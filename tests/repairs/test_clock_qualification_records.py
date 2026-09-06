@@ -93,3 +93,31 @@ def test_missing_duplicate_and_tampered_artifacts_fail(tmp_path: Path) -> None:
     artifact.write_text("{}")
     assert not runner.verify_record(rows[0])
     assert runner.summarize(result["required_vector_ids"], rows)["result"] == "FAIL"
+
+
+@pytest.mark.parametrize("damage", ["missing", "tampered"])
+def test_damaged_mutation_evidence_fails_without_erasing_execution(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, damage: str,
+) -> None:
+    original = runner._mutations
+
+    def damaged(*args: Any, **kwargs: Any) -> list[dict[str, Any]]:
+        rows = original(*args, **kwargs)
+        artifact = Path(rows[0]["actual"]["trial"]["actual_artifact"]["path"])
+        if damage == "missing":
+            artifact.unlink()
+        else:
+            artifact.write_text("{}")
+        return rows
+
+    monkeypatch.setattr(runner, "_mutations", damaged)
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    assert result["result"] == "FAIL"
+    assert result["mutation_attempts"] == result["mutation_executions"] == 6
+    assert result["mutation_verified_executions"] == 5
+    assert result["mutation_survivors"] is None
+    assert result["mutation_evidence_errors"] == [{
+        "case_id": "wrong_expected_error", "error": "E_CLOCK_MUTATION_EVIDENCE",
+    }]
+    assert len(result["mutation_records"]) == 6
+    assert result["covered_vector_count"] == 17

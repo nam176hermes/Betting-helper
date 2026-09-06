@@ -353,13 +353,21 @@ def run_clock_vector_qualification(
     records = [_execute(case, runtime, evidence / case["case_id"], context) for case in cases]
     mutations = _mutations(cases, runtime, evidence, context)
     summary = summarize(ids, records)
-    executed_mutations = [r for r in mutations if r["executed"] and verify_record(r)]
-    survivors = sum(not row["detected"] for row in executed_mutations)
-    if survivors or len(executed_mutations) != len(mutations):
+    executed_mutations = [r for r in mutations if r["executed"]]
+    evidence_errors = [{"case_id": r["case_id"], "error": "E_CLOCK_MUTATION_EVIDENCE"}
+                       for r in mutations if not verify_record(r)]
+    # Lost execution evidence makes detection unknown; it cannot erase an execution.
+    survivors = (None if evidence_errors
+                 else sum(not row["detected"] for row in executed_mutations))
+    if evidence_errors:
+        summary["result"] = "FAIL"
+    elif survivors or len(executed_mutations) != len(mutations):
         summary["result"] = "FAIL" if survivors or summary["result"] == "FAIL" else "HOLD"
     report = {**summary, "registry_version": coverage["schema_version"],
               "registry_source_sha256": coverage["source_sha256"],
               "required_vector_ids": ids, "records": records, "mutation_records": mutations,
+              "mutation_attempts": len(mutations), "mutation_evidence_errors": evidence_errors,
+              "mutation_verified_executions": sum(verify_record(r) for r in executed_mutations),
               "mutation_executions": len(executed_mutations), "mutation_survivors": survivors,
               "evidence_directory": str(evidence.resolve())}
     with (evidence / "qualification.json").open("xb") as stream:
