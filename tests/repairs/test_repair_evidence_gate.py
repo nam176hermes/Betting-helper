@@ -88,21 +88,6 @@ def test_full_inventory_consumes_four_actual_indexeddb_rows(
     assert result["money_authority"] == "NONE"
 
 
-def test_full_aggregate_runner_replaces_only_indexeddb_holds(tmp_path: Path) -> None:
-    workspace = tmp_path / "full"
-    result = indexeddb.run_full_repair_evidence(PACK, ROOT, workspace)
-    ids = [row.get("case_id", row.get("vector_id")) for row in result["records"]]
-    assert ids == gate().full_required_ids()
-    assert len(ids) == len(set(ids)) == 111
-    assert result["result"] == "HOLD"
-    assert result["status_counts"] == {"PASS": 69, "NOT_IMPLEMENTED": 42}
-    assert result["errors"] == []
-    assert result["security_review"] == "NOT_REVIEWED"
-    assert result["production_authority"] == result["live_authority"] == "NONE"
-    assert result["money_authority"] == "NONE"
-    assert json.loads((workspace / "current-aggregate.json").read_text()) == result
-
-
 def test_indexeddb_pass_does_not_use_clock_verifier(
     indexeddb_report: dict[str, Any], monkeypatch: pytest.MonkeyPatch,
 ) -> None:

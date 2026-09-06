@@ -684,6 +684,14 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
 
 
+def verify_owner_mutation(
+    harness: str, row: dict[str, Any], current: dict[str, Any]
+) -> None:
+    """Fail closed until the named SQL/browser owner mutation is recursively supported."""
+    del row, current
+    raise ValueError("E_FULL_MUTATION_OWNER_UNSUPPORTED:" + harness)
+
+
 def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> None:
     """Bind the actual browser assets, profile and OS observations to the pinned launch."""
     from tools.qualify_chrome_indexeddb import _browser_command, _canonical_browser_executable
