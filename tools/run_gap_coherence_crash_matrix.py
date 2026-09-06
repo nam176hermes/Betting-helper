@@ -421,7 +421,7 @@ def _validate_recovery(
     operation = scenario["operation"]
     target_stream = scenario["delivery"]["stream_id"]
     target_generations = {
-        row["generation"]: row["generation_state"]
+        str(row["generation"]): row["generation_state"]
         for row in after_tables["stream_generations"]
         if row["stream_id"] == target_stream
     }
@@ -434,7 +434,7 @@ def _validate_recovery(
     if operation == "GAP" and not target_gaps_before:
         if (
             len(target_gaps_after) != 1
-            or target_generations != {0: "QUARANTINED_GAP", 1: "ACTIVE"}
+            or target_generations != {"0": "QUARANTINED_GAP", "1": "ACTIVE"}
             or controller["controller_state"] != "SHOCKED_CLOSED"
         ):
             raise ValueError("E_GAP_RECOVERY_PREDICATE")

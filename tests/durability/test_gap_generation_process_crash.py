@@ -307,6 +307,14 @@ def test_retained_snapshot_verification_is_order_independent_and_database_portab
         held.rename(database)
 
 
+def test_recovery_validation_survives_json_round_trip(report: dict[str, object]) -> None:
+    control = json.loads(json.dumps(report["records"][0]))
+    assert aggregate_repair_evidence([control["case_id"]], [control])["result"] == "PASS"
+
+    mutation = json.loads(json.dumps(report["mutation_results"][0]))
+    verify_gap_mutation(mutation, control["evidence_binding"])
+
+
 def test_database_absent_controller_history_forgery_is_rejected(
     report: dict[str, object],
 ) -> None:
