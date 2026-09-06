@@ -250,3 +250,93 @@ def test_rehashed_reader_input_must_match_actual_run(record: dict[str, Any]) -> 
             verify_destruction(row, capture_binding(), terminal=False)
     finally:
         path.write_bytes(original)
+
+
+@pytest.fixture(scope="module")
+def review_record(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    from tools.run_destruction_crash_matrix import run_destruction_case
+
+    entry = next(
+        entry
+        for entry in json.loads(
+            (PACK / "docs/registries/crash-harness-registry.v1.json").read_text()
+        )["entries"]
+        if entry["vector_id"] == "DESTROY-06-AFTER-PROOF"
+    )
+    return run_destruction_case(
+        entry, tmp_path_factory.mktemp("destruction-review") / "case", mutation="EXPECTED"
+    )
+
+
+@pytest.mark.parametrize(
+    ("damage", "error"),
+    [
+        ("external-intent", "E_DESTRUCTION_EXTERNAL_ARTIFACT"),
+        ("external-proof", "E_DESTRUCTION_EXTERNAL_ARTIFACT"),
+        ("external-consumption", "E_DESTRUCTION_EXTERNAL_ARTIFACT"),
+        ("setup-error", "E_DESTRUCTION_PROCESS_OUTPUT"),
+        ("recovery-error", "E_DESTRUCTION_PROCESS_OUTPUT"),
+        ("setup-extra", "E_DESTRUCTION_PROCESS_OUTPUT"),
+        ("recovery-extra", "E_DESTRUCTION_PROCESS_OUTPUT"),
+        ("reader-before-extra", "E_DESTRUCTION_PROCESS_OUTPUT"),
+        ("stderr-missing", "E_DESTRUCTION_PROCESS_STDERR"),
+        ("stderr-hash", "E_DESTRUCTION_PROCESS_STDERR"),
+        ("stderr-content", "E_DESTRUCTION_PROCESS_STDERR"),
+    ],
+)
+def test_review_virtual_artifact_rejections(
+    review_record: dict[str, Any], monkeypatch: pytest.MonkeyPatch, damage: str, error: str
+) -> None:
+    """Coherent substitutions affect validators without modifying retained evidence."""
+    from tools.verify_destruction_evidence import verify_destruction
+    from tools.verify_repair_evidence import capture_binding
+
+    row = copy.deepcopy(review_record)
+    current = capture_binding()
+    if damage.startswith("external-"):
+        descriptor = row["artifacts"][damage]
+        altered = json.dumps(json.loads(Path(descriptor["path"]).read_bytes()), indent=2).encode()
+    elif damage.startswith("stderr-"):
+        descriptor = row["processes"][4]["stderr"]
+        if damage == "stderr-missing":
+            descriptor["path"] += ".missing"
+            descriptor["sha256"] = "0" * 64
+        elif damage == "stderr-hash":
+            descriptor["sha256"] = "0" * 64
+        altered = b"unrelated failure on stderr\n"
+    else:
+        name, alteration = damage.rsplit("-", 1)
+        descriptor = next(p for p in row["processes"] if p["name"] == name)["stdout"]
+        output = json.loads(Path(descriptor["path"]).read_bytes())
+        if alteration == "error":
+            output["result"] = {"observed_error": "E_DESTRUCTION_PROOF"}
+        else:
+            output["observed_error"] = "E_DESTRUCTION_PROOF"
+        altered = json.dumps(output).encode()
+    path = Path(descriptor["path"])
+    if damage not in {"stderr-missing", "stderr-hash"}:
+
+        def rehash(item: Any) -> None:
+            if isinstance(item, dict):
+                if item.get("path") == str(path):
+                    item["sha256"] = hashlib.sha256(altered).hexdigest()
+                for child in item.values():
+                    rehash(child)
+            elif isinstance(item, list):
+                for child in item:
+                    rehash(child)
+
+        rehash(row)
+        read_bytes, read_text = Path.read_bytes, Path.read_text
+        monkeypatch.setattr(
+            Path, "read_bytes", lambda self: altered if self == path else read_bytes(self)
+        )
+        monkeypatch.setattr(
+            Path,
+            "read_text",
+            lambda self, *args, **kwargs: (
+                altered.decode() if self == path else read_text(self, *args, **kwargs)
+            ),
+        )
+    with pytest.raises(ValueError, match=error):
+        verify_destruction(row, current, terminal=False, mutation_type="EXPECTED")

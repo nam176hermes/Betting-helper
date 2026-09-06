@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import rfc8785
+
 from moj_discovery.schema_registry import validate_artifact
 from moj_discovery.store import VENDOR
 from tools.destruction_support import consumption, content_hash, inventory, validate_plan
@@ -206,6 +208,7 @@ def verify_destruction(
     from tools.verify_repair_evidence import (
         _contains_expected,
         _sqlite_descriptor,
+        _sqlite_file,
         _verify_browser_binding,
     )
 
@@ -303,6 +306,9 @@ def verify_destruction(
             if kind == "consumption"
             else row["after"]["external"][kind]
         )
+        if kind == "consumption" and expected_value is not None:
+            # The retained committed SQLite row encodes its BOOLEAN as INTEGER.
+            expected_value = {**expected_value, "one_use": 1}
         descriptor = row["artifacts"].get("external-" + kind)
         if expected_value is None:
             if descriptor is not None or (case / filename).exists():
@@ -312,6 +318,7 @@ def verify_destruction(
             or descriptor["path"] != str(case / filename)
             or _sqlite_descriptor(row, descriptor, "E_DESTRUCTION_EXTERNAL_ARTIFACT")
             != expected_value
+            or Path(descriptor["path"]).read_bytes() != rfc8785.dumps(expected_value)
         ):
             raise ValueError("E_DESTRUCTION_EXTERNAL_ARTIFACT")
     processes = row["processes"]
@@ -343,7 +350,22 @@ def verify_destruction(
             or process["pid"] != process["pgid"]
         ):
             raise ValueError("E_DESTRUCTION_PROCESS_IDENTITY")
-        output_path = Path(process["stdout"]["path"])
+        stderr = process.get("stderr")
+        if not isinstance(stderr, dict) or set(stderr) != {"path", "sha256"}:
+            raise ValueError("E_DESTRUCTION_PROCESS_STDERR")
+        stderr_path = _sqlite_file(
+            row, stderr["path"], stderr["sha256"], "E_DESTRUCTION_PROCESS_STDERR"
+        )
+        if stderr_path != case / (name + ".stderr") or stderr_path.read_bytes() != b"":
+            raise ValueError("E_DESTRUCTION_PROCESS_STDERR")
+        stdout = process["stdout"]
+        if not isinstance(stdout, dict) or set(stdout) != {"path", "sha256"}:
+            raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
+        output_path = _sqlite_file(
+            row, stdout["path"], stdout["sha256"], "E_DESTRUCTION_PROCESS_OUTPUT"
+        )
+        if output_path != case / (name + ".stdout"):
+            raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
         expected_exit = (1 if mutation_type == "INPUT" else -signal.SIGKILL) if mode == "run" else 0
         if (
             hashlib.sha256(output_path.read_bytes()).hexdigest() != process["stdout"]["sha256"]
@@ -354,15 +376,25 @@ def verify_destruction(
         if mode in {"read", "run", "recover"} and source != loaded_inputs["owner-input"]:
             raise ValueError("E_DESTRUCTION_READER_INPUT")
         if mode != "run" or mutation_type == "INPUT":
-            output = json.loads(output_path.read_text())
+            output = _sqlite_descriptor(row, stdout, "E_DESTRUCTION_PROCESS_OUTPUT")
+            if not isinstance(output, dict) or set(output) != {"pid", "result"}:
+                raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
             if output["pid"] != process["pid"]:
                 raise ValueError("E_DESTRUCTION_PROCESS_IDENTITY")
+            if mode == "setup":
+                acks = row["before"]["backend"]["state"]["tables"]["ack_outbox"]
+                if len(acks) != 1 or output["result"] != acks[0]:
+                    raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
+            if mode == "recover" and output["result"] != {"completed": True}:
+                raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
             if mode == "read" and output["result"] != row[name.removeprefix("reader-")]:
                 raise ValueError("E_DESTRUCTION_READER_OUTPUT")
             if mode == "run" and output["result"] != {
                 "observed_error": "E_DESTRUCTION_HUMAN_INVOCATION"
             }:
                 raise ValueError("E_DESTRUCTION_WRONG_REJECTION")
+        elif output_path.read_bytes() != b"":
+            raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
     if mutation_type == "INPUT":
         if row["checkpoint"] is not None:
             raise ValueError("E_DESTRUCTION_INPUT_MUTATION_CHECKPOINT")
