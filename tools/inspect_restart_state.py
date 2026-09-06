@@ -33,14 +33,17 @@ def inspect_restart_state(
     return {"result": "PASS", "state": observed}
 
 
+def _require_supported_termination() -> None:
+    if os.name != "posix":
+        raise RuntimeError(f"E_CRASH_TERMINATION_UNSUPPORTED:{os.name}")
+
+
 def _kill_owned_child(child: Popen[bytes]) -> bool:
+    _require_supported_termination()
     if child.poll() is not None:
         return False
     try:
-        if os.name == "posix":
-            os.killpg(child.pid, signal.SIGKILL)
-        else:
-            child.kill()
+        os.killpg(child.pid, signal.SIGKILL)
     except ProcessLookupError:
         return False
     return True
@@ -74,6 +77,7 @@ def execute_crash_matrix(
 ) -> dict[str, object]:
     if state_reader is None:
         raise ValueError("E_ACTUAL_STATE_READER_REQUIRED")
+    _require_supported_termination()
     workspace.mkdir(parents=True, exist_ok=True)
     run_id = str(uuid.uuid4())
     run_directory = workspace / f"run-{run_id}"
@@ -124,7 +128,7 @@ def execute_crash_matrix(
                 ],
                 stdout=stdout,
                 stderr=stderr,
-                start_new_session=os.name == "posix",
+                start_new_session=True,
             )
             identity: dict[str, object] = {
                 "run_id": run_id,
@@ -139,8 +143,7 @@ def execute_crash_matrix(
                 _checkpoint(ready, child, identity, vector_id)
                 killed = _kill_owned_child(child)
                 return_code = child.wait(timeout=5)
-                expected_kill_code = -signal.SIGKILL if os.name == "posix" else 1
-                if not killed or return_code != expected_kill_code:
+                if not killed or return_code != -signal.SIGKILL:
                     if return_code != 0:
                         raise RuntimeError(
                             f"E_CRASH_CHILD_FAILED:{vector_id}:{return_code}"

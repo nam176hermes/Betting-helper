@@ -6,13 +6,16 @@ import textwrap
 from collections.abc import Mapping
 from pathlib import Path
 from subprocess import Popen
+from types import SimpleNamespace
 
 import pytest
 
 import tools.inspect_restart_state as restart_inspector
 from tools.inspect_restart_state import execute_crash_matrix
+from tools.run_sqlite_crash_matrix import run_sqlite_crash_matrix
 
 ROOT = Path(__file__).resolve().parents[2]
+PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
 
 
 def _case(expected: Mapping[str, object] | None = None) -> dict[str, object]:
@@ -103,6 +106,32 @@ def test_legacy_ready_only_runner_must_not_pass_without_actual_reader(tmp_path: 
             [sys.executable, str(ROOT / "tools/loopback_ack_crash_child.py")],
             tmp_path,
         )
+
+
+def test_legacy_sqlite_runner_is_blocked_without_actual_reader(tmp_path: Path) -> None:
+    workspace = tmp_path / "sqlite-runs"
+
+    with pytest.raises(ValueError, match="E_ACTUAL_STATE_READER_REQUIRED"):
+        run_sqlite_crash_matrix(PACK, workspace)
+
+    assert not workspace.exists()
+
+
+def test_non_posix_termination_is_blocked_before_launch(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    workspace = tmp_path / "unsupported-platform-runs"
+    monkeypatch.setattr(restart_inspector, "os", SimpleNamespace(name="nt"))
+
+    with pytest.raises(RuntimeError, match="E_CRASH_TERMINATION_UNSUPPORTED:nt"):
+        execute_crash_matrix(
+            [_case()],
+            ["/missing-bh-r01-child"],
+            workspace,
+            state_reader=lambda _case_dir: {"committed_rows": 1},
+        )
+
+    assert not workspace.exists()
 
 
 def test_actual_zero_state_cannot_pass_expected_999999(tmp_path: Path) -> None:
