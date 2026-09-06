@@ -9,6 +9,7 @@ import platform
 import sqlite3
 import sys
 from collections import Counter
+from dataclasses import asdict, replace
 from fractions import Fraction
 from pathlib import Path
 from shutil import which
@@ -111,8 +112,12 @@ const { readFileSync, readdirSync } = require("node:fs");
     const selected = module.selectClockMapping(c.input.candidates);
     value = { accepted: true, error: "ACCEPT", mapping_id: selected.mapping_id };
   } else if (c.handler === "close_mapping") {
-    const history = c.input.close_before_select === false
-      ? [] : module.closeClockMapping(c.input.mapping_id, c.input.reason);
+    const createdHistory = module.closeClockMapping(c.input.mapping_id, c.input.reason);
+    const history = c.mutate_closed_state
+      ? createdHistory.map(closure => ({
+          ...closure, mapping_id: `${closure.mapping_id}-MUTATED`,
+        }))
+      : createdHistory;
     const closure = history.at(-1);
     if (c.input.attempt === "SELECT_CLOSED_MAPPING_FOR_LATER_OBSERVATION") {
       try {
@@ -121,14 +126,14 @@ const { readFileSync, readdirSync } = require("node:fs");
           accepted: true, error: "ACCEPT", mapping_id: selected.mapping_id,
           reason: c.input.reason, permanent: closure?.permanent ?? false,
           reopen_permitted: closure?.reopen_permitted ?? true, history_size: history.length,
-          coherence_eligible: true,
+          coherence_eligible: true, closure_executed: true, history,
         };
       } catch (error) {
         value = {
           accepted: false, error: error instanceof Error ? error.message : String(error),
           mapping_id: c.input.mapping_id, reason: closure.reason, permanent: closure.permanent,
           reopen_permitted: closure.reopen_permitted, history_size: history.length,
-          coherence_eligible: false,
+          coherence_eligible: false, closure_executed: true, history,
         };
       }
     } else {
@@ -139,7 +144,7 @@ const { readFileSync, readdirSync } = require("node:fs");
         accepted: true, error: "ACCEPT", mapping_id: closure.mapping_id,
         reason: closure.reason, permanent: closure.permanent,
         reopen_permitted: closure.reopen_permitted, history_size: history.length,
-        reopen_error: reopenError,
+        reopen_error: reopenError, closure_executed: true, history,
       };
     }
   }
@@ -171,7 +176,7 @@ def _source_age(actual: dict[str, Any]) -> dict[str, Any]:
     return actual
 
 
-def _python(case: dict[str, Any]) -> dict[str, Any]:
+def _python(case: dict[str, Any], *, mutate_closed_state: bool = False) -> dict[str, Any]:
     handler = case["handler"]
     actual: dict[str, Any]
     if handler == "stored":
@@ -197,32 +202,36 @@ def _python(case: dict[str, Any]) -> dict[str, Any]:
         actual = {"accepted": True, "error": "ACCEPT", "mapping_id": selected["mapping_id"]}
     elif handler == "close_mapping":
         mapper = ClockMapper()
-        history = (() if case["input"].get("close_before_select") is False else mapper.close(
+        created_history = mapper.close(
             case["input"]["mapping_id"], case["input"]["reason"],
-        ))
-        closure = history[-1] if history else None
+        )
+        history = (
+            tuple(replace(closure, mapping_id=f"{closure.mapping_id}-MUTATED")
+                  for closure in created_history)
+            if mutate_closed_state else created_history
+        )
+        closure = history[-1]
+        serialized_history = [asdict(item) for item in history]
         if case["input"].get("attempt") == "SELECT_CLOSED_MAPPING_FOR_LATER_OBSERVATION":
             try:
                 selected = mapper.select(case["input"]["candidates"], history)
                 actual = {
                     "accepted": True, "error": "ACCEPT", "mapping_id": selected["mapping_id"],
                     "reason": case["input"]["reason"],
-                    "permanent": closure.permanent if closure else False,
-                    "reopen_permitted": closure.reopen_permitted if closure else True,
+                    "permanent": closure.permanent,
+                    "reopen_permitted": closure.reopen_permitted,
                     "history_size": len(history), "coherence_eligible": True,
+                    "closure_executed": True, "history": serialized_history,
                 }
             except ValueError as exc:
-                if closure is None:
-                    raise
                 actual = {
                     "accepted": False, "error": str(exc), "mapping_id": closure.mapping_id,
                     "reason": closure.reason, "permanent": closure.permanent,
                     "reopen_permitted": closure.reopen_permitted,
                     "history_size": len(history), "coherence_eligible": False,
+                    "closure_executed": True, "history": serialized_history,
                 }
         else:
-            if closure is None:
-                raise ValueError("E_INVALID_MAPPING_CLOSURE")
             try:
                 mapper.reopen(case["input"]["mapping_id"], history)
             except ValueError as exc:
@@ -232,15 +241,21 @@ def _python(case: dict[str, Any]) -> dict[str, Any]:
                 "reason": closure.reason, "permanent": closure.permanent,
                 "reopen_permitted": closure.reopen_permitted,
                 "history_size": len(history), "reopen_error": reopen_error,
+                "closure_executed": True, "history": serialized_history,
             }
     else:
         raise ValueError("E_CLOCK_NO_EXECUTABLE_ADAPTER")
     return _source_age(dict(actual))
 
 
-def _typescript(case: dict[str, Any], runtime: Path) -> dict[str, Any]:
+def _typescript(
+    case: dict[str, Any], runtime: Path, *, mutate_closed_state: bool = False,
+) -> dict[str, Any]:
     # Expected fields and IDs never cross the evaluator boundary.
-    payload = {"handler": case["handler"], "input": case["input"]}
+    payload = {
+        "handler": case["handler"], "input": case["input"],
+        "mutate_closed_state": mutate_closed_state,
+    }
     if case["handler"] in {"raw", "stored"}:
         payload.update({key: case[key] for key in ("raw", "stored", "guardrails")})
     module = runtime / "extension/.test-build/src/contracts/clock-vectors.js"
@@ -342,11 +357,15 @@ def _case(entry: dict[str, Any], vectors: dict[str, Any]) -> dict[str, Any]:
             "mapping_id": mapping_id, "reason": vector["reason"],
             **({"attempt": vector["attempt"], "candidates": [{
                 "mapping_id": mapping_id, "width_us": 1, "valid_from_us": 1,
-            }], "close_before_select": True} if "attempt" in vector else {}),
+            }]} if "attempt" in vector else {}),
+        }
+        closure = {
+            "mapping_id": mapping_id, "reason": vector["reason"],
+            "permanent": vector.get("permanent", True), "reopen_permitted": False,
         }
         common = {
-            "mapping_id": mapping_id, "reason": vector["reason"],
-            "permanent": True, "reopen_permitted": False, "history_size": 1,
+            **closure, "history_size": 1, "closure_executed": True,
+            "history": [closure],
         }
         case["expected"] = (
             {"accepted": False, "error": vector["expected_error"], **common,
@@ -457,7 +476,8 @@ def _midpoint_sql_observation(value: dict[str, Any]) -> dict[str, Any]:
 
 
 def _execute(case: dict[str, Any], runtime: Path, directory: Path,
-             context: dict[str, Any], *, corrupt_both: bool = False) -> dict[str, Any]:
+             context: dict[str, Any], *, corrupt_both: bool = False,
+             mutate_closed_state: bool = False) -> dict[str, Any]:
     actual: dict[str, Any] = {}
     status, error, executed = "NOT_IMPLEMENTED", "E_CLOCK_NO_EXECUTABLE_ADAPTER", False
     drift: bool | None = None
@@ -477,9 +497,11 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
             ).is_file():
                 raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE")
             executed = True
-            actual["python"] = _python(case)
+            actual["python"] = _python(case, mutate_closed_state=mutate_closed_state)
             exits["python"] = 0
-            actual["typescript"] = _typescript(case, runtime)
+            actual["typescript"] = _typescript(
+                case, runtime, mutate_closed_state=mutate_closed_state,
+            )
             exits["typescript"] = 0
             if corrupt_both:
                 for language in ("python", "typescript"):
@@ -628,10 +650,9 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
             case["input"]["x"] += 1
         elif name == "midpoint_corruption":
             case["input"]["offset_midpoint_us"] += 1
-        elif name == "post_close_selection":
-            case["input"]["close_before_select"] = False
         trial = _execute(case, runtime, workspace / "trial", context,
-                         corrupt_both=name == "same_wrong_result")
+                         corrupt_both=name == "same_wrong_result",
+                         mutate_closed_state=name == "post_close_selection")
         observed = [trial]
         if name == "missing_result":
             observed = []

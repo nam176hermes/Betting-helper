@@ -111,9 +111,20 @@ def test_selection_and_closure_rows_bind_real_cross_language_artifacts(tmp_path:
 def test_post_close_mutation_is_executed_and_detected(tmp_path: Path) -> None:
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     rows = {row["case_id"]: row for row in result["mutation_records"]}
-    assert rows["post_close_selection"]["executed"] is True
-    assert rows["post_close_selection"]["detected"] is True
-    assert runner.verify_record(rows["post_close_selection"])
+    mutation = rows["post_close_selection"]
+    assert mutation["executed"] is True
+    assert mutation["detected"] is True
+    assert runner.verify_record(mutation)
+    control = mutation["actual"]["control"]
+    trial = mutation["actual"]["trial"]
+    assert "close_before_select" not in control["input"]
+    assert "close_before_select" not in trial["input"]
+    for row in (control, trial):
+        for language in ("python", "typescript"):
+            assert row["actual"][language]["closure_executed"] is True
+    assert control["actual"]["python"]["history"][0]["mapping_id"] == "MAP:" + "c" * 64
+    assert trial["actual"]["python"]["history"][0]["mapping_id"].endswith("-MUTATED")
+    assert trial["actual"]["python"]["accepted"] is True
 
 
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(
@@ -121,13 +132,13 @@ def test_same_wrong_evaluators_fail_independent_numeric_oracle(
 ) -> None:
     original = runner._python
 
-    def wrong(case: dict[str, Any]) -> dict[str, Any]:
+    def wrong(case: dict[str, Any], **_kwargs: object) -> dict[str, Any]:
         actual = original(case)
         actual["network_rtt_us"] = 0
         return actual
 
     monkeypatch.setattr(runner, "_python", wrong)
-    monkeypatch.setattr(runner, "_typescript", lambda case, runtime: wrong(case))
+    monkeypatch.setattr(runner, "_typescript", lambda case, runtime, **kwargs: wrong(case))
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     golden = next(row for row in result["records"] if row["case_id"].startswith("CLOCK-GOLDEN"))
     assert golden["status"] == "FAIL"
