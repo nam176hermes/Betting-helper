@@ -187,3 +187,30 @@ def test_reader_enforces_complete_per_owner_ack_history(tmp_path: Path, mutation
         with pytest.raises(ValueError, match="^E_STORE_ACK_CHAIN$"):
             Ingestor(store).apply(observation(3))
         assert store.db_path.read_bytes() == before
+
+
+def test_first_backend_ack_may_start_at_q1_with_null_predecessor(tmp_path: Path) -> None:
+    store = prepared_store(tmp_path)
+    first = Ingestor(store).apply(observation())
+    with closing(sqlite3.connect(store.db_path)) as connection, connection:
+        connection.execute(
+            "INSERT INTO ack_cursors VALUES ('BACKEND:1',?,?,?,?,0,'BACKEND',1,?,1,"
+            "'BACKEND_DURABLE_CHAIN',NULL,1)",
+            (RUN, BROWSER, PRODUCER, STREAM, first["cursor_hash"]),
+        )
+    rows = read(store.db_path.parent)["tables"]["ack_cursors"]
+    assert len(rows) == 1
+    assert rows[0]["highest_contiguous_sequence"] == 1
+    assert rows[0]["previous_ack_cursor_id"] is None
+    second = Ingestor(store).apply(observation(2))
+    with closing(sqlite3.connect(store.db_path)) as connection, connection:
+        connection.execute(
+            "INSERT INTO ack_cursors VALUES ('BACKEND:2',?,?,?,?,0,'BACKEND',2,?,1,"
+            "'BACKEND_DURABLE_CHAIN','BACKEND:1',2)",
+            (RUN, BROWSER, PRODUCER, STREAM, second["cursor_hash"]),
+        )
+    rows = read(store.db_path.parent)["tables"]["ack_cursors"]
+    assert [
+        (row["highest_contiguous_sequence"], row["previous_ack_cursor_id"]) for row in rows
+    ] == [(1, None), (2, "BACKEND:1")]
+    assert Ingestor(store).apply(observation(3))["highest_contiguous_sequence"] == 3

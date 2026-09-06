@@ -221,9 +221,12 @@ def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
             )
         else:
             valid = (
-                previous is not None
-                and ack["previous_ack_cursor_id"] == previous["ack_cursor_id"]
-                and previous["highest_contiguous_sequence"] < ack["highest_contiguous_sequence"]
+                ack["previous_ack_cursor_id"]
+                == (None if previous is None else previous["ack_cursor_id"])
+                and (
+                    previous is None
+                    or previous["highest_contiguous_sequence"] < ack["highest_contiguous_sequence"]
+                )
                 and any(
                     tuple(row[field] for field in KEY) == key
                     and row["highest_contiguous_sequence"] == ack["highest_contiguous_sequence"]
