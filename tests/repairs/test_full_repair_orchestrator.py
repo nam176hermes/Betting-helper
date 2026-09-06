@@ -318,3 +318,29 @@ def test_arbitrary_rehashed_retained_browser_graph_is_rejected(tmp_path: Path) -
         evidence_gate._verify_retained_typescript_graph(
             row, evidence_gate.capture_binding(), "E_TEST_GRAPH"
         )
+
+
+def test_typescript_compile_binding_covers_extended_config_and_compiler_payload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    current = evidence_gate.capture_binding()
+    baseline = evidence_gate._typescript_compile_binding(current)
+    original_sha = evidence_gate._sha
+
+    def changed_base_config(path: Path) -> str:
+        if path == evidence_gate.ROOT / "extension/tsconfig.json":
+            return "1" * 64
+        return original_sha(path)
+
+    monkeypatch.setattr(evidence_gate, "_sha", changed_base_config)
+    assert evidence_gate._typescript_compile_binding(current) != baseline
+
+    monkeypatch.setattr(evidence_gate, "_sha", original_sha)
+
+    def changed_compiler_payload(path: Path) -> str:
+        if path == evidence_gate.ROOT / "extension/node_modules/typescript/lib/_tsc.js":
+            return "2" * 64
+        return original_sha(path)
+
+    monkeypatch.setattr(evidence_gate, "_sha", changed_compiler_payload)
+    assert evidence_gate._typescript_compile_binding(current) != baseline

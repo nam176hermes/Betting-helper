@@ -27,6 +27,48 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _typescript_config_closure(start: Path) -> list[Path]:
+    """Resolve the local JSON config inheritance used by the browser test build."""
+    pending = [start.resolve()]
+    configs: list[Path] = []
+    seen: set[Path] = set()
+    while pending:
+        config = pending.pop()
+        if config in seen:
+            continue
+        try:
+            config.relative_to(ROOT.resolve())
+        except ValueError as error:
+            raise ValueError("E_TYPESCRIPT_CONFIG_OUTSIDE_REPOSITORY") from error
+        if not config.is_file():
+            raise FileNotFoundError("E_TYPESCRIPT_CONFIG_PREREQUISITE:" + str(config))
+        seen.add(config)
+        configs.append(config)
+        inherited = json.loads(config.read_text()).get("extends")
+        if inherited is not None:
+            if not isinstance(inherited, str) or not inherited.startswith("."):
+                raise ValueError("E_TYPESCRIPT_CONFIG_EXTENDS")
+            parent = config.parent / inherited
+            if parent.suffix != ".json":
+                parent = parent.with_suffix(".json")
+            pending.append(parent.resolve())
+    return sorted(configs)
+
+
+def _resolved_node_executable() -> Path:
+    node = which("node")
+    if node is None:
+        raise FileNotFoundError("E_TYPESCRIPT_NODE_PREREQUISITE")
+    completed = run(  # noqa: S603 -- resolved local node shim, read-only identity query.
+        [node, "-p", "process.execPath"], check=True, capture_output=True, text=True,
+        timeout=10,
+    )
+    executable = Path(completed.stdout.strip()).resolve()
+    if not executable.is_file():
+        raise FileNotFoundError("E_TYPESCRIPT_NODE_PREREQUISITE")
+    return executable
+
+
 def capture_binding() -> dict[str, Any]:
     """Capture tested working bytes as well as HEAD; reports are not self-hashed."""
     git = which("git")
@@ -41,10 +83,11 @@ def capture_binding() -> dict[str, Any]:
         ("extension/test-harness", ".ts"),
     ) for p in (ROOT / directory).rglob("*" + suffix)]
     sources += [ROOT / name for name in (
-        "pyproject.toml", "extension/package.json", "extension/tsconfig.test.json",
+        "pyproject.toml", "extension/package.json",
         "extension/test-harness/repair-manifest.json", "extension/test-harness/repair-probe.html",
     ) if (ROOT / name).is_file()]
-    node = which("node")
+    sources += _typescript_config_closure(ROOT / "extension/tsconfig.test.json")
+    node = _resolved_node_executable()
     return {
         "revision": revision,
         "source_sha256": {str(p.relative_to(ROOT)): _sha(p) for p in sorted(sources)},
@@ -55,8 +98,8 @@ def capture_binding() -> dict[str, Any]:
         )},
         "environment": {"python": sys.version, "platform": platform.platform(),
                         "python_executable": str(Path(sys.executable).resolve()),
-                        "python_sha256": _sha(Path(sys.executable)), "node": node,
-                        "node_sha256": _sha(Path(node)) if node else None},
+                        "python_sha256": _sha(Path(sys.executable)), "node": str(node),
+                        "node_sha256": _sha(node)},
     }
 
 
@@ -846,15 +889,13 @@ def _compiled_browser_module_hashes(input_binding: str) -> dict[str, str]:
     """Compile the current pinned sources in isolation; the binding is the cache authority."""
     if not input_binding:
         raise ValueError("E_TYPESCRIPT_COMPILE_BINDING")
-    pnpm = which("pnpm")
-    if pnpm is None:
-        raise FileNotFoundError("E_TYPESCRIPT_PNPM_PREREQUISITE")
+    node = _resolved_node_executable()
+    tsc = ROOT / "extension/node_modules/typescript/lib/tsc.js"
     with TemporaryDirectory(prefix="bh-browser-graph-") as directory:
         output = Path(directory)
-        completed = run(  # noqa: S603 -- resolved package manager, fixed offline local compile.
-            [pnpm, "--dir", str(ROOT / "extension"), "exec", "tsc", "-p",
-             "tsconfig.test.json", "--outDir", str(output)],
-            cwd=ROOT,
+        completed = run(  # noqa: S603 -- content-bound node and compiler, fixed local compile.
+            [str(node), str(tsc), "-p", "tsconfig.test.json", "--outDir", str(output)],
+            cwd=ROOT / "extension",
             capture_output=True,
             text=True,
             check=False,
@@ -880,17 +921,26 @@ def _compiled_browser_module_hashes(input_binding: str) -> dict[str, str]:
 
 
 def _typescript_compile_binding(current: dict[str, Any]) -> str:
-    pnpm = which("pnpm")
-    if pnpm is None:
-        raise FileNotFoundError("E_TYPESCRIPT_PNPM_PREREQUISITE")
-    files = {
-        "pnpm": Path(pnpm).resolve(),
-        "typescript": ROOT / "extension/node_modules/typescript/lib/tsc.js",
-        "typescript_package": ROOT / "extension/node_modules/typescript/package.json",
-        "canonicalize": ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js",
-    }
+    node = _resolved_node_executable()
+    typescript = ROOT / "extension/node_modules/typescript"
+    resolved_typescript = typescript.resolve()
+    compiler_files = [typescript / path.relative_to(resolved_typescript)
+                      for path in resolved_typescript.rglob("*") if path.is_file()]
+    config_files = _typescript_config_closure(ROOT / "extension/tsconfig.test.json")
     toolchain = {
-        name: {"path": str(path), "sha256": _sha(path)} for name, path in files.items()
+        "node": {"path": str(node), "sha256": _sha(node)},
+        "typescript": {
+            str(path.relative_to(typescript)): _sha(path) for path in sorted(compiler_files)
+        },
+        "configs": {
+            str(path.relative_to(ROOT)): _sha(path) for path in config_files
+        },
+        "canonicalize": {
+            "path": str(ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"),
+            "sha256": _sha(
+                ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"
+            ),
+        },
     }
     payload = {"current": current, "toolchain": toolchain}
     return hashlib.sha256(
