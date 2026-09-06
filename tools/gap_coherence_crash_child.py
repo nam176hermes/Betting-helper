@@ -1,10 +1,6 @@
-"""Killable child for gap, generation, epoch, and clock durability checkpoints."""
-from __future__ import annotations
+"""Registered GAP entrypoint shares the actual offline ingest crash child."""
 
-import argparse
-import json
-from pathlib import Path
-from time import sleep
+from tools.loopback_ack_crash_child import main as ingest_crash_main
 
 
 def contract_not_implemented() -> None:
@@ -12,17 +8,7 @@ def contract_not_implemented() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--vector-id", required=True)
-    parser.add_argument("--ready", type=Path)
-    parser.add_argument("--hold", action="store_true")
-    args = parser.parse_args()
-    if args.ready is not None:
-        args.ready.write_text(json.dumps({"vector_id": args.vector_id}))
-    if args.hold:
-        while True:
-            sleep(1)
-    print(json.dumps({"vector_id": args.vector_id}, sort_keys=True))
+    ingest_crash_main()
 
 
 if __name__ == "__main__":
