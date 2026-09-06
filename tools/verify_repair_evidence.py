@@ -60,10 +60,37 @@ def full_required_ids() -> list[str]:
     return [entry["vector_id"] for group in (crash, clock) for entry in group["entries"]]
 
 
+def validate_case_status(row: dict[str, Any]) -> None:
+    """Reject contradictions before status-specific evidence validation can return."""
+    status = row["status"]
+    if status not in STATUSES:
+        raise ValueError("E_REPAIR_STATUS")
+    if status in {"PASS", "FAIL"}:
+        if row.get("executed") is not True or row.get("launch_attempted") is not True:
+            raise ValueError("E_REPAIR_EXECUTED_STATUS")
+        return
+    if row.get("executed", False) is not False or row.get("launch_attempted", False) is not False:
+        raise ValueError("E_REPAIR_UNEXECUTED_STATUS")
+    execution_fields = {"actual", "comparison", "cross_language_drift", "detected"}
+    if any(key in execution_fields or key.startswith(("actual_", "command_", "mutation_"))
+           for key in row):
+        raise ValueError("E_REPAIR_UNEXECUTED_OUTPUT")
+    if status == "NOT_IMPLEMENTED" and not (
+        row.get("implementation_marker") or row.get("reason")
+    ):
+        raise ValueError("E_REPAIR_IMPLEMENTATION_MARKER")
+    if status == "BLOCKED_ENVIRONMENT":
+        prerequisite = row["prerequisite"]
+        if (not prerequisite["name"] or prerequisite["available"] is not False
+                or row.get("launch_attempted") is not False):
+            raise ValueError("E_REPAIR_PREREQUISITE")
+
+
 def _verify_clock(row: dict[str, Any], current: dict[str, Any]) -> None:
     # Import lazily: the clock producer captures this module's binding before execution.
     from tools import run_clock_vector_qualification as clock
 
+    validate_case_status(row)
     if row["evidence_binding"] != current:
         raise ValueError("E_REPAIR_STALE_BINDING")
     if row["code"]["revision"] != current["revision"]:
@@ -122,23 +149,17 @@ def aggregate_repair_evidence(
             status = row["status"]
             if "scoped_evidence" in row or "scoped_result" in row:
                 raise ValueError("E_REPAIR_SUPPLEMENTAL_MUST_BE_SEPARATE")
-            if status not in STATUSES:
-                raise ValueError("E_REPAIR_STATUS")
+            validate_case_status(row)
             if "case_id" in row and "vector_id" in row and row["case_id"] != row["vector_id"]:
                 raise ValueError("E_REPAIR_CASE_ID")
             if status == "PASS":
                 _verify_clock(row, current)
             elif status == "FAIL":
+                _verify_clock(row, current)
                 raise ValueError("E_REPAIR_REPORTED_FAILURE")
             else:
-                if row.get("executed", False) is not False:
-                    raise ValueError("E_REPAIR_UNEXECUTED_STATUS")
                 if not (row.get("reason") or row.get("observed_error")):
                     raise ValueError("E_REPAIR_REASON_REQUIRED")
-                if status == "BLOCKED_ENVIRONMENT":
-                    prerequisite = row["prerequisite"]
-                    if not prerequisite["name"] or prerequisite["available"] is not False:
-                        raise ValueError("E_REPAIR_PREREQUISITE")
                 # Existing evidence cannot disappear behind a non-PASS status.
                 if "actual_artifact" in row or "evidence_binding" in row:
                     _verify_clock(row, current)

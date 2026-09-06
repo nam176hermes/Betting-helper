@@ -89,9 +89,10 @@ def test_missing_duplicate_and_tampered_artifacts_fail(tmp_path: Path) -> None:
     rows = result["records"]
     for changed in (rows[1:], [*rows, copy.deepcopy(rows[0])]):
         assert runner.summarize(result["required_vector_ids"], changed)["result"] == "FAIL"
-    artifact = Path(rows[0]["actual_artifact"]["path"])
+    executed = next(row for row in rows if row["executed"])
+    artifact = Path(executed["actual_artifact"]["path"])
     artifact.write_text("{}")
-    assert not runner.verify_record(rows[0])
+    assert not runner.verify_record(executed)
     assert runner.summarize(result["required_vector_ids"], rows)["result"] == "FAIL"
 
 

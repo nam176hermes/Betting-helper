@@ -110,6 +110,7 @@ def test_negative_evidence_cannot_qualify(
 def test_absent_prerequisite_and_unimplemented_are_distinct() -> None:
     rows = [
         {"case_id": "browser", "status": "BLOCKED_ENVIRONMENT", "executed": False,
+         "launch_attempted": False,
          "prerequisite": {"name": "extension-origin browser", "available": False},
          "reason": "E_EXTENSION_TARGET_UNAVAILABLE"},
         {"case_id": "spool", "status": "NOT_IMPLEMENTED", "executed": False,
@@ -159,3 +160,41 @@ def test_release_does_not_accept_subset_or_fabricated_summary() -> None:
     with pytest.raises(ValueError, match="E_DURABILITY_EVIDENCE_NOT_QUALIFIED"):
         validate_full_durability_release(["invented"], ["invented"], mutation_survivors=0,
                                          evidence=[{"case_id": "invented", "status": "PASS"}])
+
+
+@pytest.mark.parametrize("status", ["NOT_IMPLEMENTED", "NOT_EXECUTED", "BLOCKED_ENVIRONMENT"])
+def test_executed_failure_cannot_be_relabelled_as_unexecuted(
+    clock_report: dict[str, Any], status: str,
+) -> None:
+    trial = copy.deepcopy(clock_report["mutation_records"][0]["actual"]["trial"])
+    assert trial["status"] == "FAIL" and trial["executed"] is True
+    assert clock.verify_record(trial)
+    trial.update(status=status, executed=False, reason="claimed missing prerequisite",
+                 implementation_marker="claimed stub", launch_attempted=False,
+                 prerequisite={"name": "claimed browser", "available": False})
+    result = gate().aggregate_repair_evidence([trial["case_id"]], [trial])
+    assert result["result"] == "FAIL"
+    assert result["errors"]
+
+
+@pytest.mark.parametrize("field", ["actual", "actual_artifact", "command_exit", "comparison",
+                                   "cross_language_drift", "detected", "mutation_survivors"])
+def test_unexecuted_row_cannot_carry_execution_fields(field: str) -> None:
+    row = {"case_id": "later", "status": "NOT_EXECUTED", "executed": False,
+           "reason": "not attempted", field: None}
+    assert gate().aggregate_repair_evidence(["later"], [row])["result"] == "FAIL"
+
+
+def test_clock_prerequisite_block_occurs_before_evaluation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def must_not_execute(case: dict[str, Any]) -> dict[str, Any]:
+        pytest.fail("missing compiled prerequisite must prevent Python evaluation")
+
+    monkeypatch.setattr(clock, "_python", must_not_execute)
+    case = {"case_id": "blocked", "family": "RAW_SAMPLE", "handler": "raw", "section": "test",
+            "input": {}, "expected": {}, "evaluator_refs": []}
+    row = clock._execute(case, tmp_path, tmp_path / "evidence", {})
+    assert row["status"] == "BLOCKED_ENVIRONMENT"
+    assert row["executed"] is row["launch_attempted"] is False
+    assert not {"actual", "actual_artifact", "comparison", "command_exit"}.intersection(row)

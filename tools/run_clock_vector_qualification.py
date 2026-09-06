@@ -189,16 +189,20 @@ def _diff(actual: dict[str, Any], expected: dict[str, Any]) -> dict[str, Any]:
 
 def _record(case: dict[str, Any], actual: dict[str, Any], directory: Path,
             context: dict[str, Any], **fields: Any) -> dict[str, Any]:
+    row = {**context, "case_id": case["case_id"], "family": case["family"],
+           "source_section": case["section"], "evaluator_refs": case["evaluator_refs"],
+           "input": case["input"], "expected": case["expected"],
+           "input_sha256": _hash(case["input"]), "expected_sha256": _hash(case["expected"]),
+           **fields}
+    if not fields["executed"] and fields["execution_kind"] != "QUALIFICATION_MUTATION":
+        return row
     directory.mkdir(parents=True, exist_ok=True)
     artifact = directory / "actual.json"
     with artifact.open("xb") as stream:
         stream.write(_bytes(actual))
-    return {**context, "case_id": case["case_id"], "family": case["family"],
-            "source_section": case["section"], "evaluator_refs": case["evaluator_refs"],
-            "input": case["input"], "expected": case["expected"],
-            "input_sha256": _hash(case["input"]), "expected_sha256": _hash(case["expected"]),
+    return {**row,
             "actual": actual, "actual_artifact": {"path": str(artifact.resolve()),
-                                                   "sha256": _hash(actual)}, **fields}
+                                                   "sha256": _hash(actual)}}
 
 
 def _execute(case: dict[str, Any], runtime: Path, directory: Path,
@@ -218,6 +222,7 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                 runtime / "extension/.test-build/src/contracts/clock-vectors.js"
             ).is_file():
                 raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE")
+            executed = True
             actual["python"] = _python(case)
             exits["python"] = 0
             actual["typescript"] = _typescript(case, runtime)
@@ -235,8 +240,10 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
             error, executed = actual["python"]["error"], True
     except ContractNotImplementedError as exc:
         error = str(exc)
+        if executed:
+            status = "FAIL"
     except FileNotFoundError as exc:
-        status = "FAIL" if actual else "BLOCKED_ENVIRONMENT"
+        status = "FAIL" if executed else "BLOCKED_ENVIRONMENT"
         error = str(exc)
     except TimeoutExpired as exc:
         status, error = "FAIL", str(exc)
@@ -245,23 +252,33 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
         status, error = "FAIL", str(exc.stderr)
     except (RuntimeError, ValueError, TypeError, KeyError) as exc:
         status, error = "FAIL", str(exc)
-    actual["execution_error"] = error if not executed else None
+    executed = executed or status == "FAIL"
+    actual["execution_error"] = error if status == "FAIL" else None
     prerequisite = ({"name": "compiled TypeScript clock evaluator and Node",
                      "available": False} if status == "BLOCKED_ENVIRONMENT" else None)
+    fields = ({"comparison": comparison, "cross_language_drift": drift, "command_exit": exits}
+              if executed else {"implementation_marker": error}
+              if status == "NOT_IMPLEMENTED" else {"prerequisite": prerequisite})
     return _record(case, actual, directory, context, status=status, executed=executed,
-                   observed_error=error, comparison=comparison, cross_language_drift=drift,
-                   command_exit=exits, execution_kind="OFFLINE_SHARED_CLOCK_EVALUATOR",
-                   prerequisite=prerequisite)
+                   launch_attempted=executed, observed_error=error,
+                   execution_kind="OFFLINE_SHARED_CLOCK_EVALUATOR", **fields)
 
 
 def verify_record(row: dict[str, Any]) -> bool:
     try:
+        if row.get("execution_kind") != "QUALIFICATION_MUTATION":
+            from tools.verify_repair_evidence import validate_case_status
+
+            validate_case_status(row)
+        hashes_match = bool(row["input_sha256"] == _hash(row["input"])
+                            and row["expected_sha256"] == _hash(row["expected"]))
+        if not row["executed"] and row.get("execution_kind") != "QUALIFICATION_MUTATION":
+            return hashes_match
         artifact = row["actual_artifact"]
         digest = hashlib.sha256(Path(artifact["path"]).read_bytes()).hexdigest()
         return bool(digest == artifact["sha256"]
                 and artifact["sha256"] == _hash(row["actual"])
-                and row["input_sha256"] == _hash(row["input"])
-                and row["expected_sha256"] == _hash(row["expected"])
+                and hashes_match
                 and all(verify_record(row["actual"][key]) for key in ("control", "trial")
                         if key in row["actual"]))
     except (OSError, KeyError, TypeError, ValueError):
@@ -288,7 +305,7 @@ def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[st
             "covered_vector_count": len({row["case_id"] for row in passed}),
             "executed_vector_count": sum(row["executed"] for row in valid),
             "skipped_vectors": sum(not row["executed"] for row in records),
-            "cross_language_drift": sum(row["cross_language_drift"] is True for row in valid),
+            "cross_language_drift": sum(row.get("cross_language_drift") is True for row in valid),
             "required_id_set_complete": exact}
 
 

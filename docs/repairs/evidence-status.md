@@ -12,6 +12,13 @@ NOT_IMPLEMENTED and NOT_EXECUTED remain distinct. A negative case is PASS only
 when its actual rejection matches the independent expected error and fields.
 An absent declared prerequisite prevents execution and holds the result;
 evidence lost or modified after execution fails the result.
+Nonexecuted case rows carry no actual output/artifact, command exit, comparator,
+drift or mutation-detection fields, including empty/null versions. Stub rows
+have an implementation marker; blocked rows declare the missing prerequisite
+and no launch. PASS/FAIL rows require executed and launch flags plus verified
+actual artifacts. Changing an executed failure's status/flags cannot retain
+its execution fields and downgrade it to HOLD. Unexecuted clock metadata are
+validated as metadata, without writing an actual-state artifact for a stub.
 
 The complete local qualification inventory is the union of the governed 46 crash
 and 65 clock IDs. A successful smaller set is labelled SUBSET and leaves
