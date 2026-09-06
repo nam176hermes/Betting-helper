@@ -1050,6 +1050,21 @@ def _verify_browser_ack(
             != [*prefix, "--browser-server", row["inputs"][f"server-input-{ordinal}"]["path"]]
         ):
             raise ValueError("E_ACK_PROCESS_INPUT")
+        from tools.run_gap_coherence_crash_matrix import _verify_proc_observation
+
+        try:
+            raw = process["raw_process"]
+            raw_path = _sqlite_file(row, raw["path"], raw["sha256"], "E_ACK_PROCESS_PROVENANCE")
+            if set(raw) != {"path", "sha256"} or raw_path != (
+                Path(row["case_directory"]) / f"server-process-{ordinal}.json"
+            ):
+                raise ValueError("E_ACK_PROCESS_PROVENANCE")
+            _verify_proc_observation(process["observed"], raw, process["argv"])
+            if (process["observed"]["pid"] != process["pid"]
+                    or process["observed"]["pgid"] != process["pgid"]):
+                raise ValueError("E_ACK_PROCESS_PROVENANCE")
+        except (KeyError, TypeError, ValueError, OSError) as error:
+            raise ValueError("E_ACK_PROCESS_PROVENANCE") from error
         killed = ordinal == 0 and entry["kill_action"] == "SIGKILL_BACKEND_CHILD"
         if process["exit"] != (-signal.SIGKILL if killed else -signal.SIGTERM) or process[
             "mechanism"

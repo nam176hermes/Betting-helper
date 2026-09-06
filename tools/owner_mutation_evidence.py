@@ -220,8 +220,12 @@ def campaign(
 def verify_mutation(
     harness: str, row: dict[str, Any], binding: dict[str, Any], *, terminal: bool = True
 ) -> None:
+    from jsonschema.exceptions import ValidationError  # type: ignore[import-untyped]
+
     from moj_discovery.canonical import canonical_content_hash
+    from moj_discovery.schema_registry import validate_artifact
     from tools.verify_repair_evidence import (
+        _contains_expected,
         _sqlite_descriptor,
         _validate_sqlite_state,
         _verify_executed,
@@ -269,6 +273,8 @@ def verify_mutation(
     ):
         raise ValueError("E_OWNER_MUTATION_BINDING")
     execution, control = row["execution"], row["control"]
+    if control.get("status") != "PASS" or control.get("result") != "PASS":
+        raise ValueError("E_OWNER_MUTATION_CONTROL")
     _verify_executed(control, binding)
     if (
         execution["case_id"] != row["vector_id"]
@@ -291,6 +297,8 @@ def verify_mutation(
     if _sqlite_descriptor(row, row["oracle_artifact"], "E_OWNER_MUTATION_ORACLE") != row["oracle"]:
         raise ValueError("E_OWNER_MUTATION_ORACLE")
     if kind == "EXPECTED":
+        if execution.get("status") != "PASS" or execution.get("result") != "PASS":
+            raise ValueError("E_OWNER_MUTATION_TRIAL")
         _verify_executed(execution, binding)
         if (
             row["oracle"] != {"retained_rows": 99}
@@ -306,6 +314,15 @@ def verify_mutation(
             raise ValueError("E_OWNER_MUTATION_SURVIVOR")
     elif harness == "SQLITE_TRANSACTION":
         original, altered = execution["original_input"], execution["mutated_input"]
+        for observation in (original, altered):
+            if _contains_expected(observation):
+                raise ValueError("E_OWNER_MUTATION_INPUT")
+            try:
+                validate_artifact(
+                    observation, "raw-observation.schema.json", bootstrap_only=True, vendor=PACK
+                )
+            except (ValidationError, ValueError) as error:
+                raise ValueError("E_OWNER_MUTATION_INPUT") from error
         if (
             altered != {**original, "content_hash": "0" * 64}
             or canonical_content_hash(
