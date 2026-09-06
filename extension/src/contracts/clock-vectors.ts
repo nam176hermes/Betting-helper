@@ -44,6 +44,70 @@ export type ClockObservationEvaluation = ClockPrimitiveEvaluation & {
   computed_hash: string | null;
 };
 
+export type MappingCandidate = {
+  mapping_id: string;
+  width_us: Integer;
+  valid_from_us: Integer;
+};
+export type MappingClosure = Readonly<{
+  mapping_id: string;
+  reason: string;
+  permanent: true;
+  reopen_permitted: false;
+}>;
+const closureReasons = new Set([
+  "DOMAIN_BOOT_CHANGED", "MONOTONIC_REGRESSION", "WALL_CLOCK_STEP", "SLEEP_RESUME",
+  "MAX_DURATION", "RTT_EXCEEDED", "UNCERTAINTY_EXCEEDED", "INCONSISTENT_MAPPING",
+  "LIFECYCLE_INVALIDATED", "RUN_CLOSED",
+]);
+
+export const selectClockMapping = (
+  candidates: readonly MappingCandidate[],
+  history: readonly MappingClosure[] = [],
+): MappingCandidate => {
+  const closed = new Set(history.map((closure) => closure.mapping_id));
+  const eligible = candidates.filter((candidate) => !closed.has(candidate.mapping_id));
+  for (const candidate of eligible) {
+    if (!nonempty(candidate.mapping_id) || !isInteger(candidate.width_us) || BigInt(candidate.width_us) < 0n ||
+        !isInteger(candidate.valid_from_us) || BigInt(candidate.valid_from_us) < 0n) {
+      throw new Error("E_INVALID_MAPPING_CANDIDATE");
+    }
+  }
+  if (!eligible.length) throw new Error("E_NO_VALID_MAPPING");
+  return eligible.reduce((best, candidate) => {
+    const width = BigInt(candidate.width_us), bestWidth = BigInt(best.width_us);
+    const validFrom = BigInt(candidate.valid_from_us), bestValidFrom = BigInt(best.valid_from_us);
+    return width < bestWidth ||
+      (width === bestWidth && (validFrom > bestValidFrom ||
+        (validFrom === bestValidFrom && candidate.mapping_id < best.mapping_id))) ? candidate : best;
+  });
+};
+
+export const closeClockMapping = (
+  mappingId: string,
+  reason: string,
+  history: readonly MappingClosure[] = [],
+): readonly MappingClosure[] => {
+  if (!nonempty(mappingId) || !closureReasons.has(reason)) throw new Error("E_INVALID_MAPPING_CLOSURE");
+  if (history.some((closure) => closure.mapping_id === mappingId)) {
+    throw new Error("E_MAPPING_PERMANENTLY_CLOSED");
+  }
+  const closure = Object.freeze({
+    mapping_id: mappingId, reason, permanent: true as const, reopen_permitted: false as const,
+  });
+  return Object.freeze([...history, closure]);
+};
+
+export const reopenClockMapping = (
+  mappingId: string,
+  history: readonly MappingClosure[],
+): never => {
+  if (history.some((closure) => closure.mapping_id === mappingId)) {
+    throw new Error("E_MAPPING_PERMANENTLY_CLOSED");
+  }
+  throw new Error("E_NO_VALID_MAPPING");
+};
+
 export const verifyClockObservation = async (
   artifactType: string,
   record: MappingInput,

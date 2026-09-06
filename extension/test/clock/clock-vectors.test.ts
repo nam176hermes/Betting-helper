@@ -4,7 +4,10 @@ import type { AnySchemaObject } from "ajv";
 import type { CanonicalRegistry } from "../../src/canonical.js";
 import {
   computeDrift,
+  closeClockMapping,
   evaluateClockMappingVector,
+  reopenClockMapping,
+  selectClockMapping,
   validateMidpoint,
   verifyClockObservation,
 } from "../../src/contracts/clock-vectors.js";
@@ -25,6 +28,18 @@ interface ClockPrimitiveVectors {
     offset_upper_us: number;
     base_uncertainty_us: number;
     offset_midpoint_us: number;
+  }[];
+  mapping_selection_vectors: {
+    id: string;
+    candidates: { mapping_id: string; width_us: number; valid_from_us: number }[];
+    expected_mapping_id: string;
+  }[];
+  closure_vectors: {
+    id: string;
+    reason: string;
+    permanent?: boolean;
+    reopen_attempt_error?: string;
+    expected_error?: string;
   }[];
 }
 const vectors = JSON.parse(
@@ -96,3 +111,33 @@ for (const vector of vectors.midpoint_constraint_vectors) {
   } : input;
   assert.equal(validateMidpoint(exactInput).error, expected);
 }
+
+for (const vector of vectors.mapping_selection_vectors) {
+  assert.equal(selectClockMapping(vector.candidates).mapping_id, vector.expected_mapping_id);
+}
+
+const mappingId = `MAP:${"c".repeat(64)}`;
+for (const vector of vectors.closure_vectors.slice(0, 10)) {
+  const history = closeClockMapping(mappingId, vector.reason);
+  assert.deepEqual(history, [{
+    mapping_id: mappingId,
+    reason: vector.reason,
+    permanent: vector.permanent,
+    reopen_permitted: false,
+  }]);
+  assert.ok(Object.isFrozen(history));
+  assert.ok(Object.isFrozen(history[0]));
+  assert.throws(() => reopenClockMapping(mappingId, history), {
+    message: vector.reopen_attempt_error,
+  });
+}
+
+const firstHistory = closeClockMapping(mappingId, "SLEEP_RESUME");
+const secondHistory = closeClockMapping(`MAP:${"d".repeat(64)}`, "RUN_CLOSED", firstHistory);
+assert.equal(firstHistory.length, 1);
+assert.deepEqual(secondHistory.slice(0, 1), firstHistory);
+assert.equal(secondHistory.length, 2);
+assert.throws(
+  () => selectClockMapping([{ mapping_id: mappingId, width_us: 1, valid_from_us: 1 }], firstHistory),
+  { message: vectors.closure_vectors[10]?.expected_error },
+);

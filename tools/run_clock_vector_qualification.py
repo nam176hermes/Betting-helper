@@ -49,9 +49,9 @@ MAP-NEG-09-INVERTED-INTERVAL MAP-NEG-10-RTT-EXCEEDED MAP-NEG-11-UNCERTAINTY-EXCE
 DRIFT-01-AT-ANCHOR DRIFT-02-ONE-SECOND DRIFT-03-CEILING DRIFT-04-ABSOLUTE-BEFORE-ANCHOR"""),
     ("SERIALIZED_MAPPING_VALIDATION", "validate_midpoint", "midpoint_constraint_vectors", """
 MIDPOINT-POS-GOLDEN MIDPOINT-NEG-WRONG-VALUE MIDPOINT-POS-MAX-BOUNDARY MIDPOINT-NEG-OVERFLOW"""),
-    ("LIFECYCLE_AND_COHERENCE", "select_stub", "mapping_selection_vectors", """
+    ("LIFECYCLE_AND_COHERENCE", "select_mapping", "mapping_selection_vectors", """
 SELECT-01-NARROWEST SELECT-02-LATEST-VALIDITY-START SELECT-03-LEXICOGRAPHIC-ID"""),
-    ("LIFECYCLE_AND_COHERENCE", "", "closure_vectors", """
+    ("LIFECYCLE_AND_COHERENCE", "close_mapping", "closure_vectors", """
 CLOSE-01-DOMAIN-BOOT CLOSE-02-MONOTONIC CLOSE-03-WALL CLOSE-04-SLEEP CLOSE-05-DURATION
 CLOSE-06-RTT CLOSE-07-UNCERTAINTY CLOSE-08-INCONSISTENT CLOSE-09-LIFECYCLE CLOSE-10-RUN
 CLOSE-NEG-USE-AFTER-CLOSE"""),
@@ -82,7 +82,11 @@ _HANDLER_REFS = {
         "moj_discovery.clock_vectors.validate_midpoint", "validateMidpoint",
         "vendor/hybrid-discovery-v6.3.6/sql/discovery-store-v1.sql",
     ],
-    "select_stub": ["moj_discovery.clock.ClockMapper.select"],
+    "select_mapping": ["moj_discovery.clock.ClockMapper.select", "selectClockMapping"],
+    "close_mapping": [
+        "moj_discovery.clock.ClockMapper.close", "moj_discovery.clock.ClockMapper.reopen",
+        "closeClockMapping", "reopenClockMapping",
+    ],
     "release_stub": ["moj_discovery.coherence.CoherenceController.evaluate_release"], "": [],
 }
 _VECTOR_PATH = "docs/vectors/inherited/clock-coherence-v6.2.json"
@@ -103,6 +107,42 @@ const { readFileSync, readdirSync } = require("node:fs");
     drift_us: module.computeDrift(c.input.relative_drift_ppm, c.input.source_anchor_us, c.input.x),
   };
   else if (c.handler === "validate_midpoint") value = module.validateMidpoint(c.input);
+  else if (c.handler === "select_mapping") {
+    const selected = module.selectClockMapping(c.input.candidates);
+    value = { accepted: true, error: "ACCEPT", mapping_id: selected.mapping_id };
+  } else if (c.handler === "close_mapping") {
+    const history = c.input.close_before_select === false
+      ? [] : module.closeClockMapping(c.input.mapping_id, c.input.reason);
+    const closure = history.at(-1);
+    if (c.input.attempt === "SELECT_CLOSED_MAPPING_FOR_LATER_OBSERVATION") {
+      try {
+        const selected = module.selectClockMapping(c.input.candidates, history);
+        value = {
+          accepted: true, error: "ACCEPT", mapping_id: selected.mapping_id,
+          reason: c.input.reason, permanent: closure?.permanent ?? false,
+          reopen_permitted: closure?.reopen_permitted ?? true, history_size: history.length,
+          coherence_eligible: true,
+        };
+      } catch (error) {
+        value = {
+          accepted: false, error: error instanceof Error ? error.message : String(error),
+          mapping_id: c.input.mapping_id, reason: closure.reason, permanent: closure.permanent,
+          reopen_permitted: closure.reopen_permitted, history_size: history.length,
+          coherence_eligible: false,
+        };
+      }
+    } else {
+      let reopenError = "";
+      try { module.reopenClockMapping(c.input.mapping_id, history); }
+      catch (error) { reopenError = error instanceof Error ? error.message : String(error); }
+      value = {
+        accepted: true, error: "ACCEPT", mapping_id: closure.mapping_id,
+        reason: closure.reason, permanent: closure.permanent,
+        reopen_permitted: closure.reopen_permitted, history_size: history.length,
+        reopen_error: reopenError,
+      };
+    }
+  }
   else if (c.handler === "verify_clock_observation") {
     const schemas = readdirSync(process.argv[3]).filter(name => name.endsWith(".json"))
       .map(name => JSON.parse(readFileSync(process.argv[3] + "/" + name, "utf8")));
@@ -152,6 +192,47 @@ def _python(case: dict[str, Any]) -> dict[str, Any]:
         )}
     elif handler == "validate_midpoint":
         actual = dict(validate_midpoint(case["input"]))
+    elif handler == "select_mapping":
+        selected = ClockMapper().select(case["input"]["candidates"])
+        actual = {"accepted": True, "error": "ACCEPT", "mapping_id": selected["mapping_id"]}
+    elif handler == "close_mapping":
+        mapper = ClockMapper()
+        history = (() if case["input"].get("close_before_select") is False else mapper.close(
+            case["input"]["mapping_id"], case["input"]["reason"],
+        ))
+        closure = history[-1] if history else None
+        if case["input"].get("attempt") == "SELECT_CLOSED_MAPPING_FOR_LATER_OBSERVATION":
+            try:
+                selected = mapper.select(case["input"]["candidates"], history)
+                actual = {
+                    "accepted": True, "error": "ACCEPT", "mapping_id": selected["mapping_id"],
+                    "reason": case["input"]["reason"],
+                    "permanent": closure.permanent if closure else False,
+                    "reopen_permitted": closure.reopen_permitted if closure else True,
+                    "history_size": len(history), "coherence_eligible": True,
+                }
+            except ValueError as exc:
+                if closure is None:
+                    raise
+                actual = {
+                    "accepted": False, "error": str(exc), "mapping_id": closure.mapping_id,
+                    "reason": closure.reason, "permanent": closure.permanent,
+                    "reopen_permitted": closure.reopen_permitted,
+                    "history_size": len(history), "coherence_eligible": False,
+                }
+        else:
+            if closure is None:
+                raise ValueError("E_INVALID_MAPPING_CLOSURE")
+            try:
+                mapper.reopen(case["input"]["mapping_id"], history)
+            except ValueError as exc:
+                reopen_error = str(exc)
+            actual = {
+                "accepted": True, "error": "ACCEPT", "mapping_id": closure.mapping_id,
+                "reason": closure.reason, "permanent": closure.permanent,
+                "reopen_permitted": closure.reopen_permitted,
+                "history_size": len(history), "reopen_error": reopen_error,
+            }
     else:
         raise ValueError("E_CLOCK_NO_EXECUTABLE_ADAPTER")
     return _source_age(dict(actual))
@@ -247,6 +328,33 @@ def _case(entry: dict[str, Any], vectors: dict[str, Any]) -> dict[str, Any]:
         )}
         case["expected"] = {"accepted": str(vector["expected"]).startswith("ACCEPT"),
                             "error": vector["expected"]}
+        return case
+    if handler == "select_mapping":
+        case["input"] = {"candidates": vector["candidates"]}
+        case["expected"] = {
+            "accepted": True, "error": "ACCEPT",
+            "mapping_id": vector["expected_mapping_id"],
+        }
+        return case
+    if handler == "close_mapping":
+        mapping_id = "MAP:" + "c" * 64
+        case["input"] = {
+            "mapping_id": mapping_id, "reason": vector["reason"],
+            **({"attempt": vector["attempt"], "candidates": [{
+                "mapping_id": mapping_id, "width_us": 1, "valid_from_us": 1,
+            }], "close_before_select": True} if "attempt" in vector else {}),
+        }
+        common = {
+            "mapping_id": mapping_id, "reason": vector["reason"],
+            "permanent": True, "reopen_permitted": False, "history_size": 1,
+        }
+        case["expected"] = (
+            {"accepted": False, "error": vector["expected_error"], **common,
+             "coherence_eligible": vector["coherence_eligible"]}
+            if "attempt" in vector else
+            {"accepted": True, "error": "ACCEPT", **common,
+             "reopen_error": vector["reopen_attempt_error"]}
+        )
         return case
     if handler not in {"raw", "stored"}:
         return case
@@ -358,12 +466,11 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
     evaluator_artifacts: dict[str, dict[str, str]] = {}
     sql_observation: dict[str, Any] | None = None
     try:
-        if case["handler"] == "select_stub":
-            ClockMapper().select(case["input"])
-        elif case["handler"] == "release_stub":
+        if case["handler"] == "release_stub":
             CoherenceController().evaluate_release(case["input"])
         elif case["handler"] in {
             "raw", "stored", "verify_clock_observation", "compute_drift", "validate_midpoint",
+            "select_mapping", "close_mapping",
         }:
             if not which("node") or not (
                 runtime / "extension/.test-build/src/contracts/clock-vectors.js"
@@ -494,15 +601,19 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
     hash_case = next(c for c in cases if c["case_id"].startswith("CLOCK-HASH-POS"))
     drift_case = next(c for c in cases if c["case_id"] == "DRIFT-02-ONE-SECOND")
     midpoint_case = next(c for c in cases if c["case_id"] == "MIDPOINT-POS-GOLDEN")
+    close_case = next(c for c in cases if c["case_id"] == "CLOSE-NEG-USE-AFTER-CLOSE")
     names = ("wrong_expected_error", "inverse_eligibility", "raw_timestamp",
              "missing_result", "duplicate_result", "same_wrong_result",
-             "hash_field_removal", "drift_input_change", "midpoint_corruption")
+             "hash_field_removal", "drift_input_change", "midpoint_corruption",
+             "post_close_selection")
     for name in names:
         workspace = Path(mkdtemp(prefix=name + "-", dir=directory))
         original = (negative if name in {"wrong_expected_error", "inverse_eligibility"}
                     else hash_case if name == "hash_field_removal"
                     else drift_case if name == "drift_input_change"
                     else midpoint_case if name == "midpoint_corruption" else golden)
+        if name == "post_close_selection":
+            original = close_case
         control = _execute(copy.deepcopy(original), runtime, workspace / "control", context)
         case = copy.deepcopy(original)
         if name == "wrong_expected_error":
@@ -517,6 +628,8 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
             case["input"]["x"] += 1
         elif name == "midpoint_corruption":
             case["input"]["offset_midpoint_us"] += 1
+        elif name == "post_close_selection":
+            case["input"]["close_before_select"] = False
         trial = _execute(case, runtime, workspace / "trial", context,
                          corrupt_both=name == "same_wrong_result")
         observed = [trial]

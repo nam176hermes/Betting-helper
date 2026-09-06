@@ -46,9 +46,9 @@ def test_actual_artifacts_and_mutations_have_recomputable_counters(tmp_path: Pat
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "HOLD"
     rows = result["records"]
-    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 27
-    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 38
-    assert result["mutation_executions"] == len(result["mutation_records"]) == 9
+    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 41
+    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 24
+    assert result["mutation_executions"] == len(result["mutation_records"]) == 10
     assert result["mutation_survivors"] == sum(
         not row["detected"] for row in result["mutation_records"]
     ) == 0
@@ -90,6 +90,30 @@ def test_three_clock_primitive_mutations_are_executed_and_detected(tmp_path: Pat
         assert rows[name]["executed"] is True
         assert rows[name]["detected"] is True
         assert runner.verify_record(rows[name])
+
+
+def test_selection_and_closure_rows_bind_real_cross_language_artifacts(tmp_path: Path) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    rows = [
+        row for row in result["records"]
+        if row["case_id"].startswith(("SELECT-", "CLOSE-"))
+    ]
+    assert len(rows) == 14
+    for row in rows:
+        assert row["status"] == "PASS"
+        assert row["executed"] is True
+        assert row["cross_language_drift"] is False
+        assert set(row["evaluator_artifacts"]) == {"python", "typescript"}
+        assert all(key != "id" and not key.startswith("expected") for key in row["input"])
+        assert runner.verify_record(row)
+
+
+def test_post_close_mutation_is_executed_and_detected(tmp_path: Path) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    rows = {row["case_id"]: row for row in result["mutation_records"]}
+    assert rows["post_close_selection"]["executed"] is True
+    assert rows["post_close_selection"]["detected"] is True
+    assert runner.verify_record(rows["post_close_selection"])
 
 
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(
@@ -143,11 +167,11 @@ def test_damaged_mutation_evidence_fails_without_erasing_execution(
     monkeypatch.setattr(runner, "_mutations", damaged)
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "FAIL"
-    assert result["mutation_attempts"] == result["mutation_executions"] == 9
-    assert result["mutation_verified_executions"] == 8
+    assert result["mutation_attempts"] == result["mutation_executions"] == 10
+    assert result["mutation_verified_executions"] == 9
     assert result["mutation_survivors"] is None
     assert result["mutation_evidence_errors"] == [{
         "case_id": "wrong_expected_error", "error": "E_CLOCK_MUTATION_EVIDENCE",
     }]
-    assert len(result["mutation_records"]) == 9
-    assert result["covered_vector_count"] == 27
+    assert len(result["mutation_records"]) == 10
+    assert result["covered_vector_count"] == 41
