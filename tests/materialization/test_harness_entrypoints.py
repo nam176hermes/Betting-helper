@@ -59,7 +59,8 @@ def test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked
         source = _safe_source(entrypoint)
         source_text = source.read_text()
         if child["harness"] == "GAP_GENERATION_COHERENCE":
-            assert "Owned generation/coherence durability fixture" in source_text
+            assert "_new_shock_pending" in source_text
+            assert "Ingestor(store)" in source_text
         else:
             assert ERROR in source_text
         if source.suffix == ".py":

@@ -274,6 +274,96 @@ class Ingestor:
             )
         return result
 
+    def store_late_repair(self, observation: dict[str, Any]) -> dict[str, Any]:
+        """Persist a missing predecessor row without applying or acknowledging it."""
+        validate_artifact(
+            observation, "raw-observation.schema.json", bootstrap_only=True, vendor=VENDOR
+        )
+        verify_canonical_content_hash(
+            "RawObservation", observation, observation["content_hash"], registry_path=REGISTRY
+        )
+        run = observation["discovery_run_id"]
+        browser = observation["context"]["browser_run_id"]
+        producer = observation["clock_context"]["clock_domain_id"]
+        stream = observation["stream_id"]
+        generation, sequence = (_integer(observation[key]) for key in ("generation", "sequence"))
+        now = time_ns() // 1000
+        with closing(self.store.connect()) as connection, connection:
+            connection.execute("BEGIN IMMEDIATE")
+            validate_journal(read_journal(connection))
+            meta = connection.execute("SELECT * FROM run_meta").fetchall()
+            if len(meta) != 1 or (
+                meta[0]["run_id"] != run
+                or meta[0]["run_status"] != "OPEN"
+                or meta[0]["pack_hash"] != observation["pack_hash"]
+                or meta[0]["build_hash"] != observation["build_hash"]
+            ):
+                raise ValueError("E_INGEST_RUN_BINDING")
+            current = connection.execute(
+                "SELECT * FROM stream_generations WHERE run_id=? AND browser_run_id=? "
+                "AND producer_id=? AND stream_id=? AND generation=?",
+                (run, browser, producer, stream, generation),
+            ).fetchone()
+            if current is None or current["generation_state"] not in {"CLOSED", "QUARANTINED_GAP"}:
+                raise ValueError("E_INGEST_LATE_REPAIR_BINDING")
+            key = (run, browser, current["producer_id"], stream, generation)
+            gap = connection.execute(
+                "SELECT * FROM gap_records WHERE run_id=? AND browser_run_id=? "
+                "AND producer_id=? AND stream_id=? AND predecessor_generation=? "
+                "AND missing_from_sequence<=? AND missing_to_sequence>=? AND repair_status='OPEN'",
+                (*key, sequence, sequence),
+            ).fetchone()
+            if (
+                gap is None
+                or connection.execute(
+                    f"SELECT 1 FROM raw_commits WHERE {POSITION} AND sequence=?",  # noqa: S608
+                    (*key, sequence),
+                ).fetchone()
+            ):
+                raise ValueError("E_INGEST_LATE_REPAIR_BINDING")
+            previous = connection.execute(
+                f"SELECT * FROM reducer_cursors WHERE {POSITION} "  # noqa: S608
+                "AND highest_contiguous_sequence<? "
+                "ORDER BY highest_contiguous_sequence DESC LIMIT 1",
+                (*key, sequence),
+            ).fetchone()
+            prior_hash = H0 if previous is None else previous["cursor_hash"]
+            content_hash = observation["content_hash"]
+            cursor = canonical_content_hash(
+                "CursorStep",
+                {
+                    "schema_version": "cursor-step/v1",
+                    "discovery_run_id": run,
+                    "browser_run_id": browser,
+                    "producer_id": current["producer_id"],
+                    "stream_id": stream,
+                    "generation": str(generation),
+                    "sequence": str(sequence),
+                    "raw_observation_hash": content_hash,
+                    "previous_cursor_hash": prior_hash,
+                },
+                registry_path=REGISTRY,
+            )
+            raw_id = "late-repair:" + cursor
+            connection.execute(
+                "INSERT INTO raw_commits VALUES (?,?,?,?,?,?,?,?,?,?,?,1,'LATE_REPAIR_ONLY',?)",
+                (
+                    raw_id,
+                    *key,
+                    sequence,
+                    observation["raw_observation_id"],
+                    content_hash,
+                    prior_hash,
+                    cursor,
+                    now,
+                ),
+            )
+            return dict(
+                connection.execute(
+                    "SELECT * FROM raw_commits WHERE raw_commit_id=?", (raw_id,)
+                ).fetchone()
+            )
+
     @staticmethod
     def _gap(
         connection: sqlite3.Connection,
