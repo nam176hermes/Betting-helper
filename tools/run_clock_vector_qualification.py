@@ -6,6 +6,7 @@ import copy
 import hashlib
 import json
 import platform
+import sqlite3
 import sys
 from collections import Counter
 from fractions import Fraction
@@ -19,7 +20,13 @@ RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 
 from moj_discovery.clock import ClockMapper
-from moj_discovery.clock_vectors import derive_clock_mapping, validate_stored_mapping
+from moj_discovery.clock_vectors import (
+    compute_drift,
+    derive_clock_mapping,
+    validate_midpoint,
+    validate_stored_mapping,
+    verify_clock_observation,
+)
 from moj_discovery.coherence import CoherenceController
 from moj_discovery.errors import ContractNotImplementedError
 
@@ -34,13 +41,13 @@ MAP-NEG-13-SEGMENT-TOO-OLD MAP-NEG-14-WALL-STEP
 MAP-NEG-15-NONINTERSECTING-TARGET-INTERVALS MAP-NEG-16-UNMAPPED-CDP"""),
     ("SERIALIZED_MAPPING_VALIDATION", "stored", "mapping_negative_vectors", """
 MAP-NEG-09-INVERTED-INTERVAL MAP-NEG-10-RTT-EXCEEDED MAP-NEG-11-UNCERTAINTY-EXCEEDED"""),
-    ("SERIALIZED_MAPPING_VALIDATION", "", "canonical_hash_positive_vector",
+    ("SERIALIZED_MAPPING_VALIDATION", "verify_clock_observation", "canonical_hash_positive_vector",
      "CLOCK-HASH-POS-01-BROWSER-OBSERVATION"),
-    ("SERIALIZED_MAPPING_VALIDATION", "", "canonical_hash_negative_vector",
+    ("SERIALIZED_MAPPING_VALIDATION", "verify_clock_observation", "canonical_hash_negative_vector",
      "CLOCK-HASH-NEG-01-MISSING-CONTENT-HASH"),
-    ("RAW_SAMPLE", "", "drift_vectors", """
+    ("RAW_SAMPLE", "compute_drift", "drift_vectors", """
 DRIFT-01-AT-ANCHOR DRIFT-02-ONE-SECOND DRIFT-03-CEILING DRIFT-04-ABSOLUTE-BEFORE-ANCHOR"""),
-    ("SERIALIZED_MAPPING_VALIDATION", "", "midpoint_constraint_vectors", """
+    ("SERIALIZED_MAPPING_VALIDATION", "validate_midpoint", "midpoint_constraint_vectors", """
 MIDPOINT-POS-GOLDEN MIDPOINT-NEG-WRONG-VALUE MIDPOINT-POS-MAX-BOUNDARY MIDPOINT-NEG-OVERFLOW"""),
     ("LIFECYCLE_AND_COHERENCE", "select_stub", "mapping_selection_vectors", """
 SELECT-01-NARROWEST SELECT-02-LATEST-VALIDITY-START SELECT-03-LEXICOGRAPHIC-ID"""),
@@ -67,6 +74,14 @@ DISPATCH = {case_id: (family, handler, section)
 _HANDLER_REFS = {
     "raw": ["moj_discovery.clock_vectors.derive_clock_mapping", "deriveClockMapping"],
     "stored": ["moj_discovery.clock_vectors.validate_stored_mapping", "validateStoredMapping"],
+    "verify_clock_observation": [
+        "moj_discovery.clock_vectors.verify_clock_observation", "verifyClockObservation",
+    ],
+    "compute_drift": ["moj_discovery.clock_vectors.compute_drift", "computeDrift"],
+    "validate_midpoint": [
+        "moj_discovery.clock_vectors.validate_midpoint", "validateMidpoint",
+        "vendor/hybrid-discovery-v6.3.6/sql/discovery-store-v1.sql",
+    ],
     "select_stub": ["moj_discovery.clock.ClockMapper.select"],
     "release_stub": ["moj_discovery.coherence.CoherenceController.evaluate_release"], "": [],
 }
@@ -74,12 +89,27 @@ _VECTOR_PATH = "docs/vectors/inherited/clock-coherence-v6.2.json"
 _COVERAGE_PATH = "docs/registries/clock-vector-coverage.v1.json"
 _NODE = r'''
 const { pathToFileURL } = require("node:url");
+const { readFileSync, readdirSync } = require("node:fs");
 (async () => {
   const module = await import(pathToFileURL(process.argv[2]).href);
-  const c = JSON.parse(process.argv[1]);
-  const value = c.handler === "stored"
-    ? module.validateStoredMapping(c.stored, c.raw, c.guardrails)
-    : module.deriveClockMapping(c.raw, c.guardrails);
+  const c = JSON.parse(process.argv[1], (_key, value) =>
+    value && typeof value === "object" && Object.keys(value).length === 1 && "$bigint" in value
+      ? BigInt(value.$bigint) : value);
+  let value;
+  if (c.handler === "stored") value = module.validateStoredMapping(c.stored, c.raw, c.guardrails);
+  else if (c.handler === "raw") value = module.deriveClockMapping(c.raw, c.guardrails);
+  else if (c.handler === "compute_drift") value = {
+    accepted: true, error: "ACCEPT",
+    drift_us: module.computeDrift(c.input.relative_drift_ppm, c.input.source_anchor_us, c.input.x),
+  };
+  else if (c.handler === "validate_midpoint") value = module.validateMidpoint(c.input);
+  else if (c.handler === "verify_clock_observation") {
+    const schemas = readdirSync(process.argv[3]).filter(name => name.endsWith(".json"))
+      .map(name => JSON.parse(readFileSync(process.argv[3] + "/" + name, "utf8")));
+    const registry = JSON.parse(readFileSync(process.argv[4], "utf8"));
+    value = await module.verifyClockObservation(
+      c.input.artifact_type, c.input.record, schemas, registry);
+  } else throw new Error("E_CLOCK_NO_EXECUTABLE_ADAPTER");
   process.stdout.write(JSON.stringify(value, (_, v) => typeof v === "bigint"
     ? (v >= BigInt(Number.MIN_SAFE_INTEGER) && v <= BigInt(Number.MAX_SAFE_INTEGER)
        ? Number(v) : v.toString()) : v));
@@ -102,24 +132,57 @@ def _source_age(actual: dict[str, Any]) -> dict[str, Any]:
 
 
 def _python(case: dict[str, Any]) -> dict[str, Any]:
-    actual = (validate_stored_mapping(case["stored"], case["raw"], case["guardrails"])
-              if case["handler"] == "stored"
-              else derive_clock_mapping(case["raw"], case["guardrails"]))
+    handler = case["handler"]
+    actual: dict[str, Any]
+    if handler == "stored":
+        actual = dict(validate_stored_mapping(
+            case["stored"], case["raw"], case["guardrails"],
+        ))
+    elif handler == "raw":
+        actual = dict(derive_clock_mapping(case["raw"], case["guardrails"]))
+    elif handler == "verify_clock_observation":
+        actual = dict(verify_clock_observation(
+            case["input"]["artifact_type"], case["input"]["record"],
+            vendor=RUNTIME_ROOT / "vendor/hybrid-discovery-v6.3.6",
+        ))
+    elif handler == "compute_drift":
+        actual = {"accepted": True, "error": "ACCEPT", "drift_us": compute_drift(
+            case["input"]["relative_drift_ppm"], case["input"]["source_anchor_us"],
+            case["input"]["x"],
+        )}
+    elif handler == "validate_midpoint":
+        actual = dict(validate_midpoint(case["input"]))
+    else:
+        raise ValueError("E_CLOCK_NO_EXECUTABLE_ADAPTER")
     return _source_age(dict(actual))
 
 
 def _typescript(case: dict[str, Any], runtime: Path) -> dict[str, Any]:
     # Expected fields and IDs never cross the evaluator boundary.
-    payload = {key: case[key] for key in ("handler", "raw", "stored", "guardrails")}
+    payload = {"handler": case["handler"], "input": case["input"]}
+    if case["handler"] in {"raw", "stored"}:
+        payload.update({key: case[key] for key in ("raw", "stored", "guardrails")})
     module = runtime / "extension/.test-build/src/contracts/clock-vectors.js"
     node = which("node")
     if not node or not module.is_file():
         raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE:compile tsconfig.test.json")
     completed = run(  # noqa: S603 -- fixed JS bridge; data passed as JSON, no shell
-        [node, "-e", _NODE, json.dumps(payload), str(module)],
+        [node, "-e", _NODE, json.dumps(_json_for_node(payload)), str(module),
+         str(runtime / "vendor/hybrid-discovery-v6.3.6/schemas"),
+         str(runtime / "vendor/hybrid-discovery-v6.3.6/registries/canonical-hash-domains.v1.json")],
         capture_output=True, text=True, check=True, timeout=15,
     )
     return _source_age(json.loads(completed.stdout))
+
+
+def _json_for_node(value: object) -> object:
+    if type(value) is int and not -(2**53 - 1) <= value <= 2**53 - 1:
+        return {"$bigint": str(value)}
+    if isinstance(value, dict):
+        return {key: _json_for_node(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_json_for_node(item) for item in value]
+    return value
 
 
 def _numeric_oracle(raw: dict[str, Any]) -> dict[str, Any]:
@@ -154,6 +217,37 @@ def _case(entry: dict[str, Any], vectors: dict[str, Any]) -> dict[str, Any]:
     case = {"case_id": case_id, "family": family, "handler": handler, "section": section,
             "input": {k: v for k, v in vector.items() if k not in expected and k != "id"},
             "expected": expected, "evaluator_refs": _HANDLER_REFS[handler]}
+    if handler == "verify_clock_observation":
+        positive = vectors["canonical_hash_positive_vector"]
+        record = copy.deepcopy(positive["record"])
+        if section == "canonical_hash_negative_vector":
+            del record["content_hash"]
+        case["input"] = {"artifact_type": positive["artifact_type"], "record": record}
+        case["expected"] = {
+            "accepted": section == "canonical_hash_positive_vector",
+            "error": vector["expected"],
+            "schema_valid": section == "canonical_hash_positive_vector",
+            "computed_hash": (
+                positive["expected_sha256"]
+                if section == "canonical_hash_positive_vector" else None
+            ),
+        }
+        return case
+    if handler == "compute_drift":
+        case["input"] = {key: vector[key] for key in (
+            "relative_drift_ppm", "source_anchor_us", "x",
+        )}
+        case["expected"] = {"accepted": True, "error": "ACCEPT",
+                            "drift_us": vector["expected_drift_us"]}
+        return case
+    if handler == "validate_midpoint":
+        case["input"] = {key: vector[key] for key in (
+            "offset_lower_us", "offset_upper_us", "base_uncertainty_us",
+            "offset_midpoint_us",
+        )}
+        case["expected"] = {"accepted": str(vector["expected"]).startswith("ACCEPT"),
+                            "error": vector["expected"]}
+        return case
     if handler not in {"raw", "stored"}:
         return case
     golden = vectors["golden_mapping"]
@@ -205,6 +299,55 @@ def _record(case: dict[str, Any], actual: dict[str, Any], directory: Path,
                                                    "sha256": _hash(actual)}}
 
 
+def _write_artifact(directory: Path, name: str, value: object) -> dict[str, str]:
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / name
+    with path.open("xb") as stream:
+        stream.write(_bytes(value))
+    return {"path": str(path.resolve()), "sha256": _hash(value)}
+
+
+def _midpoint_sql_observation(value: dict[str, Any]) -> dict[str, Any]:
+    ddl = RUNTIME_ROOT / "vendor/hybrid-discovery-v6.3.6/sql/discovery-store-v1.sql"
+    connection = sqlite3.connect(":memory:")
+    try:
+        connection.executescript(ddl.read_text())
+        connection.execute(
+            "INSERT INTO run_meta VALUES (?,1,'OPEN',?,?,?,0,NULL)",
+            ("11111111-1111-4111-8111-111111111111", "test-only:clock",
+             "0" * 64, "1" * 64),
+        )
+        fields = (
+            "MAP:" + "2" * 64, "11111111-1111-4111-8111-111111111111",
+            "source", "source-boot", "EXTENSION_SERVICE_WORKER",
+            "target", "target-boot", "BACKEND_PROCESS", "MICROSECOND", 8, 0,
+            value["offset_lower_us"], value["offset_upper_us"],
+            value["offset_midpoint_us"], value["base_uncertainty_us"],
+            0, 100, 0, 1, "OPEN", 0,
+        )
+        connection.execute("""INSERT INTO clock_mappings (
+            clock_mapping_id, run_id, source_clock_domain_id, source_boot_id, source_owner,
+            target_clock_domain_id, target_boot_id, target_owner, unit, sample_count,
+            source_anchor_us, offset_lower_us, offset_upper_us, offset_midpoint_us,
+            base_uncertainty_us, network_rtt_us, relative_drift_ppm,
+            valid_from_source_us, valid_until_source_us, mapping_status, created_at_us
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", fields)
+    except sqlite3.IntegrityError as exc:
+        message = str(exc)
+        error = ("REJECT_OVERFLOW_GUARD"
+                 if "9223372036854775807" in message else "REJECT_CHECK_CONSTRAINT")
+        accepted = False
+    else:
+        message = ""
+        accepted = True
+        error = ("ACCEPT_OVERFLOW_SAFE"
+                 if value["offset_upper_us"] == 2**63 - 1 else "ACCEPT")
+    finally:
+        connection.close()
+    return {"accepted": accepted, "error": error, "sqlite_error": message or None,
+            "ddl_sha256": hashlib.sha256(ddl.read_bytes()).hexdigest()}
+
+
 def _execute(case: dict[str, Any], runtime: Path, directory: Path,
              context: dict[str, Any], *, corrupt_both: bool = False) -> dict[str, Any]:
     actual: dict[str, Any] = {}
@@ -212,12 +355,16 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
     drift: bool | None = None
     comparison: dict[str, Any] = {"matched": False, "diff": {}}
     exits: dict[str, Any] = {"python": None, "typescript": None}
+    evaluator_artifacts: dict[str, dict[str, str]] = {}
+    sql_observation: dict[str, Any] | None = None
     try:
         if case["handler"] == "select_stub":
             ClockMapper().select(case["input"])
         elif case["handler"] == "release_stub":
             CoherenceController().evaluate_release(case["input"])
-        elif case["handler"] in {"raw", "stored"}:
+        elif case["handler"] in {
+            "raw", "stored", "verify_clock_observation", "compute_drift", "validate_midpoint",
+        }:
             if not which("node") or not (
                 runtime / "extension/.test-build/src/contracts/clock-vectors.js"
             ).is_file():
@@ -236,6 +383,19 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                 diffs["independent_arithmetic"] = case["oracle_conflict"]
             drift = _bytes(actual["python"]) != _bytes(actual["typescript"])
             comparison = {"matched": not any(diffs.values()), "diff": diffs}
+            evaluator_artifacts = {
+                language: _write_artifact(directory, f"{language}.json", value)
+                for language, value in actual.items()
+            }
+            sql_observation = None
+            if case["handler"] == "validate_midpoint":
+                sql_observation = _midpoint_sql_observation(case["input"])
+                sql_diff = _diff(
+                    {key: sql_observation[key] for key in ("accepted", "error")},
+                    case["expected"],
+                )
+                comparison["diff"]["sqlite"] = sql_diff
+                comparison["matched"] = comparison["matched"] and not sql_diff
             status = "PASS" if comparison["matched"] and not drift else "FAIL"
             error, executed = actual["python"]["error"], True
     except ContractNotImplementedError as exc:
@@ -256,7 +416,12 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
     actual["execution_error"] = error if status == "FAIL" else None
     prerequisite = ({"name": "compiled TypeScript clock evaluator and Node",
                      "available": False} if status == "BLOCKED_ENVIRONMENT" else None)
-    fields = ({"comparison": comparison, "cross_language_drift": drift, "command_exit": exits}
+    fields = ({"comparison": comparison, "cross_language_drift": drift, "command_exit": exits,
+               "evaluator_artifacts": evaluator_artifacts,
+               **({"sql_observation": sql_observation,
+                   "sql_observation_artifact": _write_artifact(
+                       directory, "sqlite.json", sql_observation,
+                   )} if sql_observation is not None else {})}
               if executed else {"implementation_marker": error}
               if status == "NOT_IMPLEMENTED" else {"prerequisite": prerequisite})
     return _record(case, actual, directory, context, status=status, executed=executed,
@@ -276,9 +441,21 @@ def verify_record(row: dict[str, Any]) -> bool:
             return hashes_match
         artifact = row["actual_artifact"]
         digest = hashlib.sha256(Path(artifact["path"]).read_bytes()).hexdigest()
+        evaluator_artifacts = row.get("evaluator_artifacts", {})
+        evaluator_match = all(
+            hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            == reference["sha256"] == _hash(row["actual"][language])
+            for language, reference in evaluator_artifacts.items()
+        )
+        sql_reference = row.get("sql_observation_artifact")
+        sql_match = sql_reference is None or (
+            hashlib.sha256(Path(sql_reference["path"]).read_bytes()).hexdigest()
+            == sql_reference["sha256"] == _hash(row["sql_observation"])
+        )
         return bool(digest == artifact["sha256"]
                 and artifact["sha256"] == _hash(row["actual"])
                 and hashes_match
+                and evaluator_match and sql_match
                 and all(verify_record(row["actual"][key]) for key in ("control", "trial")
                         if key in row["actual"]))
     except (OSError, KeyError, TypeError, ValueError):
@@ -314,10 +491,18 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
     rows = []
     golden = next(c for c in cases if c["section"] == "golden_mapping")
     negative = next(c for c in cases if c["case_id"] == "MAP-NEG-01-TARGET-ORDER")
-    for name in ("wrong_expected_error", "inverse_eligibility", "raw_timestamp",
-                 "missing_result", "duplicate_result", "same_wrong_result"):
+    hash_case = next(c for c in cases if c["case_id"].startswith("CLOCK-HASH-POS"))
+    drift_case = next(c for c in cases if c["case_id"] == "DRIFT-02-ONE-SECOND")
+    midpoint_case = next(c for c in cases if c["case_id"] == "MIDPOINT-POS-GOLDEN")
+    names = ("wrong_expected_error", "inverse_eligibility", "raw_timestamp",
+             "missing_result", "duplicate_result", "same_wrong_result",
+             "hash_field_removal", "drift_input_change", "midpoint_corruption")
+    for name in names:
         workspace = Path(mkdtemp(prefix=name + "-", dir=directory))
-        original = negative if name in {"wrong_expected_error", "inverse_eligibility"} else golden
+        original = (negative if name in {"wrong_expected_error", "inverse_eligibility"}
+                    else hash_case if name == "hash_field_removal"
+                    else drift_case if name == "drift_input_change"
+                    else midpoint_case if name == "midpoint_corruption" else golden)
         control = _execute(copy.deepcopy(original), runtime, workspace / "control", context)
         case = copy.deepcopy(original)
         if name == "wrong_expected_error":
@@ -326,6 +511,12 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
             case["expected"]["accepted"] = not case["expected"]["accepted"]
         elif name == "raw_timestamp":
             case["raw"]["t4"] += 1
+        elif name == "hash_field_removal":
+            del case["input"]["record"]["content_hash"]
+        elif name == "drift_input_change":
+            case["input"]["x"] += 1
+        elif name == "midpoint_corruption":
+            case["input"]["offset_midpoint_us"] += 1
         trial = _execute(case, runtime, workspace / "trial", context,
                          corrupt_both=name == "same_wrong_result")
         observed = [trial]
@@ -372,11 +563,18 @@ def run_clock_vector_qualification(
         capture_output=True, check=True, timeout=10,
     ).stdout.strip()
     files = [Path(__file__), RUNTIME_ROOT / "src/moj_discovery/clock_vectors.py",
+             RUNTIME_ROOT / "src/moj_discovery/canonical.py",
+             RUNTIME_ROOT / "src/moj_discovery/schema_registry.py",
              RUNTIME_ROOT / "src/moj_discovery/clock.py",
              RUNTIME_ROOT / "src/moj_discovery/coherence.py",
              runtime / "extension/src/contracts/clock-vectors.ts",
+             runtime / "extension/src/canonical.ts",
+             runtime / "extension/src/schema-registry.ts",
              runtime / "extension/.test-build/src/contracts/clock-vectors.js",
-             pack / _VECTOR_PATH, pack / _COVERAGE_PATH]
+             pack / _VECTOR_PATH, pack / _COVERAGE_PATH,
+             pack / "sql/discovery-store-v1.sql",
+             pack / "schemas/clock-coherence-records.schema.json",
+             pack / "registries/canonical-hash-domains.v1.json"]
     context = {"evidence_binding": capture_binding(),
                "environment": {"python": platform.python_version(),
                                "platform": platform.platform(), "node": which("node")},

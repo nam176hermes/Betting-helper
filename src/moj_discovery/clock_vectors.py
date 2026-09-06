@@ -2,8 +2,94 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from pathlib import Path
 from typing import NotRequired, TypedDict, cast
 
+from jsonschema.exceptions import ValidationError  # type: ignore[import-untyped]
+
+from .canonical import CanonicalError, canonical_content_hash, verify_canonical_content_hash
+from .schema_registry import validate_artifact
+
+INT64_MAX = 2**63 - 1
+INT64_MIN = -(2**63)
+
+
+class ClockPrimitiveEvaluation(TypedDict):
+    accepted: bool
+    error: str
+
+
+class ClockObservationEvaluation(ClockPrimitiveEvaluation):
+    schema_valid: bool
+    computed_hash: str | None
+
+
+def verify_clock_observation(
+    artifact_type: str,
+    record: Mapping[str, object],
+    *,
+    vendor: Path = Path("vendor/hybrid-discovery-v6.3.6"),
+) -> ClockObservationEvaluation:
+    """Validate the observation before recomputing its registered canonical hash."""
+    if "content_hash" not in record:
+        return {"accepted": False, "error": "SCHEMA_INVALID_BEFORE_CANONICAL_HASH",
+                "schema_valid": False, "computed_hash": None}
+    try:
+        validate_artifact(
+            dict(record), "clock-coherence-records.schema.json",
+            bootstrap_only=True, vendor=vendor,
+        )
+        expected_hash = record["content_hash"]
+        if not isinstance(expected_hash, str):
+            raise ValidationError("content_hash")
+        computed_hash = canonical_content_hash(
+            artifact_type, record,
+            registry_path=vendor / "registries/canonical-hash-domains.v1.json",
+        )
+        verify_canonical_content_hash(
+            artifact_type, record, expected_hash,
+            registry_path=vendor / "registries/canonical-hash-domains.v1.json",
+        )
+    except ValidationError:
+        return {"accepted": False, "error": "SCHEMA_INVALID", "schema_valid": False,
+                "computed_hash": None}
+    except CanonicalError as exc:
+        return {"accepted": False, "error": str(exc), "schema_valid": True,
+                "computed_hash": computed_hash if "computed_hash" in locals() else None}
+    return {"accepted": True, "error": "SCHEMA_VALID_AND_RECOMPUTED_HASH_MATCH",
+            "schema_valid": True, "computed_hash": computed_hash}
+
+
+def compute_drift(relative_drift_ppm: int, source_anchor_us: int, x: int) -> int:
+    """Return ceil(ppm * absolute source distance / one million)."""
+    if any(type(value) is not int for value in (relative_drift_ppm, source_anchor_us, x)):
+        raise ValueError("E_INVALID_DRIFT_INPUT")
+    if relative_drift_ppm < 0 or source_anchor_us < 0 or x < 0:
+        raise ValueError("E_INVALID_DRIFT_INPUT")
+    numerator = relative_drift_ppm * abs(x - source_anchor_us)
+    return (numerator + 999_999) // 1_000_000
+
+
+def validate_midpoint(value: Mapping[str, object]) -> ClockPrimitiveEvaluation:
+    """Apply the exact overflow-safe predicates used by the governed SQLite DDL."""
+    fields = {
+        "offset_lower_us", "offset_upper_us", "base_uncertainty_us", "offset_midpoint_us",
+    }
+    if set(value) != fields or any(type(value[field]) is not int for field in fields):
+        return {"accepted": False, "error": "REJECT_CHECK_CONSTRAINT"}
+    lower = cast(int, value["offset_lower_us"])
+    upper = cast(int, value["offset_upper_us"])
+    midpoint = cast(int, value["offset_midpoint_us"])
+    uncertainty = cast(int, value["base_uncertainty_us"])
+    if any(number < INT64_MIN or number > INT64_MAX for number in (lower, upper, midpoint)):
+        return {"accepted": False, "error": "REJECT_OVERFLOW_GUARD"}
+    if uncertainty < 0 or uncertainty > 125_000 or lower > INT64_MAX - uncertainty * 2:
+        return {"accepted": False, "error": "REJECT_OVERFLOW_GUARD"}
+    if (lower > midpoint or midpoint > upper or upper != lower + uncertainty * 2
+            or midpoint != lower + uncertainty):
+        return {"accepted": False, "error": "REJECT_CHECK_CONSTRAINT"}
+    error = "ACCEPT_OVERFLOW_SAFE" if upper == INT64_MAX else "ACCEPT"
+    return {"accepted": True, "error": error}
 
 class ClockEndpoint(TypedDict):
     clock_domain_id: str

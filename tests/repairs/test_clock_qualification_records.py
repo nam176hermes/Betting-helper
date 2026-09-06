@@ -46,9 +46,9 @@ def test_actual_artifacts_and_mutations_have_recomputable_counters(tmp_path: Pat
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "HOLD"
     rows = result["records"]
-    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 17
-    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 48
-    assert result["mutation_executions"] == len(result["mutation_records"]) == 6
+    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 27
+    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 38
+    assert result["mutation_executions"] == len(result["mutation_records"]) == 9
     assert result["mutation_survivors"] == sum(
         not row["detected"] for row in result["mutation_records"]
     ) == 0
@@ -61,6 +61,35 @@ def test_actual_artifacts_and_mutations_have_recomputable_counters(tmp_path: Pat
     assert unknown["actual"]["python"]["source_age"] == "UNKNOWN"
     assert unknown["actual"]["python"]["accepted"] is False
     assert unknown["status"] == "PASS"
+
+
+def test_primitive_rows_bind_real_cross_language_and_sql_artifacts(tmp_path: Path) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    primitive_rows = [
+        row for row in result["records"]
+        if row["case_id"].startswith(("CLOCK-HASH-", "DRIFT-", "MIDPOINT-"))
+    ]
+    assert len(primitive_rows) == 10
+    for row in primitive_rows:
+        assert row["status"] == "PASS"
+        assert row["executed"] is True
+        assert row["cross_language_drift"] is False
+        assert set(row["evaluator_artifacts"]) == {"python", "typescript"}
+        assert all(key != "id" and not key.startswith("expected") for key in row["input"])
+        assert runner.verify_record(row)
+    for row in primitive_rows:
+        if row["case_id"].startswith("MIDPOINT-"):
+            assert row["sql_observation"]["ddl_sha256"]
+            assert row["sql_observation_artifact"]["sha256"]
+
+
+def test_three_clock_primitive_mutations_are_executed_and_detected(tmp_path: Path) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    rows = {row["case_id"]: row for row in result["mutation_records"]}
+    for name in ("hash_field_removal", "drift_input_change", "midpoint_corruption"):
+        assert rows[name]["executed"] is True
+        assert rows[name]["detected"] is True
+        assert runner.verify_record(rows[name])
 
 
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(
@@ -114,11 +143,11 @@ def test_damaged_mutation_evidence_fails_without_erasing_execution(
     monkeypatch.setattr(runner, "_mutations", damaged)
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "FAIL"
-    assert result["mutation_attempts"] == result["mutation_executions"] == 6
-    assert result["mutation_verified_executions"] == 5
+    assert result["mutation_attempts"] == result["mutation_executions"] == 9
+    assert result["mutation_verified_executions"] == 8
     assert result["mutation_survivors"] is None
     assert result["mutation_evidence_errors"] == [{
         "case_id": "wrong_expected_error", "error": "E_CLOCK_MUTATION_EVIDENCE",
     }]
-    assert len(result["mutation_records"]) == 6
-    assert result["covered_vector_count"] == 17
+    assert len(result["mutation_records"]) == 9
+    assert result["covered_vector_count"] == 27

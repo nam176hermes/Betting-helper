@@ -33,6 +33,22 @@ def test_exact_registry_dispatch_and_unimplemented_lifecycle(tmp_path: Path) -> 
             assert row["observed_error"]
 
 
+def test_clock_primitive_dispatch_names_exact_ten_handlers() -> None:
+    expected = {
+        "CLOCK-HASH-POS-01-BROWSER-OBSERVATION": "verify_clock_observation",
+        "CLOCK-HASH-NEG-01-MISSING-CONTENT-HASH": "verify_clock_observation",
+        "DRIFT-01-AT-ANCHOR": "compute_drift",
+        "DRIFT-02-ONE-SECOND": "compute_drift",
+        "DRIFT-03-CEILING": "compute_drift",
+        "DRIFT-04-ABSOLUTE-BEFORE-ANCHOR": "compute_drift",
+        "MIDPOINT-POS-GOLDEN": "validate_midpoint",
+        "MIDPOINT-NEG-WRONG-VALUE": "validate_midpoint",
+        "MIDPOINT-POS-MAX-BOUNDARY": "validate_midpoint",
+        "MIDPOINT-NEG-OVERFLOW": "validate_midpoint",
+    }
+    assert {case_id: runner.DISPATCH[case_id][1] for case_id in expected} == expected
+
+
 def test_unknown_id_or_missing_source_cannot_increment_coverage(tmp_path: Path) -> None:
     for relative in ("docs/registries/clock-vector-coverage.v1.json",
                      "docs/vectors/inherited/clock-coherence-v6.2.json"):

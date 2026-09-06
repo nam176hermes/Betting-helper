@@ -1,3 +1,11 @@
+import type { AnySchemaObject } from "ajv";
+import {
+  canonicalContentHash,
+  verifyCanonicalContentHash,
+  type CanonicalRegistry,
+} from "../canonical.js";
+import { validateArtifact } from "../schema-registry.js";
+
 type Integer = bigint | number;
 type ClockEndpoint = { clock_domain_id: string; boot_id: string; owner: string; unit: string; resolution_us: Integer };
 type EndpointMetadata = Partial<Record<`${"t1" | "t2" | "t3" | "t4"}_${"clock_domain_id" | "boot_id" | "owner" | "unit"}`, string>>;
@@ -27,6 +35,70 @@ const isInteger = (n: unknown): n is Integer => typeof n === "bigint" || (typeof
 const isIntegerPair = (value: unknown): value is [Integer, Integer] => Array.isArray(value) && value.length === 2 && Object.hasOwn(value, 0) && Object.hasOwn(value, 1) && isInteger(value[0]) && isInteger(value[1]);
 const isRecord = (value: unknown): value is MappingInput => typeof value === "object" && value !== null && !Array.isArray(value);
 const nonempty = (value: unknown): value is string => typeof value === "string" && value.length > 0;
+const int64Max = 2n ** 63n - 1n;
+const int64Min = -(2n ** 63n);
+
+export type ClockPrimitiveEvaluation = { accepted: boolean; error: string };
+export type ClockObservationEvaluation = ClockPrimitiveEvaluation & {
+  schema_valid: boolean;
+  computed_hash: string | null;
+};
+
+export const verifyClockObservation = async (
+  artifactType: string,
+  record: MappingInput,
+  schemas: readonly AnySchemaObject[],
+  registry: CanonicalRegistry,
+): Promise<ClockObservationEvaluation> => {
+  if (!Object.hasOwn(record, "content_hash")) {
+    return { accepted: false, error: "SCHEMA_INVALID_BEFORE_CANONICAL_HASH", schema_valid: false, computed_hash: null };
+  }
+  try {
+    validateArtifact(record, "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json", schemas);
+  } catch {
+    return { accepted: false, error: "SCHEMA_INVALID", schema_valid: false, computed_hash: null };
+  }
+  const computedHash = await canonicalContentHash(artifactType, record, registry);
+  try {
+    await verifyCanonicalContentHash(artifactType, record, String(record.content_hash), registry);
+  } catch (error) {
+    return { accepted: false, error: error instanceof Error ? error.message : String(error), schema_valid: true, computed_hash: computedHash };
+  }
+  return { accepted: true, error: "SCHEMA_VALID_AND_RECOMPUTED_HASH_MATCH", schema_valid: true, computed_hash: computedHash };
+};
+
+export const computeDrift = (
+  relativeDriftPpm: Integer,
+  sourceAnchorUs: Integer,
+  x: Integer,
+): bigint => {
+  if (![relativeDriftPpm, sourceAnchorUs, x].every(isInteger)) throw new Error("E_INVALID_DRIFT_INPUT");
+  const ppm = BigInt(relativeDriftPpm), anchor = BigInt(sourceAnchorUs), point = BigInt(x);
+  if (ppm < 0n || anchor < 0n || point < 0n) throw new Error("E_INVALID_DRIFT_INPUT");
+  const distance = point >= anchor ? point - anchor : anchor - point;
+  return (ppm * distance + 999_999n) / 1_000_000n;
+};
+
+export const validateMidpoint = (value: MappingInput): ClockPrimitiveEvaluation => {
+  const fields = ["offset_lower_us", "offset_upper_us", "base_uncertainty_us", "offset_midpoint_us"] as const;
+  if (Object.keys(value).length !== fields.length || fields.some((field) => !isInteger(value[field]))) {
+    return { accepted: false, error: "REJECT_CHECK_CONSTRAINT" };
+  }
+  const lower = BigInt(value.offset_lower_us as Integer);
+  const upper = BigInt(value.offset_upper_us as Integer);
+  const uncertainty = BigInt(value.base_uncertainty_us as Integer);
+  const midpoint = BigInt(value.offset_midpoint_us as Integer);
+  if ([lower, upper, midpoint].some((number) => number < int64Min || number > int64Max)) {
+    return { accepted: false, error: "REJECT_OVERFLOW_GUARD" };
+  }
+  if (uncertainty < 0n || uncertainty > 125_000n || lower > int64Max - uncertainty * 2n) {
+    return { accepted: false, error: "REJECT_OVERFLOW_GUARD" };
+  }
+  if (lower > midpoint || midpoint > upper || upper !== lower + uncertainty * 2n || midpoint !== lower + uncertainty) {
+    return { accepted: false, error: "REJECT_CHECK_CONSTRAINT" };
+  }
+  return { accepted: true, error: upper === int64Max ? "ACCEPT_OVERFLOW_SAFE" : "ACCEPT" };
+};
 
 const result = (error: string, rawLower = 0n, rawUpper = 0n, rtt = 0n, padding = 0n, lower = 0n, upper = 0n): ClockEvaluation => {
   const sum = lower + upper;
