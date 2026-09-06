@@ -312,27 +312,53 @@ def test_gap_closes_epoch_and_opens_exact_successor_without_ack(tmp_path: Path) 
     assert counts(store) == [1, 1, 1, 1, 1]
 
 
-def test_conflict_persists_evidence_and_blocks_generation_without_inventing_gap(
-    tmp_path: Path,
-) -> None:
+def test_conflict_atomically_closes_generation_and_retains_q1_ack(tmp_path: Path) -> None:
     store = prepared_store(tmp_path)
-    Ingestor(store).apply(observation())
+    q1_ack = Ingestor(store).apply(observation())
     value = observation()
     value["facts"]["terminal_code"] = "BUDGET_STOP"
     value["raw_observation_id"] = "observation:" + "f" * 64
     value["content_hash"] = canonical_content_hash("RawObservation", value, registry_path=REGISTRY)
     with pytest.raises(ValueError, match="E_INGEST_CONFLICT"):
         Ingestor(store).apply(value)
-    with pytest.raises(ValueError, match="E_INGEST_RUN_BINDING"):
-        Ingestor(RunStore(store.db_path)).apply(observation(2))
     assert counts(store) == [1, 1, 1, 1, 1]
     with closing(sqlite3.connect(store.db_path)) as connection:
-        assert connection.execute("SELECT count(*) FROM raw_conflicts").fetchone() == (1,)
-        assert connection.execute("SELECT count(*) FROM gap_records").fetchone() == (0,)
-        assert connection.execute("SELECT run_status FROM run_meta").fetchone() == ("CLOSED",)
+        assert connection.execute("SELECT run_status FROM run_meta").fetchone() == ("OPEN",)
         assert connection.execute(
-            "SELECT generation_state,close_reason FROM stream_generations"
-        ).fetchone() == ("CLOSED", "RUN_CLOSED")
+            "SELECT sequence,conflicting_raw_observation_id FROM raw_conflicts"
+        ).fetchone() == (1, value["raw_observation_id"])
+        assert connection.execute(
+            "SELECT missing_from_sequence,missing_to_sequence,detected_sequence,gap_reason,"
+            "ack_blocked_after_sequence FROM gap_records"
+        ).fetchone() == (1, 1, 1, "CONFLICTING_DUPLICATE", 0)
+        assert connection.execute("SELECT shock_type FROM shock_observations").fetchone() == (
+            "SCHEMA_CONFLICT",
+        )
+        assert connection.execute(
+            "SELECT from_state,to_state,transition_reason FROM coherence_transitions"
+        ).fetchone() == ("OPEN", "SHOCKED_CLOSED", "SHOCK_ATOMIC_CLOSE")
+        assert connection.execute(
+            "SELECT binding_role FROM gap_epoch_bindings"
+        ).fetchone() == ("AFFECTED_EPOCH_PERMANENTLY_CLOSED",)
+        assert connection.execute(
+            "SELECT transition_reason FROM generation_transitions"
+        ).fetchone() == ("CONFLICT",)
+        assert connection.execute(
+            "SELECT controller_state FROM coherence_controllers"
+        ).fetchone() == ("SHOCKED_CLOSED",)
+        assert connection.execute(
+            "SELECT generation,generation_state,close_reason FROM stream_generations "
+            "ORDER BY generation"
+        ).fetchall() == [
+            (0, "CLOSED", "CONFLICTING_DUPLICATE"),
+            (1, "ACTIVE", None),
+        ]
+        assert connection.execute(
+            "SELECT highest_contiguous_sequence,cursor_hash FROM reducer_cursors"
+        ).fetchone() == (1, q1_ack["cursor_hash"])
+        assert connection.execute(
+            "SELECT highest_contiguous_sequence,cursor_hash FROM ack_outbox"
+        ).fetchone() == (1, q1_ack["cursor_hash"])
 
 
 def test_store_denies_schema_changes_deletion_and_attach(tmp_path: Path) -> None:
@@ -482,52 +508,53 @@ def test_ingest_validates_after_connection_open_under_same_write_transaction(
     assert counts(store) == [1, 1, 1, 1, 1]
 
 
-def test_conflict01_successor_contract_requires_unobserved_later_sequence(tmp_path: Path) -> None:
-    """HOLD_CONTRACT evidence, not a PASS for the full CONFLICT-01 scenario."""
+def test_conflicting_duplicate_allows_truthful_singleton_position(tmp_path: Path) -> None:
     store = prepared_store(tmp_path)
     Ingestor(store).apply(observation())
     with closing(sqlite3.connect(store.db_path)) as connection:
         connection.execute("PRAGMA foreign_keys=ON")
-        # CONFLICT-01 observes another hash at q1 only. The truthful range and
-        # detected position are q1; inventing q2 would make the CHECK pass.
-        with pytest.raises(sqlite3.IntegrityError, match="detected_sequence > missing_to_sequence"):
-            connection.execute(
-                "INSERT INTO gap_records VALUES ('gap:conflict',?,?,?,?,0,1,1,1,1,"
-                "'CONFLICTING_DUPLICATE','OPEN',0,1)",
-                (RUN, BROWSER, PRODUCER, STREAM),
-            )
-        connection.rollback()
-        with pytest.raises(
-            sqlite3.IntegrityError, match="E_GENERATION_CLOSE_WITHOUT_COHERENCE_CLOSURE"
-        ):
-            connection.execute(
-                "UPDATE stream_generations SET generation_state='CLOSED',closed_at_us=1,"
-                "close_reason='CONFLICTING_DUPLICATE'"
-            )
+        connection.execute(
+            "INSERT INTO gap_records VALUES ('gap:conflict',?,?,?,?,0,1,1,1,1,"
+            "'CONFLICTING_DUPLICATE','OPEN',0,1)",
+            (RUN, BROWSER, PRODUCER, STREAM),
+        )
 
 
-@pytest.mark.parametrize("denied_table", ["run_meta", "stream_generations"])
-def test_conflict_terminal_stop_is_atomic(
+def test_non_conflict_gap_still_requires_detected_sequence_after_missing_range(
     tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    denied_table: str,
+) -> None:
+    store = prepared_store(tmp_path)
+    Ingestor(store).apply(observation())
+    with (
+        closing(sqlite3.connect(store.db_path)) as connection,
+        pytest.raises(sqlite3.IntegrityError),
+    ):
+        connection.execute(
+            "INSERT INTO gap_records VALUES ('gap:missing',?,?,?,?,0,1,1,1,1,"
+            "'MISSING_SEQUENCE','OPEN',0,1)",
+            (RUN, BROWSER, PRODUCER, STREAM),
+        )
+
+
+def test_conflict_successor_failure_rolls_back_all_conflict_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     store = prepared_store(tmp_path)
     Ingestor(store).apply(observation())
     original = store.connect
 
-    def deny_close() -> sqlite3.Connection:
+    def deny_successor() -> sqlite3.Connection:
         connection = original()
         connection.set_authorizer(
             lambda action, table, *_: (
                 sqlite3.SQLITE_DENY
-                if action == sqlite3.SQLITE_UPDATE and table == denied_table
+                if action == sqlite3.SQLITE_INSERT and table == "stream_generations"
                 else sqlite3.SQLITE_OK
             )
         )
         return connection
 
-    monkeypatch.setattr(store, "connect", deny_close)
+    monkeypatch.setattr(store, "connect", deny_successor)
     value = observation()
     value["facts"]["terminal_code"] = "BUDGET_STOP"
     value["content_hash"] = canonical_content_hash("RawObservation", value, registry_path=REGISTRY)
@@ -539,3 +566,13 @@ def test_conflict_terminal_stop_is_atomic(
         assert connection.execute("SELECT generation_state FROM stream_generations").fetchone() == (
             "ACTIVE",
         )
+        for table in (
+            "gap_records",
+            "shock_observations",
+            "coherence_transitions",
+            "gap_epoch_bindings",
+            "generation_transitions",
+        ):
+            assert connection.execute(
+                f"SELECT count(*) FROM {table}"  # noqa: S608 -- fixed test table allowlist
+            ).fetchone() == (0,)

@@ -110,21 +110,26 @@ class Ingestor:
                             now,
                         ),
                     )
-                    # Truthful terminal stop: the DDL cannot encode a conflicting
-                    # duplicate as a missing range without inventing a later sequence.
-                    connection.execute(
-                        "UPDATE run_meta SET run_status='CLOSED',closed_at_us=? WHERE run_id=?",
-                        (now, run),
-                    )
-                    connection.execute(
-                        "UPDATE stream_generations SET generation_state='CLOSED',"
-                        "close_reason='RUN_CLOSED',closed_at_us=? WHERE run_id=? "
-                        "AND generation_state<>'CLOSED'",
-                        (now, run),
+                    self._gap(
+                        connection,
+                        current,
+                        highest,
+                        sequence,
+                        content_hash,
+                        now,
+                        "CONFLICTING_DUPLICATE",
                     )
                     rejected = "E_INGEST_CONFLICT"
                 else:
-                    self._gap(connection, current, highest, sequence, content_hash, now)
+                    self._gap(
+                        connection,
+                        current,
+                        highest,
+                        sequence,
+                        content_hash,
+                        now,
+                        "MISSING_SEQUENCE",
+                    )
                     rejected = "E_INGEST_GAP"
             else:
                 prior_hash = H0 if previous is None else previous["cursor_hash"]
@@ -224,6 +229,7 @@ class Ingestor:
         sequence: int,
         digest: str,
         now: int,
+        reason: str,
     ) -> None:
         controllers = connection.execute(
             "SELECT * FROM coherence_controllers WHERE run_id=?", (current["run_id"],)
@@ -242,7 +248,9 @@ class Ingestor:
         gap, shock, transition, binding = (
             prefix + ":" + digest for prefix in ("gap", "shock", "transition", "binding")
         )
-        reason = "MISSING_SEQUENCE"
+        conflict = reason == "CONFLICTING_DUPLICATE"
+        missing_from = sequence if conflict else highest + 1
+        missing_to = sequence if conflict else sequence - 1
         connection.execute(
             "INSERT INTO gap_records VALUES (?,?,?,?,?,?,?,?,?,?,?,'OPEN',?,?)",
             (
@@ -250,17 +258,26 @@ class Ingestor:
                 *key,
                 generation,
                 generation + 1,
-                highest + 1,
-                sequence - 1,
+                missing_from,
+                missing_to,
                 sequence,
                 reason,
-                highest,
+                sequence - 1 if conflict else highest,
                 now,
             ),
         )
         connection.execute(
             "INSERT INTO shock_observations VALUES (?,?,?,?,?,?,?,?)",
-            (shock, key[0], controller["fixture_id"], "SEQUENCE_GAP", now, now, digest, now),
+            (
+                shock,
+                key[0],
+                controller["fixture_id"],
+                "SCHEMA_CONFLICT" if conflict else "SEQUENCE_GAP",
+                now,
+                now,
+                digest,
+                now,
+            ),
         )
         connection.execute(
             "INSERT INTO coherence_transitions VALUES (?,?,?,?, 'SHOCKED_CLOSED',?,NULL,?,"
@@ -296,13 +313,21 @@ class Ingestor:
             ),
         )
         connection.execute(
-            "UPDATE stream_generations SET generation_state='QUARANTINED_GAP',closed_at_us=?,"
+            "UPDATE stream_generations SET generation_state=?,closed_at_us=?,"
             "close_reason=? WHERE generation_id=?",
-            (now, reason, current["generation_id"]),
+            ("CLOSED" if conflict else "QUARANTINED_GAP", now, reason, current["generation_id"]),
         )
         connection.execute(
             "INSERT INTO generation_transitions VALUES (?,?,?,?,?,?,?,?,?,?)",
-            ("generation-transition:" + digest, gap, *key, generation, generation + 1, "GAP", now),
+            (
+                "generation-transition:" + digest,
+                gap,
+                *key,
+                generation,
+                generation + 1,
+                "CONFLICT" if conflict else "GAP",
+                now,
+            ),
         )
         connection.execute(
             "INSERT INTO stream_generations VALUES (?,?,?,?,?,?,?,'ACTIVE',?,NULL,NULL)",

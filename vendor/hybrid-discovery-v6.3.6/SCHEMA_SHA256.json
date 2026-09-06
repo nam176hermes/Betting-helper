@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "10022a3dc8ee14047c2814c89e3243238c8543cd16f2a81a134e2477541a2daa",
+  "tree_sha256": "cbdf7e7e295f17a52bef547bd72c02a71565fa94459ec152de5bb7e516233c25",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -216,8 +216,8 @@
     },
     {
       "path": "docs/registries/normative-source-map.v1.json",
-      "size_bytes": 24048,
-      "sha256": "600baa3bbbc50774515e76b05fa16963ace576401c016bcb794594523e0e510a"
+      "size_bytes": 24168,
+      "sha256": "838c58316e6877a881238cc92a5c02625faa086d25bf5f8f0ae64d56a19f6544"
     },
     {
       "path": "docs/registries/path-registry.v1.json",
@@ -416,8 +416,8 @@
     },
     {
       "path": "schemas/durability-records.schema.json",
-      "size_bytes": 31332,
-      "sha256": "1c14234a256e8f3c0228bd796d03cd18bb84d6ff0b865781ad4547de5ca31b5b"
+      "size_bytes": 31501,
+      "sha256": "896ba8827194e4d3a14f7b8967a92c754a43e80e48d2ec042ef70501718ca113"
     },
     {
       "path": "schemas/e0-evidence.schema.json",
@@ -471,8 +471,8 @@
     },
     {
       "path": "sql/discovery-store-v1.sql",
-      "size_bytes": 94525,
-      "sha256": "7a308df230f4492085f94daee9d11bc2a4e887e12b02d201a3faf4a1bd4f51a8"
+      "size_bytes": 94741,
+      "sha256": "0f5bffcbd7918167b47531024c59a02a54bec510d54e61a8dec324e4f1118f6f"
     },
     {
       "path": "vectors/authorization-v1.json",

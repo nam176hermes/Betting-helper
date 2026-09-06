@@ -383,7 +383,13 @@ CREATE TABLE gap_records (
     successor_generation INTEGER NOT NULL CHECK (successor_generation = predecessor_generation + 1),
     missing_from_sequence INTEGER NOT NULL CHECK (missing_from_sequence >= 1),
     missing_to_sequence INTEGER NOT NULL CHECK (missing_to_sequence >= missing_from_sequence),
-    detected_sequence INTEGER NOT NULL CHECK (detected_sequence > missing_to_sequence),
+    detected_sequence INTEGER NOT NULL CHECK (
+      (gap_reason = 'CONFLICTING_DUPLICATE'
+       AND missing_from_sequence = missing_to_sequence
+       AND missing_to_sequence = detected_sequence)
+      OR
+      (gap_reason <> 'CONFLICTING_DUPLICATE' AND detected_sequence > missing_to_sequence)
+    ),
     gap_reason TEXT NOT NULL CHECK (gap_reason IN ('MISSING_SEQUENCE', 'CONFLICTING_DUPLICATE', 'SCHEMA_REJECTION', 'LIFECYCLE_DISCONTINUITY', 'STORAGE_SAFETY_STOP', 'UNKNOWN_CONTINUITY')),
     repair_status TEXT NOT NULL CHECK (repair_status IN ('OPEN', 'HISTORY_REPAIRED_EPOCH_REMAINS_CLOSED', 'RESNAPSHOT_NEW_GENERATION', 'TERMINAL')),
     ack_blocked_after_sequence INTEGER NOT NULL CHECK (ack_blocked_after_sequence >= 0 AND ack_blocked_after_sequence < missing_from_sequence),

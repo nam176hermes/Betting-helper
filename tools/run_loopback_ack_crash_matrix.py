@@ -448,7 +448,7 @@ def run_family(
         elif key in {"ACK-04", "ACK-05"}:
             row["reason"] = "BACKEND_CONFIRMATION_OWNER_NOT_IMPLEMENTED"
         elif key == "CONFLICT-01":
-            row["reason"] = "HOLD_CONTRACT:CONFLICT-01_SUCCESSOR"
+            row["reason"] = "FULL_CONFLICT_PROCESS_EVIDENCE_NOT_IMPLEMENTED"
         elif key in {"SQL-06", "GAP-09"}:
             row["reason"] = "DURING_COMMIT_CHECKPOINT_NOT_EXPOSED"
         elif key == "LATE-01":

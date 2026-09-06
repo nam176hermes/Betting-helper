@@ -95,8 +95,8 @@
       "plan_source": "docs/inherited/v6.2/schemas/durability-records.schema.json",
       "vendor_relative": "schemas/durability-records.schema.json",
       "source_sha256": "9795a16e8bd1fe8aa3c893e8a4b19e41f195eba0e8c73e6f1c3cd5ef5fb12364",
-      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
-      "plan_sha256": "1c14234a256e8f3c0228bd796d03cd18bb84d6ff0b865781ad4547de5ca31b5b"
+      "protocol_compatibility": "V636_CONFLICTING_DUPLICATE_SINGLETON_AMENDMENT",
+      "plan_sha256": "896ba8827194e4d3a14f7b8967a92c754a43e80e48d2ec042ef70501718ca113"
     },
     {
       "plan_source": "docs/inherited/v6.2/schemas/e0-evidence.schema.json",
@@ -169,7 +169,8 @@
       "plan_source": "docs/inherited/v6.2/sql/discovery-store-v1.sql",
       "vendor_relative": "sql/discovery-store-v1.sql",
       "source_sha256": "7a308df230f4492085f94daee9d11bc2a4e887e12b02d201a3faf4a1bd4f51a8",
-      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+      "protocol_compatibility": "V636_CONFLICTING_DUPLICATE_SINGLETON_AMENDMENT",
+      "plan_sha256": "0f5bffcbd7918167b47531024c59a02a54bec510d54e61a8dec324e4f1118f6f"
     },
     {
       "plan_source": "docs/inherited/v6.2/vectors/authorization-v1.json",

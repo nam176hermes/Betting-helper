@@ -35,7 +35,7 @@ def test_late_arrival_rejection_is_scoped_not_history_repair(tmp_path: Path) -> 
     )
 
 
-def test_missing_commit_and_coherence_contracts_remain_visible(tmp_path: Path) -> None:
+def test_missing_full_process_and_coherence_contracts_remain_visible(tmp_path: Path) -> None:
     from tools.run_gap_coherence_crash_matrix import run_gap_coherence_crash_matrix
 
     result = run_gap_coherence_crash_matrix(PACK, tmp_path, observation_input=observation())
@@ -44,4 +44,4 @@ def test_missing_commit_and_coherence_contracts_remain_visible(tmp_path: Path) -
     for row in result["records"]:
         assert row["status"] == "NOT_IMPLEMENTED"
     conflict = next(row for row in result["records"] if row["vector_id"].startswith("CONFLICT"))
-    assert conflict["reason"] == "HOLD_CONTRACT:CONFLICT-01_SUCCESSOR"
+    assert conflict["reason"] == "FULL_CONFLICT_PROCESS_EVIDENCE_NOT_IMPLEMENTED"
