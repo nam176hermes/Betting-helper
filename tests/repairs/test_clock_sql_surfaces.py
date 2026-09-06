@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from tools.run_clock_vector_qualification import _coherence_sql_observation
+
 ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
 VECTORS = json.loads(
@@ -47,3 +49,31 @@ def test_midpoint_vector_executes_governed_clock_mapping_constraints(
     else:
         with pytest.raises(sqlite3.IntegrityError):
             connection.execute(sql, values)
+
+
+@pytest.mark.parametrize(
+    ("case_id", "expected_error", "proof_status", "release_mapping_close"),
+    [
+        ("CANDIDATE-NEG-02-SQL-UNKNOWN", "E_RESNAPSHOT_CANDIDATE_BINDING",
+         "UNKNOWN", False),
+        ("CANDIDATE-NEG-03-NOT-OBSERVED", "E_RESNAPSHOT_CANDIDATE_BINDING",
+         "NOT_OBSERVED", False),
+        ("CANDIDATE-NEG-04-UNSIGNED-UNVERIFIED", "E_RESNAPSHOT_CANDIDATE_BINDING",
+         "UNKNOWN", False),
+        ("RELEASE-NEG-09-MAPPING-CLOSED", "E_RELEASE_BINDING", None, True),
+    ],
+)
+def test_coherence_negative_executes_exact_governed_ddl(
+    case_id: str, expected_error: str, proof_status: str | None,
+    release_mapping_close: bool,
+) -> None:
+    observation = _coherence_sql_observation(
+        proof_status=proof_status, release_mapping_close=release_mapping_close,
+    )
+    assert observation["accepted"] is False
+    assert observation["error"] == expected_error
+    assert expected_error in str(observation["sqlite_error"])
+    assert observation["ddl_sha256"]
+    if case_id.startswith("RELEASE-"):
+        assert observation["candidate_acceptance_executed"] is True
+        assert observation["mapping_close_executed"] is True

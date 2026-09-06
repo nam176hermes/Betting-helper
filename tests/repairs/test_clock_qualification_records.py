@@ -44,11 +44,11 @@ def test_wrong_expectation_cannot_pass_even_when_languages_agree(
 
 def test_actual_artifacts_and_mutations_have_recomputable_counters(tmp_path: Path) -> None:
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
-    assert result["result"] == "HOLD"
+    assert result["result"] == "PASS"
     rows = result["records"]
-    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 41
-    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 24
-    assert result["mutation_executions"] == len(result["mutation_records"]) == 10
+    assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 65
+    assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 0
+    assert result["mutation_executions"] == len(result["mutation_records"]) == 12
     assert result["mutation_survivors"] == sum(
         not row["detected"] for row in result["mutation_records"]
     ) == 0
@@ -127,6 +127,26 @@ def test_post_close_mutation_is_executed_and_detected(tmp_path: Path) -> None:
     assert trial["actual"]["python"]["accepted"] is True
 
 
+def test_candidate_proof_and_release_mapping_mutations_execute_real_operations(
+    tmp_path: Path,
+) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    rows = {row["case_id"]: row for row in result["mutation_records"]}
+    for name in ("candidate_proof_corruption", "release_mapping_close"):
+        assert rows[name]["executed"] is True
+        assert rows[name]["detected"] is True
+        assert runner.verify_record(rows[name])
+    candidate = rows["candidate_proof_corruption"]["actual"]
+    assert candidate["control"]["actual"]["python"]["accepted"] is True
+    assert candidate["trial"]["actual"]["python"]["error"] == "E_RESNAPSHOT_CANDIDATE_BINDING"
+    release = rows["release_mapping_close"]["actual"]
+    for phase in ("control", "trial"):
+        for language in ("python", "typescript"):
+            assert release[phase]["actual"][language]["mapping_close_executed"] is True
+    assert release["control"]["actual"]["python"]["accepted"] is True
+    assert release["trial"]["actual"]["python"]["error"] == "E_MAPPING_CLOSED"
+
+
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -178,11 +198,11 @@ def test_damaged_mutation_evidence_fails_without_erasing_execution(
     monkeypatch.setattr(runner, "_mutations", damaged)
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "FAIL"
-    assert result["mutation_attempts"] == result["mutation_executions"] == 10
-    assert result["mutation_verified_executions"] == 9
+    assert result["mutation_attempts"] == result["mutation_executions"] == 12
+    assert result["mutation_verified_executions"] == 11
     assert result["mutation_survivors"] is None
     assert result["mutation_evidence_errors"] == [{
         "case_id": "wrong_expected_error", "error": "E_CLOCK_MUTATION_EVIDENCE",
     }]
-    assert len(result["mutation_records"]) == 10
-    assert result["covered_vector_count"] == 41
+    assert len(result["mutation_records"]) == 12
+    assert result["covered_vector_count"] == 65

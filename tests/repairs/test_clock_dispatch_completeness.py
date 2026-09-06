@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
 
 
-def test_exact_registry_dispatch_and_remaining_unimplemented_lifecycle(tmp_path: Path) -> None:
+def test_exact_registry_dispatch_and_all_rows_execute(tmp_path: Path) -> None:
     registry = json.loads((PACK / "docs/registries/clock-vector-coverage.v1.json").read_text())
     ids = [entry["vector_id"] for entry in registry["entries"]]
     assert set(runner.DISPATCH) == set(ids)
@@ -22,18 +22,25 @@ def test_exact_registry_dispatch_and_remaining_unimplemented_lifecycle(tmp_path:
     rows = result["records"]
     assert [row["case_id"] for row in rows] == ids
     assert len(rows) == len(set(ids))
-    assert result["result"] == "HOLD"
+    assert result["result"] == "PASS"
     for row in rows:
         assert row["family"] in {
             "RAW_SAMPLE", "SERIALIZED_MAPPING_VALIDATION", "LIFECYCLE_AND_COHERENCE",
         }
-        if row["case_id"].startswith(("CLOSE-", "SELECT-")):
-            assert row["status"] == "PASS"
-            assert row["executed"] is True
-        elif row["case_id"].startswith(("RELEASE-", "CANDIDATE-")):
-            assert row["status"] == "NOT_IMPLEMENTED"
-            assert row["executed"] is False
-            assert row["observed_error"]
+        assert row["status"] == "PASS"
+        assert row["executed"] is True
+        assert "implementation_marker" not in row
+
+
+def test_candidate_and_release_dispatch_names_exact_handlers() -> None:
+    assert all(
+        runner.DISPATCH[case_id][1] == "accept_candidate"
+        for case_id in runner.DISPATCH if case_id.startswith("CANDIDATE-")
+    )
+    assert all(
+        runner.DISPATCH[case_id][1] == "evaluate_release"
+        for case_id in runner.DISPATCH if case_id.startswith("RELEASE-")
+    )
 
 
 def test_clock_primitive_dispatch_names_exact_ten_handlers() -> None:
