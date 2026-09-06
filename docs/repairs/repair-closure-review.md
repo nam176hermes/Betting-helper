@@ -1,5 +1,43 @@
 # BH-R11 independent repair closure
 
+## Post-closure amendment: source-contract repair and BH-R05
+
+The prior snapshot below is superseded for BH-AUDIT-02 by independently
+reviewed code commit `cb903b007c7cca39675721a801f9ea6a9b6f0d84` / tree
+`66f7cb3eb4b419d4e7e81df6dc97ef89d5dc003a`. Authoring commit `6b99425`
+adds the dedicated `RawObservationId` contract; runtime commit `229e771`
+copies it through the official source-to-vendor path and regenerates
+`SCHEMA_SHA256.json` plus `schema-lock.json` (vendor tree
+`10022a3dc8ee14047c2814c89e3243238c8543cd16f2a81a134e2477541a2daa`).
+
+BH-AUDIT-02 is now **FIXED for the scoped IndexedDB spool matrix**. Fresh
+independent review ran 15 real Chrome for Testing cases and observed all four
+governed worker-crash boundaries: the first three recovered zero rows with a
+reusable initial sequence; the after-commit case recovered one schema-valid
+row, next sequence 2, and ACK `(0,H0)`. The parent alone held expected state;
+the child and successor reader received none. Each case terminated the exact
+owned Worker and used a distinct successor reader in the same isolated
+extension origin/profile. Negative runs rejected deleted rows, corrupt ACK,
+wrong expected values, substituted identity, missing browser, and incomplete
+or duplicate case inventories.
+
+Fresh post-change checks passed: TypeScript compile; two Node spool tests; 15
+browser tests; 92 regressions with one existing branded-Chrome skip; ESLint;
+changed-file Ruff and mypy; both source-to-vendor checks; registry self-check;
+and portable verification (67 tests, 223 repair tests collected). Full
+verification remains `HOLD`/exit 2 because authoritative controller inputs are
+not configured. The full inherited matrix, current cybersecurity review,
+native Windows/power-loss behavior, production projector/lifecycle, and all
+live/provider/money paths remain unqualified. Old signed or authority-bearing
+receipts were not rewritten; they do not bind these bytes.
+
+Amended verdict: `REPAIR_REGRESSION_GATE: PASS` and
+`SCOPED_INTEGRATION_GATE: PASS / INDEXEDDB_SPOOL_ONLY`;
+`LEGACY_FULL_QUALIFICATION: HOLD`; `SECURITY_REVIEW: NOT_REVIEWED`;
+all production, live, and money authority remains `NONE`.
+
+## Prior closure snapshot (superseded where amended above)
+
 Review date: `2026-09-06` (UTC). This review covers the code tree at
 `0f0bcc646f95ce760aed9821e0578d84caf3dc20` / tree
 `5716735cbb53b65a35f18664ce6fa08888cfcec1`. The audited commit
