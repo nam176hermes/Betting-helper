@@ -69,6 +69,21 @@ def _error(row: dict[str, Any]) -> str:
     return error
 
 
+def _rehash_snapshot_mutation(
+    row: dict[str, Any], table: str, field: str, value: object
+) -> None:
+    run = row["reader_provenance"]["runs"][0]
+    output = json.loads(Path(run["path"]).read_text())
+    output["state"]["tables"][table][0][field] = value
+    _replace_artifact(row, "mutated_reader_output", output, f"ddl-{table}-{field}")
+    run.update(row.pop("mutated_reader_output"))
+    row["actual"]["before"] = output["state"]
+    _replace_artifact(row, "actual_artifact", row["actual"], f"ddl-{table}-{field}")
+    terminal = dict(row)
+    terminal.pop("terminal_artifact")
+    _replace_artifact(row, "terminal_artifact", terminal, f"ddl-{table}-{field}")
+
+
 def test_sql_transaction_emits_exact_full_terminal_evidence(report: dict[str, Any]) -> None:
     assert report["result"] == "PASS"
     assert report["executed_vector_ids"] == SQL_IDS
@@ -190,6 +205,21 @@ def test_rehashed_journal_corruption_reaches_semantic_validator(
     row["actual"]["before"] = output["state"]
     _replace_artifact(row, "actual_artifact", row["actual"], damage)
     assert _error(row) == "E_SQLITE_JOURNAL_STATE"
+
+
+@pytest.mark.parametrize(
+    ("table", "field", "value"),
+    [
+        ("run_meta", "run_status", "INVALID"),
+        ("coherence_epochs", "epoch_status_at_record", "INVALID"),
+    ],
+)
+def test_validly_rehashed_complete_snapshot_must_satisfy_exact_ddl(
+    report: dict[str, Any], table: str, field: str, value: object
+) -> None:
+    row = copy.deepcopy(report["records"][6])
+    _rehash_snapshot_mutation(row, table, field, value)
+    assert _error(row) == "E_SQLITE_DDL_STATE"
 
 
 @pytest.mark.parametrize(

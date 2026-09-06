@@ -6,8 +6,10 @@ import hashlib
 import json
 import platform
 import signal
+import sqlite3
 import sys
 from collections import Counter
+from contextlib import closing
 from pathlib import Path
 from shutil import which
 from subprocess import run
@@ -304,6 +306,60 @@ def _sqlite_process_prefix(
     return expected
 
 
+def _validate_sqlite_ddl_snapshot(tables: dict[str, list[dict[str, Any]]]) -> None:
+    """Rehydrate every returned row under the exact governed SQLite DDL."""
+    from moj_discovery.store import TABLES, verified_ddl
+
+    insertion_order = (
+        "run_meta",
+        "stream_generations",
+        "raw_commits",
+        "raw_conflicts",
+        "application_records",
+        "derived_revisions",
+        "reducer_cursors",
+        "ack_outbox",
+        "ack_cursors",
+        "coherence_epochs",
+        "shock_observations",
+        "coherence_controllers",
+        "coherence_transitions",
+        "gap_records",
+        "gap_epoch_bindings",
+        "generation_transitions",
+    )
+    if set(insertion_order) != set(TABLES):
+        raise ValueError("E_SQLITE_DDL_STATE")
+    try:
+        with closing(sqlite3.connect(":memory:")) as connection:
+            connection.executescript(verified_ddl())
+            connection.execute("PRAGMA foreign_keys=ON")
+            connection.execute("BEGIN")
+            for name in insertion_order:
+                columns = [
+                    str(item[1])
+                    for item in connection.execute(f'PRAGMA table_info("{name}")')  # noqa: S608
+                ]
+                for row in tables[name]:
+                    if not isinstance(row, dict) or set(row) != set(columns):
+                        raise ValueError("E_SQLITE_DDL_STATE")
+                    column_sql = ",".join(f'"{column}"' for column in columns)
+                    placeholders = ",".join("?" for _ in columns)
+                    # Names come only from the fixed table allowlist and governed DDL.
+                    statement = (
+                        f'INSERT INTO "{name}" ({column_sql}) VALUES ({placeholders})'  # noqa: S608
+                    )
+                    connection.execute(
+                        statement,
+                        tuple(row[column] for column in columns),
+                    )
+            connection.commit()
+            if connection.execute("PRAGMA foreign_key_check").fetchall():
+                raise ValueError("E_SQLITE_DDL_STATE")
+    except (KeyError, TypeError, sqlite3.DatabaseError) as exc:
+        raise ValueError("E_SQLITE_DDL_STATE") from exc
+
+
 def _validate_sqlite_state(
     state: object, scenario: dict[str, Any], committed: int
 ) -> dict[str, Any]:
@@ -330,6 +386,10 @@ def _validate_sqlite_state(
         raise ValueError("E_SQLITE_JOURNAL_STATE")
     try:
         validate_journal(state["tables"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("E_SQLITE_JOURNAL_STATE") from exc
+    _validate_sqlite_ddl_snapshot(state["tables"])
+    try:
         observed = _snapshot(state)
         wanted = _oracle(scenario["observation"], bool(committed), False)
     except (KeyError, TypeError, ValueError) as exc:
