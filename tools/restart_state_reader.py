@@ -4,9 +4,14 @@ import argparse
 import hashlib
 import json
 import sqlite3
+import sys
 from contextlib import closing
 from pathlib import Path
 from typing import Any
+
+if __package__ in {None, ""}:
+    root = Path(__file__).resolve().parents[1]
+    sys.path[:0] = [str(root / "src"), str(root)]
 
 from moj_discovery.store import read_journal, validate_journal, verified_ddl, verify_database
 

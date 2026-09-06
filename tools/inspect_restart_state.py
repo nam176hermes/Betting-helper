@@ -79,6 +79,9 @@ def execute_crash_matrix(
     prepare_case: Callable[[Path], None] | None = None,
     recover_case: Callable[[Path], None] | None = None,
     validate_boundary: Callable[[Path, dict[str, object]], None] | None = None,
+    compare_state: Callable[
+        [dict[str, object], dict[str, object]], dict[str, object]
+    ] = inspect_restart_state,
 ) -> dict[str, object]:
     if state_reader is None:
         raise ValueError("E_ACTUAL_STATE_READER_REQUIRED")
@@ -170,7 +173,7 @@ def execute_crash_matrix(
                 (case_directory / "expected-state.json").write_text(
                     json.dumps(expected, sort_keys=True)
                 )
-                comparison = inspect_restart_state(observed, expected)
+                comparison = compare_state(observed, expected)
                 executed.append(vector_id)
                 records.append(
                     {

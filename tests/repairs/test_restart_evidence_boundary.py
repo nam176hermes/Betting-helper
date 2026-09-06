@@ -108,13 +108,12 @@ def test_legacy_ready_only_runner_must_not_pass_without_actual_reader(tmp_path: 
         )
 
 
-def test_legacy_sqlite_runner_is_blocked_without_actual_reader(tmp_path: Path) -> None:
+def test_sqlite_owner_uses_actual_reader_for_all_registered_cases(tmp_path: Path) -> None:
     workspace = tmp_path / "sqlite-runs"
-
-    with pytest.raises(ValueError, match="E_ACTUAL_STATE_READER_REQUIRED"):
-        run_sqlite_crash_matrix(PACK, workspace)
-
-    assert not workspace.exists()
+    result = run_sqlite_crash_matrix(PACK, workspace)
+    assert result["result"] == "PASS"
+    assert len(result["records"]) == result["killed_child_count"] == 7
+    assert all(row["reader_provenance"]["runs"] for row in result["records"])
 
 
 def test_non_posix_termination_is_blocked_before_launch(

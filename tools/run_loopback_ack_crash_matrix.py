@@ -25,6 +25,7 @@ PHASES = {
     "SQL-03": "after_revision_insert",
     "SQL-04": "after_cursor_insert",
     "SQL-05": "after_outbox_insert",
+    "SQL-06": "during_commit",
     "SQL-07": "after_commit_before_send",
     "ACK-06": "after_duplicate_ack",
     "GAP-01": "after_gap_insert",
@@ -62,8 +63,10 @@ def _trusted_command() -> list[str]:
     ]
 
 
-def _launch_provenance(command: list[str]) -> dict[str, Any]:
-    if command != _trusted_command():
+def _launch_provenance(
+    command: list[str], *, trusted_command: list[str] | None = None
+) -> dict[str, Any]:
+    if command != (trusted_command or _trusted_command()):
         raise ValueError("E_CRASH_CHILD_PROVENANCE")
     return {
         "command_prefix": command,
@@ -152,9 +155,13 @@ def run_backend_case(
     workspace: Path,
     *,
     command_prefix: list[str] | None = None,
+    trusted_command: list[str] | None = None,
+    reader_command: list[str] | None = None,
 ) -> dict[str, Any]:
     command = _trusted_command() if command_prefix is None else list(command_prefix)
-    provenance = _launch_provenance(command)  # Reject substitutions before provision/launch.
+    provenance = _launch_provenance(
+        command, trusted_command=trusted_command
+    )  # Reject substitutions before provision/launch.
     key = "-".join(entry["vector_id"].split("-")[:2])
     if key not in PHASES:
         raise ValueError("E_CRASH_BOUNDARY_NOT_IMPLEMENTED:" + key)
@@ -211,11 +218,24 @@ def run_backend_case(
     expected_replay = (
         "E_INGEST_GENERATION_CLOSED" if gap_committed else "E_INGEST_GAP" if is_gap else "ACK"
     )
-    expected_state = {
-        "before": expected,
-        "after": _oracle(observation, True, recovered_gap),
-        "replay": expected_replay,
-    }
+    expected_state: dict[str, Any]
+    if key == "SQL-06":
+        expected_state = {
+            "allowed_atomic_outcomes": [
+                {
+                    "before": _oracle(observation, state, False),
+                    "after": _oracle(observation, True, False),
+                    "replay": "ACK",
+                }
+                for state in (False, True)
+            ]
+        }
+    else:
+        expected_state = {
+            "before": expected,
+            "after": _oracle(observation, True, recovered_gap),
+            "replay": expected_replay,
+        }
 
     def prepare(case: Path) -> None:
         (case / "scenario.json").write_text(json.dumps(scenario, sort_keys=True))
@@ -230,12 +250,38 @@ def run_backend_case(
         )
 
     def boundary(case: Path, identity: dict[str, object]) -> None:
-        if _launch_provenance(command) != provenance:
+        if _launch_provenance(command, trusted_command=trusted_command) != provenance:
             raise ValueError("E_CRASH_CHILD_PROVENANCE")
         path = case / "boundary.json"
         if not path.is_file():
             raise RuntimeError("E_CRASH_BOUNDARY_MISSING")
         witness = json.loads(path.read_text())
+        if key == "SQL-06":
+            expected_fields = {
+                "identity",
+                "phase",
+                "commit_armed",
+                "operation",
+                "target",
+                "sqlite_path",
+            }
+            if (
+                not isinstance(witness, dict)
+                or set(witness) != expected_fields
+                or witness["identity"] != identity
+                or witness["phase"] != "during_commit"
+                or witness["commit_armed"] is not True
+                or witness["operation"] not in {"fsync", "fdatasync"}
+                or witness["target"] not in {"rollback_journal", "database"}
+                or not str(witness["sqlite_path"]).endswith(
+                    ("run.sqlite3-journal", "run.sqlite3")
+                )
+            ):
+                raise RuntimeError("E_CRASH_COMMIT_IO_WITNESS")
+            (case / "prerequisite-state.json").write_text(
+                json.dumps(witness, sort_keys=True)
+            )
+            return
         if (
             not isinstance(witness, dict)
             or set(witness)
@@ -321,7 +367,7 @@ def run_backend_case(
                 raise RuntimeError("E_CRASH_WIRE_ACK")
 
     def recover(case: Path, *, replay: bool = False) -> None:
-        if _launch_provenance(command) != provenance:
+        if _launch_provenance(command, trusted_command=trusted_command) != provenance:
             raise ValueError("E_CRASH_CHILD_PROVENANCE")
         suffix = "replay" if replay else "reopen"
         argv = [*command, "--recover", str(case), *(["--replay"] if replay else [])]
@@ -341,13 +387,40 @@ def run_backend_case(
                 stderr=stderr,
             )
 
-    def actual(case: Path) -> dict[str, Any]:
+    reader_runs: list[dict[str, Any]] = []
+
+    def read_actual(case: Path, label: str) -> dict[str, Any]:
         run_dir = case / observation["discovery_run_id"]
-        before = read_restart_state(run_dir)
+        if reader_command is None:
+            return read_restart_state(run_dir)
+        reader_input = {
+            "run_dir": str(run_dir.resolve()),
+            "run_id": observation["discovery_run_id"],
+            "case_id": entry["vector_id"],
+            "checkpoint_id": entry["crash_checkpoint"],
+        }
+        input_path = case / "reader-input.json"
+        input_path.write_text(json.dumps(reader_input, sort_keys=True, separators=(",", ":")))
+        argv = [*reader_command, str(run_dir)]
+        completed = subprocess.run(  # noqa: S603 -- fixed local read-only inspector
+            argv,
+            cwd=Path(__file__).resolve().parents[1],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        output = case / f"reader-{label}.json"
+        output.write_text(completed.stdout)
+        reader_runs.append({"argv": argv, "exit": completed.returncode, "artifact": output})
+        return cast(dict[str, Any], json.loads(completed.stdout))
+
+    def actual(case: Path) -> dict[str, Any]:
+        before = read_actual(case, "before")
         (case / "actual-state.json").write_text(json.dumps(before, sort_keys=True))
         recover(case, replay=True)
         recovery = json.loads((case / "recovery.json").read_text())
-        after = read_restart_state(run_dir)
+        after = read_actual(case, "after")
         if after != recovery["after"]:
             raise ValueError("E_CRASH_RECOVERY_OBSERVATION")
         replay = recovery["replay"]
@@ -359,6 +432,16 @@ def run_backend_case(
             "replay": replay.get("error", "ACK"),
         }
 
+    def compare(actual: dict[str, object], wanted: dict[str, object]) -> dict[str, object]:
+        allowed = wanted.get("allowed_atomic_outcomes")
+        if isinstance(allowed, list):
+            if actual not in allowed:
+                raise ValueError("E_RESTART_STATE_MISMATCH")
+            return {"result": "PASS", "state": actual, "allowed_atomic_outcome": True}
+        from tools.inspect_restart_state import inspect_restart_state
+
+        return inspect_restart_state(actual, wanted)
+
     result = execute_crash_matrix(
         [{**entry, "expected_post_restart_state": expected_state}],
         command,
@@ -367,9 +450,13 @@ def run_backend_case(
         prepare_case=prepare,
         recover_case=recover,
         validate_boundary=boundary,
+        compare_state=compare,
     )
     for row in cast(list[dict[str, Any]], result["records"]):
-        if _launch_provenance(command) != provenance or row["command"][:3] != command:
+        if (
+            _launch_provenance(command, trusted_command=trusted_command) != provenance
+            or row["command"][: len(command)] != command
+        ):
             raise ValueError("E_CRASH_CHILD_PROVENANCE")
         case = Path(row["case_directory"])
         if json.loads((case / "launch-input.json").read_text())["scenario_sha256"] != _sha(
@@ -417,6 +504,16 @@ def run_backend_case(
             },
             environment={"platform": platform.platform(), "python": sys.version},
         )
+        if reader_command is not None:
+            row.update(
+                reader_input_sha256=_sha(case / "reader-input.json"),
+                reader_runs=[
+                    {"argv": item["argv"], "exit": item["exit"],
+                     "path": str(item["artifact"].resolve()),
+                     "sha256": _sha(item["artifact"])}
+                    for item in reader_runs
+                ],
+            )
         (case / "result.json").write_text(json.dumps(row, sort_keys=True))
     result.update(scope="BACKEND_ONLY", legacy_full_qualification="HOLD")
     return result

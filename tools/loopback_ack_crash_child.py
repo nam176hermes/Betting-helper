@@ -110,6 +110,21 @@ class CheckpointStore(RunStore):
         return connection
 
 
+class CommitIoStore(RunStore):
+    """Arm the test-only preload hook immediately before SQLite enters COMMIT."""
+
+    def connect(self) -> sqlite3.Connection:
+        connection = super().connect()
+
+        def trace(statement: str) -> None:
+            if statement == "COMMIT":
+                connection.set_trace_callback(None)
+                os.environ["BH_SQL_COMMIT_ARMED"] = "1"
+
+        connection.set_trace_callback(trace)
+        return connection
+
+
 def apply_result(store: RunStore, value: dict[str, Any]) -> dict[str, Any]:
     try:
         return {"ack": Ingestor(store).apply(value)}
@@ -212,6 +227,8 @@ def main() -> None:
                         pause(connection)
                 if phase in BEFORE_STATEMENT:
                     store = CheckpointStore(store.db_path, phase, pause)
+                elif phase == "during_commit":
+                    store = CommitIoStore(store.db_path)
                 result = apply_result(store, received)
                 ingest_result = result
                 if phase == "after_duplicate_ack":

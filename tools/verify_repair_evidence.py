@@ -246,11 +246,131 @@ def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
     )
 
 
+def _sqlite_artifact(row: dict[str, Any], name: str) -> Any:
+    artifact = row[name]
+    path = Path(artifact["path"])
+    case = Path(row["case_directory"]).resolve()
+    if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(case):
+        raise ValueError("E_SQLITE_ARTIFACT:" + name)
+    if _sha(path) != artifact["sha256"]:
+        raise ValueError("E_SQLITE_ARTIFACT:" + name)
+    return json.loads(path.read_text())
+
+
+def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
+    """Validate fixed SQLite terminal evidence against registry and current bytes."""
+    from tools.run_loopback_ack_crash_matrix import CHAIN, PHASES
+
+    validate_case_status(row)
+    if row["evidence_binding"] != current or row["revision"] != current["revision"]:
+        raise ValueError("E_REPAIR_STALE_BINDING")
+    if row["environment"] != current["environment"]:
+        raise ValueError("E_REPAIR_ENVIRONMENT")
+    registry = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())
+    entry = next(item for item in registry["entries"] if item["vector_id"] == row["case_id"])
+    if (
+        entry["harness"] != "SQLITE_TRANSACTION"
+        or row["vector_id"] != row["case_id"]
+        or row["expected"] != entry["expected_post_restart_state"]
+        or row["execution_kind"] != "SQLITE_TRANSACTION_PROCESS_CRASH"
+        or row["qualification_scope"] != "SQLITE_TRANSACTION"
+        or row["observed_error"] is not None
+        or row["comparison"] != {"matched": True, "allowed_atomic_outcome": True}
+        or row["command_exit"] != {"child": -9, "reopen": 0, "replay": 0, "reader": 0}
+    ):
+        raise ValueError("E_SQLITE_TERMINAL_RECORD")
+    actual = _sqlite_artifact(row, "actual_artifact")
+    expected = _sqlite_artifact(row, "expected_artifact")
+    scenario = _sqlite_artifact(row, "input_artifact")
+    checkpoint = _sqlite_artifact(row, "checkpoint_artifact")
+    boundary = _sqlite_artifact(row, "boundary_artifact")
+    reader_input = _sqlite_artifact(row, "reader_input_artifact")
+    if actual != row["actual"] or expected != row["expected"] or _contains_expected(scenario):
+        raise ValueError("E_SQLITE_ARTIFACT_CONTENT")
+    identity = row["identity"]
+    case_directory = Path(row["case_directory"])
+    outer_run = case_directory.parent.name.removeprefix("run-")
+    if (
+        checkpoint != identity
+        or identity["run_id"] != outer_run
+        or identity["case_id"] != row["case_id"]
+        or identity["checkpoint_id"] != entry["crash_checkpoint"]
+        or identity["component"] != "SQLITE_TRANSACTION"
+        or identity["pid"] != row["pid"]
+        or boundary["identity"] != identity
+    ):
+        raise ValueError("E_SQLITE_CHECKPOINT_IDENTITY")
+    if (
+        _contains_expected(reader_input)
+        or set(reader_input) != {"run_dir", "run_id", "case_id", "checkpoint_id"}
+        or Path(reader_input["run_dir"]).name != reader_input["run_id"]
+        or reader_input["case_id"] != row["case_id"]
+        or reader_input["checkpoint_id"] != entry["crash_checkpoint"]
+    ):
+        raise ValueError("E_SQLITE_READER_INPUT")
+    child = row["launch_provenance"]
+    reader = row["reader_provenance"]
+    if (
+        Path(child["entrypoint"]["path"]).resolve()
+        != (ROOT / "tools/sqlite_crash_child.py").resolve()
+        or child["entrypoint"]["sha256"]
+        != current["source_sha256"]["tools/sqlite_crash_child.py"]
+        or Path(reader["entrypoint"]["path"]).resolve()
+        != (ROOT / "tools/restart_state_reader.py").resolve()
+        or reader["entrypoint"]["sha256"]
+        != current["source_sha256"]["tools/restart_state_reader.py"]
+        or len(reader["runs"]) != 2
+        or any(
+            item["exit"] != 0 or _sha(Path(item["path"])) != item["sha256"]
+            for item in reader["runs"]
+        )
+    ):
+        raise ValueError("E_SQLITE_PROCESS_PROVENANCE")
+    shim = row["shim"]
+    if (
+        shim["source_sha256"] != _sha(ROOT / "tools/sqlite_commit_crash_shim.c")
+        or _sha(Path(shim["path"])) != shim["binary_sha256"]
+    ):
+        raise ValueError("E_SQLITE_SHIM")
+    phase = PHASES["-".join(row["case_id"].split("-")[:2])]
+    if boundary["phase"] != phase:
+        raise ValueError("E_SQLITE_BOUNDARY")
+    if row["case_id"] == "SQL-06-DURING-COMMIT" and (
+        boundary != {
+            "identity": identity,
+            "phase": "during_commit",
+            "commit_armed": True,
+            "operation": boundary.get("operation"),
+            "target": boundary.get("target"),
+            "sqlite_path": boundary.get("sqlite_path"),
+        }
+        or boundary["operation"] not in {"fsync", "fdatasync"}
+        or boundary["target"] not in {"rollback_journal", "database"}
+    ):
+        raise ValueError("E_SQLITE_COMMIT_IO")
+    before = actual["before"]["counts"]
+    after = actual["after"]["counts"]
+    old_or_new = before["raw_commits"]
+    allowed = {0, 1} if row["case_id"] == "SQL-06-DURING-COMMIT" else {
+        entry["expected_post_restart_state"]["sql_row_deltas"]["raw_commits"]
+    }
+    if (
+        old_or_new not in allowed
+        or [before[name] for name in CHAIN] != [old_or_new] * len(CHAIN)
+        or [after[name] for name in CHAIN] != [1] * len(CHAIN)
+        or actual["replay"] != "ACK"
+        or actual["atomic_outcome"] != ("NEW" if old_or_new else "OLD")
+    ):
+        raise ValueError("E_SQLITE_ATOMIC_OUTCOME")
+
+
 def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
     if row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
         _verify_indexeddb(row, current)
     elif row.get("execution_kind") == "OFFLINE_SHARED_CLOCK_EVALUATOR":
         _verify_clock(row, current)
+    elif row.get("execution_kind") == "SQLITE_TRANSACTION_PROCESS_CRASH":
+        _verify_sqlite(row, current)
     else:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
 
