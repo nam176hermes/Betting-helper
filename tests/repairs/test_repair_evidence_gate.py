@@ -64,7 +64,7 @@ def test_full_inventory_keeps_actual_clock_and_durability_holds(
     assert result["result"] == "HOLD"
     assert result["qualification_scope"] == "FULL"
     assert result["required_id_set_complete"] is True
-    assert result["status_counts"] == {"PASS": 17, "NOT_IMPLEMENTED": 94}
+    assert result["status_counts"] == {"PASS": 65, "NOT_IMPLEMENTED": 46}
     assert result["errors"] == []
     assert result["security_review"] == "NOT_REVIEWED"
     assert result["production_authority"] == result["live_authority"] == "NONE"
@@ -82,7 +82,7 @@ def test_full_inventory_consumes_four_actual_indexeddb_rows(
     )
     assert result["result"] == "HOLD"
     assert result["qualification_scope"] == "FULL"
-    assert result["status_counts"] == {"PASS": 21, "NOT_IMPLEMENTED": 90}
+    assert result["status_counts"] == {"PASS": 69, "NOT_IMPLEMENTED": 42}
     assert result["errors"] == []
     assert result["production_authority"] == result["live_authority"] == "NONE"
     assert result["money_authority"] == "NONE"
@@ -95,7 +95,7 @@ def test_full_aggregate_runner_replaces_only_indexeddb_holds(tmp_path: Path) -> 
     assert ids == gate().full_required_ids()
     assert len(ids) == len(set(ids)) == 111
     assert result["result"] == "HOLD"
-    assert result["status_counts"] == {"PASS": 21, "NOT_IMPLEMENTED": 90}
+    assert result["status_counts"] == {"PASS": 69, "NOT_IMPLEMENTED": 42}
     assert result["errors"] == []
     assert result["security_review"] == "NOT_REVIEWED"
     assert result["production_authority"] == result["live_authority"] == "NONE"

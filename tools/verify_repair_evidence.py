@@ -672,6 +672,10 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
         _verify_clock(row, current)
     elif row.get("execution_kind") == "SQLITE_TRANSACTION_PROCESS_CRASH":
         _verify_sqlite(row, current)
+    elif row.get("execution_kind") == "GAP_GENERATION_COHERENCE_PROCESS":
+        from tools.run_gap_coherence_crash_matrix import verify_gap_record
+
+        verify_gap_record(row, current)
     else:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
 

@@ -40,7 +40,7 @@ def _safe_source(entrypoint: str) -> Path:
     return source
 
 
-def test_all_registered_harness_entrypoints_compile_and_emit_contract_not_implemented() -> None:
+def test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked() -> None:
     children = json.loads(
         (PACK / "docs/registries/crash-child-command-registry.v1.json").read_text()
     )["entries"]
@@ -58,7 +58,10 @@ def test_all_registered_harness_entrypoints_compile_and_emit_contract_not_implem
         entrypoint = child["entrypoint"]
         source = _safe_source(entrypoint)
         source_text = source.read_text()
-        assert ERROR in source_text
+        if child["harness"] == "GAP_GENERATION_COHERENCE":
+            assert "Owned generation/coherence durability fixture" in source_text
+        else:
+            assert ERROR in source_text
         if source.suffix == ".py":
             ast.parse(source_text)
             assert "def main" in source_text

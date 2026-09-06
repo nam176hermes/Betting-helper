@@ -5,8 +5,19 @@ from pathlib import Path
 
 import pytest
 
+from moj_discovery.generation import GenerationController
 from tests.repairs.test_loopback_actual_crashes import PACK, entry, runner
 from tests.repairs.test_shared_ingest_persistence import observation
+
+
+def test_generation_owner_opens_only_exact_successor_and_never_evicts() -> None:
+    owner = GenerationController()
+    assert owner.replace_after_gap({"0": "ACTIVE"}, 0) == {"0": "CLOSED", "1": "ACTIVE"}
+    assert owner.capacity_decision(used=7, incoming=1, normal_limit=7, terminal_reserve=1) == {
+        "accepted": False,
+        "status": "SAFETY_STOP",
+        "evicted": 0,
+    }
 
 
 @pytest.mark.parametrize("prefix", [f"GAP-{number:02d}-" for number in (*range(1, 9), 10)])
