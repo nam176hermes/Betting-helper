@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.3.6:external-seal",
+  "$defs": {
+    "ExternalSealAttestation": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "artifact_type",
+        "artifact",
+        "authorized_production_phases",
+        "created_at",
+        "zip_sha256",
+        "manifest_sha256",
+        "governed_content_root",
+        "self_review_markdown_sha256",
+        "self_review_json_sha256",
+        "task_manifest_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "external-seal-attestation/v6"
+        },
+        "artifact_type": {
+          "enum": [
+            "PLAN",
+            "RUNTIME_PACK"
+          ]
+        },
+        "artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorized_production_phases": {
+          "const": "NONE"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "zip_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "governed_content_root": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "self_review_markdown_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "self_review_json_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "task_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "repo0_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline_file_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "baseline_tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "artifact_type": {
+                "const": "RUNTIME_PACK"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "repo0_receipt_sha256",
+              "baseline_file_root_sha256",
+              "candidate_receipt_sha256",
+              "baseline_commit",
+              "baseline_tree"
+            ]
+          },
+          "else": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "repo0_receipt_sha256"
+                  ]
+                },
+                {
+                  "required": [
+                    "baseline_file_root_sha256"
+                  ]
+                },
+                {
+                  "required": [
+                    "candidate_receipt_sha256"
+                  ]
+                },
+                {
+                  "required": [
+                    "baseline_commit"
+                  ]
+                },
+                {
+                  "required": [
+                    "baseline_tree"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

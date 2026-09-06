@@ -1,0 +1,9 @@
+{
+  "schema_version": "migration-source/v1",
+  "source_runtime": "/home/thenam176/betting-helper/discovery-runtime",
+  "source_commit": "46767ea8097f51a568e656fcebed17350e93fc94",
+  "source_tree_oid": "86759aed58358f25218bc14e24bc8874f5eba204",
+  "source_file_tree_root": "03d30c45a9e2b82af0bbb6c1b319efa03b50f4ec7e9a011a4abd381bb91fd654",
+  "required_clean": true,
+  "required_no_remote": true
+}

@@ -1,0 +1,686 @@
+{
+  "schema_version": "version-rebinding/v2",
+  "owner_phase": "MIG0",
+  "patches": [
+    {
+      "path": "runtime/AGENTS.md",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/AGENTS.md",
+      "before_sha256": "d389b187ab9714861a94f7276c2eadac755394f16d32b53a0222d540c76fdbe0",
+      "after_sha256": "e69d77486291ea204747b7eb3a11a5025379f988822e887184b123336e9f7286",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/README.md",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/README.md",
+      "before_sha256": "f2975062d23dece5b8dc2ca3b7f6f837bb7b26e365a62e9887a703476141d225",
+      "after_sha256": "9dd5c2f4e36a984e2e45cbb595da159c377944459cb12f699b519e69f5913bec",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
+        },
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/test-red/canonical-hash.red.test.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/test-red/canonical-hash.red.test.ts",
+      "before_sha256": "67be263c8458476725c202a2b45590bb343e4d23dd9f5040876860bde9be3aa2",
+      "after_sha256": "bf1d426d1187dc9965ac6d24b3092a0a11c1538fa84eac9ac31516ba268eaca2",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/test/bootstrap/canonical-vectors.test.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/test/bootstrap/canonical-vectors.test.ts",
+      "before_sha256": "5137a29caf42683a9e32899218e3c824078f0542a79a2e1cafc1d27abd630400",
+      "after_sha256": "4b5bb1153cb2af7aa35de850826def6192418e2a9f34a2d8cfd012aa8ecf5b5d",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/test/bootstrap/clock-coherence-vectors.test.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/test/bootstrap/clock-coherence-vectors.test.ts",
+      "before_sha256": "69c14fa8055b8dde60af1560f002b2b88da40ee50f887e74e1892b8ce3481df4",
+      "after_sha256": "6995a4a8403b40aaf462d2b2f77e3ff75ffe90b4bc8ff9d2723d976cef622fec",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/test/schema-vendor.test.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/test/schema-vendor.test.ts",
+      "before_sha256": "910364e2d231f9f0f1d4f763ee8e0d6c55a523e76ea8eb9aa95c340404dd9d78",
+      "after_sha256": "4e696e51f9537c91ebca08c0785a6fa099d58f984d7239324894fd2aa2b149e0",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+      "before_sha256": "1705c95cbc4e412778c9244e1e2ea8bd957bb73bf4ee725f7ba791045b258727",
+      "after_sha256": "22809ff9440cd0344bffe782b1a813bdd6c8d1d0c1594e3de4a599bd3aa4fb80",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/extension/tools/verify-capability-graph.ts",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/extension/tools/verify-capability-graph.ts",
+      "before_sha256": "86a558eb92f40073b69b5c4f00d8019cebc53d5c256c264c283a2a8c83af84a9",
+      "after_sha256": "8bc82abed82137fb7a99f0ac4f9e648e7278efff8c9d0aff53f3ac09a62965e5",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/canonical.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/canonical.py",
+      "before_sha256": "90d37e4451d67a921a533f079bd5c1aa83e26e5a2b1992c857471733a737a1e4",
+      "after_sha256": "32b3dacd9daa07ee063ce6cade6b55a039ca87b14b2cd289313d9cd0ee78943c",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/evidence_semantics.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/evidence_semantics.py",
+      "before_sha256": "09d0905a5760bb4d19bc3cd30c8be8370b61e337e524c63aaffeb589b31e486b",
+      "after_sha256": "31733113441d5e5bb7d7febc59bded640c989e45dc07f389ce9510bc15553119",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/governance.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/governance.py",
+      "before_sha256": "420263b7ad3c9d0c5860a783e4e60174977a910c6136ba27eca811f0726aa614",
+      "after_sha256": "7f6f29d56b2dfef00f5a95bbdbb744c804d7311e4e62096754d2d14b5889b86f",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/pack_verifier.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/pack_verifier.py",
+      "before_sha256": "a068b722f9ba81234974f0be018e450a640dc1744f47dd360d8bd6c63f6dc1c2",
+      "after_sha256": "f3182f356bc7071cce1df047c49a58455ea92bcd4355373690ffc79ce64f78c1",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
+        },
+        {
+          "old": "/home/thenam176/betting-helper/discovery-runtime",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime"
+        },
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/schema_registry.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/schema_registry.py",
+      "before_sha256": "c0f321ee59001878d26a5ab68979e828775845abb3151e07f8354a5cfb0a7bcf",
+      "after_sha256": "ca84033f53c624056a53883e19c92a9bb1eaca20111ada91d870c7325223388d",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/universal_denial.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/universal_denial.py",
+      "before_sha256": "4d10e903683bd83827b072eb4d2f51f1081d897b0dc0c8a14200a1c2344375f5",
+      "after_sha256": "69a9d6e351dbd34fad340e635e39820e8b0c7441e26e926880d3345b7439c53b",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/vendor.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/src/moj_discovery/vendor.py",
+      "before_sha256": "d4c93f417daa5decf9e8345534b866c2a4da5b01a410a6cc380044e03b2267ee",
+      "after_sha256": "6e456d2342c52727f2f3fe6e0965774bea1a79fd19b7fa35e20431dbee589cd4",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests-red/test_canonical_hash_red.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests-red/test_canonical_hash_red.py",
+      "before_sha256": "8330085fee60b9bd698a6b9f4853cf2e612abe6a440595484a526899b9cace51",
+      "after_sha256": "4de7dfa23eafc99218caf5fec74a0b368f64df021e60b864ca608f7be56d7413",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_authorization_vectors.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_authorization_vectors.py",
+      "before_sha256": "7585c194faa2c91bc8f9ca2f7e73900c8bf3f8616bfc9a4c033c99904b5c4c42",
+      "after_sha256": "d2050111a7f99ecb0a9b24661cb87a7e24613c021b32aa935902d64d3533f07c",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_capability_reachability.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_capability_reachability.py",
+      "before_sha256": "6d2b6b5bf51a08cb67b70b1c7a04d059c38ea0769f03c45a92713c8954cd0f4a",
+      "after_sha256": "b5f585aba906eb07a2d4baa0aead8f1521bc54f3eeb1f8795a9382d3e868073e",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_ddl.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_ddl.py",
+      "before_sha256": "7f9691f6997869779125ccdfc33bf56c15f7aed726df9975f45a43ac6118af81",
+      "after_sha256": "e840b35a55fa591236fdf75630bb4be1c49d69f520fde4198e69df892f6a1267",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_durability_crash.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_durability_crash.py",
+      "before_sha256": "c0a1ef9a408d6bd05cde80d0733020dfbf34d9b0d0e8fc03c2721a0fa5796870",
+      "after_sha256": "a0a869d52c4b61e806c1c7e81b493400f9ff954745155038ca319ceecf4b19d3",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_governance_semantic_vectors.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_governance_semantic_vectors.py",
+      "before_sha256": "ef9bee80469d42a8b8175643eb46b9b395bf3fbdca990998cc008e99f249b85f",
+      "after_sha256": "723de464907b49a72a96711ccbdff087a6978bc6ace7677b117bff2ee7d49d99",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_graph_partition.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_graph_partition.py",
+      "before_sha256": "33621fce9fe1942ecf734a228fc6b2f09156d8d3e1c63450a295ab34d9d8b8c0",
+      "after_sha256": "9ec188c136b63b8b7557709a64399b9ee8ed4f9fe18e1763c7fe2f247b5d21d2",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_repository_baseline.py",
+      "before_sha256": "7ef1cad9c7f8f9ed194c81821c49fa1fd7e3904b0569b1bdb54136e821b58f84",
+      "after_sha256": "a0ac54c2514a7991081b876ca66c157caebfbb4e65bc4251d95d07ec863bee7e",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
+        },
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_format_checker.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_schema_format_checker.py",
+      "before_sha256": "7451330ce1ce19eb212f4c2dddede5242433f0ca36caa100206b4838022ca7bc",
+      "after_sha256": "ccb9beae9f41e40cd09bd79f58a71eb09367fd8d11e8460989b4684145a94b81",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_vendor.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_schema_vendor.py",
+      "before_sha256": "d678082cea89d6295299b1d22cca3c21f28dde2c740b99e37cae510e0af5d398",
+      "after_sha256": "0256b70a0f16635e7bac565c3096a046778727e27e230028dbe0c635a6ce2c12",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
+        },
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_semantic_denial.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tests/bootstrap/test_semantic_denial.py",
+      "before_sha256": "4c8ec7cd91b02746c08f722941ff56f54fdaf1c5f7be6f75fc8228a7641374aa",
+      "after_sha256": "c1547f60a279c03f925217e50e5ca3d9dede4c618d52de2727f652dc60d6dc58",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tools/run_command_registry.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tools/run_command_registry.py",
+      "before_sha256": "2fd3c2c28842beffc1b1d4dc353bb3475090b16f33ca0ce7b71ff4bf25a33ced",
+      "after_sha256": "16064b37303dcc18e9af32b07adaa7519ebdca66730f7fb152886e4c470f7f31",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
+        },
+        {
+          "old": "/home/thenam176/betting-helper/discovery-runtime",
+          "new": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime"
+        },
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tools/sync_pack_assets.py",
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/tools/sync_pack_assets.py",
+      "before_sha256": "528663797d453aadd01a8ddccbf7c6351a0f46399193ff35d741671748c124ed",
+      "after_sha256": "d6ffbcec441668561e9d93f57316597abc4f1a3e12dca099d6474f147aa06158",
+      "mode": "HASH_GUARDED_UTF8_REPLACEMENT",
+      "replacements": [
+        {
+          "old": "vendor/hybrid-discovery-v6.2",
+          "new": "vendor/hybrid-discovery-v6.3.6"
+        }
+      ]
+    }
+  ],
+  "legacy_exceptions": [
+    {
+      "path": "runtime/README.md",
+      "source_sha256": "c1b5dc358d86c47f5b3c8dea13984e2abcc3bbcf93c2887314a84c33db8e3a30",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/extension/manifest.json",
+      "source_sha256": "154b2462628377a4b442e5dfc6689b0080fa1e78746173940f8b3fbfb8c89ec7",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/extension/package.json",
+      "source_sha256": "9854343c2a798a931ca384b6e9245cc8dcb98ca496549e4e253d2fa3c3c5f616",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/extension/test/schema-vendor.test.ts",
+      "source_sha256": "672ca259e7bbfbd5ade04738bbd56fc80a9118743b0995e87407927aee160599",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+      "source_sha256": "7911693445eef70c632057205d6396d3a2efc2e84521094f0f690d0f9cf19e40",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/extension/tools/verify-capability-graph.ts",
+      "source_sha256": "b93dc028d82fd64cb972b507e64ce8c43dbf847dcaf4e999306a9de7e572eb7e",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/package.json",
+      "source_sha256": "12557a1bdafcb4d31ef2ac12196d1faed18e4d09b1fc4707e99169d9ccdc3479",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/pyproject.toml",
+      "source_sha256": "4171b6551124ddf425efac41e08fe14b11d8d87584f8632db8b368c05901cefb",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/__init__.py",
+      "source_sha256": "1eb28e5ef061a8fe391a4f03c4d24f1cca71d35de336f1864079f8c37da95777",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/authorization_semantics.py",
+      "source_sha256": "c82fc76777962ab595ac4e0f8043fd04d1d158da09ae14321961c12c08745470",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/governance.py",
+      "source_sha256": "4a5c62e39b86bd4093ae8a47cf3de84a7ea2c802551c8ab49d9c1839c8d0a4ca",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/pack_verifier.py",
+      "source_sha256": "f37edda5cdb0be150455a73beade79b1aa383b422dea631d040b9d616b14f39f",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/semantic_vectors.py",
+      "source_sha256": "1ad1ebe240d9ff62b0b26de98eaa700ea0aaee1bfdda9555bdc7405d921b9982",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/src/moj_discovery/universal_denial.py",
+      "source_sha256": "6f2a401906e8a8360ea2dc64e88c090f880c6a8de61a9040607f66894928c745",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_authorization_vectors.py",
+      "source_sha256": "14375c6b8019cbe47214818fd2f8f7d034118d93896241b58da314116483c081",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "source_sha256": "5c7f77fb6f3c2043856e27a4d8d10b51e9a2492ae5b0974cf672b079d2c6166e",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_closure.py",
+      "source_sha256": "73a046ac838ea9e214ae950ed7424abc7482977a56c00ee973c94946244545af",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_semantic_denial.py",
+      "source_sha256": "f91875b26991dd6db096ae2ae502385d6fdb3f3bd621f22a86529ff8b345e256",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tools/run_command_registry.py",
+      "source_sha256": "62d85686ba47b34a63f03aeaad3c8707bbfdf5377ef586c578e5a31ba5143576",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/tools/verify_toolchains.py",
+      "source_sha256": "f26a788dcc28ef39fb429521ccbb513a4bb11e0670736a6b07108fa20d8022e6",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    },
+    {
+      "path": "runtime/uv.lock",
+      "source_sha256": "876853e6c71f8e33606d99353838437f8e8c223a98fa7899c25c31146339a974",
+      "reason": "Inherited protocol identifier, fixture provenance or source package version; delivery paths must use v6.3.6. No protocol migration is authorized."
+    }
+  ],
+  "immutable_protocol_sources": [
+    "docs/inherited/v6.2/cdp/browser_protocol.json",
+    "docs/inherited/v6.2/cdp/js_protocol.json",
+    "docs/inherited/v6.2/graphs/executable-discovery-graph.v1.json",
+    "docs/inherited/v6.2/graphs/non-authoritative-future-roadmap.v1.json",
+    "docs/inherited/v6.2/registries/canonical-hash-domains.v1.json",
+    "docs/inherited/v6.2/registries/discovery-capability-consumers.v1.json",
+    "docs/inherited/v6.2/registries/pack-archive-profile.v1.json",
+    "docs/inherited/v6.2/registries/required-discovery-decisions.v1.json",
+    "docs/inherited/v6.2/registries/scope0-input-policy.v1.json",
+    "docs/inherited/v6.2/schemas/authorization-records.schema.json",
+    "docs/inherited/v6.2/schemas/capability-manifest.schema.json",
+    "docs/inherited/v6.2/schemas/clock-coherence-records.schema.json",
+    "docs/inherited/v6.2/schemas/common-records.schema.json",
+    "docs/inherited/v6.2/schemas/d0-evidence.schema.json",
+    "docs/inherited/v6.2/schemas/durability-records.schema.json",
+    "docs/inherited/v6.2/schemas/e0-evidence.schema.json",
+    "docs/inherited/v6.2/schemas/loopback-messages.schema.json",
+    "docs/inherited/v6.2/schemas/meta-records.schema.json",
+    "docs/inherited/v6.2/schemas/pack-archive.schema.json",
+    "docs/inherited/v6.2/schemas/raw-observation.schema.json",
+    "docs/inherited/v6.2/schemas/review-records.schema.json",
+    "docs/inherited/v6.2/schemas/scope-records.schema.json",
+    "docs/inherited/v6.2/security/cdp-protocol-lock.v1.json",
+    "docs/inherited/v6.2/security/discovery-capability-manifest.v1.json",
+    "docs/inherited/v6.2/security/trust-root.v1.json",
+    "docs/inherited/v6.2/sql/discovery-store-v1.sql",
+    "docs/inherited/v6.2/vectors/authorization-v1.json",
+    "docs/inherited/v6.2/vectors/canonical-hashing-v1.json",
+    "docs/inherited/v6.2/vectors/capability-negative-v1.json",
+    "docs/inherited/v6.2/vectors/clock-coherence-v1.json",
+    "docs/inherited/v6.2/vectors/d0-evidence-v1.json",
+    "docs/inherited/v6.2/vectors/durability-crash-v1.json",
+    "docs/inherited/v6.2/vectors/e0-evidence-v1.json",
+    "docs/inherited/v6.2/vectors/pack-archive-v1.json",
+    "docs/inherited/v6.2/vectors/pack-governed-metadata-v1.json",
+    "docs/inherited/v6.2/vectors/repo0-baseline-roots-v1.json",
+    "docs/inherited/v6.2/vectors/review-semantic-v1.json",
+    "docs/inherited/v6.2/vectors/scope-semantic-v1.json"
+  ],
+  "rule": "Before hash applies once; after hash is an idempotent no-op; any other hash fails. No broad replace or undeclared exception.",
+  "final_legacy_policy": {
+    "scope": "PINNED_BASELINE_MIGRATION_OUTPUTS_AND_IMPORTED_FIXTURES",
+    "token_pattern": "[A-Za-z0-9_:/.-]*(?:v6\\.2|v6\\.3\\.[123]|V63[123])[A-Za-z0-9_:/.-]*",
+    "source_entries": [
+      {
+        "path": "runtime/README.md",
+        "allowed_literals": [
+          "v6.2"
+        ]
+      },
+      {
+        "path": "runtime/extension/manifest.json",
+        "allowed_literals": [
+          "v6.2"
+        ]
+      },
+      {
+        "path": "runtime/extension/test/schema-vendor.test.ts",
+        "allowed_literals": [
+          "urn:hybrid-discovery:v6.2:capability-manifest"
+        ]
+      },
+      {
+        "path": "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+        "allowed_literals": [
+          "hybrid-discovery-v6.2-working-"
+        ]
+      },
+      {
+        "path": "runtime/extension/tools/verify-capability-graph.ts",
+        "allowed_literals": [
+          "hybrid-discovery-v6.2-working-"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/__init__.py",
+        "allowed_literals": [
+          "v6.2"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/authorization_semantics.py",
+        "allowed_literals": [
+          "HYBRID-DISCOVERY/v6.2/AUTHORIZATION-SCOPE-BINDING/v1",
+          "HYBRID-DISCOVERY/v6.2/REVOCATION-LEDGER-GENESIS/v1",
+          "HYBRID-DISCOVERY/v6.2/SIGNATURE/Ed25519/v1",
+          "v6.2"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/governance.py",
+        "allowed_literals": [
+          "HYBRID-DISCOVERY/v6.2/",
+          "HYBRID-DISCOVERY/v6.2/CursorSeed/v1",
+          "HYBRID-DISCOVERY/v6.2/CursorStep/v1",
+          "HYBRID-DISCOVERY/v6.2/SIGNATURE/Ed25519/v1",
+          "https://hybrid-discovery.local/schemas/v6.2/",
+          "urn:hybrid-discovery:v6.2:",
+          "urn:hybrid-discovery:v6.2:meta-records:v1"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/pack_verifier.py",
+        "allowed_literals": [
+          "HYBRID-DISCOVERY/v6.2/Repo0BaselineReceipt/v1",
+          "HYBRID-DISCOVERY/v6.2/Repo0CommandResultSet/v1",
+          "HYBRID-DISCOVERY/v6.2/Repo0IndependentFileTree/v1",
+          "hybrid-discovery-v6.2"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/semantic_vectors.py",
+        "allowed_literals": [
+          "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+          "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+          "urn:hybrid-discovery:v6.2:meta-records:v1",
+          "urn:hybrid-discovery:v6.2:scope0-input-policy:v1"
+        ]
+      },
+      {
+        "path": "runtime/src/moj_discovery/universal_denial.py",
+        "allowed_literals": [
+          "urn:hybrid-discovery:v6.2:authorization-records",
+          "urn:hybrid-discovery:v6.2:meta-records:v1"
+        ]
+      },
+      {
+        "path": "runtime/tests/bootstrap/test_authorization_vectors.py",
+        "allowed_literals": [
+          "hybrid-discovery-v6.2"
+        ]
+      },
+      {
+        "path": "runtime/tests/bootstrap/test_repository_baseline.py",
+        "allowed_literals": [
+          "hybrid-discovery-v6.2"
+        ]
+      },
+      {
+        "path": "runtime/tests/bootstrap/test_schema_closure.py",
+        "allowed_literals": [
+          "urn:hybrid-discovery:v6.2:missing:v1",
+          "urn:hybrid-discovery:v6.2:test-closed:v1"
+        ]
+      },
+      {
+        "path": "runtime/tests/bootstrap/test_semantic_denial.py",
+        "allowed_literals": [
+          "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+          "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+          "urn:hybrid-discovery:v6.2:meta-records:v1"
+        ]
+      },
+      {
+        "path": "runtime/tools/run_command_registry.py",
+        "allowed_literals": [
+          "HYBRID-DISCOVERY/v6.2/Repo0CommandResultSet/v1",
+          "urn:hybrid-discovery:v6.2:meta-records:v1"
+        ]
+      }
+    ],
+    "additional_fixture_literals": [
+      "docs/fixtures/inherited/v6.2/task-command-registry.json",
+      "docs/fixtures/inherited/v6.2/plan-manifest.json"
+    ],
+    "immutable_fixture_files": [
+      {
+        "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/fixtures/inherited/v6.2/task-command-registry.json",
+        "sha256": "78f05809b0d027ef07523fe0efeb746fc96e7a2cb615d702cead04c902c1a685"
+      },
+      {
+        "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/fixtures/inherited/v6.2/plan-manifest.json",
+        "sha256": "77132d5005d312282d7521eb21f6db556a463d53d2ffe4015b1ecdb6dc028e50"
+      }
+    ],
+    "changed_source_authority": "DECLARED_MODIFIER_AND_ACCEPTED_TASK_EVIDENCE",
+    "deny_unlisted_tokens": true,
+    "initial_hashes_apply_only_at": "V636-MIG0-T03",
+    "final_native_lock_policy": "COMPARE_EXACT_VERSIONS_TO_BASELINE_AND_HASH_TO_MIG0_T07_RECEIPT"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "pack-governed-metadata-vectors/v1",
+  "record_type": "PackGovernedMetadataVectorSet",
+  "valid_vectors": [
+    {
+      "vector_id": "PLAN-MANIFEST-VALID-CANONICAL",
+      "artifact_path": "plan-manifest.json",
+      "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#PlanManifest",
+      "expected_result": "VALID"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-VALID-CANONICAL",
+      "artifact_path": "docs/receipts/source-provenance.json",
+      "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SourceProvenance",
+      "expected_result": "VALID"
+    }
+  ],
+  "negative_vectors": [
+    {
+      "vector_id": "PLAN-MANIFEST-REJECT-CROSS-GRAPH-EDGE",
+      "base_artifact_path": "plan-manifest.json",
+      "mutation_code": "FUTURE_GRAPH_ADD_SCOPE0_TO_F0B_EDGE",
+      "expected_error": "E_PLAN_MANIFEST_GRAPH"
+    },
+    {
+      "vector_id": "PLAN-MANIFEST-REJECT-CROSS-GRAPH-NODE",
+      "base_artifact_path": "plan-manifest.json",
+      "mutation_code": "EXECUTABLE_GRAPH_ADD_F0B_NODE",
+      "expected_error": "E_PLAN_MANIFEST_GRAPH"
+    },
+    {
+      "vector_id": "PLAN-MANIFEST-REJECT-TASK-OMISSION",
+      "base_artifact_path": "plan-manifest.json",
+      "mutation_code": "TASK_REGISTRY_OMIT_LAST_TASK",
+      "expected_error": "E_PLAN_MANIFEST_TASK_REGISTRY"
+    },
+    {
+      "vector_id": "PLAN-MANIFEST-REJECT-AUTHORITY-ESCALATION",
+      "base_artifact_path": "plan-manifest.json",
+      "mutation_code": "PLAN_SET_READY_TO_IMPLEMENT_YES",
+      "expected_error": "E_PACK_GOVERNED_METADATA_SCHEMA"
+    },
+    {
+      "vector_id": "PLAN-MANIFEST-REJECT-HD-JCS-SELF-HASH",
+      "base_artifact_path": "plan-manifest.json",
+      "mutation_code": "PLAN_ADD_CONTENT_HASH",
+      "expected_error": "E_PACK_GOVERNED_METADATA_SCHEMA"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-REJECT-IMPORT-BYTES",
+      "base_artifact_path": "docs/receipts/source-provenance.json",
+      "mutation_code": "IMPORT_APPEND_ONE_BYTE",
+      "expected_error": "E_SOURCE_PROVENANCE_IMPORT_BYTES"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-REJECT-SOURCE-SWAP",
+      "base_artifact_path": "docs/receipts/source-provenance.json",
+      "mutation_code": "IMPORT_SOURCE_PATH_SWAP",
+      "expected_error": "E_PACK_GOVERNED_METADATA_SCHEMA"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-REJECT-V61-PLAN-ENTRY",
+      "base_artifact_path": "docs/receipts/source-provenance.json",
+      "mutation_code": "V61_SOURCE_MANIFEST_REPLACE_PLAN_ENTRY_HASH",
+      "expected_error": "E_SOURCE_PROVENANCE_V61_SOURCE_PACK"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-REJECT-V61-ARCHIVE-SIDECAR",
+      "base_artifact_path": "docs/receipts/source-provenance.json",
+      "mutation_code": "V61_SIDECAR_REPLACE_DECLARED_ARCHIVE_HASH",
+      "expected_error": "E_SOURCE_PROVENANCE_V61_SOURCE_PACK"
+    },
+    {
+      "vector_id": "SOURCE-PROVENANCE-REJECT-HD-JCS-SELF-HASH",
+      "base_artifact_path": "docs/receipts/source-provenance.json",
+      "mutation_code": "SOURCE_PROVENANCE_ADD_CONTENT_HASH",
+      "expected_error": "E_PACK_GOVERNED_METADATA_SCHEMA"
+    }
+  ],
+  "production_authority": "NONE"
+}

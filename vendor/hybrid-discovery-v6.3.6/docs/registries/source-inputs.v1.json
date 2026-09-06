@@ -1,0 +1,67 @@
+{
+  "schema_version": "source-inputs/v1",
+  "v6_3_1_plan_zip_sha256": "2f7498c14434c10ce8acb9e167a9a14ff02de31f6ecb2d4d191526558368865c",
+  "v6_2_review_markdown_sha256": "250b28b50390581f6d97ed27181fa436c4ccb36f08e3ab992c80748ceed79322",
+  "v6_2_review_json_sha256": "15728851bd663efe186a434070f5a7657f86ab14e30b445df4469b6dda5c10f5",
+  "plan_review_import": "pack/docs/reviews/v6.3.1-plan-review-input.md",
+  "v6_3_1_plan_review_input_sha256": "6f045f9d426433d61c2cfe29ac037452b160d2910da22d32b95e90fe1210309d",
+  "v6_3_4_plan_zip_sha256": "6eb746ed00a773400e2d8774bbe6a070c9bea8aea287b9dd629daa439266d2f0",
+  "v6_3_4_external_attestation_sha256": "2052a7ad78a054a6159459a280a47c48c6b60586a2608bdedd44405b55dd0c1a",
+  "required_plan_source_files": [
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.seal-attestation.json",
+      "size": 764,
+      "sha256": "b1596dfc13574d95a914e52223fb57c3108ec54381ff482b53d32948dd3678d2"
+    },
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip",
+      "size": 132732,
+      "sha256": "dc7be9176d88a3160ea7259fad3c7f57d48d855b7211ad995fc24d33f59ba59b"
+    },
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip.sha256",
+      "size": 120,
+      "sha256": "fc6297a618943f85122c9fbd3807c902275b0608a1431ea356e9da79369abcd9"
+    },
+    {
+      "path": "docs/reviews/v6.3.2-independent-review.md",
+      "sha256": "c22edcec6c1d804e1444bc820c4ece5bd3379d9a3103464c808754e4b5bee992"
+    },
+    {
+      "path": "docs/reviews/v6.3.2-independent-review-evidence.json",
+      "sha256": "bdaee5a25879a66f8105d6ed9cdee9e36c103a0c034dabe720bb5f61e84ff94b"
+    },
+    {
+      "path": "docs/reviews/v6.3.3-plan-review.md",
+      "sha256": "086a25ff1848da51fd5e508e0fd62cade557d07cad64fd97c3591a104d6bdefc"
+    },
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip",
+      "size": 5165377,
+      "sha256": "6eb746ed00a773400e2d8774bbe6a070c9bea8aea287b9dd629daa439266d2f0"
+    },
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip.sha256",
+      "size": 120,
+      "sha256": "1843ff1b7d764674b247199ff9de6fbf11a33bbddf193b4baf1a37fba1746619"
+    },
+    {
+      "path": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.seal-attestation.json",
+      "size": 791,
+      "sha256": "2052a7ad78a054a6159459a280a47c48c6b60586a2608bdedd44405b55dd0c1a"
+    },
+    {
+      "path": "docs/sources/V634-MIG0-T05.json",
+      "size": 3061,
+      "sha256": "a0c2049523c632e05705847821517a2cae9823a43d2cc1adb9d7960617fd49eb"
+    },
+    {
+      "path": "docs/sources/V634-P01-T06.json",
+      "size": 1406,
+      "sha256": "a31534b1b5d374a9d70ee471597fd4b4dfc8b292bc02731684f82141f95c3c96"
+    }
+  ],
+  "historical_hash_fields_are_provenance_only": true,
+  "runtime_source_registry": "docs/registries/baseline-source-files.v1.json",
+  "predecessor_plan_zip_sha256": "abc8c12f15313d75edb0ed8f7a16c99501997b7a0c797119b8278eff0339bbed"
+}

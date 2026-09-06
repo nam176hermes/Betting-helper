@@ -1,0 +1,9 @@
+# Ordered gates and evidence stages
+
+The four gates are separate: DECLARATION_COMPLETE at P00-T05; MATERIALIZATION_COMPLETE at P01-T06; MATERIALIZED_CONTRACTS_VALID at P02-T03; EXECUTABLE_REFERENCE_COMPLETE at P06-T03. P02 depends on MIG0-T07, which depends on P01-T06. P06 depends on MIG0-T08 after P03/P04/P05. No gate may borrow future evidence.
+
+Declaration validates the entire reference/ownership/dependency closure, allowing declared future source files. Materialization requires all internal source/test/config stubs and schemas, not later evidence outputs, delivered roots, host keys or external review results. Materialized-contract validation validates actual schemas, manifests, registries and consumers. Executable-reference validation resolves symbols/commands and distinguishes test-only fixtures from active intentional stubs. New v6.3.6 tooling cannot retain an intentional stub; inherited discovery-product stubs remain expected-red because discovery implementation is outside this plan.
+
+Evidence stages are ordered CANDIDATE < SEALED < REVIEWED. At a gate, require rows with stage <= gate stage, reject missing/skipped/stale eligible rows, and report later rows PENDING without reading or fabricating their evidence. P07 checks only CANDIDATE. P09 checks CANDIDATE+SEALED after creating the seal-stage outputs; the completion receipt is external and cannot enter its own pack. P10 checks all stages, including actual review receipts. A matrix row's evidence owner must precede its consuming gate. Static plan tests prove this acyclicity.
+
+All runtime code/test/config changes finish by P06-T03; all normative changes finish before MIG0-T08. P07 binds qualified source/config/lock/build inventories. P08/P09/P10 consume these bytes without modification. Any drift invalidates qualification and requires a new candidate cycle, not a waiver.

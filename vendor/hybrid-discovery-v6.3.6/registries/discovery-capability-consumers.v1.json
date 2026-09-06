@@ -1,0 +1,50 @@
+{
+  "schema_version": "discovery-capability-consumers/v1",
+  "registry_id": "hybrid-discovery-v6.2-capability-consumers",
+  "closed_world": true,
+  "consumers": [
+    {
+      "consumer_id": "G0_DISCOVERY_EVIDENCE_REVIEW",
+      "graph_class": "EXECUTABLE_DISCOVERY_GRAPH",
+      "authority": "DISCOVERY_REVIEW_ONLY"
+    },
+    {
+      "consumer_id": "SCOPE0_INPUT_VIEW_BUILDER",
+      "graph_class": "EXECUTABLE_DISCOVERY_GRAPH",
+      "authority": "V7_DESIGN_INPUT_ONLY"
+    },
+    {
+      "consumer_id": "SCOPE0_SCOPE_FREEZER",
+      "graph_class": "EXECUTABLE_DISCOVERY_GRAPH",
+      "authority": "V7_DESIGN_ONLY"
+    },
+    {
+      "consumer_id": "V7_DESIGN_HANDOFF",
+      "graph_class": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+      "authority": "NONE"
+    },
+    {
+      "consumer_id": "FUTURE_FORMAL_SCANNER",
+      "graph_class": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+      "authority": "NONE"
+    },
+    {
+      "consumer_id": "FUTURE_OPERATOR_STATE_REDUCER",
+      "graph_class": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+      "authority": "NONE"
+    },
+    {
+      "consumer_id": "FUTURE_COHERENCE_CONTROLLER",
+      "graph_class": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+      "authority": "NONE"
+    },
+    {
+      "consumer_id": "FUTURE_PROVIDER_FEASIBILITY_SELECTOR",
+      "graph_class": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+      "authority": "NONE"
+    }
+  ],
+  "partition_rule": "evaluated_consumers is the registry universe; authorized_consumers and blocked_consumers are disjoint and their union equals evaluated_consumers",
+  "unknown_authorization_rule": "UNKNOWN_NOT_OBSERVED_INCONCLUSIVE_OR_UNSAFE_DEFERRED_AUTHORIZES_NONE",
+  "production_authority": "NONE"
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": "hybrid-discovery-plan-manifest/v6.2",
+  "record_type": "PlanManifest",
+  "pack_id": "plan:hybrid-discovery-v6.2",
+  "pack_version": "6.2",
+  "pack_kind": "DOCUMENTATION_SCHEMA_AND_BOOTSTRAP_CONTRACT_ONLY",
+  "artifact_status": "SEALED_READY_FOR_INDEPENDENT_REVIEW",
+  "sealed": true,
+  "pack_root": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+  "runtime_root": "/home/thenam176/betting-helper/discovery-runtime",
+  "pack_is_implementation_worktree": false,
+  "executable_graph": {
+    "graph_type": "EXECUTABLE_DISCOVERY_GRAPH",
+    "path": "docs/graphs/executable-discovery-graph.v1.json",
+    "node_count": 8,
+    "edge_count": 8,
+    "terminal": "DISCOVERY_COMPLETE",
+    "composition": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+  },
+  "future_roadmap": {
+    "graph_type": "NON_AUTHORITATIVE_FUTURE_ROADMAP",
+    "path": "docs/graphs/non-authoritative-future-roadmap.v1.json",
+    "node_count": 20,
+    "edge_count": 22,
+    "cross_set_edge_count": 0,
+    "executable": false,
+    "authority": "NONE",
+    "may_start": false,
+    "auto_activate": false,
+    "composition": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+  },
+  "task_registry": {
+    "registry_type": "TASK_COMMAND_REGISTRY",
+    "canonical_path": "docs/registries/task-command-registry.v1.json",
+    "runtime_path": "/home/thenam176/betting-helper/discovery-runtime/task-command-registry.json",
+    "task_count": 51,
+    "repo0_authoring_task_count": 5,
+    "discovery_task_count": 46,
+    "phase_task_counts": {
+      "REPO0": 5,
+      "R0": 7,
+      "F0A": 8,
+      "SEC0": 7,
+      "E0": 10,
+      "D0": 6,
+      "G0": 4,
+      "SCOPE0": 4
+    },
+    "composition": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+  },
+  "authority": {
+    "READY_TO_IMPLEMENT_DISCOVERY_PACK": "NO",
+    "SAFE_TO_IMPLEMENT_R0": "NO",
+    "SAFE_TO_IMPLEMENT_F0A": "NO",
+    "SAFE_TO_IMPLEMENT_SEC0": "NO",
+    "SAFE_TO_IMPLEMENT_E0": "NO",
+    "SAFE_TO_IMPLEMENT_D0": "NO",
+    "SAFE_TO_FREEZE_SCOPE0": "NO",
+    "READY_FOR_CODEX_REVIEW": "YES",
+    "AUTHORIZED_PRODUCTION_PHASES": "NONE"
+  },
+  "governance_binding": "PACK_MANIFEST_RAW_SHA256_ONLY_NO_HD_JCS_SELF_HASH",
+  "hd_jcs_domain_registered": false,
+  "plan_authority": "NONE",
+  "production_authority": "NONE"
+}

@@ -1,0 +1,1832 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json",
+  "title": "Hybrid Discovery v6.2 clock and coherence records",
+  "description": "Closed immutable clock observations, mappings, closures, shocks, freshness vectors, coherence epochs, transitions, and resnapshot proofs.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/BrowserClockObservation"
+    },
+    {
+      "$ref": "#/$defs/DocumentClockObservation"
+    },
+    {
+      "$ref": "#/$defs/CdpClockObservation"
+    },
+    {
+      "$ref": "#/$defs/RelayClockObservation"
+    },
+    {
+      "$ref": "#/$defs/BackendClockObservation"
+    },
+    {
+      "$ref": "#/$defs/ClockMapping"
+    },
+    {
+      "$ref": "#/$defs/ClockMappingClosure"
+    },
+    {
+      "$ref": "#/$defs/InputFreshnessVector"
+    },
+    {
+      "$ref": "#/$defs/ShockObservation"
+    },
+    {
+      "$ref": "#/$defs/FixtureCoherenceEpoch"
+    },
+    {
+      "$ref": "#/$defs/CoherenceTransition"
+    },
+    {
+      "$ref": "#/$defs/AuthoritativeResnapshotProof"
+    }
+  ],
+  "$defs": {
+    "SchemaVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "Uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "Hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ArtifactId": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*:[0-9a-f]{64}$"
+    },
+    "UnsignedDecimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "SignedDecimal": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)$"
+    },
+    "PositiveDecimal": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "UtcTimestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ClockUnit": {
+      "const": "MICROSECOND"
+    },
+    "ObservationOwner": {
+      "enum": [
+        "EXTENSION_SERVICE_WORKER",
+        "TARGET_DOCUMENT",
+        "CDP_BROWSER",
+        "RELAY_PROCESS",
+        "BACKEND_PROCESS"
+      ]
+    },
+    "BrowserClockObservation": {
+      "$anchor": "BrowserClockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "observation_id",
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "conversion_rule",
+        "observed_at_utc",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "BrowserClockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "const": "EXTENSION_SERVICE_WORKER"
+        },
+        "conversion_rule": {
+          "const": "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000"
+        },
+        "observed_at_utc": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "DocumentClockObservation": {
+      "$anchor": "DocumentClockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "observation_id",
+        "document_id",
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "conversion_rule",
+        "observed_at_utc",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "DocumentClockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "document_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "const": "TARGET_DOCUMENT"
+        },
+        "conversion_rule": {
+          "const": "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000"
+        },
+        "observed_at_utc": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "CdpClockObservation": {
+      "$anchor": "CdpClockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "observation_id",
+        "cdp_session_generation",
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "mapping_status",
+        "observed_at_utc",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "CdpClockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "cdp_session_generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "const": "CDP_BROWSER"
+        },
+        "mapping_status": {
+          "enum": [
+            "MAPPED",
+            "UNKNOWN"
+          ]
+        },
+        "observed_at_utc": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "RelayClockObservation": {
+      "$anchor": "RelayClockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "observation_id",
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "conversion_rule",
+        "observed_at_utc",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "RelayClockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "const": "RELAY_PROCESS"
+        },
+        "conversion_rule": {
+          "enum": [
+            "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000",
+            "PYTHON_MONOTONIC_NS_INTEGER_DIVIDE_1000"
+          ]
+        },
+        "observed_at_utc": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "BackendClockObservation": {
+      "$anchor": "BackendClockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "observation_id",
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "conversion_rule",
+        "observed_at_utc",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "BackendClockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "const": "BACKEND_PROCESS"
+        },
+        "conversion_rule": {
+          "const": "PYTHON_MONOTONIC_NS_INTEGER_DIVIDE_1000"
+        },
+        "observed_at_utc": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "TimestampEndpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner"
+      ],
+      "properties": {
+        "clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "owner": {
+          "$ref": "#/$defs/ObservationOwner"
+        }
+      }
+    },
+    "FourTimestampSample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_id",
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t1_owner",
+        "t2_owner",
+        "t3_owner",
+        "t4_owner",
+        "offset_sign",
+        "network_rtt_us",
+        "raw_lower_us",
+        "raw_upper_us",
+        "padding_us",
+        "offset_lower_us",
+        "offset_upper_us",
+        "offset_midpoint_us",
+        "base_uncertainty_us"
+      ],
+      "properties": {
+        "sample_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "t1": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "t2": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "t3": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "t4": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "t1_owner": {
+          "const": "SOURCE_IMMEDIATELY_BEFORE_PING"
+        },
+        "t2_owner": {
+          "const": "TARGET_IMMEDIATELY_AFTER_AUTHENTICATED_RECEIPT"
+        },
+        "t3_owner": {
+          "const": "TARGET_IMMEDIATELY_BEFORE_PONG"
+        },
+        "t4_owner": {
+          "const": "SOURCE_IMMEDIATELY_AFTER_AUTHENTICATED_VALIDATION"
+        },
+        "offset_sign": {
+          "const": "THETA_EQUALS_TARGET_CLOCK_MINUS_SOURCE_CLOCK"
+        },
+        "network_rtt_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "raw_lower_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "raw_upper_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "padding_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "offset_lower_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "offset_upper_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "offset_midpoint_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "base_uncertainty_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        }
+      }
+    },
+    "GuardrailConstants": {
+      "$anchor": "GuardrailConstants",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_period_us",
+        "sample_window_count",
+        "minimum_valid_samples",
+        "max_network_rtt_us",
+        "max_base_uncertainty_us",
+        "relative_drift_ppm",
+        "max_mapping_segment_age_us",
+        "wall_step_tolerance_us"
+      ],
+      "properties": {
+        "sample_period_us": {
+          "const": "1000000"
+        },
+        "sample_window_count": {
+          "const": "32"
+        },
+        "minimum_valid_samples": {
+          "const": "8"
+        },
+        "max_network_rtt_us": {
+          "const": "250000"
+        },
+        "max_base_uncertainty_us": {
+          "const": "125000"
+        },
+        "relative_drift_ppm": {
+          "const": "100"
+        },
+        "max_mapping_segment_age_us": {
+          "const": "30000000"
+        },
+        "wall_step_tolerance_us": {
+          "const": "1000000"
+        }
+      }
+    },
+    "ClockMapping": {
+      "$anchor": "ClockMapping",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "clock_mapping_id",
+        "source_clock_domain_id",
+        "source_boot_id",
+        "source_owner",
+        "target_clock_domain_id",
+        "target_boot_id",
+        "target_owner",
+        "unit",
+        "samples",
+        "source_anchor_us",
+        "offset_lower_us",
+        "offset_upper_us",
+        "offset_midpoint_us",
+        "base_uncertainty_us",
+        "network_rtt_us",
+        "drift_formula",
+        "valid_from_source_us",
+        "valid_until_source_us",
+        "status",
+        "guardrails",
+        "selection_rule",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "ClockMapping"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "clock_mapping_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "source_clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "source_boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "source_owner": {
+          "$ref": "#/$defs/ObservationOwner"
+        },
+        "target_clock_domain_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "target_boot_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "target_owner": {
+          "$ref": "#/$defs/ObservationOwner"
+        },
+        "unit": {
+          "$ref": "#/$defs/ClockUnit"
+        },
+        "samples": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/FourTimestampSample"
+          }
+        },
+        "source_anchor_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "offset_lower_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "offset_upper_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "offset_midpoint_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "base_uncertainty_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "network_rtt_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "drift_formula": {
+          "const": "CEIL(100*ABS(X-SOURCE_ANCHOR_US)/1000000)"
+        },
+        "valid_from_source_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "valid_until_source_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "status": {
+          "const": "OPEN"
+        },
+        "guardrails": {
+          "$ref": "#/$defs/GuardrailConstants"
+        },
+        "selection_rule": {
+          "const": "MATCH_DOMAIN_BOOT_UNIT_AND_OPEN_VALIDITY_THEN_MIN_INTERVAL_WIDTH_THEN_LATEST_VALIDITY_START_THEN_LEXICOGRAPHIC_MAPPING_ID"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "ClockMappingClosure": {
+      "$anchor": "ClockMappingClosure",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "clock_mapping_closure_id",
+        "clock_mapping_id",
+        "closure_reason",
+        "closed_at",
+        "permanent",
+        "reopen_permitted",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "ClockMappingClosure"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "clock_mapping_closure_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "clock_mapping_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "closure_reason": {
+          "enum": [
+            "DOMAIN_BOOT_CHANGED",
+            "MONOTONIC_REGRESSION",
+            "WALL_CLOCK_STEP",
+            "SLEEP_RESUME",
+            "MAX_DURATION",
+            "RTT_EXCEEDED",
+            "UNCERTAINTY_EXCEEDED",
+            "INCONSISTENT_MAPPING",
+            "LIFECYCLE_INVALIDATED",
+            "RUN_CLOSED"
+          ]
+        },
+        "closed_at": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "permanent": {
+          "const": true
+        },
+        "reopen_permitted": {
+          "const": false
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "RequiredInputFreshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirement",
+        "observation_id",
+        "mapping_id",
+        "observation_lower_bound_us",
+        "observation_upper_bound_us",
+        "decision_lower_bound_us",
+        "decision_upper_bound_us",
+        "conservative_age_us",
+        "ttl_us",
+        "status",
+        "age_formula"
+      ],
+      "properties": {
+        "requirement": {
+          "const": "REQUIRED_INPUT"
+        },
+        "observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "mapping_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "observation_lower_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "observation_upper_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "decision_lower_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "decision_upper_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "conservative_age_us": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "ttl_us": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "status": {
+          "enum": [
+            "FRESH",
+            "STALE",
+            "UNKNOWN"
+          ]
+        },
+        "age_formula": {
+          "const": "DECISION_UPPER_BOUND_US_MINUS_OBSERVATION_LOWER_BOUND_US"
+        }
+      }
+    },
+    "NotRequiredInputFreshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirement",
+        "reason"
+      ],
+      "properties": {
+        "requirement": {
+          "const": "NOT_REQUIRED_FOR_THIS_DISCOVERY_CHECK"
+        },
+        "reason": {
+          "enum": [
+            "OUT_OF_SCOPE",
+            "NOT_A_CONSUMER_INPUT",
+            "CAPABILITY_NOT_UNDER_TEST"
+          ]
+        }
+      }
+    },
+    "FreshnessEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RequiredInputFreshness"
+        },
+        {
+          "$ref": "#/$defs/NotRequiredInputFreshness"
+        }
+      ]
+    },
+    "InputFreshnessVector": {
+      "$anchor": "InputFreshnessVector",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "input_freshness_vector_id",
+        "evaluation_clock",
+        "FOOTBALL_STATE",
+        "OPERATOR_STATE",
+        "MARKET_BOOK",
+        "DISPLAY_EVIDENCE",
+        "BETSLIP_EVIDENCE",
+        "POSITION",
+        "CASHOUT_OFFER",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "InputFreshnessVector"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "input_freshness_vector_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "evaluation_clock": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "FOOTBALL_STATE": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "OPERATOR_STATE": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "MARKET_BOOK": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "DISPLAY_EVIDENCE": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "BETSLIP_EVIDENCE": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "POSITION": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "CASHOUT_OFFER": {
+          "$ref": "#/$defs/FreshnessEntry"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "ShockObservation": {
+      "$anchor": "ShockObservation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "shock_observation_id",
+        "fixture_id",
+        "shock_type",
+        "shock_lower_bound_us",
+        "shock_upper_bound_us",
+        "mapping_ids",
+        "evidence_ids",
+        "observed_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "ShockObservation"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "shock_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "fixture_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "shock_type": {
+          "enum": [
+            "GOAL",
+            "RED_CARD",
+            "PERIOD_TRANSITION",
+            "SUSPENSION_MISMATCH",
+            "SEQUENCE_GAP",
+            "SCHEMA_CONFLICT",
+            "LIFECYCLE_INVALIDATION",
+            "MAPPING_CLOSURE",
+            "EQUIVALENT_UNKNOWN_SHOCK"
+          ]
+        },
+        "shock_lower_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "shock_upper_bound_us": {
+          "$ref": "#/$defs/SignedDecimal"
+        },
+        "mapping_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ArtifactId"
+          }
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ArtifactId"
+          }
+        },
+        "observed_at": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "FixtureCoherenceEpoch": {
+      "$anchor": "FixtureCoherenceEpoch",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "coherence_epoch_id",
+        "fixture_id",
+        "generation",
+        "controller_state_at_record",
+        "epoch_status",
+        "predecessor_epoch_id",
+        "opening_freshness_vector_id",
+        "opening_resnapshot_proof_id",
+        "opened_at",
+        "predecessor_permanently_closed",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "FixtureCoherenceEpoch"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "coherence_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "fixture_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "controller_state_at_record": {
+          "enum": [
+            "OPEN",
+            "SHOCKED_CLOSED",
+            "WAITING_FOR_RESNAPSHOT",
+            "NEW_EPOCH_PENDING",
+            "NEW_EPOCH_OPEN"
+          ]
+        },
+        "epoch_status": {
+          "enum": [
+            "OPEN",
+            "CLOSED"
+          ]
+        },
+        "predecessor_epoch_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "GENESIS"
+            }
+          ]
+        },
+        "opening_freshness_vector_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_APPLICABLE_GENESIS"
+            }
+          ]
+        },
+        "opening_resnapshot_proof_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_APPLICABLE_GENESIS"
+            }
+          ]
+        },
+        "opened_at": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "predecessor_permanently_closed": {
+          "type": "boolean"
+        },
+        "immutable": {
+          "const": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "predecessor_epoch_id": {
+                "const": "GENESIS"
+              }
+            },
+            "required": [
+              "predecessor_epoch_id"
+            ]
+          },
+          "then": {
+            "properties": {
+              "generation": {
+                "const": "0"
+              },
+              "opening_freshness_vector_id": {
+                "const": "NOT_APPLICABLE_GENESIS"
+              },
+              "opening_resnapshot_proof_id": {
+                "const": "NOT_APPLICABLE_GENESIS"
+              },
+              "predecessor_permanently_closed": {
+                "const": false
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "generation": {
+                "$ref": "#/$defs/PositiveDecimal"
+              },
+              "opening_freshness_vector_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "opening_resnapshot_proof_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "predecessor_permanently_closed": {
+                "const": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CoherenceTransition": {
+      "$anchor": "CoherenceTransition",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "coherence_transition_id",
+        "fixture_id",
+        "from_state",
+        "to_state",
+        "predecessor_epoch_id",
+        "candidate_epoch_id",
+        "shock_observation_id",
+        "input_freshness_vector_id",
+        "resnapshot_proof_id",
+        "transition_reason",
+        "transitioned_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "CoherenceTransition"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "coherence_transition_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "fixture_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "from_state": {
+          "enum": [
+            "OPEN",
+            "SHOCKED_CLOSED",
+            "WAITING_FOR_RESNAPSHOT",
+            "NEW_EPOCH_PENDING",
+            "NEW_EPOCH_OPEN"
+          ]
+        },
+        "to_state": {
+          "enum": [
+            "SHOCKED_CLOSED",
+            "WAITING_FOR_RESNAPSHOT",
+            "NEW_EPOCH_PENDING",
+            "NEW_EPOCH_OPEN"
+          ]
+        },
+        "predecessor_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "candidate_epoch_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_CREATED"
+            },
+            {
+              "const": "CANDIDATE_CLOSED_BY_NEW_SHOCK"
+            }
+          ]
+        },
+        "shock_observation_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_APPLICABLE"
+            }
+          ]
+        },
+        "input_freshness_vector_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_APPLICABLE"
+            }
+          ]
+        },
+        "resnapshot_proof_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_OBSERVED"
+            },
+            {
+              "const": "UNKNOWN"
+            },
+            {
+              "const": "NOT_APPLICABLE"
+            }
+          ]
+        },
+        "candidate_epoch_relation": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "DISTINCT_SUCCESSOR",
+            "CANDIDATE_CLOSED_BY_NEW_SHOCK"
+          ]
+        },
+        "proof_status_at_transition": {
+          "enum": [
+            "OBSERVED",
+            "NOT_OBSERVED",
+            "UNKNOWN",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "proof_verified": {
+          "type": "boolean"
+        },
+        "freshness_binding_verified": {
+          "type": "boolean"
+        },
+        "shock_binding_verified": {
+          "type": "boolean"
+        },
+        "mapping_bindings_verified": {
+          "type": "boolean"
+        },
+        "continuity_bindings_verified": {
+          "type": "boolean"
+        },
+        "predecessor_permanently_closed": {
+          "type": "boolean"
+        },
+        "release_predicate_at_transition": {
+          "enum": [
+            "SATISFIED",
+            "NOT_SATISFIED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "proof_bound_mappings_open_unclosed_valid_at_release": {
+          "type": "boolean"
+        },
+        "freshness_bindings_valid_at_release": {
+          "type": "boolean"
+        },
+        "continuity_bindings_valid_at_release": {
+          "type": "boolean"
+        },
+        "transition_reason": {
+          "enum": [
+            "SHOCK_ATOMIC_CLOSE",
+            "CLOSE_RECORDED",
+            "RESNAPSHOT_CANDIDATE_ACCEPTED",
+            "RELEASE_PREDICATE_SATISFIED",
+            "NEW_SHOCK_CLOSED_CANDIDATE"
+          ]
+        },
+        "transitioned_at": {
+          "$ref": "#/$defs/TimestampEndpoint"
+        },
+        "immutable": {
+          "const": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "from_state": {
+                "enum": [
+                  "OPEN",
+                  "NEW_EPOCH_OPEN"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "to_state": {
+                "const": "SHOCKED_CLOSED"
+              },
+              "transition_reason": {
+                "const": "SHOCK_ATOMIC_CLOSE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "from_state": {
+                "const": "SHOCKED_CLOSED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "to_state": {
+                "const": "WAITING_FOR_RESNAPSHOT"
+              },
+              "transition_reason": {
+                "const": "CLOSE_RECORDED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "from_state": {
+                "const": "WAITING_FOR_RESNAPSHOT"
+              }
+            },
+            "required": [
+              "from_state"
+            ]
+          },
+          "then": {
+            "required": [
+              "candidate_epoch_relation",
+              "proof_status_at_transition",
+              "proof_verified",
+              "freshness_binding_verified",
+              "shock_binding_verified",
+              "mapping_bindings_verified",
+              "continuity_bindings_verified",
+              "predecessor_permanently_closed",
+              "release_predicate_at_transition"
+            ],
+            "properties": {
+              "to_state": {
+                "const": "NEW_EPOCH_PENDING"
+              },
+              "candidate_epoch_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "shock_observation_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "input_freshness_vector_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "resnapshot_proof_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "candidate_epoch_relation": {
+                "const": "DISTINCT_SUCCESSOR"
+              },
+              "proof_status_at_transition": {
+                "const": "OBSERVED"
+              },
+              "proof_verified": {
+                "const": true
+              },
+              "freshness_binding_verified": {
+                "const": true
+              },
+              "shock_binding_verified": {
+                "const": true
+              },
+              "mapping_bindings_verified": {
+                "const": true
+              },
+              "continuity_bindings_verified": {
+                "const": true
+              },
+              "predecessor_permanently_closed": {
+                "const": true
+              },
+              "release_predicate_at_transition": {
+                "const": "SATISFIED"
+              },
+              "transition_reason": {
+                "const": "RESNAPSHOT_CANDIDATE_ACCEPTED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "from_state": {
+                "const": "NEW_EPOCH_PENDING"
+              },
+              "transition_reason": {
+                "const": "RELEASE_PREDICATE_SATISFIED"
+              }
+            },
+            "required": [
+              "from_state",
+              "transition_reason"
+            ]
+          },
+          "then": {
+            "required": [
+              "candidate_epoch_relation",
+              "proof_status_at_transition",
+              "proof_verified",
+              "freshness_binding_verified",
+              "shock_binding_verified",
+              "mapping_bindings_verified",
+              "continuity_bindings_verified",
+              "predecessor_permanently_closed",
+              "release_predicate_at_transition",
+              "proof_bound_mappings_open_unclosed_valid_at_release",
+              "freshness_bindings_valid_at_release",
+              "continuity_bindings_valid_at_release"
+            ],
+            "properties": {
+              "to_state": {
+                "const": "NEW_EPOCH_OPEN"
+              },
+              "candidate_epoch_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "shock_observation_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "input_freshness_vector_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "resnapshot_proof_id": {
+                "$ref": "#/$defs/ArtifactId"
+              },
+              "candidate_epoch_relation": {
+                "const": "DISTINCT_SUCCESSOR"
+              },
+              "proof_status_at_transition": {
+                "const": "OBSERVED"
+              },
+              "proof_verified": {
+                "const": true
+              },
+              "freshness_binding_verified": {
+                "const": true
+              },
+              "shock_binding_verified": {
+                "const": true
+              },
+              "mapping_bindings_verified": {
+                "const": true
+              },
+              "continuity_bindings_verified": {
+                "const": true
+              },
+              "predecessor_permanently_closed": {
+                "const": true
+              },
+              "release_predicate_at_transition": {
+                "const": "SATISFIED"
+              },
+              "proof_bound_mappings_open_unclosed_valid_at_release": {
+                "const": true
+              },
+              "freshness_bindings_valid_at_release": {
+                "const": true
+              },
+              "continuity_bindings_valid_at_release": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "from_state": {
+                "const": "NEW_EPOCH_PENDING"
+              },
+              "transition_reason": {
+                "const": "NEW_SHOCK_CLOSED_CANDIDATE"
+              }
+            },
+            "required": [
+              "from_state",
+              "transition_reason"
+            ]
+          },
+          "then": {
+            "properties": {
+              "to_state": {
+                "const": "WAITING_FOR_RESNAPSHOT"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ContinuityBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stream_key_hash",
+        "generation",
+        "first_sequence",
+        "last_sequence",
+        "starting_cursor_hash",
+        "ending_cursor_hash",
+        "contiguous"
+      ],
+      "properties": {
+        "stream_key_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "first_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "last_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "starting_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "ending_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "contiguous": {
+          "const": true
+        }
+      }
+    },
+    "RequiredMappingBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "FOOTBALL_STATE",
+        "OPERATOR_STATE",
+        "MARKET_BOOK"
+      ],
+      "properties": {
+        "FOOTBALL_STATE": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "OPERATOR_STATE": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "MARKET_BOOK": {
+          "$ref": "#/$defs/ArtifactId"
+        }
+      }
+    },
+    "ObservedResnapshotProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "authoritative_resnapshot_proof_id",
+        "proof_status",
+        "proof_verified",
+        "predecessor_epoch_id",
+        "predecessor_permanently_closed",
+        "candidate_epoch_id",
+        "candidate_epoch_relation",
+        "shock_observation_id",
+        "accepted_capability_evidence_id",
+        "accepted_capability_evidence_signature_hash",
+        "snapshot_semantics",
+        "football_state_observation_id",
+        "operator_state_observation_id",
+        "market_book_observation_id",
+        "market_book_completeness",
+        "market_book_open",
+        "freshness_vector_id",
+        "mapping_bindings",
+        "continuity_bindings",
+        "post_shock_lower_bounds_strict",
+        "mappings_valid",
+        "identities_orientation_generations_agree",
+        "cursor_ranges_contiguous",
+        "blocking_condition_absent",
+        "state_fields_agree",
+        "release_predicate",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "AuthoritativeResnapshotProof"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "authoritative_resnapshot_proof_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "proof_status": {
+          "const": "OBSERVED"
+        },
+        "proof_verified": {
+          "const": true
+        },
+        "predecessor_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "predecessor_permanently_closed": {
+          "const": true
+        },
+        "candidate_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "candidate_epoch_relation": {
+          "const": "DISTINCT_SUCCESSOR"
+        },
+        "shock_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "accepted_capability_evidence_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "accepted_capability_evidence_signature_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "snapshot_semantics": {
+          "const": "FULL_AUTHORITATIVE_SNAPSHOT"
+        },
+        "football_state_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "operator_state_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "market_book_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "market_book_completeness": {
+          "const": "COMPLETE"
+        },
+        "market_book_open": {
+          "const": true
+        },
+        "freshness_vector_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "mapping_bindings": {
+          "$ref": "#/$defs/RequiredMappingBindings"
+        },
+        "continuity_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/ContinuityBinding"
+          }
+        },
+        "post_shock_lower_bounds_strict": {
+          "const": true
+        },
+        "mappings_valid": {
+          "const": true
+        },
+        "identities_orientation_generations_agree": {
+          "const": true
+        },
+        "cursor_ranges_contiguous": {
+          "const": true
+        },
+        "blocking_condition_absent": {
+          "const": true
+        },
+        "state_fields_agree": {
+          "const": true
+        },
+        "release_predicate": {
+          "const": "SATISFIED"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "UnavailableResnapshotProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "authoritative_resnapshot_proof_id",
+        "proof_status",
+        "predecessor_epoch_id",
+        "shock_observation_id",
+        "reason",
+        "release_predicate",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "AuthoritativeResnapshotProof"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "authoritative_resnapshot_proof_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "proof_status": {
+          "enum": [
+            "NOT_OBSERVED",
+            "UNKNOWN"
+          ]
+        },
+        "predecessor_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "shock_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "reason": {
+          "enum": [
+            "SNAPSHOT_SEMANTICS_NOT_OBSERVED",
+            "TTL_NOT_OBSERVED",
+            "CAPABILITY_EVIDENCE_NOT_ACCEPTED",
+            "MAPPING_UNKNOWN",
+            "SOURCE_AGE_UNKNOWN",
+            "BOOK_COMPLETENESS_UNKNOWN",
+            "STATE_AGREEMENT_UNKNOWN",
+            "CONTINUITY_UNKNOWN"
+          ]
+        },
+        "release_predicate": {
+          "const": "NOT_SATISFIED"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "AuthoritativeResnapshotProof": {
+      "$anchor": "AuthoritativeResnapshotProof",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ObservedResnapshotProof"
+        },
+        {
+          "$ref": "#/$defs/UnavailableResnapshotProof"
+        }
+      ]
+    },
+    "SemanticInvariants": {
+      "$anchor": "SemanticInvariants",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_content_hashes",
+        "artifact_id_independence",
+        "four_timestamp_equations",
+        "mapping_rejection",
+        "mapping_selection",
+        "closure",
+        "state_sequence",
+        "closed_predecessor",
+        "release_candidate",
+        "candidate_acceptance",
+        "release_binding",
+        "release_time_revalidation",
+        "pending_shock",
+        "release_predicate"
+      ],
+      "properties": {
+        "canonical_content_hashes": {
+          "const": "ALL_TWELVE_REGISTERED_TOP_LEVEL_CLOCK_COHERENCE_RECORD_TYPES_REQUIRE_LOWERCASE_HEX_HD_JCS_SHA256_V1_CONTENT_HASH_EXCLUDING_ONLY_TOP_LEVEL_CONTENT_HASH"
+        },
+        "artifact_id_independence": {
+          "const": "EVERY_ARTIFACT_ID_IS_PREALLOCATED_OPAQUE_AND_INDEPENDENT_OF_CONTENT_HASH_NEVER_DERIVED_FROM_CONTENT_HASH"
+        },
+        "four_timestamp_equations": {
+          "const": "RAW_LOWER=T3-T4;RAW_UPPER=T2-T1;NETWORK_RTT=(T4-T1)-(T3-T2);PADDING=SOURCE_RESOLUTION+TARGET_RESOLUTION;LOWER=RAW_LOWER-PADDING;UPPER=RAW_UPPER+PADDING;MIDPOINT=(LOWER+UPPER)/2;UNCERTAINTY=(UPPER-LOWER)/2"
+        },
+        "mapping_rejection": {
+          "const": "REJECT_NEGATIVE_ORDERING_OR_RTT_WRONG_DOMAIN_BOOT_UNIT_OWNER_OR_INVERTED_INTERVAL"
+        },
+        "mapping_selection": {
+          "const": "MINIMUM_INTERVAL_WIDTH_THEN_LATEST_VALIDITY_START_THEN_LEXICOGRAPHIC_MAPPING_ID"
+        },
+        "closure": {
+          "const": "PERMANENT"
+        },
+        "state_sequence": {
+          "const": "OPEN->SHOCKED_CLOSED->WAITING_FOR_RESNAPSHOT->NEW_EPOCH_PENDING->NEW_EPOCH_OPEN"
+        },
+        "closed_predecessor": {
+          "const": "IMMUTABLE_AND_NEVER_REOPENED"
+        },
+        "release_candidate": {
+          "const": "DISTINCT_NON_GENESIS_SUCCESSOR_ONLY_NEVER_SAME_AS_OR_REOPEN_OF_PREDECESSOR"
+        },
+        "candidate_acceptance": {
+          "const": "WAITING_FOR_RESNAPSHOT_ADVANCES_ONLY_ON_OBSERVED_VERIFIED_PROOF_WITH_SATISFIED_RELEASE_PREDICATE_AND_EXACT_PREDECESSOR_CANDIDATE_SHOCK_FRESHNESS_REQUIRED_MAPPING_AND_CONTINUITY_BINDINGS_OTHERWISE_REMAINS_WAITING"
+        },
+        "release_binding": {
+          "const": "OBSERVED_VERIFIED_PROOF_BINDS_PREDECESSOR_CANDIDATE_SHOCK_FRESHNESS_REQUIRED_MAPPINGS_AND_CONTIGUOUS_CURSOR_RANGES"
+        },
+        "release_time_revalidation": {
+          "const": "REVALIDATE_EVERY_PROOF_BOUND_MAPPING_OPEN_UNCLOSED_VALID_AND_FRESHNESS_AND_CONTINUITY_BINDINGS_VALID_AT_RELEASE_TRANSITION_AND_CONTROLLER_OPEN_OTHERWISE_REMAIN_NEW_EPOCH_PENDING"
+        },
+        "pending_shock": {
+          "const": "CLOSE_CANDIDATE_AND_RETURN_CONTROLLER_TO_WAITING_FOR_RESNAPSHOT"
+        },
+        "release_predicate": {
+          "const": "SIGNED_ACCEPTED_FULL_SNAPSHOT_AND_FRESH_POST_SHOCK_FOOTBALL_OPERATOR_COMPLETE_OPEN_BOOK_AND_VALID_MAPPINGS_AND_AGREEMENT_AND_CONTIGUOUS_CURSORS_AND_NO_BLOCKER"
+        }
+      }
+    }
+  }
+}

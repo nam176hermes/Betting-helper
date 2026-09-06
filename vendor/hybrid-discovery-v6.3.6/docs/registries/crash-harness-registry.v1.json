@@ -1,0 +1,1616 @@
+{
+  "schema_version": "crash-harness-registry/v2",
+  "source_file": "docs/vectors/inherited/durability-crash-v6.2.json",
+  "source_sha256": "1ceb5a82bce9f377eac4423038df821e592c73499e06d095e5135bc10365d422",
+  "source_case_count": 46,
+  "mapped_case_count": 46,
+  "coverage_policy": "EVERY_INHERITED_CASE_PROCESS_EXECUTED_EXACTLY_ONCE",
+  "entries": [
+    {
+      "vector_id": "IDB-01-BEFORE-TRANSACTION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 0,
+      "source_boundary": "before IndexedDB sequence-allocation transaction",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "CHROME_INDEXEDDB",
+      "child_command_id": "CRASH_VECTOR_IDB_01_BEFORE_TRANSACTION",
+      "crash_checkpoint": "idb_01_before_transaction",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {},
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "REOBSERVE_IF_SOURCE_EMITS_AGAIN_NO_GUARANTEE_APPLIES"
+      },
+      "mutation_vector_ids": [
+        "IDB-01-BEFORE-TRANSACTION-MUT-EXPECTED",
+        "IDB-01-BEFORE-TRANSACTION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T03",
+      "verification_command_id": "TEST_V636_P03_T03"
+    },
+    {
+      "vector_id": "IDB-02-DURING-SEQUENCE-ALLOCATION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 1,
+      "source_boundary": "after sequence allocation and before spool row put in one IndexedDB transaction",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "CHROME_INDEXEDDB",
+      "child_command_id": "CRASH_VECTOR_IDB_02_DURING_SEQUENCE_ALLOCATION",
+      "crash_checkpoint": "idb_02_during_sequence_allocation",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {},
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ABORT_TRANSACTION_REUSE_SEQUENCE_1"
+      },
+      "mutation_vector_ids": [
+        "IDB-02-DURING-SEQUENCE-ALLOCATION-MUT-EXPECTED",
+        "IDB-02-DURING-SEQUENCE-ALLOCATION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T03",
+      "verification_command_id": "TEST_V636_P03_T03"
+    },
+    {
+      "vector_id": "IDB-03-DURING-ROW-PUT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 2,
+      "source_boundary": "after spool row put and before IndexedDB transaction completion",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "CHROME_INDEXEDDB",
+      "child_command_id": "CRASH_VECTOR_IDB_03_DURING_ROW_PUT",
+      "crash_checkpoint": "idb_03_during_row_put",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {},
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ABORT_TRANSACTION_REUSE_SEQUENCE_1"
+      },
+      "mutation_vector_ids": [
+        "IDB-03-DURING-ROW-PUT-MUT-EXPECTED",
+        "IDB-03-DURING-ROW-PUT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T03",
+      "verification_command_id": "TEST_V636_P03_T03"
+    },
+    {
+      "vector_id": "IDB-04-AFTER-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 3,
+      "source_boundary": "after IndexedDB transaction completion and before send",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "CHROME_INDEXEDDB",
+      "child_command_id": "CRASH_VECTOR_IDB_04_AFTER_COMMIT",
+      "crash_checkpoint": "idb_04_after_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {},
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RESEND_DURABLY_SPOOLED_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "IDB-04-AFTER-COMMIT-MUT-EXPECTED",
+        "IDB-04-AFTER-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T03",
+      "verification_command_id": "TEST_V636_P03_T03"
+    },
+    {
+      "vector_id": "SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 4,
+      "source_boundary": "after send and before backend BEGIN IMMEDIATE",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_SEND_01_AFTER_SEND_BEFORE_BACKEND_BEGIN",
+      "crash_checkpoint": "send_01_after_send_before_backend_begin",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {},
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RESEND_POSITION_0_1_AFTER_FRESH_PAIRING_AND_RESUME_AUTHORIZATION"
+      },
+      "mutation_vector_ids": [
+        "SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN-MUT-EXPECTED",
+        "SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "SQL-01-AFTER-RAW-COMMIT-STATEMENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 5,
+      "source_boundary": "after raw_commits INSERT and before application_records INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_01_AFTER_RAW_COMMIT_STATEMENT",
+      "crash_checkpoint": "sql_01_after_raw_commit_statement",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "SQL-01-AFTER-RAW-COMMIT-STATEMENT-MUT-EXPECTED",
+        "SQL-01-AFTER-RAW-COMMIT-STATEMENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-02-AFTER-APPLICATION-STATEMENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 6,
+      "source_boundary": "after application_records INSERT and before derived_revisions INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_02_AFTER_APPLICATION_STATEMENT",
+      "crash_checkpoint": "sql_02_after_application_statement",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "SQL-02-AFTER-APPLICATION-STATEMENT-MUT-EXPECTED",
+        "SQL-02-AFTER-APPLICATION-STATEMENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-03-AFTER-DERIVED-REVISION-STATEMENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 7,
+      "source_boundary": "after derived_revisions INSERT and before reducer_cursors INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_03_AFTER_DERIVED_REVISION_STATEMENT",
+      "crash_checkpoint": "sql_03_after_derived_revision_statement",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "SQL-03-AFTER-DERIVED-REVISION-STATEMENT-MUT-EXPECTED",
+        "SQL-03-AFTER-DERIVED-REVISION-STATEMENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-04-AFTER-REDUCER-CURSOR-STATEMENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 8,
+      "source_boundary": "after reducer_cursors INSERT and before ack_outbox INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_04_AFTER_REDUCER_CURSOR_STATEMENT",
+      "crash_checkpoint": "sql_04_after_reducer_cursor_statement",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "SQL-04-AFTER-REDUCER-CURSOR-STATEMENT-MUT-EXPECTED",
+        "SQL-04-AFTER-REDUCER-CURSOR-STATEMENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-05-AFTER-ACK-OUTBOX-STATEMENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 9,
+      "source_boundary": "after ack_outbox INSERT and before COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_05_AFTER_ACK_OUTBOX_STATEMENT",
+      "crash_checkpoint": "sql_05_after_ack_outbox_statement",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "BASELINE_H0_Q0",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"
+      },
+      "mutation_vector_ids": [
+        "SQL-05-AFTER-ACK-OUTBOX-STATEMENT-MUT-EXPECTED",
+        "SQL-05-AFTER-ACK-OUTBOX-STATEMENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-06-DURING-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 10,
+      "source_boundary": "during SQLite COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_06_DURING_COMMIT",
+      "crash_checkpoint": "sql_06_during_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "allowed_atomic_outcomes": [
+          {
+            "sql_row_deltas": {
+              "raw_commits": 0,
+              "application_records": 0,
+              "derived_revisions": 0,
+              "reducer_cursors": 0,
+              "ack_outbox": 0
+            },
+            "reducer_cursor": "BASELINE_H0_Q0",
+            "backend_ack": "BASELINE_H0_Q0",
+            "recovery_action": "RESEND_POSITION_0_1"
+          },
+          {
+            "sql_row_deltas": {
+              "raw_commits": 1,
+              "application_records": 1,
+              "derived_revisions": 1,
+              "reducer_cursors": 1,
+              "ack_outbox": 1
+            },
+            "reducer_cursor": "GEN0_Q1_H1",
+            "backend_ack": "GEN0_Q1_H1",
+            "recovery_action": "RESEND_OR_REDELIVER_IDEMPOTENT_ACK"
+          }
+        ],
+        "extension_ack": "BASELINE_H0_Q0",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN"
+      },
+      "mutation_vector_ids": [
+        "SQL-06-DURING-COMMIT-MUT-EXPECTED",
+        "SQL-06-DURING-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 11,
+      "source_boundary": "after SQLite COMMIT and before backend ACK send",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "SQLITE_TRANSACTION",
+      "child_command_id": "CRASH_VECTOR_SQL_07_AFTER_COMMIT_BEFORE_ACK_SEND",
+      "crash_checkpoint": "sql_07_after_commit_before_ack_send",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "REDELIVER_ACK_FROM_DURABLE_OUTBOX"
+      },
+      "mutation_vector_ids": [
+        "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND-MUT-EXPECTED",
+        "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T05",
+      "verification_command_id": "TEST_V636_P03_T05"
+    },
+    {
+      "vector_id": "ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 12,
+      "source_boundary": "after ACK receipt and before extension ACK transaction",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_01_BEFORE_EXTENSION_ACK_TRANSACTION",
+      "crash_checkpoint": "ack_01_before_extension_ack_transaction",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "BACKEND_REDELIVERS_DUPLICATE_ACK"
+      },
+      "mutation_vector_ids": [
+        "ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION-MUT-EXPECTED",
+        "ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "ACK-02-DURING-EXTENSION-ACK-TRANSACTION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 13,
+      "source_boundary": "after ACK chain verification and before IndexedDB ACK transaction completion",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_02_DURING_EXTENSION_ACK_TRANSACTION",
+      "crash_checkpoint": "ack_02_during_extension_ack_transaction",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "BASELINE_H0_Q0",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ABORT_ACK_TRANSACTION_AND_REVERIFY_REDELIVERED_ACK"
+      },
+      "mutation_vector_ids": [
+        "ACK-02-DURING-EXTENSION-ACK-TRANSACTION-MUT-EXPECTED",
+        "ACK-02-DURING-EXTENSION-ACK-TRANSACTION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "ACK-03-AFTER-EXTENSION-ACK-TRANSACTION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 14,
+      "source_boundary": "after IndexedDB ACK transaction completion and before backend confirmation",
+      "kill_action": "TERMINATE_EXTENSION_WORKER",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_03_AFTER_EXTENSION_ACK_TRANSACTION",
+      "crash_checkpoint": "ack_03_after_extension_ack_transaction",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RETAIN_ROW_AND_SEND_ACK_CONFIRMATION_IDEMPOTENTLY"
+      },
+      "mutation_vector_ids": [
+        "ACK-03-AFTER-EXTENSION-ACK-TRANSACTION-MUT-EXPECTED",
+        "ACK-03-AFTER-EXTENSION-ACK-TRANSACTION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 15,
+      "source_boundary": "after extension confirmation send and before backend confirmation transaction",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_04_BEFORE_BACKEND_CONFIRMATION_COMMIT",
+      "crash_checkpoint": "ack_04_before_backend_confirmation_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1,
+          "ack_cursors": 0
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RESEND_CONFIRMATION_AFTER_FRESH_PAIRING"
+      },
+      "mutation_vector_ids": [
+        "ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT-MUT-EXPECTED",
+        "ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 16,
+      "source_boundary": "after backend confirmation transaction commit",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_05_AFTER_BACKEND_CONFIRMATION_COMMIT",
+      "crash_checkpoint": "ack_05_after_backend_confirmation_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 1,
+          "derived_revisions": 1,
+          "reducer_cursors": 1,
+          "ack_outbox": 1,
+          "ack_cursors": 1
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RESTART_HANDSHAKE_CONFIRMS_EQUAL_VERIFIED_CURSORS"
+      },
+      "mutation_vector_ids": [
+        "ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT-MUT-EXPECTED",
+        "ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "ACK-06-DUPLICATE-IDENTICAL",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 17,
+      "source_boundary": "identical resend after full commit",
+      "kill_action": "NONE",
+      "harness": "LOOPBACK_ACK",
+      "child_command_id": "CRASH_VECTOR_ACK_06_DUPLICATE_IDENTICAL",
+      "crash_checkpoint": "ack_06_duplicate_identical",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "raw_commits": 0,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "RETURN_EXISTING_IDEMPOTENT_ACK"
+      },
+      "mutation_vector_ids": [
+        "ACK-06-DUPLICATE-IDENTICAL-MUT-EXPECTED",
+        "ACK-06-DUPLICATE-IDENTICAL-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T04",
+      "verification_command_id": "TEST_V636_P03_T04"
+    },
+    {
+      "vector_id": "GAP-01-AFTER-GAP-INSERT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 18,
+      "source_boundary": "after gap_records INSERT and before shock_observations INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_01_AFTER_GAP_INSERT",
+      "crash_checkpoint": "gap_01_after_gap_insert",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-01-AFTER-GAP-INSERT-MUT-EXPECTED",
+        "GAP-01-AFTER-GAP-INSERT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-02-AFTER-SHOCK-INSERT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 19,
+      "source_boundary": "after shock_observations INSERT and before immutable coherence_transitions epoch-close INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_02_AFTER_SHOCK_INSERT",
+      "crash_checkpoint": "gap_02_after_shock_insert",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-02-AFTER-SHOCK-INSERT-MUT-EXPECTED",
+        "GAP-02-AFTER-SHOCK-INSERT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-03-AFTER-COHERENCE-TRANSITION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 20,
+      "source_boundary": "after immutable OPEN to SHOCKED_CLOSED coherence_transitions INSERT and before controller UPDATE",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_03_AFTER_COHERENCE_TRANSITION",
+      "crash_checkpoint": "gap_03_after_coherence_transition",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-03-AFTER-COHERENCE-TRANSITION-MUT-EXPECTED",
+        "GAP-03-AFTER-COHERENCE-TRANSITION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-04-AFTER-CONTROLLER-CLOSE",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 21,
+      "source_boundary": "after coherence_controllers UPDATE to SHOCKED_CLOSED and before gap_epoch_bindings INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_04_AFTER_CONTROLLER_CLOSE",
+      "crash_checkpoint": "gap_04_after_controller_close",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-04-AFTER-CONTROLLER-CLOSE-MUT-EXPECTED",
+        "GAP-04-AFTER-CONTROLLER-CLOSE-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-05-AFTER-EPOCH-BINDING",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 22,
+      "source_boundary": "after gap_epoch_bindings links GAP, affected epoch, shock, controller, and transition; before predecessor close",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_05_AFTER_EPOCH_BINDING",
+      "crash_checkpoint": "gap_05_after_epoch_binding",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-05-AFTER-EPOCH-BINDING-MUT-EXPECTED",
+        "GAP-05-AFTER-EPOCH-BINDING-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-06-AFTER-PREDECESSOR-CLOSE",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 23,
+      "source_boundary": "after guarded predecessor generation close UPDATE and before generation_transitions INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_06_AFTER_PREDECESSOR_CLOSE",
+      "crash_checkpoint": "gap_06_after_predecessor_close",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-06-AFTER-PREDECESSOR-CLOSE-MUT-EXPECTED",
+        "GAP-06-AFTER-PREDECESSOR-CLOSE-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-07-AFTER-GENERATION-TRANSITION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 24,
+      "source_boundary": "after generation_transitions INSERT and before successor generation INSERT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_07_AFTER_GENERATION_TRANSITION",
+      "crash_checkpoint": "gap_07_after_generation_transition",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-07-AFTER-GENERATION-TRANSITION-MUT-EXPECTED",
+        "GAP-07-AFTER-GENERATION-TRANSITION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-08-AFTER-SUCCESSOR-INSERT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 25,
+      "source_boundary": "after guarded successor generation INSERT and before GAP COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_08_AFTER_SUCCESSOR_INSERT",
+      "crash_checkpoint": "gap_08_after_successor_insert",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 0,
+          "generation_transitions": 0,
+          "stream_generations": 0
+        },
+        "coherence_controller_updates": 0,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_ACTIVE",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"
+      },
+      "mutation_vector_ids": [
+        "GAP-08-AFTER-SUCCESSOR-INSERT-MUT-EXPECTED",
+        "GAP-08-AFTER-SUCCESSOR-INSERT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-09-DURING-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 26,
+      "source_boundary": "during atomic GAP and coherence transaction COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_09_DURING_COMMIT",
+      "crash_checkpoint": "gap_09_during_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "allowed_atomic_outcomes": [
+          {
+            "sql_row_deltas": {
+              "gap_records": 0,
+              "shock_observations": 0,
+              "coherence_transitions": 0,
+              "coherence_controllers": 0,
+              "gap_epoch_bindings": 0,
+              "generation_transitions": 0,
+              "stream_generations": 0
+            },
+            "coherence_controller_updates": 0,
+            "predecessor_generation": "0_ACTIVE",
+            "successor_generation": "NOT_CREATED",
+            "coherence_state": "OPEN",
+            "recovery_action": "REDETECT_GAP"
+          },
+          {
+            "sql_row_deltas": {
+              "gap_records": 1,
+              "shock_observations": 1,
+              "coherence_transitions": 1,
+              "coherence_controllers": 0,
+              "gap_epoch_bindings": 1,
+              "generation_transitions": 1,
+              "stream_generations": 1,
+              "application_records": 0,
+              "derived_revisions": 0,
+              "reducer_cursors": 0,
+              "ack_outbox": 0
+            },
+            "coherence_controller_updates": 1,
+            "predecessor_generation": "0_CLOSED",
+            "successor_generation": "1_ACTIVE",
+            "coherence_state": "SHOCKED_CLOSED",
+            "recovery_action": "RESUME_ONLY_IN_GENERATION_1"
+          }
+        ],
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1"
+      },
+      "mutation_vector_ids": [
+        "GAP-09-DURING-COMMIT-MUT-EXPECTED",
+        "GAP-09-DURING-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-10-AFTER-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 27,
+      "source_boundary": "after atomic GAP and coherence transaction COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_10_AFTER_COMMIT",
+      "crash_checkpoint": "gap_10_after_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {
+          "gap_records": 1,
+          "shock_observations": 1,
+          "coherence_transitions": 1,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 1,
+          "generation_transitions": 1,
+          "stream_generations": 1,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "coherence_controller_updates": 1,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_CLOSED",
+        "successor_generation": "1_ACTIVE",
+        "coherence_state": "SHOCKED_CLOSED",
+        "recovery_action": "AUTHENTICATE_GENERATION_AND_COHERENCE_FACTS_AND_RESUME_ONLY_IN_GENERATION_1"
+      },
+      "mutation_vector_ids": [
+        "GAP-10-AFTER-COMMIT-MUT-EXPECTED",
+        "GAP-10-AFTER-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "CONFLICT-01-SAME-POSITION-DIFFERENT-HASH",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 28,
+      "source_boundary": "conflicting duplicate compare and quarantine transaction",
+      "kill_action": "NONE",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_CONFLICT_01_SAME_POSITION_DIFFERENT_HASH",
+      "crash_checkpoint": "conflict_01_same_position_different_hash",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "raw_conflicts": 1,
+          "gap_records": 1,
+          "shock_observations": 1,
+          "coherence_transitions": 1,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 1,
+          "generation_transitions": 1,
+          "stream_generations": 1,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "coherence_controller_updates": 1,
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_CLOSED",
+        "successor_generation": "1_ACTIVE",
+        "coherence_state": "SHOCKED_CLOSED",
+        "recovery_action": "QUARANTINE_CONFLICT_ATOMICALLY_CLOSE_COHERENCE_AND_START_GENERATION_1_WITHOUT_ACKING_CONFLICT"
+      },
+      "mutation_vector_ids": [
+        "CONFLICT-01-SAME-POSITION-DIFFERENT-HASH-MUT-EXPECTED",
+        "CONFLICT-01-SAME-POSITION-DIFFERENT-HASH-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "LATE-01-MISSING-POSITION-AFTER-GAP",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 29,
+      "source_boundary": "late sequence 2 arrives after generation 0 permanently closed",
+      "kill_action": "NONE",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_LATE_01_MISSING_POSITION_AFTER_GAP",
+      "crash_checkpoint": "late_01_missing_position_after_gap",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "raw_commits": 1,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0,
+          "gap_records": 0,
+          "generation_transitions": 0
+        },
+        "reducer_cursor": "GEN0_Q1_H1",
+        "extension_ack": "GEN0_Q1_H1",
+        "backend_ack": "GEN0_Q1_H1",
+        "predecessor_generation": "0_CLOSED_HISTORY_REPAIRED_EPOCH_REMAINS_CLOSED",
+        "successor_generation": "1_ACTIVE",
+        "coherence_state": "WAITING_FOR_RESNAPSHOT",
+        "recovery_action": "STORE_LATE_REPAIR_ONLY_NEVER_REOPEN_GENERATION_0_OR_ITS_EPOCH"
+      },
+      "mutation_vector_ids": [
+        "LATE-01-MISSING-POSITION-AFTER-GAP-MUT-EXPECTED",
+        "LATE-01-MISSING-POSITION-AFTER-GAP-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "GAP-11-REPEATED-GAP-IN-SUCCESSOR",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 30,
+      "source_boundary": "new missing sequence in generation 1",
+      "kill_action": "NONE",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_GAP_11_REPEATED_GAP_IN_SUCCESSOR",
+      "crash_checkpoint": "gap_11_repeated_gap_in_successor",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "gap_records": 1,
+          "shock_observations": 1,
+          "coherence_transitions": 1,
+          "coherence_controllers": 0,
+          "gap_epoch_bindings": 1,
+          "generation_transitions": 1,
+          "stream_generations": 1,
+          "application_records": 0,
+          "derived_revisions": 0,
+          "reducer_cursors": 0,
+          "ack_outbox": 0
+        },
+        "coherence_controller_updates": 1,
+        "reducer_cursor": "GEN1_Q0_H0",
+        "extension_ack": "GEN1_Q0_H0",
+        "backend_ack": "GEN1_Q0_H0",
+        "predecessor_generation": "1_CLOSED",
+        "successor_generation": "2_ACTIVE",
+        "coherence_state": "SHOCKED_CLOSED",
+        "recovery_action": "ATOMICALLY_CLOSE_COHERENCE_CLOSE_GENERATION_1_AND_OPEN_EXACT_SUCCESSOR_2"
+      },
+      "mutation_vector_ids": [
+        "GAP-11-REPEATED-GAP-IN-SUCCESSOR-MUT-EXPECTED",
+        "GAP-11-REPEATED-GAP-IN-SUCCESSOR-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "CAPACITY-01-NORMAL-LIMIT-REACHED",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 31,
+      "source_boundary": "127 MiB normal spool capacity reached with 1 MiB terminal reserve intact",
+      "kill_action": "NONE",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_CAPACITY_01_NORMAL_LIMIT_REACHED",
+      "crash_checkpoint": "capacity_01_normal_limit_reached",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 1,
+        "sql_row_deltas": {},
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "ACTIVE_UNTIL_TERMINAL_GAP_COMMIT",
+        "successor_generation": "NOT_CREATED",
+        "coherence_state": "SHOCKED_CLOSED_AFTER_TERMINAL_GAP",
+        "recovery_action": "SPOOL_CAPACITY_SAFETY_STOP_NEVER_EVICT_UNACKNOWLEDGED_ROWS"
+      },
+      "mutation_vector_ids": [
+        "CAPACITY-01-NORMAL-LIMIT-REACHED-MUT-EXPECTED",
+        "CAPACITY-01-NORMAL-LIMIT-REACHED-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 32,
+      "source_boundary": "after clock_mapping_closures INSERT and before transaction COMMIT",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_CLOCK_01_AFTER_MAPPING_CLOSURE_INSERT",
+      "crash_checkpoint": "clock_01_after_mapping_closure_insert",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "clock_mapping_closures": 0,
+          "shock_observations": 0,
+          "coherence_transitions": 0
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "UNCHANGED",
+        "successor_generation": "UNCHANGED",
+        "coherence_state": "OPEN",
+        "recovery_action": "ROLLBACK_AND_REDETECT_CLOSURE_BEFORE_ACCEPTING_LATER_EVIDENCE"
+      },
+      "mutation_vector_ids": [
+        "CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT-MUT-EXPECTED",
+        "CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 33,
+      "source_boundary": "after permanent mapping closure commit and before coherence shock transaction",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_CLOCK_02_AFTER_CLOSURE_COMMIT_BEFORE_SHOCK",
+      "crash_checkpoint": "clock_02_after_closure_commit_before_shock",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "clock_mapping_closures": 1,
+          "shock_observations": 0,
+          "coherence_transitions": 0
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "UNCHANGED",
+        "successor_generation": "UNCHANGED",
+        "coherence_state": "OPEN_BUT_INELIGIBLE",
+        "recovery_action": "SYNTHESIZE_MAPPING_CLOSURE_SHOCK_BEFORE_ANY_LATER_EVIDENCE"
+      },
+      "mutation_vector_ids": [
+        "CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK-MUT-EXPECTED",
+        "CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 34,
+      "source_boundary": "after shock_observations and OPEN to SHOCKED_CLOSED transition writes before commit",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_EPOCH_01_AFTER_SHOCK_BEFORE_CLOSE_COMMIT",
+      "crash_checkpoint": "epoch_01_after_shock_before_close_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "shock_observations": 0,
+          "coherence_transitions": 0
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "UNCHANGED",
+        "successor_generation": "UNCHANGED",
+        "coherence_state": "OPEN_BUT_SHOCK_REDETECTION_REQUIRED",
+        "recovery_action": "ROLLBACK_REDETECT_SHOCK_AND_CLOSE_BEFORE_ELIGIBILITY"
+      },
+      "mutation_vector_ids": [
+        "EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT-MUT-EXPECTED",
+        "EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 35,
+      "source_boundary": "after atomic shock and predecessor epoch close commit",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_EPOCH_02_AFTER_SHOCK_CLOSE_COMMIT",
+      "crash_checkpoint": "epoch_02_after_shock_close_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "shock_observations": 1,
+          "coherence_transitions": 1
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "UNCHANGED",
+        "successor_generation": "UNCHANGED",
+        "coherence_state": "SHOCKED_CLOSED",
+        "recovery_action": "ADVANCE_TO_WAITING_FOR_RESNAPSHOT_PREDECESSOR_REMAINS_CLOSED"
+      },
+      "mutation_vector_ids": [
+        "EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT-MUT-EXPECTED",
+        "EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 36,
+      "source_boundary": "after resnapshot proof, freshness vector, candidate epoch, and pending transition writes before commit",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_EPOCH_03_AFTER_PENDING_WRITES_BEFORE_COMMIT",
+      "crash_checkpoint": "epoch_03_after_pending_writes_before_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "authoritative_resnapshot_proofs": 0,
+          "input_freshness_vectors": 0,
+          "coherence_epochs": 0,
+          "coherence_transitions": 0
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "UNCHANGED",
+        "successor_generation": "UNCHANGED",
+        "coherence_state": "WAITING_FOR_RESNAPSHOT",
+        "recovery_action": "ROLLBACK_AND_REVALIDATE_FULL_RELEASE_PREDICATE"
+      },
+      "mutation_vector_ids": [
+        "EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT-MUT-EXPECTED",
+        "EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 37,
+      "source_boundary": "during NEW_EPOCH_PENDING to NEW_EPOCH_OPEN commit",
+      "kill_action": "SIGKILL_BACKEND_CHILD",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_EPOCH_04_DURING_NEW_EPOCH_OPEN_COMMIT",
+      "crash_checkpoint": "epoch_04_during_new_epoch_open_commit",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "allowed_atomic_outcomes": [
+          {
+            "sql_row_deltas": {
+              "coherence_transitions": 0
+            },
+            "coherence_state": "NEW_EPOCH_PENDING",
+            "recovery_action": "REVALIDATE_RELEASE_PREDICATE"
+          },
+          {
+            "sql_row_deltas": {
+              "coherence_transitions": 1
+            },
+            "coherence_state": "NEW_EPOCH_OPEN",
+            "recovery_action": "USE_ONLY_DISTINCT_SUCCESSOR_EPOCH"
+          }
+        ],
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "CLOSED",
+        "successor_generation": "ACTIVE"
+      },
+      "mutation_vector_ids": [
+        "EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT-MUT-EXPECTED",
+        "EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "EPOCH-05-NEW-SHOCK-WHILE-PENDING",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 38,
+      "source_boundary": "new or intersecting shock while successor candidate is pending",
+      "kill_action": "NONE",
+      "harness": "GAP_GENERATION_COHERENCE",
+      "child_command_id": "CRASH_VECTOR_EPOCH_05_NEW_SHOCK_WHILE_PENDING",
+      "crash_checkpoint": "epoch_05_new_shock_while_pending",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_spool_delta": 0,
+        "sql_row_deltas": {
+          "shock_observations": 1,
+          "coherence_epochs": 1,
+          "coherence_transitions": 1
+        },
+        "reducer_cursor": "UNCHANGED",
+        "extension_ack": "UNCHANGED",
+        "backend_ack": "UNCHANGED",
+        "predecessor_generation": "CLOSED",
+        "successor_generation": "ACTIVE",
+        "coherence_state": "WAITING_FOR_RESNAPSHOT",
+        "recovery_action": "PERMANENTLY_CLOSE_CANDIDATE_AND_BUILD_A_NEW_DISTINCT_CANDIDATE"
+      },
+      "mutation_vector_ids": [
+        "EPOCH-05-NEW-SHOCK-WHILE-PENDING-MUT-EXPECTED",
+        "EPOCH-05-NEW-SHOCK-WHILE-PENDING-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T06",
+      "verification_command_id": "TEST_V636_P03_T06"
+    },
+    {
+      "vector_id": "DESTROY-01-BEFORE-AUTHORITY",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 39,
+      "source_boundary": "before signed destruction authority and human invocation",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_01_BEFORE_AUTHORITY",
+      "crash_checkpoint": "destroy_01_before_authority",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "PRESENT",
+        "backend_database": "PRESENT",
+        "external_intent_delta": 0,
+        "external_proof_delta": 0,
+        "sql_row_deltas": {},
+        "reducer_cursor": "FINAL_UNCHANGED",
+        "extension_ack": "FINAL_UNCHANGED",
+        "backend_ack": "FINAL_UNCHANGED",
+        "predecessor_generation": "FINAL_CLOSED",
+        "successor_generation": "FINAL",
+        "coherence_state": "FINAL_CLOSED",
+        "recovery_action": "DO_NOT_DELETE"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-01-BEFORE-AUTHORITY-MUT-EXPECTED",
+        "DESTROY-01-BEFORE-AUTHORITY-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 40,
+      "source_boundary": "after the exact one-use EVIDENCE_EXPORT_ACCEPTED authorization consumption commit and before external RunDestructionIntent creation",
+      "kill_action": "SIGKILL_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_01A_AFTER_CONSUMPTION_BEFORE_INTENT",
+      "crash_checkpoint": "destroy_01a_after_consumption_before_intent",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "PRESENT",
+        "backend_database": "PRESENT",
+        "run_status": "CLOSED",
+        "receipt_state": "CONSUMED_ONE_USE_PERMANENTLY_BURNED",
+        "external_intent_delta": 0,
+        "external_proof_delta": 0,
+        "deletion_started": false,
+        "sql_row_deltas": {
+          "authorization_consumptions": 1
+        },
+        "second_authorization_consumption_allowed": false,
+        "new_authority_required": false,
+        "reducer_cursor": "FINAL_UNCHANGED",
+        "extension_ack": "FINAL_UNCHANGED",
+        "backend_ack": "FINAL_UNCHANGED",
+        "predecessor_generation": "FINAL_CLOSED",
+        "successor_generation": "FINAL",
+        "coherence_state": "FINAL_CLOSED",
+        "recovery_action": "FAIL_CLOSED_REVALIDATE_SAME_RECEIPT_BYTES_AS_DATA_ONLY_AND_RECONSTRUCT_ONLY_THE_BYTE_IDENTICAL_EXTERNAL_INTENT_MATCHING_PRECOMMITTED_ID_CONTENT_HASH_INVENTORY_HASH_CREATED_AT_AND_FIXED_ARTIFACT_ORDER_NEVER_RECONSUME_OR_ALTER_ANY_FIELD"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT-MUT-EXPECTED",
+        "DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-02-AFTER-INTENT-BEFORE-DELETION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 41,
+      "source_boundary": "after the exact one-use EVIDENCE_EXPORT_ACCEPTED GateReceipt consumption and byte-identical precommitted external intent commit, and before either whole-run store deletion",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_02_AFTER_INTENT_BEFORE_DELETION",
+      "crash_checkpoint": "destroy_02_after_intent_before_deletion",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "PRESENT",
+        "backend_database": "PRESENT",
+        "run_status": "DESTRUCTION_PENDING",
+        "external_intent_delta": 1,
+        "external_proof_delta": 0,
+        "sql_row_deltas": {
+          "authorization_consumptions": 1
+        },
+        "reducer_cursor": "FINAL_UNCHANGED",
+        "extension_ack": "FINAL_UNCHANGED",
+        "backend_ack": "FINAL_UNCHANGED",
+        "predecessor_generation": "FINAL_CLOSED",
+        "successor_generation": "FINAL",
+        "coherence_state": "FINAL_CLOSED",
+        "recovery_action": "REVALIDATE_PERSISTED_EXTERNAL_INTENT_ID_AND_CANONICAL_CONTENT_HASH_AGAINST_IMMUTABLE_PRECOMMIT_PLUS_EXACT_RUN_MANIFEST_RECEIPT_CONSUMPTION_AND_HUMAN_BINDINGS_THEN_RESUME_SAME_WHOLE_RUN_DESTRUCTION"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-02-AFTER-INTENT-BEFORE-DELETION-MUT-EXPECTED",
+        "DESTROY-02-AFTER-INTENT-BEFORE-DELETION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-03-AFTER-EXTENSION-DELETION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 42,
+      "source_boundary": "after IndexedDB run deletion and before backend database deletion",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_03_AFTER_EXTENSION_DELETION",
+      "crash_checkpoint": "destroy_03_after_extension_deletion",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "DELETED",
+        "backend_database": "PRESENT",
+        "external_intent_delta": 1,
+        "external_proof_delta": 0,
+        "sql_row_deltas": {
+          "authorization_consumptions": 1
+        },
+        "reducer_cursor": "READABLE_FROM_BACKEND",
+        "extension_ack": "UNAVAILABLE_AFTER_DELETE",
+        "backend_ack": "FINAL_UNCHANGED",
+        "predecessor_generation": "READABLE_FROM_BACKEND",
+        "successor_generation": "READABLE_FROM_BACKEND",
+        "coherence_state": "READABLE_FROM_BACKEND",
+        "recovery_action": "REVALIDATE_EXTERNAL_INTENT_AGAINST_COMMITTED_ONE_USE_CONSUMPTION_FOR_THE_SAME_RUN_THEN_DELETE_BACKEND_AND_PROVE_PARTIAL_HISTORY"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-03-AFTER-EXTENSION-DELETION-MUT-EXPECTED",
+        "DESTROY-03-AFTER-EXTENSION-DELETION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-04-AFTER-BACKEND-DELETION",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 43,
+      "source_boundary": "after backend database deletion and before IndexedDB run deletion",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_04_AFTER_BACKEND_DELETION",
+      "crash_checkpoint": "destroy_04_after_backend_deletion",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "PRESENT",
+        "backend_database": "DELETED",
+        "external_intent_delta": 1,
+        "external_proof_delta": 0,
+        "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED",
+        "reducer_cursor": "UNAVAILABLE_AFTER_DELETE",
+        "extension_ack": "FINAL_UNCHANGED",
+        "backend_ack": "UNAVAILABLE_AFTER_DELETE",
+        "predecessor_generation": "UNAVAILABLE_AFTER_DELETE",
+        "successor_generation": "UNAVAILABLE_AFTER_DELETE",
+        "coherence_state": "UNAVAILABLE_AFTER_DELETE",
+        "recovery_action": "REVALIDATE_SIGNED_EXTERNAL_INTENT_EXACT_RUN_MANIFEST_AND_RECEIPT_CONTENT_HASH_BINDING_THEN_DELETE_ONLY_THE_SAME_RUN_INDEXEDDB_AND_WRITE_PROOF"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-04-AFTER-BACKEND-DELETION-MUT-EXPECTED",
+        "DESTROY-04-AFTER-BACKEND-DELETION-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 44,
+      "source_boundary": "after both component deletions and before external proof write",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_05_AFTER_BOTH_DELETIONS_BEFORE_PROOF",
+      "crash_checkpoint": "destroy_05_after_both_deletions_before_proof",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "DELETED",
+        "backend_database": "DELETED",
+        "external_intent_delta": 1,
+        "external_proof_delta": 0,
+        "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED",
+        "reducer_cursor": "RECORDED_IN_INTENT_ONLY",
+        "extension_ack": "RECORDED_IN_INTENT_ONLY",
+        "backend_ack": "RECORDED_IN_INTENT_ONLY",
+        "predecessor_generation": "RECORDED_IN_INTENT_ONLY",
+        "successor_generation": "RECORDED_IN_INTENT_ONLY",
+        "coherence_state": "RECORDED_IN_INTENT_ONLY",
+        "recovery_action": "WRITE_LOGICAL_DELETION_PROOF_FROM_ACCEPTED_EXTERNAL_INTENT"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF-MUT-EXPECTED",
+        "DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    },
+    {
+      "vector_id": "DESTROY-06-AFTER-PROOF",
+      "source_vector_set": "DURABILITY_CRASH_V1",
+      "source_case_index": 45,
+      "source_boundary": "after external deletion proof write",
+      "kill_action": "TERMINATE_DESTRUCTION_CHILD",
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "child_command_id": "CRASH_VECTOR_DESTROY_06_AFTER_PROOF",
+      "crash_checkpoint": "destroy_06_after_proof",
+      "state_inspector": "runtime/tools/inspect_restart_state.py::inspect_restart_state",
+      "expected_post_restart_state": {
+        "indexeddb_store": "DELETED",
+        "backend_database": "DELETED",
+        "external_intent_delta": 1,
+        "external_proof_delta": 1,
+        "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED",
+        "reducer_cursor": "RECORDED_IN_INTENT_ONLY",
+        "extension_ack": "RECORDED_IN_INTENT_ONLY",
+        "backend_ack": "RECORDED_IN_INTENT_ONLY",
+        "predecessor_generation": "RECORDED_IN_INTENT_ONLY",
+        "successor_generation": "RECORDED_IN_INTENT_ONLY",
+        "coherence_state": "RECORDED_IN_INTENT_ONLY",
+        "recovery_action": "NO_FURTHER_ACTION_LOGICAL_DELETION_COMPLETE_SECURE_ERASURE_CLAIM_FALSE"
+      },
+      "mutation_vector_ids": [
+        "DESTROY-06-AFTER-PROOF-MUT-EXPECTED",
+        "DESTROY-06-AFTER-PROOF-MUT-INPUT"
+      ],
+      "owner_task": "V636-P03-T07",
+      "verification_command_id": "TEST_V636_P03_T07"
+    }
+  ]
+}

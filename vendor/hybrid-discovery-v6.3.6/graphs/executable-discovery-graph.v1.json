@@ -1,0 +1,25 @@
+{
+  "graph_type": "EXECUTABLE_DISCOVERY_GRAPH",
+  "schema_version": "v1",
+  "nodes": [
+    "R0",
+    "F0A",
+    "SEC0",
+    "E0",
+    "D0",
+    "G0",
+    "SCOPE0",
+    "DISCOVERY_COMPLETE"
+  ],
+  "edges": [
+    ["R0", "F0A"],
+    ["F0A", "SEC0"],
+    ["SEC0", "E0"],
+    ["SEC0", "D0"],
+    ["E0", "G0"],
+    ["D0", "G0"],
+    ["G0", "SCOPE0"],
+    ["SCOPE0", "DISCOVERY_COMPLETE"]
+  ],
+  "terminal": "DISCOVERY_COMPLETE"
+}

@@ -1,0 +1,701 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:pack-archive:v1",
+  "title": "Hybrid Discovery v6.2 deterministic distribution archive records",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/PackArchiveProfile"
+    },
+    {
+      "$ref": "#/$defs/PackArchiveVectorSet"
+    }
+  ],
+  "$defs": {
+    "Sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ClosedStringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "ManifestPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_ref",
+        "relative_path",
+        "serialization",
+        "self_listed_in_files",
+        "included_in_archive",
+        "files_membership",
+        "file_entry_keys",
+        "size_bytes_representation",
+        "size_bytes_minimum",
+        "size_bytes_maximum",
+        "file_order",
+        "tree_preimage_item",
+        "tree_digest",
+        "pack_hash_binding",
+        "baseline_hash_binding"
+      ],
+      "properties": {
+        "schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#PackManifest"
+        },
+        "relative_path": {
+          "const": "MANIFEST_SHA256.json"
+        },
+        "serialization": {
+          "const": "RFC8785_JCS_UTF8_PLUS_SINGLE_LF"
+        },
+        "self_listed_in_files": {
+          "const": false
+        },
+        "included_in_archive": {
+          "const": true
+        },
+        "files_membership": {
+          "const": "EVERY_AND_ONLY_REGULAR_SOURCE_FILE_EXCEPT_MANIFEST_EXACTLY_ONCE"
+        },
+        "file_entry_keys": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "path"
+            },
+            {
+              "const": "size_bytes"
+            },
+            {
+              "const": "sha256"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "size_bytes_representation": {
+          "const": "JSON_INTEGER"
+        },
+        "size_bytes_minimum": {
+          "const": 0
+        },
+        "size_bytes_maximum": {
+          "const": 9007199254740991
+        },
+        "file_order": {
+          "const": "RELATIVE_PATH_UTF8_BYTE_LEXICOGRAPHIC_ASCENDING"
+        },
+        "tree_preimage_item": {
+          "const": "UTF8_NFC_PATH || 0x00 || ASCII_BASE10_SIZE || 0x00 || ASCII_LOWERCASE_SHA256 || 0x0A"
+        },
+        "tree_digest": {
+          "const": "SHA-256"
+        },
+        "pack_hash_binding": {
+          "const": "SHA256_CONCATENATED_TREE_PREIMAGE_ITEMS"
+        },
+        "baseline_hash_binding": {
+          "const": "IMPLEMENTATION_BASELINE_HASH_EQUALS_REPO0_RECEIPT_INDEPENDENT_FILE_TREE_ROOT_SHA256"
+        }
+      }
+    },
+    "PathPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_encoding",
+        "normalization",
+        "normalization_action",
+        "portable_character_set",
+        "relative_separator",
+        "forbidden_components",
+        "absolute_paths",
+        "backslash",
+        "bom",
+        "nul",
+        "duplicate_rule",
+        "member_prefix",
+        "top_level_directory_count"
+      ],
+      "properties": {
+        "source_encoding": {
+          "const": "UTF-8"
+        },
+        "normalization": {
+          "const": "NFC_ALREADY"
+        },
+        "normalization_action": {
+          "const": "REJECT_NEVER_NORMALIZE"
+        },
+        "portable_character_set": {
+          "const": "ASCII_SUBSET_[A-Za-z0-9._/-]"
+        },
+        "relative_separator": {
+          "const": "/"
+        },
+        "forbidden_components": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": ""
+            },
+            {
+              "const": "."
+            },
+            {
+              "const": ".."
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "absolute_paths": {
+          "const": "REJECT"
+        },
+        "backslash": {
+          "const": "REJECT"
+        },
+        "bom": {
+          "const": "REJECT_U_PLUS_FEFF_ANY_POSITION"
+        },
+        "nul": {
+          "const": "REJECT"
+        },
+        "duplicate_rule": {
+          "const": "REJECT_DUPLICATE_EXACT_MEMBER_OR_NORMALIZED_RELATIVE_PATH"
+        },
+        "member_prefix": {
+          "const": "hybrid-discovery-v6.2/"
+        },
+        "top_level_directory_count": {
+          "const": 1
+        }
+      }
+    },
+    "SourcePolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root_type",
+        "accepted_entry_type",
+        "accepted_source_link_count",
+        "symlink",
+        "hardlink",
+        "device",
+        "fifo",
+        "socket",
+        "content_transform"
+      ],
+      "properties": {
+        "root_type": {
+          "const": "REAL_DIRECTORY_NOT_SYMLINK"
+        },
+        "accepted_entry_type": {
+          "const": "REGULAR_FILE_OR_DIRECTORY"
+        },
+        "accepted_source_link_count": {
+          "const": 1
+        },
+        "symlink": {
+          "const": "REJECT"
+        },
+        "hardlink": {
+          "const": "REJECT_SOURCE_ST_NLINK_NOT_ONE"
+        },
+        "device": {
+          "const": "REJECT"
+        },
+        "fifo": {
+          "const": "REJECT"
+        },
+        "socket": {
+          "const": "REJECT"
+        },
+        "content_transform": {
+          "const": "NONE_COPY_EXACT_BYTES"
+        }
+      }
+    },
+    "ZipPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "disk_count",
+        "zip64",
+        "encryption",
+        "data_descriptor",
+        "compression_method",
+        "compression_method_code",
+        "compression_level",
+        "member_order",
+        "directory_entries",
+        "member_timestamp",
+        "timezone_interpretation",
+        "creator_system",
+        "creator_system_code",
+        "version_made_by",
+        "version_needed_to_extract",
+        "general_purpose_bit_flags_hex",
+        "unix_file_type",
+        "unix_permissions_octal",
+        "external_attributes_hex",
+        "internal_attributes_hex",
+        "disk_number_start",
+        "entry_extra_fields",
+        "entry_comments",
+        "archive_comment"
+      ],
+      "properties": {
+        "format": {
+          "const": "CLASSIC_ZIP_APPNOTE_6_3_10"
+        },
+        "disk_count": {
+          "const": 1
+        },
+        "zip64": {
+          "const": false
+        },
+        "encryption": {
+          "const": false
+        },
+        "data_descriptor": {
+          "const": false
+        },
+        "compression_method": {
+          "const": "STORED"
+        },
+        "compression_method_code": {
+          "const": 0
+        },
+        "compression_level": {
+          "const": "NOT_APPLICABLE"
+        },
+        "member_order": {
+          "const": "FULL_MEMBER_NAME_UTF8_BYTE_LEXICOGRAPHIC_ASCENDING_IN_LOCAL_AND_CENTRAL_RECORDS"
+        },
+        "directory_entries": {
+          "const": "OMITTED"
+        },
+        "member_timestamp": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": 1980
+            },
+            {
+              "const": 1
+            },
+            {
+              "const": 1
+            },
+            {
+              "const": 0
+            },
+            {
+              "const": 0
+            },
+            {
+              "const": 0
+            }
+          ],
+          "items": false,
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "timezone_interpretation": {
+          "const": "NONE_LITERAL_DOS_FIELDS"
+        },
+        "creator_system": {
+          "const": "UNIX"
+        },
+        "creator_system_code": {
+          "const": 3
+        },
+        "version_made_by": {
+          "const": 20
+        },
+        "version_needed_to_extract": {
+          "const": 20
+        },
+        "general_purpose_bit_flags_hex": {
+          "const": "0000"
+        },
+        "unix_file_type": {
+          "const": "REGULAR"
+        },
+        "unix_permissions_octal": {
+          "const": "0644"
+        },
+        "external_attributes_hex": {
+          "const": "81a40000"
+        },
+        "internal_attributes_hex": {
+          "const": "0000"
+        },
+        "disk_number_start": {
+          "const": 0
+        },
+        "entry_extra_fields": {
+          "const": "EMPTY"
+        },
+        "entry_comments": {
+          "const": "EMPTY"
+        },
+        "archive_comment": {
+          "const": "EMPTY"
+        }
+      }
+    },
+    "IntegrityPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "member_crc",
+        "member_size",
+        "member_compressed_size",
+        "member_sha256",
+        "archive_sha256",
+        "reopen",
+        "rebuild"
+      ],
+      "properties": {
+        "member_crc": {
+          "const": "CRC-32_IEEE_MATCH_CENTRAL_AND_EXTRACTED_BYTES"
+        },
+        "member_size": {
+          "const": "EXACT_MANIFEST_SIZE_OR_EXACT_MANIFEST_FILE_SIZE_FOR_MANIFEST"
+        },
+        "member_compressed_size": {
+          "const": "EQUALS_MEMBER_SIZE"
+        },
+        "member_sha256": {
+          "const": "EXACT_MANIFEST_SHA256_AND_SOURCE_BYTES"
+        },
+        "archive_sha256": {
+          "const": "SHA-256_OVER_COMPLETE_ZIP_BYTES"
+        },
+        "reopen": {
+          "const": "REQUIRED_AFTER_WRITE"
+        },
+        "rebuild": {
+          "const": "SECOND_INDEPENDENT_OUTPUT_FROM_SAME_PACK_MUST_BE_BYTE_IDENTICAL"
+        }
+      }
+    },
+    "SidecarPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relative_location",
+        "basename",
+        "encoding",
+        "bom",
+        "line_count",
+        "format",
+        "digest_case",
+        "line_ending",
+        "included_in_archive"
+      ],
+      "properties": {
+        "relative_location": {
+          "const": "SIBLING_OF_ARCHIVE"
+        },
+        "basename": {
+          "const": "hybrid-discovery-v6.2.zip.sha256"
+        },
+        "encoding": {
+          "const": "ASCII"
+        },
+        "bom": {
+          "const": false
+        },
+        "line_count": {
+          "const": 1
+        },
+        "format": {
+          "const": "LOWERCASE_SHA256_HEX || TWO_ASCII_SPACES || ARCHIVE_BASENAME || LF"
+        },
+        "digest_case": {
+          "const": "LOWERCASE"
+        },
+        "line_ending": {
+          "const": "LF"
+        },
+        "included_in_archive": {
+          "const": false
+        }
+      }
+    },
+    "PackArchiveProfile": {
+      "$anchor": "PackArchiveProfile",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "profile_id",
+        "pack_directory_basename",
+        "archive_basename",
+        "manifest",
+        "paths",
+        "source",
+        "zip",
+        "integrity",
+        "sidecar",
+        "failure_precedence",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "pack-archive-profile/v1"
+        },
+        "profile_id": {
+          "const": "HD-PACK-ZIP-STORED-v1"
+        },
+        "pack_directory_basename": {
+          "const": "hybrid-discovery-v6.2"
+        },
+        "archive_basename": {
+          "const": "hybrid-discovery-v6.2.zip"
+        },
+        "manifest": {
+          "$ref": "#/$defs/ManifestPolicy"
+        },
+        "paths": {
+          "$ref": "#/$defs/PathPolicy"
+        },
+        "source": {
+          "$ref": "#/$defs/SourcePolicy"
+        },
+        "zip": {
+          "$ref": "#/$defs/ZipPolicy"
+        },
+        "integrity": {
+          "$ref": "#/$defs/IntegrityPolicy"
+        },
+        "sidecar": {
+          "$ref": "#/$defs/SidecarPolicy"
+        },
+        "failure_precedence": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "const": "SOURCE_AND_NAME"
+            },
+            {
+              "const": "MANIFEST_SCHEMA_AND_MEMBERSHIP"
+            },
+            {
+              "const": "MANIFEST_SIZE_HASH_AND_TREE_ROOT"
+            },
+            {
+              "const": "ARCHIVE_AND_SIDECAR_TYPE"
+            },
+            {
+              "const": "SIDECAR_BYTES"
+            },
+            {
+              "const": "ZIP_FORMAT_PATH_AND_DUPLICATE"
+            },
+            {
+              "const": "ZIP_METADATA"
+            },
+            {
+              "const": "CRC_SIZE_HASH_AND_CONTENT"
+            },
+            {
+              "const": "BYTE_IDENTICAL_REBUILD"
+            }
+          ],
+          "items": false,
+          "minItems": 9,
+          "maxItems": 9
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "VectorFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "content_base64",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+        },
+        "content_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256"
+        }
+      }
+    },
+    "GoldenVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vector_id",
+        "source_files",
+        "manifest_content_base64",
+        "tree_preimage_hex",
+        "pack_hash",
+        "expected_member_names",
+        "expected_archive_size_bytes",
+        "expected_archive_sha256",
+        "expected_archive_base64",
+        "expected_sidecar_base64"
+      ],
+      "properties": {
+        "vector_id": {
+          "const": "PACK-ARCHIVE-GOLDEN-STORED-V1"
+        },
+        "source_files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/VectorFile"
+          }
+        },
+        "manifest_content_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+        },
+        "tree_preimage_hex": {
+          "type": "string",
+          "pattern": "^[0-9a-f]+$"
+        },
+        "pack_hash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "expected_member_names": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 17,
+          "items": {
+            "type": "string",
+            "pattern": "^hybrid-discovery-v6\\.2/[A-Za-z0-9._/-]+$"
+          },
+          "uniqueItems": true
+        },
+        "expected_archive_size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expected_archive_sha256": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "expected_archive_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+        },
+        "expected_sidecar_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+        }
+      }
+    },
+    "NegativeVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vector_id",
+        "mutation",
+        "expected_error"
+      ],
+      "properties": {
+        "vector_id": {
+          "type": "string",
+          "pattern": "^PACK-ARCHIVE-REJECT-[A-Z0-9-]+$"
+        },
+        "mutation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_error": {
+          "enum": [
+            "E_PACK:ARCHIVE_NAME",
+            "E_PACK:SOURCE_TYPE",
+            "E_PACK:SOURCE_HARDLINK",
+            "E_PACK:SOURCE_CHANGED",
+            "E_PACK:MANIFEST",
+            "E_PACK:MANIFEST_SERIALIZATION",
+            "E_PACK:MANIFEST_SELF_REFERENCE",
+            "E_PACK:MANIFEST_DUPLICATE",
+            "E_PACK:MANIFEST_ORDER",
+            "E_PACK:MANIFEST_FILE_SET",
+            "E_PACK:MANIFEST_HASH",
+            "E_PACK:ARCHIVE_FORMAT",
+            "E_PACK:ARCHIVE_PATH",
+            "E_PACK:ARCHIVE_DUPLICATE",
+            "E_PACK:ARCHIVE_FILE_SET",
+            "E_PACK:ARCHIVE_METADATA",
+            "E_PACK:ARCHIVE_INTEGRITY",
+            "E_PACK:ARCHIVE_BYTES",
+            "E_PACK:ARCHIVE_REBUILD",
+            "E_PACK:SIDECAR"
+          ]
+        }
+      }
+    },
+    "PackArchiveVectorSet": {
+      "$anchor": "PackArchiveVectorSet",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "profile_id",
+        "golden_vectors",
+        "negative_vectors",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "pack-archive-vectors/v1"
+        },
+        "profile_id": {
+          "const": "HD-PACK-ZIP-STORED-v1"
+        },
+        "golden_vectors": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/GoldenVector"
+          }
+        },
+        "negative_vectors": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/NegativeVector"
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    }
+  }
+}

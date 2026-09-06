@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.test.json",
+  "include": [
+    "src/**/*.ts",
+    "test-harness/**/*.ts",
+    "test/durability/**/*.ts",
+    "test/security/**/*.ts"
+  ],
+  "exclude": []
+}

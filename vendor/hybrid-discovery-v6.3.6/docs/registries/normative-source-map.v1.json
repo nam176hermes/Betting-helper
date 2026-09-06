@@ -1,0 +1,529 @@
+{
+  "schema_version": "normative-source-map/v1",
+  "owner_phase": "MIG0",
+  "inherited_entries": [
+    {
+      "plan_source": "docs/inherited/v6.2/cdp/browser_protocol.json",
+      "vendor_relative": "cdp/browser_protocol.json",
+      "source_sha256": "9ec7cd3dd1ae22514ec48761681b029f78a9cfa32c1befb2806269b15a799894",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/cdp/js_protocol.json",
+      "vendor_relative": "cdp/js_protocol.json",
+      "source_sha256": "cf124bf143bf361a7900bcfeea3926c1cfcc1da36d83756c228c43d84321539a",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/graphs/executable-discovery-graph.v1.json",
+      "vendor_relative": "graphs/executable-discovery-graph.v1.json",
+      "source_sha256": "eea2994a7e52f1036721dcdec371d1396d5947f0ce1a8aa09ecefc29a5f4325a",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/graphs/non-authoritative-future-roadmap.v1.json",
+      "vendor_relative": "graphs/non-authoritative-future-roadmap.v1.json",
+      "source_sha256": "03bc03dd59806ac7aab1758bb51b081e50c4a83f6740b00c9a00ad0a8fca47a0",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/registries/canonical-hash-domains.v1.json",
+      "vendor_relative": "registries/canonical-hash-domains.v1.json",
+      "source_sha256": "0cf32d6dec4c324e27a6845b79089b7bb4b2d7d8064abdf57f180d432c992de1",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/registries/discovery-capability-consumers.v1.json",
+      "vendor_relative": "registries/discovery-capability-consumers.v1.json",
+      "source_sha256": "dd5e4e2c734b586f709e2c33e0409291e5ddb2ab38d210ca0135a2ed61e4e1ac",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/registries/pack-archive-profile.v1.json",
+      "vendor_relative": "registries/pack-archive-profile.v1.json",
+      "source_sha256": "197d6814a434e4a4ce0e21d1e6a0555af54bd7a26c2648b39215e9689ecc8f7b",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/registries/required-discovery-decisions.v1.json",
+      "vendor_relative": "registries/required-discovery-decisions.v1.json",
+      "source_sha256": "6c355933378b902cc1945c7be9971cba6c4587a808ab9d467bb07497567bdecc",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/registries/scope0-input-policy.v1.json",
+      "vendor_relative": "registries/scope0-input-policy.v1.json",
+      "source_sha256": "a21360a1eea1f9ad776b46235907ced897a89de12ca324db9a059c801e970f22",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/authorization-records.schema.json",
+      "vendor_relative": "schemas/authorization-records.schema.json",
+      "source_sha256": "7f656e388ffa96cbd8fb46475f2d9aca2984844788afb8590e7b7539dcc71746",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "94c261853c38f2e46e899ebcf29f3426f055f7a97cfd644dd8c8f626533dedda"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/capability-manifest.schema.json",
+      "vendor_relative": "schemas/capability-manifest.schema.json",
+      "source_sha256": "41540c3258fc75e89467448cf89042195e174ea590d678e1a773c7192cd90fbe",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "0724bd38b2decd924e4aba28760588c269be78a1805faa00a1a0fb5c72e68a53"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/clock-coherence-records.schema.json",
+      "vendor_relative": "schemas/clock-coherence-records.schema.json",
+      "source_sha256": "ac318036e1fad1ec215baf7ab4a532c64c12997060fda9b00e932104adba372c",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "cca966134ffbc976a1ccdce951a954b3820eaa5f8e8e65f1108180a7ae60929f"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/common-records.schema.json",
+      "vendor_relative": "schemas/common-records.schema.json",
+      "source_sha256": "cddf9a52d9dc7619330c436edd7b12516ef062e232febd1daa56b62843364936",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "c09d716b27e0eb02ef00ad2988115b921838fdd759c0fe21149e9e6134a0e2cd"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/d0-evidence.schema.json",
+      "vendor_relative": "schemas/d0-evidence.schema.json",
+      "source_sha256": "646321029ebf37f5b031763a008dca2bae298f4c6f3d6e71b8f274e1f29bff4f",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "1a33964641d391a4b2b81937f0a9b6f06a27fa85af066ebafd59d36c61bf57cc"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/durability-records.schema.json",
+      "vendor_relative": "schemas/durability-records.schema.json",
+      "source_sha256": "9795a16e8bd1fe8aa3c893e8a4b19e41f195eba0e8c73e6f1c3cd5ef5fb12364",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "bebadf5dc5c1320ce54036123f00e7f777d9754759cb7c19d4675c64b95d271f"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/e0-evidence.schema.json",
+      "vendor_relative": "schemas/e0-evidence.schema.json",
+      "source_sha256": "3cb156fcd1a525939f206b099d7062818397d835d347174a824b2768294f74e1",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "7729157a65a1e439e37dff46ac22d509036954eca9f22b1bfd7e4c680a20d304"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/loopback-messages.schema.json",
+      "vendor_relative": "schemas/loopback-messages.schema.json",
+      "source_sha256": "7d6695c4366a42434b7ea5131dba10b65105f73fc91df1ad6596d4982bbcc207",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "bbaebd5e1ec794eac2e63214c4a5c906319ee785a7585214d9508892fb1cc6c0"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/meta-records.schema.json",
+      "vendor_relative": "schemas/meta-records.schema.json",
+      "source_sha256": "e4f856d81e95209ee3bdb28efef84dce0ce93323613dc2e27e937318a5278b77",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "6f2156fbb2079079ce96bef618e390fdb3462d9244de76aca6672b673d79a041"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/pack-archive.schema.json",
+      "vendor_relative": "schemas/pack-archive.schema.json",
+      "source_sha256": "8d84fbb9196f58cd4e1e14100c8f0aadfc130b0de1a0ada53cd8346e4d8cf31b",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "bb176786782cf822a58212a3612088650d73bd642fd8602d46d95b5811d6cc0c"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/raw-observation.schema.json",
+      "vendor_relative": "schemas/raw-observation.schema.json",
+      "source_sha256": "7b2023ed333e4bd29d05761d201a459207a3aab87acee876b42ac1fb6a109b19",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "90982ce0ab8a10b2491fd8eeda96ba1403cc2f3d70d6eea21840be2bbfc0dcaf"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/review-records.schema.json",
+      "vendor_relative": "schemas/review-records.schema.json",
+      "source_sha256": "cf87f105be5871b52ba4ab7b86a16b0e0494c26b7d63fc5f714a933a58ee1b1d",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "bfd9ff2a23d3ec3c496000d1ede2d5b1db1ee92e824059b0e3e2f41e6c42d77a"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/schemas/scope-records.schema.json",
+      "vendor_relative": "schemas/scope-records.schema.json",
+      "source_sha256": "a25b5cc5f1b20819ad789e44f0004634dfab4934d3f8f5fc7838c9bb29894c8d",
+      "protocol_compatibility": "EQUIVALENT_SCHEMA_POINTER_NORMALIZATION",
+      "plan_sha256": "ce7064caa51e4a2ad1e4a45b9289abeced7cff484a5d63065d89741097f9a387"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/security/cdp-protocol-lock.v1.json",
+      "vendor_relative": "security/cdp-protocol-lock.v1.json",
+      "source_sha256": "606e1489a83b7168aaa5ba3b26febec4acd5a499635a4611c47db12bad253a22",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/security/discovery-capability-manifest.v1.json",
+      "vendor_relative": "security/discovery-capability-manifest.v1.json",
+      "source_sha256": "b6e5069e1721db12b4a1f0802eb20db8aa986ac42f4120e39dde928313ebc90a",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/security/trust-root.v1.json",
+      "vendor_relative": "security/trust-root.v1.json",
+      "source_sha256": "8c01ce1e210b4b016ea06fb983de3459c585ae1c9eb1ba240d53e7cb41b173b4",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/sql/discovery-store-v1.sql",
+      "vendor_relative": "sql/discovery-store-v1.sql",
+      "source_sha256": "7a308df230f4492085f94daee9d11bc2a4e887e12b02d201a3faf4a1bd4f51a8",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/authorization-v1.json",
+      "vendor_relative": "vectors/authorization-v1.json",
+      "source_sha256": "a0bd11e9e25ee1e822fa244ab91238f17aee7867ced63447ea31d8ad8d03beb3",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/canonical-hashing-v1.json",
+      "vendor_relative": "vectors/canonical-hashing-v1.json",
+      "source_sha256": "1a553f9065d58b5efad3214affdc3104e95c31b19a0b7b2010b96bdc7594d50e",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/capability-negative-v1.json",
+      "vendor_relative": "vectors/capability-negative-v1.json",
+      "source_sha256": "6ddd12df9ce31e2f1bfb78350e6437af8ac1422ee150f9e4b84a286b6aecf556",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/clock-coherence-v1.json",
+      "vendor_relative": "vectors/clock-coherence-v1.json",
+      "source_sha256": "7124139b9a0a5a89032e3fb7809c16dc36d6dce03e84ea34d2b8194f4625867f",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/d0-evidence-v1.json",
+      "vendor_relative": "vectors/d0-evidence-v1.json",
+      "source_sha256": "6f2bd8ac772bcf5072d2cc8857c1dbe13f7f42f245fda1e964cd038a23a703ec",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/durability-crash-v1.json",
+      "vendor_relative": "vectors/durability-crash-v1.json",
+      "source_sha256": "1ceb5a82bce9f377eac4423038df821e592c73499e06d095e5135bc10365d422",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/e0-evidence-v1.json",
+      "vendor_relative": "vectors/e0-evidence-v1.json",
+      "source_sha256": "bbba06ef1a8f17d6edf30787f6219bf61178683cd920a63cb6be21d571d8a0be",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/pack-archive-v1.json",
+      "vendor_relative": "vectors/pack-archive-v1.json",
+      "source_sha256": "ee4811c4f24a39d35a7b63e1ad22ae453714d5fb1e6ff3cd389c8dbfd61afb89",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/pack-governed-metadata-v1.json",
+      "vendor_relative": "vectors/pack-governed-metadata-v1.json",
+      "source_sha256": "5f7b32b2a8da728d32a204f5286429a479070d14447986424a8110ba76ea930b",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/repo0-baseline-roots-v1.json",
+      "vendor_relative": "vectors/repo0-baseline-roots-v1.json",
+      "source_sha256": "e252c0dc0f05b43a3992c29bb832fd4852882d058e8a5ea9e08cbecf9b4c524a",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/review-semantic-v1.json",
+      "vendor_relative": "vectors/review-semantic-v1.json",
+      "source_sha256": "0249799d5602af2e05599b926e9c862564d54afa24dccbe79e2327fe263dc17d",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    },
+    {
+      "plan_source": "docs/inherited/v6.2/vectors/scope-semantic-v1.json",
+      "vendor_relative": "vectors/scope-semantic-v1.json",
+      "source_sha256": "0fae7dde19986072add7031b6e92df79ec93c9ea70ec6da345252443148f483f",
+      "protocol_compatibility": "IMMUTABLE_V62_PROTOCOL"
+    }
+  ],
+  "plan_entries": [
+    {
+      "plan_source": "docs/configs/review-a.v1.json",
+      "vendor_relative": "docs/configs/review-a.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/review-aggregation.v1.json",
+      "vendor_relative": "docs/configs/review-aggregation.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/review-authority.v1.json",
+      "vendor_relative": "docs/configs/review-authority.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/review-b.v1.json",
+      "vendor_relative": "docs/configs/review-b.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/runtime-pyproject.toml",
+      "vendor_relative": "docs/configs/runtime-pyproject.toml"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.build.json",
+      "vendor_relative": "docs/configs/tsconfig.build.json"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.harness.json",
+      "vendor_relative": "docs/configs/tsconfig.harness.json"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.test.json",
+      "vendor_relative": "docs/configs/tsconfig.test.json"
+    },
+    {
+      "plan_source": "docs/contracts/00-sealing-and-attestation.md",
+      "vendor_relative": "docs/contracts/00-sealing-and-attestation.md"
+    },
+    {
+      "plan_source": "docs/contracts/01-artifact-lifecycle.md",
+      "vendor_relative": "docs/contracts/01-artifact-lifecycle.md"
+    },
+    {
+      "plan_source": "docs/contracts/02-successor-migration-rebinding.md",
+      "vendor_relative": "docs/contracts/02-successor-migration-rebinding.md"
+    },
+    {
+      "plan_source": "docs/contracts/03-task-exactness.md",
+      "vendor_relative": "docs/contracts/03-task-exactness.md"
+    },
+    {
+      "plan_source": "docs/contracts/04-verification-coverage.md",
+      "vendor_relative": "docs/contracts/04-verification-coverage.md"
+    },
+    {
+      "plan_source": "docs/contracts/05-reviewer-independence.md",
+      "vendor_relative": "docs/contracts/05-reviewer-independence.md"
+    },
+    {
+      "plan_source": "docs/contracts/06-cybersecurity-review.md",
+      "vendor_relative": "docs/contracts/06-cybersecurity-review.md"
+    },
+    {
+      "plan_source": "docs/contracts/07-command-and-config-lifecycle.md",
+      "vendor_relative": "docs/contracts/07-command-and-config-lifecycle.md"
+    },
+    {
+      "plan_source": "docs/contracts/08-execution-and-ownership.md",
+      "vendor_relative": "docs/contracts/08-execution-and-ownership.md"
+    },
+    {
+      "plan_source": "docs/contracts/09-inherited-baseline-qualification.md",
+      "vendor_relative": "docs/contracts/09-inherited-baseline-qualification.md"
+    },
+    {
+      "plan_source": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "vendor_relative": "docs/fixtures/inherited/v6.2/plan-manifest.json"
+    },
+    {
+      "plan_source": "docs/fixtures/inherited/v6.2/task-command-registry.json",
+      "vendor_relative": "docs/fixtures/inherited/v6.2/task-command-registry.json"
+    },
+    {
+      "plan_source": "docs/graphs/executable-discovery-graph.v1.json",
+      "vendor_relative": "docs/graphs/executable-discovery-graph.v1.json"
+    },
+    {
+      "plan_source": "docs/graphs/non-authoritative-future-roadmap.v1.json",
+      "vendor_relative": "docs/graphs/non-authoritative-future-roadmap.v1.json"
+    },
+    {
+      "plan_source": "docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
+      "vendor_relative": "docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md"
+    },
+    {
+      "plan_source": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
+      "vendor_relative": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md"
+    },
+    {
+      "plan_source": "docs/prompts/CODEX_IMPLEMENTATION_START_PROMPT.md",
+      "vendor_relative": "docs/prompts/CODEX_IMPLEMENTATION_START_PROMPT.md"
+    },
+    {
+      "plan_source": "docs/prompts/CODEX_PLAN_REVIEW_PROMPT.md",
+      "vendor_relative": "docs/prompts/CODEX_PLAN_REVIEW_PROMPT.md"
+    },
+    {
+      "plan_source": "docs/registries/artifact-ownership.v1.json",
+      "vendor_relative": "docs/registries/artifact-ownership.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/baseline-replay-command-registry.v1.json",
+      "vendor_relative": "docs/registries/baseline-replay-command-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/baseline-source-files.v1.json",
+      "vendor_relative": "docs/registries/baseline-source-files.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/clock-failure-precedence.v1.json",
+      "vendor_relative": "docs/registries/clock-failure-precedence.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/clock-vector-coverage.v1.json",
+      "vendor_relative": "docs/registries/clock-vector-coverage.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/command-io.v1.json",
+      "vendor_relative": "docs/registries/command-io.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/config-materialization.v1.json",
+      "vendor_relative": "docs/registries/config-materialization.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/crash-child-command-registry.v1.json",
+      "vendor_relative": "docs/registries/crash-child-command-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/crash-harness-registry.v1.json",
+      "vendor_relative": "docs/registries/crash-harness-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/cybersecurity-attack-matrix.v1.json",
+      "vendor_relative": "docs/registries/cybersecurity-attack-matrix.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/cybersecurity-command-registry.v1.json",
+      "vendor_relative": "docs/registries/cybersecurity-command-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/delivery-map.v1.json",
+      "vendor_relative": "docs/registries/delivery-map.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/inherited-baseline-qualification.v1.json",
+      "vendor_relative": "docs/registries/inherited-baseline-qualification.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/migration-source.v1.json",
+      "vendor_relative": "docs/registries/migration-source.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/normative-source-map.v1.json",
+      "vendor_relative": "docs/registries/normative-source-map.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/path-registry.v1.json",
+      "vendor_relative": "docs/registries/path-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/proof-coverage-matrix.v1.json",
+      "vendor_relative": "docs/registries/proof-coverage-matrix.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/review-command-registry.v1.json",
+      "vendor_relative": "docs/registries/review-command-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/reviewer-role-registry.v1.json",
+      "vendor_relative": "docs/registries/reviewer-role-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/schema-pointer-normalization.v1.json",
+      "vendor_relative": "docs/registries/schema-pointer-normalization.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/schema-reference-registry.v1.json",
+      "vendor_relative": "docs/registries/schema-reference-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/seal-exclusions.v1.json",
+      "vendor_relative": "docs/registries/seal-exclusions.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/seed-artifacts.v1.json",
+      "vendor_relative": "docs/registries/seed-artifacts.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/source-inputs.v1.json",
+      "vendor_relative": "docs/registries/source-inputs.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/task-command-registry.v1.json",
+      "vendor_relative": "docs/registries/task-command-registry.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/verification-topology.v1.json",
+      "vendor_relative": "docs/registries/verification-topology.v1.json"
+    },
+    {
+      "plan_source": "docs/registries/version-rebinding.v1.json",
+      "vendor_relative": "docs/registries/version-rebinding.v1.json"
+    },
+    {
+      "plan_source": "docs/schemas/artifact-ownership.schema.json",
+      "vendor_relative": "docs/schemas/artifact-ownership.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/command-registry.schema.json",
+      "vendor_relative": "docs/schemas/command-registry.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/external-seal-attestation.schema.json",
+      "vendor_relative": "docs/schemas/external-seal-attestation.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/migration-receipt.schema.json",
+      "vendor_relative": "docs/schemas/migration-receipt.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/proof-coverage.schema.json",
+      "vendor_relative": "docs/schemas/proof-coverage.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/review-execution-receipt.schema.json",
+      "vendor_relative": "docs/schemas/review-execution-receipt.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/review-launch-authorization.schema.json",
+      "vendor_relative": "docs/schemas/review-launch-authorization.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/review-result.schema.json",
+      "vendor_relative": "docs/schemas/review-result.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/self-review-record.schema.json",
+      "vendor_relative": "docs/schemas/self-review-record.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/task-card-v6.3.6.schema.json",
+      "vendor_relative": "docs/schemas/task-card-v6.3.6.schema.json"
+    },
+    {
+      "plan_source": "docs/security/review-trust-root.v1.json",
+      "vendor_relative": "docs/security/review-trust-root.v1.json"
+    },
+    {
+      "plan_source": "docs/tasks/task-manifest.v6.3.6.json",
+      "vendor_relative": "docs/tasks/task-manifest.v6.3.6.json"
+    },
+    {
+      "plan_source": "docs/vectors/inherited/clock-coherence-v6.2.json",
+      "vendor_relative": "docs/vectors/inherited/clock-coherence-v6.2.json"
+    },
+    {
+      "plan_source": "docs/vectors/inherited/durability-crash-v6.2.json",
+      "vendor_relative": "docs/vectors/inherited/durability-crash-v6.2.json"
+    },
+    {
+      "plan_source": "docs/vectors/plan-contract-negative.v1.json",
+      "vendor_relative": "docs/vectors/plan-contract-negative.v1.json"
+    }
+  ],
+  "vendor_prefix": "runtime/vendor/hybrid-discovery-v6.3.6/",
+  "plan_namespace": "docs/",
+  "collision_policy": "Only the explicitly listed graph overrides may replace an inherited destination; any other collision fails",
+  "graph_overrides": [
+    "graphs/executable-discovery-graph.v1.json",
+    "graphs/non-authoritative-future-roadmap.v1.json"
+  ],
+  "rule": "Inherited assets retain v6.2 protocol domains and vector hashes. v6.3.6 plan schemas/contracts live under vendor/docs. Delivery path rebinding is independent of protocol version."
+}

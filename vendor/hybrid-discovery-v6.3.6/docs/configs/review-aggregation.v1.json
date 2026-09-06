@@ -1,0 +1,13 @@
+{
+  "schema_version": "review-aggregation-config/v1",
+  "review_a_role": "IMPLEMENTATION_READINESS_REVIEWER",
+  "review_b_role": "CYBERSECURITY_REVIEWER",
+  "require_distinct_serials": true,
+  "require_distinct_workspaces": true,
+  "require_distinct_output_roots": true,
+  "require_identical_input_hashes": true,
+  "require_human_fresh_session_attestation": true,
+  "maximum_launch_age_seconds": 14400,
+  "maximum_aggregate_delay_seconds": 3600,
+  "authorized_production_phases": "NONE"
+}

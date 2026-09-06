@@ -1,0 +1,831 @@
+{
+  "schema_version": "capability-negative-vectors/v1",
+  "baseline_manifest": "docs/security/discovery-capability-manifest.v1.json",
+  "policy": "BUILD_FAILS_IF_ANY_CASE_REACHES_ITS_SINK",
+  "static_analysis_scope": [
+    "extension manifest",
+    "TypeScript AST",
+    "module graph",
+    "compiled chunks",
+    "exports",
+    "message handlers",
+    "CDP constants",
+    "probe registry",
+    "loopback union",
+    "persistence call graph",
+    "storage call graph"
+  ],
+  "loopback_hmac_contract": {
+    "classification": "TEST_ONLY_SECRET_NEVER_TRUSTED_OR_DEPLOYED",
+    "test_secret_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+    "body_hash_algorithm": "SHA-256",
+    "body_hash_domain": "HYBRID-DISCOVERY/v6.2/LoopbackBody/v1\u0000",
+    "body_hash_preimage_rule": "body_hash_domain || RFC8785_JCS(body)",
+    "hmac_algorithm": "HMAC-SHA-256",
+    "hmac_domain": "HYBRID-DISCOVERY/v6.2/LOOPBACK-HMAC-SHA256/v1\u0000",
+    "hmac_preimage_rule": "hmac_domain || U32BE(len(UTF8(session_id))) || UTF8(session_id) || U32BE(len(ASCII(direction))) || ASCII(direction) || U64BE(counter) || U32BE(len(ASCII(message_type))) || ASCII(message_type) || raw_32_byte_canonical_body_digest",
+    "counter_policy": "INDEPENDENT_PER_DIRECTION_START_AT_1_INCREMENT_EXACTLY_1_REJECT_REPLAY_OR_GAP"
+  },
+  "loopback_hmac_vectors": [
+    {
+      "vector_id": "LOOPBACK-HMAC-VALID-001",
+      "classification": "TEST_ONLY_ALGORITHM_COMPATIBILITY",
+      "canonical_body_jcs_utf8": "{\"error_code\":\"SCHEMA_INVALID\",\"terminal\":false}",
+      "canonical_body_hash": "b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+      "hmac_preimage_hex": "4859425249442d444953434f564552592f76362e322f4c4f4f504241434b2d484d41432d5348413235362f7631000000002430303030303030302d303030302d343030302d383030302d303030303030303030303331000000114241434b454e445f544f5f434c49454e5400000000000000010000001650524f544f434f4c5f4552524f525f464143545f5631b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+      "message": {
+        "schema_version": "loopback-message/v1",
+        "session_id": "00000000-0000-4000-8000-000000000031",
+        "direction": "BACKEND_TO_CLIENT",
+        "counter": "1",
+        "message_type": "PROTOCOL_ERROR_FACT_V1",
+        "body": {"error_code": "SCHEMA_INVALID", "terminal": false},
+        "canonical_body_hash": "b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+        "mac": "9756de7fc63b4c5214fe6482b38c5a33185fd10408d07e26e6ea094bae2d9912"
+      },
+      "prior_highest_accepted_counter_for_direction": "0",
+      "expected_result": "ACCEPTED"
+    },
+    {
+      "vector_id": "LOOPBACK-HMAC-FORGED-001",
+      "classification": "TEST_ONLY_ALGORITHM_COMPATIBILITY",
+      "mutation": "mac final hexadecimal digit changed",
+      "message": {
+        "schema_version": "loopback-message/v1",
+        "session_id": "00000000-0000-4000-8000-000000000031",
+        "direction": "BACKEND_TO_CLIENT",
+        "counter": "1",
+        "message_type": "PROTOCOL_ERROR_FACT_V1",
+        "body": {"error_code": "SCHEMA_INVALID", "terminal": false},
+        "canonical_body_hash": "b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+        "mac": "9756de7fc63b4c5214fe6482b38c5a33185fd10408d07e26e6ea094bae2d9913"
+      },
+      "prior_highest_accepted_counter_for_direction": "0",
+      "expected_result": "REJECTED",
+      "expected_error": "AUTHENTICATION_FAILED"
+    },
+    {
+      "vector_id": "LOOPBACK-HMAC-REPLAY-001",
+      "classification": "TEST_ONLY_ALGORITHM_COMPATIBILITY",
+      "mutation": "exact previously accepted message presented again",
+      "message": {
+        "schema_version": "loopback-message/v1",
+        "session_id": "00000000-0000-4000-8000-000000000031",
+        "direction": "BACKEND_TO_CLIENT",
+        "counter": "1",
+        "message_type": "PROTOCOL_ERROR_FACT_V1",
+        "body": {"error_code": "SCHEMA_INVALID", "terminal": false},
+        "canonical_body_hash": "b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+        "mac": "9756de7fc63b4c5214fe6482b38c5a33185fd10408d07e26e6ea094bae2d9912"
+      },
+      "prior_highest_accepted_counter_for_direction": "1",
+      "expected_result": "REJECTED",
+      "expected_error": "COUNTER_MISMATCH"
+    },
+    {
+      "vector_id": "LOOPBACK-HMAC-DIRECTION-SWAP-001",
+      "classification": "TEST_ONLY_ALGORITHM_COMPATIBILITY",
+      "mutation": "direction changed without recomputing mac",
+      "message": {
+        "schema_version": "loopback-message/v1",
+        "session_id": "00000000-0000-4000-8000-000000000031",
+        "direction": "CLIENT_TO_BACKEND",
+        "counter": "1",
+        "message_type": "PROTOCOL_ERROR_FACT_V1",
+        "body": {"error_code": "SCHEMA_INVALID", "terminal": false},
+        "canonical_body_hash": "b56917822ba015141b3a5e1ffcdcbd9f9c8f26d10a360d3a32638ba246694ada",
+        "mac": "9756de7fc63b4c5214fe6482b38c5a33185fd10408d07e26e6ea094bae2d9912"
+      },
+      "prior_highest_accepted_counter_for_direction": "0",
+      "expected_result": "REJECTED",
+      "expected_error": "AUTHENTICATION_FAILED"
+    },
+    {
+      "vector_id": "LOOPBACK-HMAC-TYPE-SWAP-001",
+      "classification": "TEST_ONLY_ALGORITHM_COMPATIBILITY",
+      "mutation": "message_type changed from BACKEND_CURSOR_FACT_V1 to ACK_CURSOR_FACT_V1 without recomputing mac",
+      "source_canonical_body_jcs_utf8": "{\"browser_run_id\":\"00000000-0000-4000-8000-000000000032\",\"cursor_hash\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"generation\":\"0\",\"producer_id\":\"producer:test\",\"sequence\":\"1\",\"stream_id\":\"00000000-0000-4000-8000-000000000033\"}",
+      "source_canonical_body_hash": "910ea39f89229f6911a07aa1e118c12e0801d529f58944a32b24f05165b30532",
+      "source_hmac_preimage_hex": "4859425249442d444953434f564552592f76362e322f4c4f4f504241434b2d484d41432d5348413235362f7631000000002430303030303030302d303030302d343030302d383030302d303030303030303030303331000000114241434b454e445f544f5f434c49454e540000000000000002000000164241434b454e445f435552534f525f464143545f5631910ea39f89229f6911a07aa1e118c12e0801d529f58944a32b24f05165b30532",
+      "message": {
+        "schema_version": "loopback-message/v1",
+        "session_id": "00000000-0000-4000-8000-000000000031",
+        "direction": "BACKEND_TO_CLIENT",
+        "counter": "2",
+        "message_type": "ACK_CURSOR_FACT_V1",
+        "body": {
+          "browser_run_id": "00000000-0000-4000-8000-000000000032",
+          "producer_id": "producer:test",
+          "stream_id": "00000000-0000-4000-8000-000000000033",
+          "generation": "0",
+          "sequence": "1",
+          "cursor_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "canonical_body_hash": "910ea39f89229f6911a07aa1e118c12e0801d529f58944a32b24f05165b30532",
+        "mac": "cdba69ee660bdf212523d9af701e2bc73a07ef83aca4483c84ddeba8e7a388c1"
+      },
+      "prior_highest_accepted_counter_for_direction": "1",
+      "expected_result": "REJECTED",
+      "expected_error": "AUTHENTICATION_FAILED"
+    }
+  ],
+  "vectors": [
+    {
+      "vector_id": "CAP-NEG-001",
+      "escape_case": "GENERIC_CDP_DISPATCH",
+      "attempted_path": "exported sendCdpCommand(method, params)",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PRIVILEGED_SINK_OUTSIDE_CLOSED_BROKER"
+    },
+    {
+      "vector_id": "CAP-NEG-002",
+      "escape_case": "COMPUTED_COMMAND_NAME",
+      "attempted_path": "sendLiteralCommand('Network.' + operation)",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_NOT_LITERAL"
+    },
+    {
+      "vector_id": "CAP-NEG-003",
+      "escape_case": "ALIASED_DESTRUCTURED_CALL_APPLY_BIND_PRIVILEGE",
+      "attempted_path": "const send = chrome.debugger.sendCommand",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PRIVILEGED_API_ALIAS"
+    },
+    {
+      "vector_id": "CAP-NEG-004",
+      "escape_case": "DESTRUCTURED_PRIVILEGE",
+      "attempted_path": "const {sendCommand} = chrome.debugger",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PRIVILEGED_API_ALIAS"
+    },
+    {
+      "vector_id": "CAP-NEG-005",
+      "escape_case": "CALL_APPLY_BIND_PRIVILEGE",
+      "attempted_path": "chrome.debugger.sendCommand.call(adapter, target, method)",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_INDIRECT_PRIVILEGED_CALL"
+    },
+    {
+      "vector_id": "CAP-NEG-006",
+      "escape_case": "DYNAMIC_IMPORT_REQUIRE_EVAL_NEW_FUNCTION_REMOTE_CODE_OR_CODE_SPLIT",
+      "attempted_path": "await import(moduleName)",
+      "privileged_sink": "module graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_DYNAMIC_MODULE_LOADING"
+    },
+    {
+      "vector_id": "CAP-NEG-007",
+      "escape_case": "COMMONJS_REQUIRE",
+      "attempted_path": "require(moduleName)",
+      "privileged_sink": "module graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_DYNAMIC_MODULE_LOADING"
+    },
+    {
+      "vector_id": "CAP-NEG-008",
+      "escape_case": "DYNAMIC_CODE",
+      "attempted_path": "eval(source) or new Function(source)",
+      "privileged_sink": "runtime execution",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_DYNAMIC_CODE"
+    },
+    {
+      "vector_id": "CAP-NEG-009",
+      "escape_case": "REMOTE_CODE_OR_CODE_SPLIT",
+      "attempted_path": "remote import or undeclared chunk",
+      "privileged_sink": "build graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_REMOTE_OR_SPLIT_CODE"
+    },
+    {
+      "vector_id": "CAP-NEG-010",
+      "escape_case": "ARBITRARY_RUNTIME_CALL",
+      "attempted_path": "Runtime.evaluate",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-011",
+      "escape_case": "ARBITRARY_RUNTIME_FUNCTION",
+      "attempted_path": "Runtime.callFunctionOn",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-012",
+      "escape_case": "FETCH_INPUT_PAGE_OR_NETWORK_MUTATION",
+      "attempted_path": "Fetch.enable or Fetch.continueRequest",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_DOMAIN_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-013",
+      "escape_case": "INPUT_MUTATION",
+      "attempted_path": "Input.dispatchMouseEvent",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_DOMAIN_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-014",
+      "escape_case": "PAGE_MUTATION",
+      "attempted_path": "Page.navigate",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-015",
+      "escape_case": "NETWORK_MUTATION",
+      "attempted_path": "Network.replayXHR or Network.setCacheDisabled",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-016",
+      "escape_case": "DOM_OR_CSS_MUTATION",
+      "attempted_path": "DOM.setAttributeValue",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_DOMAIN_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-017",
+      "escape_case": "CSS_MUTATION",
+      "attempted_path": "CSS.setStyleTexts",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_DOMAIN_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-018",
+      "escape_case": "RESPONSE_BODY_CAPTURE",
+      "attempted_path": "Network.getResponseBody",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_METHOD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-019",
+      "escape_case": "TARGET_ENUMERATION",
+      "attempted_path": "Target.getTargets or Target.setAutoAttach",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_TARGET_DOMAIN_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-020",
+      "escape_case": "ARBITRARY_AUTHENTICATED_HTTP_METHOD_OR_BODY",
+      "attempted_path": "fetch(url, {method:'POST', body})",
+      "privileged_sink": "network I/O",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_OUTBOUND_NETWORK_PATH"
+    },
+    {
+      "vector_id": "CAP-NEG-021",
+      "escape_case": "FETCH_XHR_FORM_BEACON_NAVIGATION_OR_ARBITRARY_WEBSOCKET",
+      "attempted_path": "XMLHttpRequest, form.submit, sendBeacon, or navigation",
+      "privileged_sink": "network I/O",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_OUTBOUND_NETWORK_PATH"
+    },
+    {
+      "vector_id": "CAP-NEG-022",
+      "escape_case": "ARBITRARY_WEBSOCKET",
+      "attempted_path": "new WebSocket(userUrl)",
+      "privileged_sink": "network I/O",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_LOOPBACK_URL_NOT_LITERAL"
+    },
+    {
+      "vector_id": "CAP-NEG-023",
+      "escape_case": "PAGE_ORIGINATED_COMMAND_BEARING_MESSAGE",
+      "attempted_path": "window.postMessage({command:'ATTACH'})",
+      "privileged_sink": "message handler to broker",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PAGE_COMMAND_CHANNEL"
+    },
+    {
+      "vector_id": "CAP-NEG-024",
+      "escape_case": "CONTENT_OR_EXTERNAL_MESSAGE",
+      "attempted_path": "content script or onMessageExternal command",
+      "privileged_sink": "message handler to broker",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_UNTRUSTED_COMMAND_CHANNEL"
+    },
+    {
+      "vector_id": "CAP-NEG-025",
+      "escape_case": "LOOPBACK_COMMAND_BEARING_MESSAGE",
+      "attempted_path": "{message_type:'COMMAND', action:'attach'}",
+      "privileged_sink": "loopback receiver",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_LOOPBACK_FACT_UNION"
+    },
+    {
+      "vector_id": "CAP-NEG-026",
+      "escape_case": "LOOPBACK_CDP_FIELD",
+      "attempted_path": "{message_type:'ACK_CURSOR_FACT_V1', cdp_method:'Runtime.evaluate'}",
+      "privileged_sink": "loopback receiver",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_LOOPBACK_FACT_UNION"
+    },
+    {
+      "vector_id": "CAP-NEG-027",
+      "escape_case": "TARGET_SESSION_FRAME_OR_ORIGIN_ESCAPE",
+      "attempted_path": "attach target not equal to selected root",
+      "privileged_sink": "debugger attach",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_SELECTED_TARGET_BINDING"
+    },
+    {
+      "vector_id": "CAP-NEG-028",
+      "escape_case": "CHILD_SESSION_ESCAPE",
+      "attempted_path": "send command with child sessionId",
+      "privileged_sink": "closed broker",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHILD_SESSION_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-029",
+      "escape_case": "FRAME_ESCAPE",
+      "attempted_path": "frame absent from selected-tab webNavigation membership",
+      "privileged_sink": "observation projection",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_FRAME_OWNERSHIP"
+    },
+    {
+      "vector_id": "CAP-NEG-030",
+      "escape_case": "ORIGIN_OR_PATH_ESCAPE",
+      "attempted_path": "navigation away from exact origin or pathname /",
+      "privileged_sink": "run controller",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_LOCATION_SAFETY_STOP"
+    },
+    {
+      "vector_id": "CAP-NEG-031",
+      "escape_case": "HOST_PERMISSION",
+      "attempted_path": "add https://miseojeu.espacejeux.com/* to host_permissions",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-032",
+      "escape_case": "OPTIONAL_PERMISSION",
+      "attempted_path": "add any optional permission",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-033",
+      "escape_case": "EXTERNALLY_CONNECTABLE",
+      "attempted_path": "set externally_connectable to an object",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-034",
+      "escape_case": "CONTENT_SCRIPT",
+      "attempted_path": "add any content_scripts entry",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-035",
+      "escape_case": "WEB_ACCESSIBLE_RESOURCE",
+      "attempted_path": "add any web_accessible_resources entry",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-036",
+      "escape_case": "CSP_EXPANSION",
+      "attempted_path": "add network origin or unsafe-eval to CSP",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-037",
+      "escape_case": "BODY_CLASS_ENABLEMENT",
+      "attempted_path": "add production body class",
+      "privileged_sink": "capability manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_BODY_CLASS_NOT_PERMITTED"
+    },
+    {
+      "vector_id": "CAP-NEG-038",
+      "escape_case": "PROBE_ARGUMENT_OR_SELECTOR",
+      "attempted_path": "supply argument, selector, script, or expression to a fixed probe",
+      "privileged_sink": "fixed probe broker",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_FIXED_PROBE_SHAPE"
+    },
+    {
+      "vector_id": "CAP-NEG-039",
+      "escape_case": "UNKNOWN_PROBE",
+      "attempted_path": "request unregistered probe ID",
+      "privileged_sink": "fixed probe broker",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_FIXED_PROBE_ID"
+    },
+    {
+      "vector_id": "CAP-NEG-040",
+      "escape_case": "PERSISTENCE_BEFORE_PROJECT_BEFORE_PERSISTENCE",
+      "attempted_path": "raw CDP event reaches log/hash/spool before projectBeforePersistence",
+      "privileged_sink": "persistence graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PERSISTENCE_BEFORE_PROJECTION"
+    },
+    {
+      "vector_id": "CAP-NEG-041",
+      "escape_case": "FORBIDDEN_EVENT_FIELD",
+      "attempted_path": "retain query, fragment, userinfo, header, cookie, auth, postData, payloadData, SSE data, ExtraInfo, or free error text",
+      "privileged_sink": "event projection",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_EVENT_FIELD_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-042",
+      "escape_case": "ARCHIVE_OR_INDIVIDUAL_DELETE",
+      "attempted_path": "automatic archive, backup, compaction, TTL/LRU purge, or individual deletion path",
+      "privileged_sink": "storage graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CUSTODY_PATH_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-043",
+      "escape_case": "PRODUCTION_PATH",
+      "attempted_path": "production operator, wager, betslip mutation, Cashout action, or provider performance path",
+      "privileged_sink": "build graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PRODUCTION_CAPABILITY_REACHABLE"
+    },
+    {
+      "vector_id": "CAP-NEG-044",
+      "escape_case": "ACTION_DEFAULT_POPUP",
+      "attempted_path": "add action.default_popup to extension/manifest.json",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-045",
+      "escape_case": "BACKGROUND_SERVICE_WORKER_IDENTITY",
+      "attempted_path": "change background.service_worker or background.type",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-046",
+      "escape_case": "MANIFEST_EXECUTABLE_SURFACE_EXPANSION",
+      "attempted_path": "add commands, externally_connectable, side_panel, devtools_page, omnibox, sandbox, or another undeclared manifest key",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-047",
+      "escape_case": "SIDE_PANEL_SURFACE",
+      "attempted_path": "add side_panel to extension/manifest.json",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-048",
+      "escape_case": "DEVTOOLS_PAGE_SURFACE",
+      "attempted_path": "add devtools_page to extension/manifest.json",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-049",
+      "escape_case": "OMNIBOX_SURFACE",
+      "attempted_path": "add omnibox to extension/manifest.json",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-050",
+      "escape_case": "SANDBOX_SURFACE",
+      "attempted_path": "add sandbox to extension/manifest.json",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-051",
+      "escape_case": "OPTIONAL_HOST_PERMISSION",
+      "attempted_path": "add any optional_host_permissions entry",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-052",
+      "escape_case": "NATIVE_MESSAGING_PERMISSION",
+      "attempted_path": "add nativeMessaging to permissions or optional_permissions",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-053",
+      "escape_case": "MANIFEST_PUBLIC_KEY_MISMATCH",
+      "attempted_path": "change chrome_manifest.key so it no longer equals extension_identity.manifest_public_key",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-054",
+      "escape_case": "MANIFEST_UNKNOWN_EXECUTABLE_KEY",
+      "attempted_path": "add an unknown top-level executable manifest key",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-055",
+      "escape_case": "ACTION_TITLE_MISMATCH",
+      "attempted_path": "change action.default_title from the sealed held-state title",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-056",
+      "escape_case": "DEBUGGER_ATTACH_TARGET_SHAPE",
+      "attempted_path": "chrome.debugger.attach({targetId:'child'}, '1.3') or an attach target with any key other than tabId",
+      "privileged_sink": "chrome.debugger.attach",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_SELECTED_TARGET_BINDING"
+    },
+    {
+      "vector_id": "CAP-NEG-057",
+      "escape_case": "DEBUGGER_ATTACH_PROTOCOL_VERSION",
+      "attempted_path": "chrome.debugger.attach({tabId:selectedTabId}, computedOrNon13Version)",
+      "privileged_sink": "chrome.debugger.attach",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_DEBUGGER_PROTOCOL_VERSION"
+    },
+    {
+      "vector_id": "CAP-NEG-058",
+      "escape_case": "DEBUGGER_DETACH_TARGET_SHAPE",
+      "attempted_path": "chrome.debugger.detach({sessionId:'child'}) or detach a tab other than the selected root",
+      "privileged_sink": "chrome.debugger.detach",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_SELECTED_TARGET_BINDING"
+    },
+    {
+      "vector_id": "CAP-NEG-059",
+      "escape_case": "DEBUGGER_EVENT_SOURCE_ESCAPE",
+      "attempted_path": "chrome.debugger.onEvent callback accepts a source with sessionId, targetId, extensionId, or wrong tabId",
+      "privileged_sink": "chrome.debugger.onEvent.addListener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHILD_SESSION_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-060",
+      "escape_case": "DEBUGGER_DETACH_EVENT_SOURCE_ESCAPE",
+      "attempted_path": "chrome.debugger.onDetach callback accepts a source containing targetId/extensionId, a wrong tabId, an additional key, or an unlisted reason",
+      "privileged_sink": "chrome.debugger.onDetach.addListener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_SELECTED_TARGET_BINDING"
+    },
+    {
+      "vector_id": "CAP-NEG-061",
+      "escape_case": "UNLISTED_CHROME_API",
+      "attempted_path": "chrome.debugger.getTargets() or any Chrome API member absent from the sealed allowlist",
+      "privileged_sink": "Chrome API graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-062",
+      "escape_case": "SCRIPTING_EXECUTE_SCRIPT_SHAPE",
+      "attempted_path": "chrome.scripting.executeScript with allFrames, files, injectImmediately, MAIN world, multiple frames, arguments, or an unregistered function",
+      "privileged_sink": "chrome.scripting.executeScript",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_FIXED_PROBE_SHAPE"
+    },
+    {
+      "vector_id": "CAP-NEG-063",
+      "escape_case": "WEBNAVIGATION_UNLISTED_MEMBER",
+      "attempted_path": "use a chrome.webNavigation method or event not present in the sealed allowlist",
+      "privileged_sink": "chrome.webNavigation",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-064",
+      "escape_case": "RUNTIME_INTERNAL_SENDER_ESCAPE",
+      "attempted_path": "chrome.runtime.onMessage accepts a page, content-script, external, tab-bearing, wrong-ID, or wrong-origin sender",
+      "privileged_sink": "chrome.runtime.onMessage.addListener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_UNTRUSTED_COMMAND_CHANNEL"
+    },
+    {
+      "vector_id": "CAP-NEG-065",
+      "escape_case": "ACTION_UNLISTED_METHOD",
+      "attempted_path": "call chrome.action.openPopup, setPopup, or another action method or event",
+      "privileged_sink": "chrome.action",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-066",
+      "escape_case": "TABS_API",
+      "attempted_path": "call any chrome.tabs method or subscribe to any chrome.tabs event",
+      "privileged_sink": "chrome.tabs",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-067",
+      "escape_case": "DEBUGGER_OWNER_ESCAPE",
+      "attempted_path": "reference attach, detach, sendCommand, onEvent, or onDetach outside its sealed broker owner",
+      "privileged_sink": "chrome.debugger",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PRIVILEGED_SINK_OUTSIDE_CLOSED_BROKER"
+    },
+    {
+      "vector_id": "CAP-NEG-068",
+      "escape_case": "DEBUGGER_SEND_PARAMETER_SHAPE",
+      "attempted_path": "send Network.enable with an omitted, additional, or changed parameter or Network.disable with any parameter",
+      "privileged_sink": "chrome.debugger.sendCommand",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CDP_PARAMETER_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-069",
+      "escape_case": "WEBNAVIGATION_FILTER_EXPANSION",
+      "attempted_path": "register a webNavigation listener without the sealed hostEquals/pathEquals narrowing filter or treat that filter as authoritative instead of parsing and validating the transient raw URL protocol, host, pathname, username, password, search, and hash",
+      "privileged_sink": "chrome.webNavigation event listener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_PARAMETER_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-070",
+      "escape_case": "NATIVE_MESSAGING_METHOD",
+      "attempted_path": "call chrome.runtime.connectNative or chrome.runtime.sendNativeMessage",
+      "privileged_sink": "native messaging",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-071",
+      "escape_case": "UNLISTED_PERSISTENCE_API",
+      "attempted_path": "call indexedDB, an IDB member, localStorage, sessionStorage, chrome.storage, CacheStorage, OPFS, File System Access, or a filesystem writer outside extension/src/spool.ts#Spool or outside the exact sealed member allowlist",
+      "privileged_sink": "persistent storage graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PERSISTENCE_API_NOT_ALLOWLISTED"
+    },
+    {
+      "vector_id": "CAP-NEG-072",
+      "escape_case": "UNDOMINATED_SPOOL_APPEND",
+      "attempted_path": "call Spool.append with a cast, alias, reconstructed value, raw event, or value not returned unchanged by the same-flow dominating projectBeforePersistence call",
+      "privileged_sink": "extension/src/spool.ts#Spool.append",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PERSISTENCE_BEFORE_PROJECTION"
+    },
+    {
+      "vector_id": "CAP-NEG-073",
+      "escape_case": "INDEXEDDB_SCHEMA_OR_TRANSACTION_ESCAPE",
+      "attempted_path": "open a different database/version, create a third store/index, change an out-of-line key, use a non-strict write transaction, reorder append steps, or claim durability before IDBTransaction.oncomplete",
+      "privileged_sink": "extension/src/spool.ts#Spool",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PERSISTENCE_CONTRACT_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-074",
+      "escape_case": "INDEXEDDB_DELETE_ARCHIVE_OR_COMPACTION",
+      "attempted_path": "call deleteDatabase, deleteObjectStore, clear, delete, cursor.delete, or implement automatic archive, backup, compaction, TTL, LRU, rolling deletion, cleanup, or restore",
+      "privileged_sink": "persistent storage graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CUSTODY_PATH_DENIED"
+    },
+    {
+      "vector_id": "CAP-NEG-075",
+      "escape_case": "RAW_EVENT_TO_STORAGE",
+      "attempted_path": "send a raw CDP/webNavigation/probe/message object or any byte derived before projectBeforePersistence to an IndexedDB value, key, name, log, hash, or error",
+      "privileged_sink": "persistent storage graph",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_PERSISTENCE_BEFORE_PROJECTION"
+    },
+    {
+      "vector_id": "CAP-NEG-076",
+      "escape_case": "ACTION_LISTENER_SIGNATURE_ESCAPE",
+      "attempted_path": "declare or consume a second chrome.action.onClicked OnClickData/button argument instead of the pinned one-argument (tab) => void signature",
+      "privileged_sink": "chrome.action.onClicked.addListener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_SIGNATURE_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-077",
+      "escape_case": "RUNTIME_LISTENER_SIGNATURE_ESCAPE",
+      "attempted_path": "return true or a Promise from chrome.runtime.onMessage instead of the pinned (message, sender, sendResponse) => void signature and synchronous-at-most-once response",
+      "privileged_sink": "chrome.runtime.onMessage.addListener",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_CHROME_API_SIGNATURE_MISMATCH"
+    },
+    {
+      "vector_id": "CAP-NEG-078",
+      "escape_case": "MANIFEST_IDENTITY_METADATA_MISMATCH",
+      "attempted_path": "change manifest_version, name, version, description, or minimum_chrome_version",
+      "privileged_sink": "Chrome manifest",
+      "expected_result": "BUILD_REJECTED",
+      "expected_error": "E_MANIFEST_CAPABILITY_MISMATCH"
+    }
+  ],
+  "required_allowed_controls": [
+    {
+      "control_id": "CAP-POS-001",
+      "source": "extension/src/security/cdp-broker.ts#sendLiteralCommand",
+      "sink": "chrome.debugger.sendCommand",
+      "literals": [
+        "Network.enable",
+        "Network.disable"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-002",
+      "source": "extension/src/security/fixed-probes.ts#runFixedProbe",
+      "sink": "chrome.scripting.executeScript",
+      "literals": [
+        "APP_LOCATION_CONTEXT_V1",
+        "DOM_DOCUMENT_LIFECYCLE_V1"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-003",
+      "source": "extension/src/security/loopback.ts#AuthenticatedLoopback",
+      "sink": "WebSocket",
+      "literals": [
+        "ws://127.0.0.1:8765"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-004",
+      "source": "extension/src/security/capability-manifest.ts#validateCapabilityManifest",
+      "sink": "extension/manifest.json",
+      "literals": [
+        "EXACT_FULL_OBJECT_EQUALITY_WITH_chrome_manifest",
+        "NO_action.default_popup",
+        "NO_UNDECLARED_MANIFEST_KEYS"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-005",
+      "source": "extension/src/security/cdp-broker.ts#ClosedCdpBroker",
+      "sink": "chrome.debugger",
+      "literals": [
+        "attach:selected-root-tabId:protocol-1.3",
+        "detach:selected-root-tabId",
+        "sendCommand:Network.enable-or-Network.disable",
+        "onEvent:selected-root-no-child-session",
+        "onDetach:selected-root-safety-stop"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-006",
+      "source": "extension/src/security/run-controller.ts#DiscoveryRunController;extension/src/security/target-policy.ts#assertOwnedTarget;extension/src/security/fixed-probes.ts#runFixedProbe",
+      "sink": "chrome.action.onClicked;chrome.runtime.onMessage;chrome.webNavigation;chrome.scripting.executeScript",
+      "literals": [
+        "SEALED_ALLOWED_METHOD_AND_EVENT_MEMBERS_ONLY",
+        "SEALED_EXACT_ARGUMENT_AND_EVENT_BINDINGS_ONLY",
+        "UNLISTED_CHROME_API_DENY"
+      ]
+    },
+    {
+      "control_id": "CAP-POS-007",
+      "source": "extension/src/security/redaction.ts#projectBeforePersistence;extension/src/spool.ts#Spool.append",
+      "sink": "indexedDB.open;IDBDatabase.transaction;IDBObjectStore.add;IDBObjectStore.put",
+      "literals": [
+        "OPAQUE_PersistableSanitizedObservationV1_DIRECT_DOMINATING_EDGE",
+        "EXACT_PER_RUN_DATABASE_VERSION_1_TWO_STORE_SCHEMA",
+        "EXACT_READWRITE_STRICT_ATOMIC_SEQUENCE_AND_ENTRY_TRANSACTION",
+        "SUCCESS_ONLY_ON_IDBTransaction.oncomplete",
+        "NO_EVICTION_DELETE_ARCHIVE_COMPACTION_OR_UNLISTED_STORAGE"
+      ]
+    }
+  ],
+  "production_authority": "NONE"
+}

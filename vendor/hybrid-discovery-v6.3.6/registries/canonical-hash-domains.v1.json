@@ -1,0 +1,1479 @@
+{
+  "schema_version": "canonical-hash-domains/v1",
+  "algorithm_id": "HD-JCS-SHA256-v1",
+  "closed_world": true,
+  "input_requirements": {
+    "encoding": "UTF-8_NO_BOM",
+    "unicode": "ALL_KEYS_AND_STRING_VALUES_MUST_ALREADY_BE_NFC",
+    "normalization": "REJECT_NON_NFC_NEVER_NORMALIZE",
+    "duplicate_keys": "REJECT",
+    "lone_surrogates": "REJECT",
+    "numeric_policy": "HASH_BOUND_QUANTITIES_ARE_CANONICAL_DECIMAL_STRINGS",
+    "serialization": "RFC8785_JCS",
+    "digest": "SHA-256"
+  },
+  "preimage_rule": "ASCII('HYBRID-DISCOVERY/v6.2/' + artifact_type + '/' + domain_version) || 0x00 || RFC8785_JCS(projected_object)",
+  "signature": {
+    "algorithm": "Ed25519",
+    "domain": "HYBRID-DISCOVERY/v6.2/SIGNATURE/Ed25519/v1\u0000",
+    "preimage_rule": "signature_domain || raw_32_byte_content_digest"
+  },
+  "cursor_domains": [
+    {
+      "name": "CursorSeed",
+      "domain": "HYBRID-DISCOVERY/v6.2/CursorSeed/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "name": "CursorStep",
+      "domain": "HYBRID-DISCOVERY/v6.2/CursorStep/v1\u0000",
+      "excluded_json_pointers": []
+    }
+  ],
+  "file_manifest_self_exclusions": [
+    {
+      "artifact_type": "PackManifest",
+      "excluded_path": "MANIFEST_SHA256.json"
+    },
+    {
+      "artifact_type": "BuildManifest",
+      "excluded_path": ".local/build-manifest.json"
+    },
+    {
+      "artifact_type": "DiscoveryArtifactManifest",
+      "excluded_path": "sanitized-export/discovery-artifact-manifest.json"
+    }
+  ],
+  "repo0_baseline_root_algorithms": [
+    {
+      "algorithm_id": "HD-REPO0-FILE-TREE-SHA256-v1",
+      "hash_field": "Repo0BaselineReceipt/independent_file_tree_root_sha256",
+      "input_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#Repo0IndependentFileTree",
+      "domain": "HYBRID-DISCOVERY/v6.2/Repo0IndependentFileTree/v1\u0000",
+      "serialization": "RFC8785_JCS",
+      "digest": "SHA-256",
+      "self_exclusions": [],
+      "vector_id": "REPO0-FILE-TREE-ROOT-ASCII"
+    },
+    {
+      "algorithm_id": "HD-REPO0-COMMAND-RESULTS-SHA256-v1",
+      "hash_field": "Repo0BaselineReceipt/command_result_root_sha256",
+      "input_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#Repo0CommandResultSet",
+      "domain": "HYBRID-DISCOVERY/v6.2/Repo0CommandResultSet/v1\u0000",
+      "serialization": "RFC8785_JCS",
+      "digest": "SHA-256",
+      "self_exclusions": [],
+      "vector_id": "REPO0-COMMAND-RESULT-ROOT-ASCII"
+    },
+    {
+      "algorithm_id": "HD-VENDOR-TREE-SHA256-v1",
+      "hash_field": "Repo0BaselineReceipt/vendor_root_sha256",
+      "input_schema_ref": "NONE_BINARY_ENTRY_STREAM",
+      "domain": "NONE",
+      "serialization": "UTF8_PATH_NUL_ASCII_SIZE_NUL_ASCII_FILE_SHA256_LF_IN_UNSIGNED_UTF8_PATH_ORDER",
+      "digest": "SHA-256",
+      "self_exclusions": ["vendor/hybrid-discovery-v6.2/SCHEMA_SHA256.json"],
+      "vector_id": "NONE_RECOMPUTE_EXACT_VENDOR_MANIFEST"
+    },
+    {
+      "algorithm_id": "SHA-256-RAW-BYTES",
+      "hash_field": "Repo0BaselineReceipt/lockfile_hashes/*/sha256",
+      "input_schema_ref": "NONE_RAW_FILE_BYTES",
+      "domain": "NONE",
+      "serialization": "NONE",
+      "digest": "SHA-256",
+      "self_exclusions": [],
+      "vector_id": "NONE_RECOMPUTE_EXACT_LOCKFILE_BYTES"
+    }
+  ],
+  "schema_consistency_contract": {
+    "validation_order": [
+      "RESOLVE_EXACTLY_ONE_REGISTERED_ARTIFACT_DOMAIN",
+      "RESOLVE_EXACTLY_ONE_DOMAIN_VALIDATION_CLASS",
+      "APPLY_CLASS_SPECIFIC_PRE_PROJECTION_VALIDATION",
+      "FOR_SCHEMA_GATED_SELF_HASH_REQUIRE_EVERY_REGISTERED_EXCLUDED_JSON_POINTER_TO_EXIST",
+      "PROJECT_ONLY_REGISTERED_EXACT_JSON_POINTERS",
+      "RFC8785_JCS_SERIALIZE_AND_HASH"
+    ],
+    "domain_validation_partition": "EXACT_DISJOINT_EXHAUSTIVE_83_EQUALS_65_PLUS_18",
+    "domain_validation_class_mismatch_error": "DOMAIN_VALIDATION_CLASS_MISMATCH",
+    "unclassified_domain_error": "UNCLASSIFIED_HASH_DOMAIN",
+    "multiply_classified_domain_error": "MULTIPLY_CLASSIFIED_HASH_DOMAIN",
+    "missing_domain_validator_binding_error": "MISSING_DOMAIN_VALIDATOR_BINDING",
+    "no_exclusion_validator_binding_rule": "EXACTLY_ONE_BINDING_PER_GOVERNED_NO_EXCLUSION_DOMAIN",
+    "no_exclusion_validator_binding_required_fields": [
+      "artifact_type",
+      "canonical_source_path",
+      "validation_kind",
+      "command_ids",
+      "verifier_symbols"
+    ],
+    "no_exclusion_validator_reference_resolution": "SOURCE_PATH_COMMAND_IDS_SCHEMA_BINDING_VECTOR_BINDING_AND_VERIFIER_SYMBOLS_MUST_RESOLVE_EXACTLY",
+    "registered_exclusion_presence": "REQUIRED_MISSING_IS_HARD_FAILURE",
+    "required_self_hash_field_absence_error": "SCHEMA_INVALID_BEFORE_CANONICAL_HASH",
+    "missing_registered_excluded_field_error": "MISSING_REGISTERED_EXCLUDED_FIELD",
+    "schema_binding_error": "HASH_DOMAIN_SCHEMA_MISMATCH",
+    "self_hash_field_constraint": "REQUIRED_LOWERCASE_HEXADECIMAL_64",
+    "identifier_rule": "PREALLOCATED_OPAQUE_INDEPENDENT_INCLUDED_IN_PREIMAGE",
+    "identifier_derivation_from_self_hash": "FORBIDDEN",
+    "path_rule": "INCLUDED_IN_PREIMAGE_SCHEMA_AUTHORIZED_DERIVATION_ONLY_FROM_NON_SELF_HASH_FIELDS",
+    "path_derivation_from_self_hash": "FORBIDDEN",
+    "self_identifier_cycle_error": "SELF_ID_HASH_CYCLE",
+    "unregistered_non_record_hash_domain_error": "NON_HASH_ARTIFACT_REGISTERED",
+    "non_hd_jcs_manifest_hashes": [
+      {
+        "artifact_type": "BuildManifest",
+        "hash_field": "/build_hash",
+        "mechanism": "FILE_TREE_ROOT_WITH_FILE_MANIFEST_SELF_EXCLUSION"
+      },
+      {
+        "artifact_type": "PackManifest",
+        "hash_field": "/pack_hash",
+        "mechanism": "FILE_TREE_ROOT_WITH_FILE_MANIFEST_SELF_EXCLUSION"
+      }
+    ]
+  },
+  "domain_validation_classes": [
+    {
+      "class_id": "SCHEMA_GATED_SELF_HASH",
+      "membership_rule": "EXCLUDED_JSON_POINTERS_NONEMPTY",
+      "expected_count": 65,
+      "pre_projection_validation": "CLOSED_SCHEMA_OR_TEST_ONLY_CLOSED_VECTOR_SCHEMA_BEFORE_PROJECTION",
+      "binding_source": "schema_binding_groups",
+      "artifact_types": [
+        "GateReceipt",
+        "DiscoveryRunAuthorization",
+        "BodyClassApproval",
+        "ProviderProbeProtocol",
+        "ProviderCallAuthorization",
+        "RevocationRecord",
+        "Repo0BaselineReceipt",
+        "TaskEvidence",
+        "ScopeInputView",
+        "ScopeInputAudit",
+        "DiscoveryCapability",
+        "CodexReviewOutput",
+        "DiscoveryArtifactManifest",
+        "SpoolRecord",
+        "RawCommitRecord",
+        "ApplicationRecord",
+        "DerivedRevision",
+        "ReducerCursor",
+        "AckOutboxRecord",
+        "AckCursor",
+        "GapRecord",
+        "GenerationTransition",
+        "RunDestructionIntent",
+        "DeletionProof",
+        "BrowserClockObservation",
+        "DocumentClockObservation",
+        "CdpClockObservation",
+        "RelayClockObservation",
+        "BackendClockObservation",
+        "ClockMapping",
+        "ClockMappingClosure",
+        "InputFreshnessVector",
+        "ShockObservation",
+        "FixtureCoherenceEpoch",
+        "CoherenceTransition",
+        "AuthoritativeResnapshotProof",
+        "RawObservation",
+        "E0ScenarioResult",
+        "CatalogCapabilityReport",
+        "GlobalOperatorStateReport",
+        "OperatorIdentityReport",
+        "ParticipantOrientationReport",
+        "TransportSemanticsReport",
+        "QuoteDisplayParityReport",
+        "BrowserLifecycleReport",
+        "ClockTimestampReport",
+        "GapsAndLossReport",
+        "LoopbackTopologyReport",
+        "BetslipObservationReport",
+        "PositionObservationReport",
+        "CashoutObservationReport",
+        "CapacityReport",
+        "CredentialRedactionReport",
+        "ProviderObservation",
+        "ProviderCorrectionLineage",
+        "ProviderCallReceipt",
+        "FootballProviderCapabilityReport",
+        "FootballLatencyReport",
+        "FootballCorrectionReport",
+        "FootballIdentityReport",
+        "FrozenInitialScopeApproval",
+        "NoFeasibleScopeRecord",
+        "ScopeRevocationRecord",
+        "GoldenExcludedHash",
+        "GoldenSelfHash"
+      ]
+    },
+    {
+      "class_id": "GOVERNED_NO_EXCLUSION",
+      "membership_rule": "EXCLUDED_JSON_POINTERS_EMPTY",
+      "expected_count": 18,
+      "pre_projection_validation": "STRICT_JSON_UTF8_NO_BOM_DUPLICATE_KEY_AND_NFC_VALIDATION_THEN_ARTIFACT_SPECIFIC_GOVERNANCE_OR_VECTOR_CHECK",
+      "synthetic_schema_requirement": "NONE",
+      "artifact_types": [
+        "LoopbackBody",
+        "DiscoveryCapabilityManifest",
+        "TrustRoot",
+        "CdpProtocolLock",
+        "CanonicalHashDomainRegistry",
+        "DiscoveryCapabilityConsumerRegistry",
+        "RequiredDiscoveryDecisionRegistry",
+        "Scope0InputPolicy",
+        "TaskCommandRegistry",
+        "ExecutableDiscoveryGraph",
+        "NonAuthoritativeFutureRoadmap",
+        "GoldenASCII",
+        "GoldenUnicodeNFC",
+        "GoldenDecimalStrings",
+        "GoldenFieldOrdering",
+        "GoldenAstralOrdering",
+        "CursorSeed",
+        "CursorStep"
+      ],
+      "subclasses": [
+        {
+          "subclass_id": "STATIC_PACK_ASSET",
+          "artifact_types": [
+            "LoopbackBody",
+            "DiscoveryCapabilityManifest",
+            "TrustRoot",
+            "CdpProtocolLock",
+            "CanonicalHashDomainRegistry",
+            "DiscoveryCapabilityConsumerRegistry",
+            "RequiredDiscoveryDecisionRegistry",
+            "Scope0InputPolicy",
+            "TaskCommandRegistry",
+            "ExecutableDiscoveryGraph",
+            "NonAuthoritativeFutureRoadmap"
+          ],
+          "validation": "ARTIFACT_SPECIFIC_PACK_GOVERNANCE_AFTER_STRICT_JSON_AND_NFC"
+        },
+        {
+          "subclass_id": "GOLDEN_OR_CURSOR_VECTOR_INPUT",
+          "artifact_types": [
+            "GoldenASCII",
+            "GoldenUnicodeNFC",
+            "GoldenDecimalStrings",
+            "GoldenFieldOrdering",
+            "GoldenAstralOrdering",
+            "CursorSeed",
+            "CursorStep"
+          ],
+          "validation": "ARTIFACT_SPECIFIC_PROTOCOL_OR_GOLDEN_VECTOR_CHECK_AFTER_STRICT_JSON_AND_NFC"
+        }
+      ]
+    }
+  ],
+  "no_exclusion_validation_bindings": [
+    {
+      "artifact_type": "LoopbackBody",
+      "canonical_source_path": "docs/vectors/capability-negative-v1.json",
+      "validation_kind": "CLOSED_LOOPBACK_SCHEMA_AND_AUTHENTICATED_HMAC_VECTOR",
+      "command_ids": [
+        "PRE-PY-SCHEMA-CLOSURE",
+        "PRE-PY-AUTHORIZATION-VECTORS"
+      ],
+      "schema_binding": {
+        "schema_path": "docs/schemas/loopback-messages.schema.json",
+        "schema_id": "urn:hybrid-discovery:v6.2:loopback-messages",
+        "schema_fragment": "#LoopbackMessage"
+      },
+      "vector_binding": {
+        "vector_path": "docs/vectors/capability-negative-v1.json",
+        "vector_ids": [
+          "LOOPBACK-HMAC-VALID-001",
+          "LOOPBACK-HMAC-FORGED-001",
+          "LOOPBACK-HMAC-REPLAY-001",
+          "LOOPBACK-HMAC-DIRECTION-SWAP-001",
+          "LOOPBACK-HMAC-TYPE-SWAP-001"
+        ]
+      },
+      "verifier_symbols": [
+        "moj_discovery.governance.validate_schema_closure",
+        "moj_discovery.governance.validate_authorization_vectors"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryCapabilityManifest",
+      "canonical_source_path": "docs/security/discovery-capability-manifest.v1.json",
+      "validation_kind": "CLOSED_SCHEMA_AND_CAPABILITY_GOVERNANCE",
+      "command_ids": [
+        "PRE-NODE-CAPABILITY-BOOTSTRAP",
+        "PRE-PY-CAPABILITY-REACHABILITY"
+      ],
+      "schema_binding": {
+        "schema_path": "docs/schemas/capability-manifest.schema.json",
+        "schema_id": "urn:hybrid-discovery:v6.2:capability-manifest",
+        "schema_fragment": "#DiscoveryCapabilityManifest"
+      },
+      "verifier_symbols": [
+        "moj_discovery.governance.validate_capability_artifacts",
+        "extension/tools/verify-capability-graph.ts#verifyCapabilityGraph"
+      ]
+    },
+    {
+      "artifact_type": "TrustRoot",
+      "canonical_source_path": "docs/security/trust-root.v1.json",
+      "validation_kind": "TRUST_AND_CUSTODY_GOVERNANCE",
+      "command_ids": [
+        "PRE-PY-CUSTODY-AUTHORITY"
+      ],
+      "verifier_symbols": [
+        "moj_discovery.governance.validate_custody_and_authority"
+      ]
+    },
+    {
+      "artifact_type": "CdpProtocolLock",
+      "canonical_source_path": "docs/security/cdp-protocol-lock.v1.json",
+      "validation_kind": "PINNED_PROTOCOL_HASH_AND_SIZE_GOVERNANCE",
+      "command_ids": [
+        "PRE-NORMATIVE-BUNDLE",
+        "PRE-PY-CUSTODY-AUTHORITY"
+      ],
+      "verifier_symbols": [
+        "tools.verify_normative_bundle.verify_normative_bundle",
+        "moj_discovery.governance.validate_custody_and_authority"
+      ]
+    },
+    {
+      "artifact_type": "CanonicalHashDomainRegistry",
+      "canonical_source_path": "docs/registries/canonical-hash-domains.v1.json",
+      "validation_kind": "CLOSED_WORLD_DOMAIN_PARTITION_AND_CROSS_LANGUAGE_VECTOR_GOVERNANCE",
+      "command_ids": [
+        "PRE-NODE-CANONICAL-VECTORS",
+        "PRE-PY-CANONICAL-REJECTIONS"
+      ],
+      "vector_binding": {
+        "vector_path": "docs/vectors/canonical-hashing-v1.json",
+        "vector_ids": [
+          "REGISTRY-SCHEMA-CONSISTENCY-PASS"
+        ]
+      },
+      "verifier_symbols": [
+        "extension/src/canonical.ts#canonicalContentHash",
+        "moj_discovery.canonical.canonical_content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryCapabilityConsumerRegistry",
+      "canonical_source_path": "docs/registries/discovery-capability-consumers.v1.json",
+      "validation_kind": "CAPABILITY_CONSUMER_CLOSED_WORLD_GOVERNANCE",
+      "command_ids": [
+        "PRE-NORMATIVE-BUNDLE",
+        "PRE-PY-CAPABILITY-REACHABILITY"
+      ],
+      "verifier_symbols": [
+        "tools.verify_normative_bundle.verify_normative_bundle",
+        "moj_discovery.governance.validate_capability_artifacts"
+      ]
+    },
+    {
+      "artifact_type": "RequiredDiscoveryDecisionRegistry",
+      "canonical_source_path": "docs/registries/required-discovery-decisions.v1.json",
+      "validation_kind": "REQUIRED_DECISION_CLOSED_WORLD_GOVERNANCE",
+      "command_ids": [
+        "PRE-NORMATIVE-BUNDLE"
+      ],
+      "verifier_symbols": [
+        "tools.verify_normative_bundle.verify_normative_bundle"
+      ]
+    },
+    {
+      "artifact_type": "Scope0InputPolicy",
+      "canonical_source_path": "docs/registries/scope0-input-policy.v1.json",
+      "validation_kind": "SCOPE_INPUT_POLICY_AND_SEMANTIC_GOVERNANCE",
+      "command_ids": [
+        "PRE-NORMATIVE-BUNDLE",
+        "PRE-PY-SCOPE-SEMANTICS"
+      ],
+      "verifier_symbols": [
+        "tools.verify_normative_bundle.verify_normative_bundle",
+        "moj_discovery.governance.validate_semantic_vector_file"
+      ]
+    },
+    {
+      "artifact_type": "TaskCommandRegistry",
+      "canonical_source_path": "docs/registries/task-command-registry.v1.json",
+      "validation_kind": "CLOSED_COMMAND_REGISTRY_SELF_CHECK",
+      "command_ids": [
+        "PRE-PY-COMMAND-REGISTRY",
+        "PRE-REGISTRY-SELF-CHECK"
+      ],
+      "verifier_symbols": [
+        "tools.run_command_registry.validate_registry"
+      ]
+    },
+    {
+      "artifact_type": "ExecutableDiscoveryGraph",
+      "canonical_source_path": "docs/graphs/executable-discovery-graph.v1.json",
+      "validation_kind": "EXECUTABLE_GRAPH_PARTITION_GOVERNANCE",
+      "command_ids": [
+        "PRE-PY-GRAPH-PARTITION"
+      ],
+      "verifier_symbols": [
+        "moj_discovery.governance.validate_graph_partition"
+      ]
+    },
+    {
+      "artifact_type": "NonAuthoritativeFutureRoadmap",
+      "canonical_source_path": "docs/graphs/non-authoritative-future-roadmap.v1.json",
+      "validation_kind": "NON_AUTHORITATIVE_GRAPH_PARTITION_GOVERNANCE",
+      "command_ids": [
+        "PRE-PY-GRAPH-PARTITION"
+      ],
+      "verifier_symbols": [
+        "moj_discovery.governance.validate_graph_partition"
+      ]
+    },
+    {
+      "artifact_type": "GoldenASCII",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CANON-ASCII"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "GoldenUnicodeNFC",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CANON-UNICODE-NFC"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "GoldenDecimalStrings",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CANON-DECIMAL-STRINGS"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "GoldenFieldOrdering",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CANON-FIELD-ORDER"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "GoldenAstralOrdering",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CANON-ASTRAL-KEY-ORDER"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "CursorSeed",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CURSOR-SEED-H0"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    },
+    {
+      "artifact_type": "CursorStep",
+      "canonical_source_path": "docs/vectors/canonical-hashing-v1.json",
+      "validation_kind": "CROSS_LANGUAGE_CANONICAL_VECTOR",
+      "command_ids": ["PRE-NODE-CANONICAL-VECTORS", "PRE-PY-CANONICAL-REJECTIONS"],
+      "vector_binding": {"vector_path": "docs/vectors/canonical-hashing-v1.json", "vector_ids": ["CURSOR-STEP-H1"]},
+      "verifier_symbols": ["extension/src/canonical.ts#canonicalContentHash", "moj_discovery.canonical.canonical_content_hash"]
+    }
+  ],
+  "schema_binding_groups": [
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/authorization-records.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "GateReceipt",
+        "DiscoveryRunAuthorization",
+        "BodyClassApproval",
+        "ProviderProbeProtocol",
+        "ProviderCallAuthorization",
+        "RevocationRecord"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/meta-records.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "Repo0BaselineReceipt",
+        "TaskEvidence",
+        "ScopeInputView",
+        "ScopeInputAudit",
+        "DiscoveryCapability",
+        "CodexReviewOutput",
+        "DiscoveryArtifactManifest"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/durability-records.schema.json",
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "SpoolRecord",
+        "RawCommitRecord",
+        "ApplicationRecord",
+        "DerivedRevision",
+        "ReducerCursor",
+        "AckOutboxRecord",
+        "AckCursor",
+        "GapRecord",
+        "GenerationTransition",
+        "RunDestructionIntent",
+        "DeletionProof"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/clock-coherence-records.schema.json",
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "BrowserClockObservation",
+        "DocumentClockObservation",
+        "CdpClockObservation",
+        "RelayClockObservation",
+        "BackendClockObservation",
+        "ClockMapping",
+        "ClockMappingClosure",
+        "InputFreshnessVector",
+        "ShockObservation",
+        "FixtureCoherenceEpoch",
+        "CoherenceTransition"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/clock-coherence-records.schema.json",
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json",
+      "artifact_types": [
+        "AuthoritativeResnapshotProof"
+      ],
+      "schema_fragment": "#AuthoritativeResnapshotProof",
+      "variant_definitions": [
+        "ObservedResnapshotProof",
+        "UnavailableResnapshotProof"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/raw-observation.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_types": [
+        "RawObservation"
+      ],
+      "schema_fragment": "#",
+      "variant_anchors": [
+        "NetworkMetadataObservation",
+        "AppStateObservation",
+        "DomVerificationObservation",
+        "LifecycleObservation",
+        "ClockSampleObservation",
+        "GapObservation",
+        "TerminalObservation"
+      ],
+      "hash_contract_fragment": "#/$defs/ObservationBase",
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/e0-evidence.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_types": [
+        "E0ScenarioResult"
+      ],
+      "schema_fragment": "#",
+      "variant_anchors": [
+        "E0S01",
+        "E0S02",
+        "E0S03",
+        "E0S04",
+        "E0S05",
+        "E0S06",
+        "E0S07",
+        "E0S08",
+        "E0S09",
+        "E0S10",
+        "E0S11",
+        "E0S12",
+        "E0S13",
+        "E0S14",
+        "E0S15",
+        "E0S16",
+        "E0S17",
+        "E0S18",
+        "E0S19",
+        "E0S20",
+        "E0S21",
+        "E0S22",
+        "E0S23",
+        "E0S24"
+      ],
+      "hash_contract_fragment": "#/$defs/ScenarioBase",
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/e0-evidence.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "hash_contract_fragment": "#/$defs/ReportBase",
+      "artifact_types": [
+        "CatalogCapabilityReport",
+        "GlobalOperatorStateReport",
+        "OperatorIdentityReport",
+        "ParticipantOrientationReport",
+        "TransportSemanticsReport",
+        "QuoteDisplayParityReport",
+        "BrowserLifecycleReport",
+        "ClockTimestampReport",
+        "GapsAndLossReport",
+        "LoopbackTopologyReport",
+        "BetslipObservationReport",
+        "PositionObservationReport",
+        "CashoutObservationReport",
+        "CapacityReport",
+        "CredentialRedactionReport"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/d0-evidence.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "ProviderObservation",
+        "ProviderCorrectionLineage",
+        "ProviderCallReceipt",
+        "FootballProviderCapabilityReport",
+        "FootballLatencyReport",
+        "FootballCorrectionReport",
+        "FootballIdentityReport"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/scope-records.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "NoFeasibleScopeRecord"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/scope-records.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "FrozenInitialScopeApproval"
+      ],
+      "self_hash_pointer": "/approval_hash",
+      "required_excluded_json_pointers": [
+        "/approval_hash"
+      ]
+    },
+    {
+      "source_kind": "CLOSED_JSON_SCHEMA",
+      "schema_path": "docs/schemas/scope-records.schema.json",
+      "schema_id": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "schema_fragment_rule": "ANCHOR_EQUALS_ARTIFACT_TYPE",
+      "artifact_types": [
+        "ScopeRevocationRecord"
+      ],
+      "self_hash_pointer": "/revocation_hash",
+      "required_excluded_json_pointers": [
+        "/revocation_hash"
+      ]
+    },
+    {
+      "source_kind": "TEST_ONLY_CLOSED_VECTOR_SCHEMA",
+      "vector_path": "docs/vectors/canonical-hashing-v1.json",
+      "schema_fragment_rule": "/test_only_closed_schemas/<artifact_type>",
+      "artifact_types": [
+        "GoldenExcludedHash",
+        "GoldenSelfHash"
+      ],
+      "self_hash_pointer": "/content_hash",
+      "required_excluded_json_pointers": [
+        "/content_hash"
+      ],
+      "production_authority": "NONE"
+    }
+  ],
+  "domains": [
+    {
+      "artifact_type": "GateReceipt",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GateReceipt/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryRunAuthorization",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DiscoveryRunAuthorization/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "BodyClassApproval",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/BodyClassApproval/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "ProviderProbeProtocol",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ProviderProbeProtocol/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "ProviderCallAuthorization",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ProviderCallAuthorization/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "RevocationRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RevocationRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash",
+        "/signature"
+      ]
+    },
+    {
+      "artifact_type": "LoopbackBody",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/LoopbackBody/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "Repo0BaselineReceipt",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/Repo0BaselineReceipt/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "TaskEvidence",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/TaskEvidence/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ScopeInputView",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ScopeInputView/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ScopeInputAudit",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ScopeInputAudit/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryCapability",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DiscoveryCapability/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CodexReviewOutput",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CodexReviewOutput/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryArtifactManifest",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DiscoveryArtifactManifest/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "SpoolRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/SpoolRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "RawCommitRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RawCommitRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ApplicationRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ApplicationRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DerivedRevision",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DerivedRevision/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ReducerCursor",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ReducerCursor/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "AckOutboxRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/AckOutboxRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "AckCursor",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/AckCursor/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "GapRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GapRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "GenerationTransition",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GenerationTransition/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "RunDestructionIntent",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RunDestructionIntent/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DeletionProof",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DeletionProof/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "BrowserClockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/BrowserClockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "DocumentClockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DocumentClockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CdpClockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CdpClockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "RelayClockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RelayClockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "BackendClockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/BackendClockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ClockMapping",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ClockMapping/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ClockMappingClosure",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ClockMappingClosure/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "InputFreshnessVector",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/InputFreshnessVector/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ShockObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ShockObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FixtureCoherenceEpoch",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FixtureCoherenceEpoch/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CoherenceTransition",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CoherenceTransition/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "AuthoritativeResnapshotProof",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/AuthoritativeResnapshotProof/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "RawObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RawObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "E0ScenarioResult",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/E0ScenarioResult/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CatalogCapabilityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CatalogCapabilityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "GlobalOperatorStateReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GlobalOperatorStateReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "OperatorIdentityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/OperatorIdentityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ParticipantOrientationReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ParticipantOrientationReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "TransportSemanticsReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/TransportSemanticsReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "QuoteDisplayParityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/QuoteDisplayParityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "BrowserLifecycleReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/BrowserLifecycleReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ClockTimestampReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ClockTimestampReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "GapsAndLossReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GapsAndLossReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "LoopbackTopologyReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/LoopbackTopologyReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "BetslipObservationReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/BetslipObservationReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "PositionObservationReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/PositionObservationReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CashoutObservationReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CashoutObservationReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CapacityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CapacityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "CredentialRedactionReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CredentialRedactionReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ProviderObservation",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ProviderObservation/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ProviderCorrectionLineage",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ProviderCorrectionLineage/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ProviderCallReceipt",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ProviderCallReceipt/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FootballProviderCapabilityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FootballProviderCapabilityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FootballLatencyReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FootballLatencyReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FootballCorrectionReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FootballCorrectionReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FootballIdentityReport",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FootballIdentityReport/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "FrozenInitialScopeApproval",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/FrozenInitialScopeApproval/v1\u0000",
+      "excluded_json_pointers": [
+        "/approval_hash"
+      ]
+    },
+    {
+      "artifact_type": "NoFeasibleScopeRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/NoFeasibleScopeRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/content_hash"
+      ]
+    },
+    {
+      "artifact_type": "ScopeRevocationRecord",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ScopeRevocationRecord/v1\u0000",
+      "excluded_json_pointers": [
+        "/revocation_hash"
+      ]
+    },
+    {
+      "artifact_type": "DiscoveryCapabilityManifest",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DiscoveryCapabilityManifest/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "TrustRoot",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/TrustRoot/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "CdpProtocolLock",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CdpProtocolLock/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "CanonicalHashDomainRegistry",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CanonicalHashDomainRegistry/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "DiscoveryCapabilityConsumerRegistry",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/DiscoveryCapabilityConsumerRegistry/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "RequiredDiscoveryDecisionRegistry",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/RequiredDiscoveryDecisionRegistry/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "Scope0InputPolicy",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/Scope0InputPolicy/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "TaskCommandRegistry",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/TaskCommandRegistry/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "ExecutableDiscoveryGraph",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/ExecutableDiscoveryGraph/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "NonAuthoritativeFutureRoadmap",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/NonAuthoritativeFutureRoadmap/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenASCII",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenASCII/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenUnicodeNFC",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenUnicodeNFC/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenDecimalStrings",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenDecimalStrings/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenFieldOrdering",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenFieldOrdering/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenAstralOrdering",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenAstralOrdering/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "GoldenExcludedHash",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenExcludedHash/v1\u0000",
+      "excluded_json_pointers": ["/content_hash"]
+    },
+    {
+      "artifact_type": "GoldenSelfHash",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/GoldenSelfHash/v1\u0000",
+      "excluded_json_pointers": ["/content_hash"]
+    },
+    {
+      "artifact_type": "CursorSeed",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CursorSeed/v1\u0000",
+      "excluded_json_pointers": []
+    },
+    {
+      "artifact_type": "CursorStep",
+      "domain_version": "v1",
+      "domain": "HYBRID-DISCOVERY/v6.2/CursorStep/v1\u0000",
+      "excluded_json_pointers": []
+    }
+  ],
+  "golden_vectors": [
+    {
+      "vector_id": "GOLDEN_ASCII_V1",
+      "artifact_type": "GoldenASCII",
+      "domain_version": "v1",
+      "projected_object": {
+        "a": "alpha",
+        "b": "2"
+      },
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e41534349492f763100",
+      "jcs_utf8_hex": "7b2261223a22616c706861222c2262223a2232227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e41534349492f7631007b2261223a22616c706861222c2262223a2232227d",
+      "sha256": "42a1cdc73f3c35b3650257cfd22e17e7bcdb25db236796d015aa256648df15e3"
+    },
+    {
+      "vector_id": "GOLDEN_UNICODE_NFC_V1",
+      "artifact_type": "GoldenUnicodeNFC",
+      "domain_version": "v1",
+      "projected_object": {
+        "name": "Café"
+      },
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e556e69636f64654e46432f763100",
+      "jcs_utf8_hex": "7b226e616d65223a22436166c3a9227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e556e69636f64654e46432f7631007b226e616d65223a22436166c3a9227d",
+      "sha256": "e58f05ba00554a0fbfa6b6be4c11d387160ac1dd955c0a6646b21752a5204230"
+    },
+    {
+      "vector_id": "GOLDEN_DECIMAL_STRINGS_V1",
+      "artifact_type": "GoldenDecimalStrings",
+      "domain_version": "v1",
+      "projected_object": {
+        "amount": "1.2300",
+        "exponent": "-2"
+      },
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e446563696d616c537472696e67732f763100",
+      "jcs_utf8_hex": "7b22616d6f756e74223a22312e32333030222c226578706f6e656e74223a222d32227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e446563696d616c537472696e67732f7631007b22616d6f756e74223a22312e32333030222c226578706f6e656e74223a222d32227d",
+      "sha256": "c914aa76ad656b510ea833dc81eb586ada28faab6060729028af017a996528e9"
+    },
+    {
+      "vector_id": "GOLDEN_FIELD_ORDERING_V1",
+      "artifact_type": "GoldenFieldOrdering",
+      "domain_version": "v1",
+      "projected_object": {"a": "first", "z": "last"},
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e4669656c644f72646572696e672f763100",
+      "jcs_utf8_hex": "7b2261223a226669727374222c227a223a226c617374227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e4669656c644f72646572696e672f7631007b2261223a226669727374222c227a223a226c617374227d",
+      "sha256": "d31b4eb532b7e44684c4009b00a16439459cb37a7ab7b8c2d390d4599e5689bb"
+    },
+    {
+      "vector_id": "GOLDEN_ASTRAL_ORDERING_V1",
+      "artifact_type": "GoldenAstralOrdering",
+      "domain_version": "v1",
+      "projected_object": {"": "bmp", "𐀀": "astral"},
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e41737472616c4f72646572696e672f763100",
+      "jcs_utf8_hex": "7b22f0908080223a2261737472616c222c22ee8080223a22626d70227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e41737472616c4f72646572696e672f7631007b22f0908080223a2261737472616c222c22ee8080223a22626d70227d",
+      "sha256": "c4d742a966f1b86ffa1858868e78472a1b4a62e8580f4740b57347d877c18630"
+    },
+    {
+      "vector_id": "GOLDEN_EXCLUDED_HASH_V1",
+      "artifact_type": "GoldenExcludedHash",
+      "domain_version": "v1",
+      "projected_object": {"id": "x"},
+      "excluded_json_pointers": ["/content_hash"],
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e4578636c75646564486173682f763100",
+      "jcs_utf8_hex": "7b226964223a2278227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e4578636c75646564486173682f7631007b226964223a2278227d",
+      "sha256": "5116e2ca2784d70090429294fdf6f93f4aa0d51bdbf6daec1f619887ec0a06ab"
+    },
+    {
+      "vector_id": "GOLDEN_SELF_HASH_V1",
+      "artifact_type": "GoldenSelfHash",
+      "domain_version": "v1",
+      "projected_object": {"id": "self"},
+      "excluded_json_pointers": ["/content_hash"],
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e53656c66486173682f763100",
+      "jcs_utf8_hex": "7b226964223a2273656c66227d",
+      "preimage_hex": "4859425249442d444953434f564552592f76362e322f476f6c64656e53656c66486173682f7631007b226964223a2273656c66227d",
+      "sha256": "5eb79eee7367b31b6c05650454b00ef872495ff1bda3753b25c5b0df2841f2af"
+    }
+  ],
+  "rejection_vectors": [
+    "NON_NFC_INPUT",
+    "UTF8_BOM",
+    "DUPLICATE_JSON_KEY",
+    "LONE_SURROGATE",
+    "UNREGISTERED_ARTIFACT_TYPE",
+    "UNREGISTERED_EXCLUSION",
+    "WILDCARD_EXCLUSION"
+  ],
+  "production_authority": "NONE"
+}

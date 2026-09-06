@@ -1,0 +1,10 @@
+{
+  "schema_version": "seal-exclusions/v2",
+  "governed_root_exclusions": [
+    "GOVERNED_CONTENT_ROOT.json",
+    "SELF_REVIEW_REPORT.md",
+    "SELF_REVIEW_REPORT.json",
+    "MANIFEST_SHA256.json"
+  ],
+  "external_outputs_must_be_outside_root": true
+}

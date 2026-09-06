@@ -1,0 +1,1 @@
+export const bootstrapSelfCheck = () => ({ READY_TO_IMPLEMENT_DISCOVERY_PACK: "NO", AUTHORIZED_PRODUCTION_PHASES: "NONE" });

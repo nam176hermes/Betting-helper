@@ -1,0 +1,438 @@
+{
+  "schema_version": "contract-stub-registry/v1",
+  "task_id": "V636-P01-T02",
+  "entries": [
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
+      "classification": "external"
+    },
+    {
+      "path": "runtime/.contract-stub-registry.json",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/src/contracts/clock-vectors.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/src/task-contracts.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test-harness/indexeddb-crash-child.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/clock/clock-vectors.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/exactness/task-symbols.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/cdp-reachability.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/dynamic-dispatch.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/message-smuggling.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/outbound-network.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/production-build-exclusion.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/test/security/target-escape.test.ts",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/extension/tsconfig.harness.json",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/artifact_ownership.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/clock_precedence.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/clock_vectors.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/declaration_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/durability_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/durability_release.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/executable_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/materialization_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/review_aggregation.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/review_authorization.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/symbol_inventory.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/src/moj_discovery/task_contracts.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/clock/test_clock_parity_and_mutation.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/clock/test_failure_precedence_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/clock/test_python_clock_vectors.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/contracts/test_declaration_complete_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/contracts/test_task_manifest_semantics.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/coverage/test_proof_coverage_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_chrome_indexeddb_environment.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_crash_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_destruction_and_release.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_gap_generation_process_crash.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_indexeddb_process_crash.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_loopback_ack_process_crash.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/durability/test_sqlite_process_crash.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/exactness/test_task_symbols.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_declared_stubs.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_harness_entrypoints.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_materialization_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_normative_artifacts.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_review_release_tools.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/materialization/test_runtime_layout.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_candidate_command_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_candidate_qualification_receipt.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_executable_complete_gate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_executable_references.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_full_proof_coverage.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_post_commit_baseline.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_verification_topology.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_zero_parent_export.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/release/test_zero_parent_repository.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_a_runner.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_aggregation_and_self_review.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_authority_bootstrap.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_b_runner.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_launch_authorization.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/review/test_review_workspace_isolation.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/seal/test_deterministic_seal.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/seal/test_governed_content_root.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/seal/test_pack_assembly.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/seal/test_self_review_binding.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_authorization_trust.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_bubblewrap_isolation.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_canonical_hashing.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_capability_manifest.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_credential_evidence_boundary.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_cybersecurity_command_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_no_archive_policy.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_replay_revocation.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tests/security/test_supply_chain_integrity.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/aggregate_reviews.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/assemble_review_pack.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/bootstrap_review_authority.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/build_candidate_qualification_receipt.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/build_self_review.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/compute_governed_content_root.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/create_zero_parent_repository.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/destruction_crash_child.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/export_zero_parent_candidate.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/finalize_review.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/gap_coherence_crash_child.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/inspect_restart_state.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/issue_review_launch_authorization.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/loopback_ack_crash_child.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/materialize_declared_stubs.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/prepare_review_workspace.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/qualify_chrome_indexeddb.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/qualify_zero_parent_baseline.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_clock_vector_qualification.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_destruction_crash_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_gap_coherence_crash_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_indexeddb_crash_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_loopback_ack_crash_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_review_a_checks.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_review_b_checks.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/run_sqlite_crash_matrix.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/seal_review_pack.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/sqlite_crash_child.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/verify_cybersecurity_registry.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/verify_executable_references.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/verify_proof_coverage.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/verify_task_symbols.py",
+      "classification": "internal"
+    },
+    {
+      "path": "runtime/tools/verify_test_discovery.py",
+      "classification": "internal"
+    }
+  ]
+}

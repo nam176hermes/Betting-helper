@@ -1,0 +1,866 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "d0-evidence-vectors/v1",
+  "target_schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+  "provider_protocol_reference": "urn:hybrid-discovery:v6.2:authorization-records#ProviderProbeProtocol",
+  "vector_contract": {
+    "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorContract",
+    "base_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorBase",
+    "case_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorCase",
+    "scanner_acceptance_expectation_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalScannerAcceptanceExpectation",
+    "content_reference_resolution_policy_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#ContentReferenceResolutionPolicy",
+    "patch_semantics": "RFC6902",
+    "error_selection": "LOWEST_PRECEDENCE_RANK_ONLY"
+  },
+  "positive_content_reference_resolution": {
+    "schema_version": "content-reference-resolution-policy/v1",
+    "positive_collections": [
+      "valid_records"
+    ],
+    "coverage": "EVERY_CONTENT_REFERENCE_RECURSIVELY_IN_EVERY_POSITIVE_BASE",
+    "schema_id_resolution": "EXACT_PUBLISHED_ID_ONLY_NO_ALIAS_OR_FILENAME_FALLBACK",
+    "type_version_resolution": "EXACT_SCHEMA_ID_ARTIFACT_TYPE_SCHEMA_VERSION_BINDING_TO_RESOLVABLE_SCHEMA_TARGET",
+    "binding_schema_ids": [
+      "urn:hybrid-discovery:v6.2:d0-evidence:v1"
+    ],
+    "missing_or_mismatched_reference_error": "E_CONTENT_REFERENCE_RESOURCE",
+    "production_authority": "NONE"
+  },
+  "error_precedence": [
+    {
+      "precedence_rank": 1,
+      "stage": "UNIVERSAL_DENIAL",
+      "rule": "DENY_BEFORE_ANY_SIDE_EFFECT"
+    },
+    {
+      "precedence_rank": 5,
+      "stage": "JSON_PATCH",
+      "rule": "PATCH_MUST_APPLY_EXACTLY"
+    },
+    {
+      "precedence_rank": 10,
+      "stage": "SCHEMA",
+      "rule": "DRAFT_2020_12_CLOSED_SCHEMA"
+    },
+    {
+      "precedence_rank": 15,
+      "stage": "REFERENCE",
+      "rule": "REFERENCE_INTEGRITY"
+    },
+    {
+      "precedence_rank": 20,
+      "stage": "SEMANTIC",
+      "rule": "D0_SEMANTIC_RULES"
+    },
+    {
+      "precedence_rank": 30,
+      "stage": "AUTHORITY",
+      "rule": "PRODUCTION_AUTHORITY_NONE"
+    }
+  ],
+  "valid_records": [
+    {
+      "case_id": "D0-VALID-FIXTURE-METADATA",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "record": {
+        "schema_version": "provider-observation/v1",
+        "provider_observation_id": "provider-observation:1111111111111111111111111111111111111111111111111111111111111111",
+        "provider_role": "FOOTBALL_FEASIBILITY_SOURCE",
+        "sample_id": "sample:fixture-001",
+        "source_time": "2026-09-01T12:00:00Z",
+        "effective_time": "2026-09-01T12:00:00Z",
+        "first_observed_time": "2026-09-01T12:00:02Z",
+        "receive_clock": {
+          "clock_domain_id": "11111111-1111-4111-8111-111111111111",
+          "boot_id": "22222222-2222-4222-8222-222222222222",
+          "unit": "MICROSECOND",
+          "monotonic_value": "1000000",
+          "resolution_us": "1",
+          "owner": "BACKEND",
+          "mapping_id": "NOT_APPLICABLE",
+          "mapping_status": "NOT_APPLICABLE"
+        },
+        "observation": {
+          "observation_kind": "FIXTURE_METADATA",
+          "provider_fixture_id": "fixture:provider-001",
+          "provider_competition_id": "competition:provider-001",
+          "participant_a_id": "participant:provider-a",
+          "participant_b_id": "participant:provider-b",
+          "scheduled_start_utc": "2026-09-01T12:00:00Z",
+          "fixture_state_class": "SCHEDULED"
+        },
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "provider_probe_protocol_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "provider_call_receipt_id": "provider-call-receipt:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "discovery_run_id": "33333333-3333-4333-8333-333333333333",
+        "content_hash": "1212121212121212121212121212121212121212121212121212121212121212",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "D0-VALID-CORRECTION-LINEAGE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "record": {
+        "schema_version": "provider-correction-lineage/v1",
+        "lineage_id": "provider-lineage:2222222222222222222222222222222222222222222222222222222222222222",
+        "lineage_sequence": "2",
+        "action": "CORRECT",
+        "subject_id": "fixture:provider-001",
+        "observation_ref": {
+          "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+          "artifact_type": "PROVIDER_OBSERVATION",
+          "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+          "schema_version": "provider-observation/v1",
+          "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+        },
+        "supersedes_lineage_id": "provider-lineage:1111111111111111111111111111111111111111111111111111111111111111",
+        "reverses_lineage_id": "NONE",
+        "effective_time": "2026-09-01T12:00:01Z",
+        "first_observed_time": "2026-09-01T12:00:03Z",
+        "append_only": true,
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "provider_probe_protocol_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "provider_call_receipt_id": "provider-call-receipt:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "discovery_run_id": "33333333-3333-4333-8333-333333333333",
+        "content_hash": "2323232323232323232323232323232323232323232323232323232323232323",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "D0-VALID-PROVIDER-CAPABILITY-REPORT",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "record": {
+        "schema_version": "d0-report/v1",
+        "record_kind": "D0_REPORT",
+        "report_name": "football-provider-capability-report.json",
+        "provider_probe_protocol_ref": {
+          "artifact_id": "artifact:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_type": "PROVIDER_PROBE_PROTOCOL",
+          "schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+          "schema_version": "provider-probe-protocol/v1",
+          "content_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "evidence_refs": [
+          {
+            "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+            "artifact_type": "PROVIDER_OBSERVATION",
+            "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+            "schema_version": "provider-observation/v1",
+            "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ],
+        "metrics": [
+          {
+            "metric_id": "FIXTURE_FIELD_COVERAGE",
+            "disposition": "OBSERVED",
+            "sample_count": "10",
+            "numerator": "10",
+            "denominator": "10",
+            "unit": "COUNT",
+            "evidence_refs": [
+              {
+                "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                "artifact_type": "PROVIDER_OBSERVATION",
+                "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                "schema_version": "provider-observation/v1",
+                "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+              }
+            ]
+          }
+        ],
+        "disposition": "PARTIAL",
+        "scope0_projection": {
+          "coverage": {
+            "category": "coverage",
+            "records": [
+              {
+                "datum_id": "PROVIDER_COVERAGE",
+                "disposition": "OBSERVED",
+                "evidence_refs": [
+                  {
+                    "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                    "artifact_type": "PROVIDER_OBSERVATION",
+                    "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                    "schema_version": "provider-observation/v1",
+                    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+                  }
+                ],
+                "numerator": "10",
+                "denominator": "10",
+                "unit": "COUNT",
+                "limitation_codes": []
+              }
+            ]
+          },
+          "schema_stability": {
+            "category": "schema_stability",
+            "records": [
+              {
+                "datum_id": "PROVIDER_SCHEMA_STABILITY",
+                "disposition": "OBSERVED",
+                "evidence_refs": [
+                  {
+                    "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                    "artifact_type": "PROVIDER_OBSERVATION",
+                    "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                    "schema_version": "provider-observation/v1",
+                    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+                  }
+                ],
+                "limitation_codes": []
+              }
+            ]
+          },
+          "quota": {
+            "category": "quota",
+            "records": [
+              {
+                "datum_id": "PROVIDER_QUOTA",
+                "disposition": "OBSERVED",
+                "evidence_refs": [
+                  {
+                    "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                    "artifact_type": "PROVIDER_OBSERVATION",
+                    "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                    "schema_version": "provider-observation/v1",
+                    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+                  }
+                ],
+                "decimal_value": "10",
+                "unit": "COUNT",
+                "limitation_codes": []
+              }
+            ]
+          },
+          "licensing": {
+            "category": "licensing",
+            "records": [
+              {
+                "datum_id": "PROVIDER_LICENSING",
+                "disposition": "PARTIAL",
+                "evidence_refs": [
+                  {
+                    "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                    "artifact_type": "PROVIDER_OBSERVATION",
+                    "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                    "schema_version": "provider-observation/v1",
+                    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+                  }
+                ],
+                "limitation_codes": [
+                  "LICENSE_SCOPE_REVIEW_REQUIRED"
+                ]
+              }
+            ]
+          },
+          "cost": {
+            "category": "cost",
+            "records": [
+              {
+                "datum_id": "PROVIDER_COST",
+                "disposition": "OBSERVED",
+                "evidence_refs": [
+                  {
+                    "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111",
+                    "artifact_type": "PROVIDER_OBSERVATION",
+                    "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+                    "schema_version": "provider-observation/v1",
+                    "content_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+                  }
+                ],
+                "decimal_value": "0",
+                "unit": "CURRENCY_MINOR_UNIT",
+                "limitation_codes": []
+              }
+            ]
+          }
+        },
+        "limitation_codes": [
+          "LICENSE_SCOPE_REVIEW_REQUIRED"
+        ],
+        "unknown_codes": [
+          "FULL_LICENSE_SCOPE_UNKNOWN"
+        ],
+        "content_hash": "3434343434343434343434343434343434343434343434343434343434343434",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "D0-VALID-PROVIDER-CALL-RECEIPT",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "scanner_acceptance_expectation": {
+        "expectation_id": "scanner-acceptance:provider-call-receipt",
+        "expected_disposition": "ACCEPTED",
+        "complete_record_requirement": "SCHEMA_VALID_PROVIDER_CALL_RECEIPT_WITH_COMPLETE_CANONICAL_PROVIDER_PROBE_PROTOCOL",
+        "safe_identifier_declaring_schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+        "schema_declared_safe_identifier_names": [
+          "issuer_key_id"
+        ],
+        "safe_identifier_bypass_scope": "NAME_FRAGMENT_ONLY",
+        "value_scan_completed": true,
+        "entropy_scan_completed": true,
+        "side_effects_before_acceptance": {
+          "candidate_bytes_hashed": false,
+          "sanitized_record_projected": false,
+          "artifact_written": false,
+          "log_written": false,
+          "indexeddb_written": false,
+          "sqlite_written": false,
+          "fixture_emitted": false,
+          "report_emitted": false,
+          "replay_artifact_emitted": false,
+          "export_emitted": false
+        },
+        "production_authority": "NONE"
+      },
+      "record": {
+        "schema_version": "provider-call-receipt/v1",
+        "provider_call_receipt_id": "provider-call-receipt:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "provider_probe_protocol": {
+          "schema_version": "provider-probe-protocol/v1",
+          "record_type": "ProviderProbeProtocol",
+          "record_id": "00000000-0000-4000-8000-000000000022",
+          "issuer": "issuer:rfc8032-test-vector-1",
+          "issuer_key_id": "key:ed25519:21fe31dfa154a261626bf854046fd2271b7bed4b6abe45aa58877ef47f9721b9",
+          "signature_algorithm": "Ed25519",
+          "pack_bindings": {
+            "final_pack_zip_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "pack_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "repo0_baseline_receipt_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "repo0_git_commit_oid": "dddddddddddddddddddddddddddddddddddddddd",
+            "repo0_git_tree_oid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "repo0_tree_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+          },
+          "implementation_bindings": {
+            "implementation_build_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "dependency_lock_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+            "schema_vendor_hash": "3333333333333333333333333333333333333333333333333333333333333333"
+          },
+          "issued_at": "2030-01-01T00:00:00Z",
+          "not_before": "2030-01-01T00:00:00Z",
+          "expires_at": "2030-01-01T00:30:00Z",
+          "revocation_checkpoint": {
+            "ledger_id": "00000000-0000-4000-8000-000000000011",
+            "sequence": "0",
+            "head_hash": "b861b7545e39caf552c29908ec2789ab4da35b40b774abc41067daabb708de5e"
+          },
+          "production_authority": "NONE",
+          "issuer_role": "PROVIDER_OPERATOR",
+          "audience": "hybrid-discovery:provider-protocol:v1",
+          "scope": "FOOTBALL_PROVIDER_FEASIBILITY_ONLY",
+          "serial": "TEST-PROTOCOL-0001",
+          "nonce": "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+          "one_use": false,
+          "consumed_before": "NO_PROVIDER_CALL_AUTHORITY",
+          "protocol_id": "00000000-0000-4000-8000-000000000023",
+          "protocol_state": "FROZEN",
+          "endpoint_templates": [
+            {
+              "endpoint_template_id": "endpoint-template:fixtures",
+              "provider_role": "FOOTBALL_FEASIBILITY_SOURCE",
+              "method": "GET",
+              "body_policy": "NO_BODY"
+            }
+          ],
+          "sample_windows": [
+            {
+              "window_id": "window:historical-one",
+              "window_kind": "HISTORICAL",
+              "start_date": "2029-01-01",
+              "end_date": "2029-01-02",
+              "competition_ids": [
+                "competition:test"
+              ],
+              "maximum_samples": "10"
+            }
+          ],
+          "allowed_fields": [
+            "FIXTURE_ID",
+            "COMPETITION_ID",
+            "PARTICIPANT_IDS",
+            "SCHEDULED_START",
+            "EVENT_AVAILABILITY",
+            "SOURCE_TIMESTAMP",
+            "SCHEMA_VERSION",
+            "HTTP_STATUS_CLASS",
+            "RESPONSE_SIZE_BYTES",
+            "RECEIVE_TIME"
+          ],
+          "denominators": [
+            "REQUESTED_FIXTURES",
+            "OBSERVED_FIXTURES",
+            "RESPONSES",
+            "SCHEMA_VALID_RESPONSES"
+          ],
+          "cadence": {
+            "minimum_interval_ms": "1000",
+            "maximum_concurrency": 1
+          },
+          "budget": {
+            "maximum_calls": "10",
+            "quota_limit": "100",
+            "quota_utilization_limit_percent": "80",
+            "maximum_cost": "1.00",
+            "currency": "CAD"
+          },
+          "licensing": {
+            "license_status": "DOCUMENTED_ALLOWED",
+            "evidence_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "credential_class": "NONE",
+          "accepted_schema_versions": [
+            "provider-test/v1"
+          ],
+          "prohibited_outputs": [
+            "FINAL_SCORE",
+            "WINNER",
+            "SETTLEMENT",
+            "OUTCOME",
+            "FEATURE",
+            "PREDICTION",
+            "PROBABILITY",
+            "WDL",
+            "MODEL_RESULT",
+            "CALIBRATION_METRIC",
+            "MARKET_PERFORMANCE",
+            "ROI",
+            "YIELD",
+            "EDGE",
+            "EV",
+            "PROFIT",
+            "PNL",
+            "DRAWDOWN",
+            "RANKING",
+            "CHAMPION_SELECTION"
+          ],
+          "content_hash": "7982a599b8db0886e70f12607d3183879f5803bcb47626870f20b6cdfd2797dd",
+          "signature": "BrAMqJpZh1ovLU7CTrejb0B9DkAYIMK-02Wc1eR07rg6Kgmem6WT9AlAPNq1DfOP5lrMY_HfqDsSjG1PO_jGCw",
+          "deterministic_sampling_rule": {
+            "ordering": "SCHEDULED_START_ASC_THEN_OPAQUE_FIXTURE_ID_ASC",
+            "selection": "FIRST_MAXIMUM_SAMPLES_PER_WINDOW_AFTER_SCHEMA_VALIDATION",
+            "seed_policy": "NO_RANDOM_SEED",
+            "duplicate_policy": "ONE_SAMPLE_PER_OPAQUE_FIXTURE_ID_LOWEST_SORT_POSITION_WINS"
+          },
+          "retry_policy": {
+            "maximum_attempts_per_sample": 1,
+            "retryable_status_classes": [],
+            "retryable_transport_errors": [],
+            "backoff_policy": "NO_RETRY"
+          },
+          "maximum_response_bytes": "1048576"
+        },
+        "provider_probe_protocol_hash": "7982a599b8db0886e70f12607d3183879f5803bcb47626870f20b6cdfd2797dd",
+        "provider_call_approval_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "pack_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "build_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "implementation_baseline_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "capability_manifest_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "discovery_run_id": "33333333-3333-4333-8333-333333333333",
+        "provider_role": "FOOTBALL_FEASIBILITY_SOURCE",
+        "endpoint_template_id": "endpoint-template:fixtures",
+        "method": "GET",
+        "body_mode": "NONE",
+        "scheduled_at": "2030-01-01T00:01:00Z",
+        "started_at": "2030-01-01T00:01:01Z",
+        "completed_at": "2030-01-01T00:01:02Z",
+        "response_class": "SUCCESS",
+        "quota_units": "1",
+        "cost_minor_units": "0",
+        "currency": "CAD",
+        "content_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "production_authority": "NONE"
+      }
+    }
+  ],
+  "required_report_anchors": [
+    {
+      "anchor": "FootballProviderCapabilityReport",
+      "report_name": "football-provider-capability-report.json"
+    },
+    {
+      "anchor": "FootballLatencyReport",
+      "report_name": "football-latency-report.json"
+    },
+    {
+      "anchor": "FootballCorrectionReport",
+      "report_name": "football-correction-report.json"
+    },
+    {
+      "anchor": "FootballIdentityReport",
+      "report_name": "football-identity-report.json"
+    }
+  ],
+  "counterexamples": [
+    {
+      "case_id": "D0-REJECT-FINAL-SCORE",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/final_score",
+          "value": "2-1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_RESULT_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-WINNER",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/winner",
+          "value": "participant:provider-a"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_RESULT_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-SETTLEMENT",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/settlement",
+          "value": "FINAL"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_RESULT_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-OUTCOMES",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/outcomes",
+          "value": []
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_RESULT_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-FEATURES",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/features",
+          "value": []
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_MODEL_FIELD",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-PREDICTIONS",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/predictions",
+          "value": []
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_MODEL_FIELD",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-PROBABILITIES",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/probabilities",
+          "value": []
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_MODEL_FIELD",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-MODEL",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/model",
+          "value": "forbidden"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_MODEL_FIELD",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-MARKET-PERFORMANCE",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/market_performance",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-ROI",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/roi",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-YIELD",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/yield",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-EV",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/ev",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-EDGE",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/edge",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-PROFIT",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/profit",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-PNL",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/pnl",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-DRAWDOWN",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/drawdown",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-RANKING",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/ranking",
+          "value": "1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-CHAMPION",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/champion",
+          "value": "participant:provider-a"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_D0_PERFORMANCE_FIELD",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-POST",
+      "base_case_id": "D0-VALID-PROVIDER-CALL-RECEIPT",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/record/method",
+          "value": "POST"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_PROVIDER_METHOD",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-BODY",
+      "base_case_id": "D0-VALID-PROVIDER-CALL-RECEIPT",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/record/body_mode",
+          "value": "JSON"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_PROVIDER_BODY",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-CREDENTIAL",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/credentials",
+          "value": "TEST_ONLY_SECRET_A7z9Q2m5N8v1K4p7R0t3W6y9B2d5F8h1"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-AUTH-HEADER",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/authorization",
+          "value": "Bearer TEST_ONLY"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-RAW-URL",
+      "base_case_id": "D0-VALID-FIXTURE-METADATA",
+      "operations": [
+        {
+          "op": "add",
+          "path": "/record/observation/raw_url",
+          "value": "https://invalid.example/test"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1
+    },
+    {
+      "case_id": "D0-REJECT-LINEAGE-OVERWRITE",
+      "base_case_id": "D0-VALID-CORRECTION-LINEAGE",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/record/append_only",
+          "value": false
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_LINEAGE_MUTABLE",
+      "precedence_rank": 10
+    },
+    {
+      "case_id": "D0-REJECT-LINEAGE-CYCLE",
+      "base_case_id": "D0-VALID-CORRECTION-LINEAGE",
+      "operations": [
+        {
+          "op": "copy",
+          "from": "/record/lineage_id",
+          "path": "/record/supersedes_lineage_id"
+        }
+      ],
+      "candidate_schema_state": "VALID",
+      "expected_error": "E_LINEAGE_CYCLE",
+      "precedence_rank": 20
+    },
+    {
+      "case_id": "D0-REJECT-UNKNOWN-REPORT",
+      "base_case_id": "D0-VALID-PROVIDER-CAPABILITY-REPORT",
+      "operations": [
+        {
+          "op": "replace",
+          "path": "/record/report_name",
+          "value": "football-ranking-report.json"
+        }
+      ],
+      "candidate_schema_state": "INVALID",
+      "expected_error": "E_REPORT_NAME_UNKNOWN",
+      "precedence_rank": 10
+    }
+  ],
+  "production_authority": "NONE"
+}

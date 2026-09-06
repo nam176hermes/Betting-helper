@@ -1,0 +1,297 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:common-records:v1",
+  "title": "Hybrid Discovery v6.2 common records",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/UUID"
+    },
+    {
+      "$ref": "#/$defs/Sha256"
+    },
+    {
+      "$ref": "#/$defs/ContentReference"
+    },
+    {
+      "$ref": "#/$defs/ClockContext"
+    },
+    {
+      "$ref": "#/$defs/DocumentContext"
+    },
+    {
+      "$ref": "#/$defs/PackBindings"
+    }
+  ],
+  "$defs": {
+    "UUID": {
+      "$anchor": "UUID",
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Sha256": {
+      "$anchor": "Sha256",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "UnsignedDecimal": {
+      "$anchor": "UnsignedDecimal",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+      "maxLength": 80
+    },
+    "UnsignedInteger": {
+      "$anchor": "UnsignedInteger",
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 40
+    },
+    "PositiveInteger": {
+      "$anchor": "PositiveInteger",
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$",
+      "maxLength": 40
+    },
+    "UtcDateTime": {
+      "$anchor": "UtcDateTime",
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "RegistryCode": {
+      "$anchor": "RegistryCode",
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{1,95}$"
+    },
+    "OpaqueId": {
+      "$anchor": "OpaqueId",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}:[A-Za-z0-9._~-]{1,192}$"
+    },
+    "ContentReference": {
+      "$anchor": "ContentReference",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "schema_id",
+        "schema_version",
+        "content_hash"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^artifact:[0-9a-f]{64}$"
+        },
+        "artifact_type": {
+          "$ref": "#/$defs/RegistryCode"
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^(?:urn:hybrid-discovery:v6\\.2:[a-z0-9-]+(?::v[0-9]+)?|https://hybrid-discovery\\.local/schemas/v6\\.2/[a-z0-9-]+\\.schema\\.json)$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+/v[0-9]+$"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256"
+        }
+      }
+    },
+    "ClockContext": {
+      "$anchor": "ClockContext",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "monotonic_value",
+        "resolution_us",
+        "owner",
+        "mapping_id",
+        "mapping_status"
+      ],
+      "properties": {
+        "clock_domain_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "unit": {
+          "const": "MICROSECOND"
+        },
+        "monotonic_value": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "resolution_us": {
+          "$ref": "#/$defs/PositiveInteger"
+        },
+        "owner": {
+          "enum": [
+            "EXTENSION",
+            "DOCUMENT",
+            "CDP",
+            "BACKEND",
+            "RELAY"
+          ]
+        },
+        "mapping_id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^clock-mapping:[0-9a-f]{64}$"
+            },
+            {
+              "const": "NOT_OBSERVED"
+            },
+            {
+              "const": "NOT_APPLICABLE"
+            }
+          ]
+        },
+        "mapping_status": {
+          "enum": [
+            "VALID",
+            "NOT_OBSERVED",
+            "NOT_APPLICABLE",
+            "CLOSED"
+          ]
+        }
+      }
+    },
+    "DocumentBoundContext": {
+      "$anchor": "DocumentBoundContext",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_kind",
+        "browser_run_id",
+        "browser_boot_id",
+        "tab_instance_id",
+        "frame_id",
+        "document_id",
+        "document_instance_id",
+        "navigation_epoch",
+        "bfcache_activation",
+        "debugger_attachment_generation",
+        "session_generation",
+        "origin_binding",
+        "pathname_binding"
+      ],
+      "properties": {
+        "context_kind": {
+          "const": "DOCUMENT_BOUND"
+        },
+        "browser_run_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "browser_boot_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "tab_instance_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "frame_id": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "document_id": {
+          "$ref": "#/$defs/OpaqueId"
+        },
+        "document_instance_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "navigation_epoch": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "bfcache_activation": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "debugger_attachment_generation": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "session_generation": {
+          "$ref": "#/$defs/UnsignedInteger"
+        },
+        "origin_binding": {
+          "const": "https://miseojeu.espacejeux.com"
+        },
+        "pathname_binding": {
+          "const": "/"
+        }
+      }
+    },
+    "RunBoundContext": {
+      "$anchor": "RunBoundContext",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_kind",
+        "browser_run_id",
+        "browser_boot_id",
+        "binding_reason"
+      ],
+      "properties": {
+        "context_kind": {
+          "const": "RUN_BOUND_NOT_DOCUMENT"
+        },
+        "browser_run_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "browser_boot_id": {
+          "$ref": "#/$defs/UUID"
+        },
+        "binding_reason": {
+          "enum": [
+            "RUN_CONTROL",
+            "BACKEND_DURABILITY",
+            "GAP_ACCOUNTING",
+            "TERMINAL_ACCOUNTING"
+          ]
+        }
+      }
+    },
+    "DocumentContext": {
+      "$anchor": "DocumentContext",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DocumentBoundContext"
+        },
+        {
+          "$ref": "#/$defs/RunBoundContext"
+        }
+      ]
+    },
+    "PackBindings": {
+      "$anchor": "PackBindings",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "capability_manifest_hash",
+        "discovery_run_id"
+      ],
+      "properties": {
+        "pack_hash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "capability_manifest_hash": {
+          "$ref": "#/$defs/Sha256"
+        },
+        "discovery_run_id": {
+          "$ref": "#/$defs/UUID"
+        }
+      }
+    }
+  }
+}

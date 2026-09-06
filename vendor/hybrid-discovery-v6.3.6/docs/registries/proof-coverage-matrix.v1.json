@@ -1,0 +1,354 @@
+{
+  "schema_version": "proof-coverage/v1",
+  "entries": [
+    {
+      "requirement_id": "V631-C1.ACYCLIC_SEAL",
+      "source_finding": "V631-C1",
+      "implementation_symbol": "runtime/tools/compute_governed_content_root.py::compute_governed_content_root",
+      "test_file": "runtime/tests/seal/test_governed_content_root.py",
+      "vector_ids": [
+        "SEAL-NO-ZIP-SELF-REFERENCE"
+      ],
+      "command_id": "VERIFY_V636_P09_T04",
+      "evidence_artifact": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+      "release_gate": "PACK_SEALED",
+      "stage": "SEALED",
+      "evidence_owner": "V636-P09-T04",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": null
+    },
+    {
+      "requirement_id": "V631-C2.DECLARATION_COMPLETE",
+      "source_finding": "V631-C2",
+      "implementation_symbol": "authoring-tools/issue_declaration_gate.py::issue_declaration_complete_receipt",
+      "test_file": "authoring-tests/test_declaration_gate.py",
+      "vector_ids": [
+        "DECLARATION-ALL-OWNED-AND-ORDERED"
+      ],
+      "command_id": "ISSUE_V636_P00_T05",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P00-T05.json",
+      "release_gate": "DECLARATION_COMPLETE",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P00-T05",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P00-T05.json"
+    },
+    {
+      "requirement_id": "V631-C2.LIFECYCLE_ORDER",
+      "source_finding": "V631-C2",
+      "implementation_symbol": "runtime/src/moj_discovery/artifact_ownership.py::validate_artifact_lifecycle",
+      "test_file": "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+      "vector_ids": [
+        "LIFECYCLE-OWNER-BEFORE-CONSUMER"
+      ],
+      "command_id": "TEST_V636_P02_T02",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P02-T02.json",
+      "release_gate": "MATERIALIZED_CONTRACTS_VALID",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P02-T02",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P02-T02.json"
+    },
+    {
+      "requirement_id": "V631-C3.MIGRATION_COMPLETE",
+      "source_finding": "V631-C3",
+      "implementation_symbol": "authoring-tools/verify_successor_migration.py::verify_successor_migration",
+      "test_file": "authoring-tests/test_successor_migration_receipt.py",
+      "vector_ids": [
+        "MIGRATION-NO-ACTIVE-V62-REF"
+      ],
+      "command_id": "VERIFY_V636_MIG0_T06",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-MIG0-T06.json",
+      "release_gate": "MATERIALIZATION_COMPLETE",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-MIG0-T06",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-MIG0-T06.json"
+    },
+    {
+      "requirement_id": "V631-C4.EXACT_REFERENCES",
+      "source_finding": "V631-C4",
+      "implementation_symbol": "runtime/tools/verify_executable_references.py::verify_executable_references",
+      "test_file": "runtime/tests/release/test_executable_references.py",
+      "vector_ids": [
+        "EXACT-NO-PLACEHOLDERS",
+        "EXACT-JSON-POINTERS"
+      ],
+      "command_id": "TEST_V636_P06_T01",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P06-T01.json",
+      "release_gate": "EXECUTABLE_REFERENCE_COMPLETE",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P06-T01",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P06-T01.json"
+    },
+    {
+      "requirement_id": "V631-C5.CRASH_COVERAGE",
+      "source_finding": "V631-C5",
+      "implementation_symbol": "runtime/src/moj_discovery/durability_release.py::validate_full_durability_release",
+      "test_file": "runtime/tests/durability/test_destruction_and_release.py",
+      "vector_ids": [
+        "IDB-01-BEFORE-TRANSACTION",
+        "IDB-02-DURING-SEQUENCE-ALLOCATION",
+        "IDB-03-DURING-ROW-PUT",
+        "IDB-04-AFTER-COMMIT",
+        "SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN",
+        "SQL-01-AFTER-RAW-COMMIT-STATEMENT",
+        "SQL-02-AFTER-APPLICATION-STATEMENT",
+        "SQL-03-AFTER-DERIVED-REVISION-STATEMENT",
+        "SQL-04-AFTER-REDUCER-CURSOR-STATEMENT",
+        "SQL-05-AFTER-ACK-OUTBOX-STATEMENT",
+        "SQL-06-DURING-COMMIT",
+        "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND",
+        "ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION",
+        "ACK-02-DURING-EXTENSION-ACK-TRANSACTION",
+        "ACK-03-AFTER-EXTENSION-ACK-TRANSACTION",
+        "ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT",
+        "ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT",
+        "ACK-06-DUPLICATE-IDENTICAL",
+        "GAP-01-AFTER-GAP-INSERT",
+        "GAP-02-AFTER-SHOCK-INSERT",
+        "GAP-03-AFTER-COHERENCE-TRANSITION",
+        "GAP-04-AFTER-CONTROLLER-CLOSE",
+        "GAP-05-AFTER-EPOCH-BINDING",
+        "GAP-06-AFTER-PREDECESSOR-CLOSE",
+        "GAP-07-AFTER-GENERATION-TRANSITION",
+        "GAP-08-AFTER-SUCCESSOR-INSERT",
+        "GAP-09-DURING-COMMIT",
+        "GAP-10-AFTER-COMMIT",
+        "CONFLICT-01-SAME-POSITION-DIFFERENT-HASH",
+        "LATE-01-MISSING-POSITION-AFTER-GAP",
+        "GAP-11-REPEATED-GAP-IN-SUCCESSOR",
+        "CAPACITY-01-NORMAL-LIMIT-REACHED",
+        "CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT",
+        "CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK",
+        "EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT",
+        "EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT",
+        "EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT",
+        "EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT",
+        "EPOCH-05-NEW-SHOCK-WHILE-PENDING",
+        "DESTROY-01-BEFORE-AUTHORITY",
+        "DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT",
+        "DESTROY-02-AFTER-INTENT-BEFORE-DELETION",
+        "DESTROY-03-AFTER-EXTENSION-DELETION",
+        "DESTROY-04-AFTER-BACKEND-DELETION",
+        "DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF",
+        "DESTROY-06-AFTER-PROOF"
+      ],
+      "command_id": "TEST_V636_P03_T07",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P03-T07.json",
+      "release_gate": "DURABILITY_RELEASE_ACCEPTED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P03-T07",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P03-T07.json"
+    },
+    {
+      "requirement_id": "V631-C5.CLOCK_EVALUATION",
+      "source_finding": "V631-C5",
+      "implementation_symbol": "runtime/tools/run_clock_vector_qualification.py::run_clock_vector_qualification",
+      "test_file": "runtime/tests/clock/test_clock_parity_and_mutation.py",
+      "vector_ids": [
+        "CLOCK-ALL-POSITIVE",
+        "CLOCK-ALL-NEGATIVE",
+        "CLOCK-MUTATION"
+      ],
+      "command_id": "TEST_V636_P04_T04",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P04-T04.json",
+      "release_gate": "CLOCK_QUALIFICATION_ACCEPTED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P04-T04",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P04-T04.json"
+    },
+    {
+      "requirement_id": "V631-C6.CYBERSECURITY_COMPLETE",
+      "source_finding": "V631-C6",
+      "implementation_symbol": "runtime/tools/run_review_b_checks.py::main",
+      "test_file": "runtime/tests/review/test_review_b_runner.py",
+      "vector_ids": [
+        "SEC_CAPABILITY_MANIFEST",
+        "SEC_CDP_REACHABILITY",
+        "SEC_DYNAMIC_DISPATCH",
+        "SEC_TARGET_ESCAPE",
+        "SEC_MESSAGE_SMUGGLING",
+        "SEC_OUTBOUND_NETWORK",
+        "SEC_AUTHORIZATION_TRUST",
+        "SEC_REPLAY_REVOCATION",
+        "SEC_CREDENTIAL_EVIDENCE",
+        "SEC_CANONICAL_HASHING",
+        "SEC_NO_ARCHIVE",
+        "SEC_BUBBLEWRAP_ISOLATION",
+        "SEC_SUPPLY_CHAIN",
+        "SEC_PRODUCTION_BUILD_EXCLUSION"
+      ],
+      "command_id": "TEST_V636_P05_T07",
+      "evidence_artifact": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
+      "release_gate": "REVIEW_B_FINALIZED",
+      "stage": "REVIEWED",
+      "evidence_owner": "V636-P10-T03",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": null
+    },
+    {
+      "requirement_id": "R633-01.CLOSURE",
+      "source_finding": "R633-01",
+      "implementation_symbol": "authoring-tools/verify_successor_migration.py::verify_successor_migration",
+      "test_file": "authoring-tests/test_successor_migration_receipt.py",
+      "vector_ids": [
+        "R633-01-REGRESSION"
+      ],
+      "command_id": "VERIFY_V636_MIG0_T06",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-MIG0-T06.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-MIG0-T06",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-MIG0-T06.json"
+    },
+    {
+      "requirement_id": "R633-02.CLOSURE",
+      "source_finding": "R633-02",
+      "implementation_symbol": "runtime/src/moj_discovery/pack_verifier.py::verify_repository_baseline",
+      "test_file": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "vector_ids": [
+        "R633-02-REGRESSION"
+      ],
+      "command_id": "QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T09.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T09",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T09.json"
+    },
+    {
+      "requirement_id": "R633-03.CLOSURE",
+      "source_finding": "R633-03",
+      "implementation_symbol": "runtime/tools/qualify_chrome_indexeddb.py::qualify_chrome_indexeddb_environment",
+      "test_file": "runtime/tests/durability/test_chrome_indexeddb_environment.py",
+      "vector_ids": [
+        "R633-03-REGRESSION"
+      ],
+      "command_id": "TEST_V636_P03_T02",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P03-T02.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P03-T02",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P03-T02.json"
+    },
+    {
+      "requirement_id": "R633-04.CLOSURE",
+      "source_finding": "R633-04",
+      "implementation_symbol": "runtime/tools/run_command_registry.py::main",
+      "test_file": "runtime/tests/release/test_candidate_command_registry.py",
+      "vector_ids": [
+        "R633-04-REGRESSION"
+      ],
+      "command_id": "TEST_SECURITY_TS",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T09.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T09",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T09.json"
+    },
+    {
+      "requirement_id": "R633-05.CLOSURE",
+      "source_finding": "R633-05",
+      "implementation_symbol": "runtime/src/moj_discovery/review_authorization.py::verify_review_launch_authorization",
+      "test_file": "runtime/tests/review/test_review_launch_authorization.py",
+      "vector_ids": [
+        "R633-05-REGRESSION"
+      ],
+      "command_id": "TEST_V636_P05_T04",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T04.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T04",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T04.json"
+    },
+    {
+      "requirement_id": "R633-06.CLOSURE",
+      "source_finding": "R633-06",
+      "implementation_symbol": "runtime/tools/verify_proof_coverage.py::verify_proof_coverage_matrix",
+      "test_file": "runtime/tests/coverage/test_proof_coverage_matrix.py",
+      "vector_ids": [
+        "R633-06-REGRESSION"
+      ],
+      "command_id": "TEST_V636_P05_T02",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T02.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T02",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T02.json"
+    },
+    {
+      "requirement_id": "R634-MIGRATION-STAGE.CLOSURE",
+      "source_finding": "R634-MIGRATION-STAGE",
+      "implementation_symbol": "authoring-tools/verify_successor_migration.py::verify_successor_migration",
+      "test_file": "authoring-tests/test_successor_migration_receipt.py",
+      "vector_ids": [
+        "R634-MIGRATION-STAGE-REGRESSION"
+      ],
+      "command_id": "VERIFY_V636_MIG0_T06",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-MIG0-T06.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-MIG0-T06",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-MIG0-T06.json"
+    },
+    {
+      "requirement_id": "R634-PRODUCTION-BUILD.CLOSURE",
+      "source_finding": "R634-PRODUCTION-BUILD",
+      "implementation_symbol": "runtime/tools/run_command_registry.py::main",
+      "test_file": "runtime/extension/test/security/production-build-exclusion.test.ts",
+      "vector_ids": [
+        "R634-PRODUCTION-BUILD-REGRESSION"
+      ],
+      "command_id": "TEST_SECURITY_TS",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T09.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T09",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T09.json"
+    },
+    {
+      "requirement_id": "R634-DEPENDENCY-SETUP.CLOSURE",
+      "source_finding": "R634-DEPENDENCY-SETUP",
+      "implementation_symbol": "runtime/tools/prepare_review_workspace.py::main",
+      "test_file": "runtime/tests/review/test_review_workspace_isolation.py",
+      "vector_ids": [
+        "R634-DEPENDENCY-SETUP-REGRESSION"
+      ],
+      "command_id": "TEST_V636_P05_T05",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T05.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T05",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T05.json"
+    },
+    {
+      "requirement_id": "R634-EXPORT-INVENTORY.CLOSURE",
+      "source_finding": "R634-EXPORT-INVENTORY",
+      "implementation_symbol": "runtime/tools/export_zero_parent_candidate.py::export_zero_parent_candidate",
+      "test_file": "runtime/tests/release/test_zero_parent_export.py",
+      "vector_ids": [
+        "R634-EXPORT-INVENTORY-REGRESSION"
+      ],
+      "command_id": "TEST_RELEASE_TOOLS",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P05-T09.json",
+      "release_gate": "CANDIDATE_QUALIFIED",
+      "stage": "CANDIDATE",
+      "evidence_owner": "V636-P05-T09",
+      "verification_kind": "EXECUTED_RUNTIME_EVIDENCE",
+      "sealed_evidence_path": "evidence/V636-P05-T09.json"
+    }
+  ]
+}

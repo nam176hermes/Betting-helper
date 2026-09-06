@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "required-discovery-decisions/v1",
+  "registry_id": "required-discovery-decisions:v1",
+  "decision_count": 18,
+  "decisions": [
+    { "order": 1, "decision_id": "OPERATOR_CATALOG_WDL_COVERAGE", "required_report_names": ["catalog-capability-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 2, "decision_id": "OPERATOR_GLOBAL_STATE_COVERAGE", "required_report_names": ["global-operator-state-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 3, "decision_id": "OPERATOR_TRANSPORT_TARGET_INVENTORY", "required_report_names": ["transport-semantics-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 4, "decision_id": "OPERATOR_SEQUENCE_RESUME_SEMANTICS", "required_report_names": ["gaps-and-loss-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 5, "decision_id": "OPERATOR_IDENTIFIER_STABILITY", "required_report_names": ["operator-identity-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 6, "decision_id": "OPERATOR_IDENTIFIER_LIFECYCLE", "required_report_names": ["operator-identity-report.json", "browser-lifecycle-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 7, "decision_id": "OPERATOR_WDL_ORIENTATION", "required_report_names": ["participant-orientation-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 8, "decision_id": "OPERATOR_PRICE_TRANSFORMATION_ATOMICITY", "required_report_names": ["quote-display-parity-report.json", "transport-semantics-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 9, "decision_id": "OPERATOR_TIMESTAMP_SEMANTICS", "required_report_names": ["clock-timestamp-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 10, "decision_id": "BROWSER_LIFECYCLE_CONTINUITY", "required_report_names": ["browser-lifecycle-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 11, "decision_id": "LOOPBACK_TOPOLOGY", "required_report_names": ["loopback-topology-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 12, "decision_id": "NATURAL_CAPACITY", "required_report_names": ["capacity-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 13, "decision_id": "BODY_CLASS_SAFETY", "required_report_names": ["credential-redaction-report.json", "transport-semantics-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 14, "decision_id": "CASHOUT_OBSERVABILITY", "required_report_names": ["cashout-observation-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 15, "decision_id": "BETSLIP_POSITION_SEMANTICS", "required_report_names": ["betslip-observation-report.json", "position-observation-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 16, "decision_id": "PARTIAL_CASHOUT_SIDE_EFFECT_FREEDOM", "required_report_names": ["cashout-observation-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 17, "decision_id": "PROVIDER_FEASIBILITY", "required_report_names": ["football-provider-capability-report.json", "football-latency-report.json", "football-correction-report.json", "football-identity-report.json"], "unresolved_default": "UNKNOWN" },
+    { "order": 18, "decision_id": "POST_SHOCK_RESNAPSHOT_RECOGNITION", "required_report_names": ["browser-lifecycle-report.json", "clock-timestamp-report.json", "gaps-and-loss-report.json"], "unresolved_default": "UNKNOWN" }
+  ],
+  "additional_decisions_permitted": false,
+  "production_authority": "NONE"
+}

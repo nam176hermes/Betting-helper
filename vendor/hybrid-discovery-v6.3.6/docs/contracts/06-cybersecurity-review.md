@@ -1,0 +1,7 @@
+# Security command qualification
+
+Every command in cybersecurity-command-registry.v1.json has a concrete Python or TypeScript source, creation owner P01-T02, implementation/qualification task P05-T03 and final Review B obligation P10. Source-to-command/attack mappings are frozen in cybersecurity-attack-matrix.v1.json. Test code must invoke the real inherited boundary or the new isolated review boundary; a test that only validates its own expected result is rejected. Where the existing baseline seam is an intentional product stub, the test must establish the existing denial behavior and mark product implementation readiness separately; it cannot fabricate a green product implementation result.
+
+Required cases include denied Chrome permissions/CDP reachability, computed dynamic dispatch, wrong target/session, command-bearing message smuggling, unauthorized outbound network, wrong signer/role/audience/boot, replay/revocation/expiry, credential and raw-evidence denial before persistence, canonical hashing mutation, prohibited archive creation, namespace mount escape, dependency/lock tampering and test-privilege exclusion from production dist. Every area includes allowed/denied synthetic vectors and a mutation that invalidates the purported proof. A skipped or unavailable area yields HOLD and CYBERSECURITY_REVIEW_COMPLETE=NO.
+
+These are offline qualification/review tools only. They authorize no real operator profile, authenticated discovery or provider access.

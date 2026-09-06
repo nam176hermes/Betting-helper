@@ -1,0 +1,26 @@
+{
+  "schema_version": "config-materialization/v1",
+  "entries": [
+    {
+      "plan_source": "docs/configs/runtime-pyproject.toml",
+      "destination": "runtime/pyproject.toml",
+      "owner": "V636-P01-T01"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.test.json",
+      "destination": "runtime/extension/tsconfig.test.json",
+      "owner": "V636-P01-T01"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.harness.json",
+      "destination": "runtime/extension/tsconfig.harness.json",
+      "owner": "V636-P01-T01"
+    },
+    {
+      "plan_source": "docs/configs/tsconfig.build.json",
+      "destination": "runtime/extension/tsconfig.build.json",
+      "owner": "V636-P01-T01"
+    }
+  ],
+  "byte_policy": "COPY_EXACT_PLAN_BYTES"
+}

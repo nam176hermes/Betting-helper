@@ -1,0 +1,198 @@
+{
+  "schema_version": "1",
+  "vector_set_id": "CLOCK_COHERENCE_V1",
+  "unit": "MICROSECOND",
+  "canonical_hash_contract": {
+    "algorithm": "HD-JCS-SHA256-v1",
+    "registered_artifact_types": ["BrowserClockObservation", "DocumentClockObservation", "CdpClockObservation", "RelayClockObservation", "BackendClockObservation", "ClockMapping", "ClockMappingClosure", "InputFreshnessVector", "ShockObservation", "FixtureCoherenceEpoch", "CoherenceTransition", "AuthoritativeResnapshotProof"],
+    "required_field": "content_hash",
+    "excluded_json_pointers": ["/content_hash"],
+    "artifact_id_rule": "PREALLOCATED_OPAQUE_INDEPENDENT_INPUT_INCLUDED_IN_PREIMAGE_NEVER_DERIVED_FROM_CONTENT_HASH",
+    "nested_non_artifacts": ["TimestampEndpoint", "FourTimestampSample", "GuardrailConstants", "RequiredInputFreshness", "NotRequiredInputFreshness", "FreshnessEntry", "ContinuityBinding", "RequiredMappingBindings", "SemanticInvariants"]
+  },
+  "canonical_hash_positive_vector": {
+    "id": "CLOCK-HASH-POS-01-BROWSER-OBSERVATION",
+    "artifact_type": "BrowserClockObservation",
+    "record": {
+      "record_type": "BrowserClockObservation",
+      "schema_version": "1",
+      "content_hash": "2b63679a94fd4c6d217c3f23f811f77314e82b46baef7902a95e4146efbcee41",
+      "observation_id": "CLOCK_OBSERVATION:4444444444444444444444444444444444444444444444444444444444444444",
+      "clock_domain_id": "44444444-4444-4444-8444-444444444444",
+      "boot_id": "55555555-5555-4555-8555-555555555555",
+      "unit": "MICROSECOND",
+      "monotonic_value": "1000000",
+      "resolution_us": "10",
+      "owner": "EXTENSION_SERVICE_WORKER",
+      "conversion_rule": "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000",
+      "observed_at_utc": "2030-01-01T00:00:00Z",
+      "immutable": true
+    },
+    "projection": "REMOVE_ONLY_TOP_LEVEL_CONTENT_HASH",
+    "expected_sha256": "2b63679a94fd4c6d217c3f23f811f77314e82b46baef7902a95e4146efbcee41",
+    "expected": "SCHEMA_VALID_AND_RECOMPUTED_HASH_MATCH"
+  },
+  "canonical_hash_negative_vector": {
+    "id": "CLOCK-HASH-NEG-01-MISSING-CONTENT-HASH",
+    "base_vector_id": "CLOCK-HASH-POS-01-BROWSER-OBSERVATION",
+    "mutation": "REMOVE_TOP_LEVEL_CONTENT_HASH",
+    "expected": "SCHEMA_INVALID_BEFORE_CANONICAL_HASH"
+  },
+  "realm_contracts": [
+    {"owner": "EXTENSION_SERVICE_WORKER", "record_anchor": "BrowserClockObservation", "independent_clock_domain": true, "independent_boot_id": true, "conversion_rule": "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000"},
+    {"owner": "TARGET_DOCUMENT", "record_anchor": "DocumentClockObservation", "independent_clock_domain": true, "independent_boot_id": true, "conversion_rule": "FLOOR_JAVASCRIPT_MILLISECONDS_TIMES_1000"},
+    {"owner": "CDP_BROWSER", "record_anchor": "CdpClockObservation", "independent_clock_domain": true, "independent_boot_id": true, "unmapped_source_age": "UNKNOWN"},
+    {"owner": "RELAY_PROCESS", "record_anchor": "RelayClockObservation", "independent_clock_domain": true, "independent_boot_id": true, "optional": true},
+    {"owner": "BACKEND_PROCESS", "record_anchor": "BackendClockObservation", "independent_clock_domain": true, "independent_boot_id": true, "conversion_rule": "PYTHON_MONOTONIC_NS_INTEGER_DIVIDE_1000"}
+  ],
+  "guardrails": {
+    "sample_period_us": 1000000,
+    "sample_window_count": 32,
+    "minimum_valid_samples": 8,
+    "max_network_rtt_us": 250000,
+    "max_base_uncertainty_us": 125000,
+    "relative_drift_ppm": 100,
+    "max_mapping_segment_age_us": 30000000,
+    "wall_step_tolerance_us": 1000000
+  },
+  "four_timestamp_contract": {
+    "t1": "SOURCE_IMMEDIATELY_BEFORE_PING",
+    "t2": "TARGET_IMMEDIATELY_AFTER_AUTHENTICATED_RECEIPT",
+    "t3": "TARGET_IMMEDIATELY_BEFORE_PONG",
+    "t4": "SOURCE_IMMEDIATELY_AFTER_AUTHENTICATED_VALIDATION",
+    "offset_sign": "THETA_EQUALS_TARGET_CLOCK_MINUS_SOURCE_CLOCK",
+    "raw_lower": "t3-t4",
+    "raw_upper": "t2-t1",
+    "network_rtt": "(t4-t1)-(t3-t2)",
+    "padding": "source_resolution+target_resolution",
+    "offset_lower": "raw_lower-padding",
+    "offset_upper": "raw_upper+padding",
+    "offset_midpoint": "(offset_lower+offset_upper)/2",
+    "base_uncertainty": "(offset_upper-offset_lower)/2",
+    "drift_us": "ceil(relative_drift_ppm*abs(x-source_anchor_us)/1000000)"
+  },
+  "golden_mapping": {
+    "id": "CLOCK-GOLDEN-FOUR-TIMESTAMP-01",
+    "source": {"clock_domain_id": "11111111-1111-4111-8111-111111111111", "boot_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "owner": "EXTENSION_SERVICE_WORKER", "unit": "MICROSECOND", "resolution_us": 10},
+    "target": {"clock_domain_id": "22222222-2222-4222-8222-222222222222", "boot_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "owner": "BACKEND_PROCESS", "unit": "MICROSECOND", "resolution_us": 20},
+    "t1": 1000000,
+    "t2": 1005200,
+    "t3": 1005400,
+    "t4": 1000600,
+    "expected": {
+      "raw_lower_us": 4800,
+      "raw_upper_us": 5200,
+      "network_rtt_us": 400,
+      "padding_us": 30,
+      "offset_interval_us": [4770, 5230],
+      "offset_midpoint_us": 5000,
+      "base_uncertainty_us": 230,
+      "accepted": true
+    }
+  },
+  "drift_vectors": [
+    {"id": "DRIFT-01-AT-ANCHOR", "relative_drift_ppm": 100, "source_anchor_us": 1000000, "x": 1000000, "expected_drift_us": 0},
+    {"id": "DRIFT-02-ONE-SECOND", "relative_drift_ppm": 100, "source_anchor_us": 1000000, "x": 2000000, "expected_drift_us": 100},
+    {"id": "DRIFT-03-CEILING", "relative_drift_ppm": 100, "source_anchor_us": 1000000, "x": 1000001, "expected_drift_us": 1},
+    {"id": "DRIFT-04-ABSOLUTE-BEFORE-ANCHOR", "relative_drift_ppm": 100, "source_anchor_us": 2000000, "x": 1000000, "expected_drift_us": 100}
+  ],
+  "mapping_negative_vectors": [
+    {"id": "MAP-NEG-01-TARGET-ORDER", "mutation": {"t2": 1005401, "t3": 1005400}, "expected_error": "E_NEGATIVE_TARGET_ORDER", "mapping_eligible": false},
+    {"id": "MAP-NEG-02-SOURCE-ORDER", "mutation": {"t1": 1000601, "t4": 1000600}, "expected_error": "E_NEGATIVE_SOURCE_ORDER", "mapping_eligible": false},
+    {"id": "MAP-NEG-03-NEGATIVE-RTT", "mutation": {"t1": 1000000, "t2": 1000100, "t3": 1001000, "t4": 1000500}, "expected_error": "E_NEGATIVE_NETWORK_RTT", "mapping_eligible": false},
+    {"id": "MAP-NEG-04-WRONG-SOURCE-DOMAIN", "mutation": {"t4_clock_domain_id": "33333333-3333-4333-8333-333333333333"}, "expected_error": "E_SOURCE_DOMAIN_MISMATCH", "mapping_eligible": false},
+    {"id": "MAP-NEG-05-WRONG-TARGET-DOMAIN", "mutation": {"t3_clock_domain_id": "33333333-3333-4333-8333-333333333333"}, "expected_error": "E_TARGET_DOMAIN_MISMATCH", "mapping_eligible": false},
+    {"id": "MAP-NEG-06-WRONG-BOOT", "mutation": {"t4_boot_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc"}, "expected_error": "E_BOOT_MISMATCH", "mapping_eligible": false},
+    {"id": "MAP-NEG-07-WRONG-UNIT", "mutation": {"t3_unit": "MILLISECOND"}, "expected_error": "E_UNIT_NOT_MICROSECOND", "mapping_eligible": false},
+    {"id": "MAP-NEG-08-WRONG-OWNER", "mutation": {"t2_owner": "EXTENSION_SERVICE_WORKER"}, "expected_error": "E_TIMESTAMP_OWNER_MISMATCH", "mapping_eligible": false},
+    {"id": "MAP-NEG-09-INVERTED-INTERVAL", "mutation": {"offset_lower_us": 5230, "offset_upper_us": 4770}, "expected_error": "E_INVERTED_OFFSET_INTERVAL", "mapping_eligible": false},
+    {"id": "MAP-NEG-10-RTT-EXCEEDED", "mutation": {"network_rtt_us": 250001}, "expected_error": "E_MAX_NETWORK_RTT_EXCEEDED", "mapping_eligible": false},
+    {"id": "MAP-NEG-11-UNCERTAINTY-EXCEEDED", "mutation": {"base_uncertainty_us": 125001}, "expected_error": "E_MAX_BASE_UNCERTAINTY_EXCEEDED", "mapping_eligible": false},
+    {"id": "MAP-NEG-12-TOO-FEW-SAMPLES", "mutation": {"valid_sample_count": 7}, "expected_error": "E_MINIMUM_VALID_SAMPLES", "mapping_eligible": false},
+    {"id": "MAP-NEG-13-SEGMENT-TOO-OLD", "mutation": {"mapping_segment_age_us": 30000001}, "expected_error": "E_MAX_MAPPING_SEGMENT_AGE", "mapping_eligible": false},
+    {"id": "MAP-NEG-14-WALL-STEP", "mutation": {"wall_step_us": 1000001}, "expected_error": "E_WALL_STEP_TOLERANCE", "mapping_eligible": false},
+    {"id": "MAP-NEG-15-NONINTERSECTING-TARGET-INTERVALS", "mutation": {"eligible_target_intervals": [[4770, 4800], [5000, 5230]]}, "expected_error": "E_INCONSISTENT_MAPPING", "mapping_eligible": false},
+    {"id": "MAP-NEG-16-UNMAPPED-CDP", "mutation": {"source_owner": "CDP_BROWSER", "proven_mapping": false}, "expected_source_age": "UNKNOWN", "mapping_eligible": false}
+  ],
+  "mapping_selection_vectors": [
+    {"id": "SELECT-01-NARROWEST", "candidates": [{"mapping_id": "MAP:a000000000000000000000000000000000000000000000000000000000000001", "width_us": 500, "valid_from_us": 10}, {"mapping_id": "MAP:b000000000000000000000000000000000000000000000000000000000001", "width_us": 400, "valid_from_us": 5}], "expected_mapping_id": "MAP:b000000000000000000000000000000000000000000000000000000000001"},
+    {"id": "SELECT-02-LATEST-VALIDITY-START", "candidates": [{"mapping_id": "MAP:a000000000000000000000000000000000000000000000000000000000002", "width_us": 400, "valid_from_us": 10}, {"mapping_id": "MAP:b000000000000000000000000000000000000000000000000000000000002", "width_us": 400, "valid_from_us": 11}], "expected_mapping_id": "MAP:b000000000000000000000000000000000000000000000000000000000002"},
+    {"id": "SELECT-03-LEXICOGRAPHIC-ID", "candidates": [{"mapping_id": "MAP:b000000000000000000000000000000000000000000000000000000000003", "width_us": 400, "valid_from_us": 11}, {"mapping_id": "MAP:a000000000000000000000000000000000000000000000000000000000003", "width_us": 400, "valid_from_us": 11}], "expected_mapping_id": "MAP:a000000000000000000000000000000000000000000000000000000000003"}
+  ],
+  "midpoint_constraint_vectors": [
+    {"id": "MIDPOINT-POS-GOLDEN", "offset_lower_us": 4770, "offset_upper_us": 5230, "base_uncertainty_us": 230, "offset_midpoint_us": 5000, "expected": "ACCEPT"},
+    {"id": "MIDPOINT-NEG-WRONG-VALUE", "offset_lower_us": 0, "offset_upper_us": 10, "base_uncertainty_us": 5, "offset_midpoint_us": 1, "expected": "REJECT_CHECK_CONSTRAINT"},
+    {"id": "MIDPOINT-POS-MAX-BOUNDARY", "offset_lower_us": 9223372036854525807, "offset_upper_us": 9223372036854775807, "base_uncertainty_us": 125000, "offset_midpoint_us": 9223372036854650807, "expected": "ACCEPT_OVERFLOW_SAFE"},
+    {"id": "MIDPOINT-NEG-OVERFLOW", "offset_lower_us": 9223372036854525808, "offset_upper_us": 9223372036854775807, "base_uncertainty_us": 125000, "offset_midpoint_us": 9223372036854650808, "expected": "REJECT_OVERFLOW_GUARD"}
+  ],
+  "closure_vectors": [
+    {"id": "CLOSE-01-DOMAIN-BOOT", "reason": "DOMAIN_BOOT_CHANGED", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-02-MONOTONIC", "reason": "MONOTONIC_REGRESSION", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-03-WALL", "reason": "WALL_CLOCK_STEP", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-04-SLEEP", "reason": "SLEEP_RESUME", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-05-DURATION", "reason": "MAX_DURATION", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-06-RTT", "reason": "RTT_EXCEEDED", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-07-UNCERTAINTY", "reason": "UNCERTAINTY_EXCEEDED", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-08-INCONSISTENT", "reason": "INCONSISTENT_MAPPING", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-09-LIFECYCLE", "reason": "LIFECYCLE_INVALIDATED", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-10-RUN", "reason": "RUN_CLOSED", "permanent": true, "reopen_attempt_error": "E_MAPPING_PERMANENTLY_CLOSED"},
+    {"id": "CLOSE-NEG-USE-AFTER-CLOSE", "reason": "SLEEP_RESUME", "attempt": "SELECT_CLOSED_MAPPING_FOR_LATER_OBSERVATION", "expected_error": "E_NO_VALID_MAPPING", "coherence_eligible": false}
+  ],
+  "coherence_state_machine": {
+    "states": ["OPEN", "SHOCKED_CLOSED", "WAITING_FOR_RESNAPSHOT", "NEW_EPOCH_PENDING", "NEW_EPOCH_OPEN"],
+    "required_path": ["OPEN->SHOCKED_CLOSED", "SHOCKED_CLOSED->WAITING_FOR_RESNAPSHOT", "WAITING_FOR_RESNAPSHOT->NEW_EPOCH_PENDING", "NEW_EPOCH_PENDING->NEW_EPOCH_OPEN"],
+    "pending_shock_path": "NEW_EPOCH_PENDING->WAITING_FOR_RESNAPSHOT",
+    "closed_predecessor": "IMMUTABLE_AND_NEVER_REOPENED",
+    "candidate_acceptance_gate": "OBSERVED_VERIFIED_SATISFIED_PROOF_WITH_EXACT_PREDECESSOR_CANDIDATE_SHOCK_FRESHNESS_REQUIRED_MAPPING_AND_CONTINUITY_BINDINGS"
+  },
+  "freshness_keys": ["FOOTBALL_STATE", "OPERATOR_STATE", "MARKET_BOOK", "DISPLAY_EVIDENCE", "BETSLIP_EVIDENCE", "POSITION", "CASHOUT_OFFER"],
+  "release_positive_vector": {
+    "id": "RELEASE-POS-01",
+    "predecessor_closed": true,
+    "proof_status": "OBSERVED",
+    "signed_accepted_capability_evidence": true,
+    "snapshot_semantics": "FULL_AUTHORITATIVE_SNAPSHOT",
+    "football_state": "FRESH",
+    "operator_state": "FRESH",
+    "market_book": "FRESH_COMPLETE_OPEN",
+    "conservative_lower_bounds_strictly_after_shock_upper": true,
+    "mappings_valid": true,
+    "identities_orientation_generations_agree": true,
+    "cursor_ranges_contiguous": true,
+    "gap_conflict_schema_lifecycle_mapping_or_later_shock_absent": true,
+    "score_period_suspension_and_shock_fields_agree": true,
+    "proof_bound_mappings_open_unclosed_valid_at_release": true,
+    "freshness_bindings_valid_at_release": true,
+    "continuity_bindings_valid_at_release": true,
+    "expected_transition": "NEW_EPOCH_PENDING->NEW_EPOCH_OPEN",
+    "expected_predecessor_state": "CLOSED_FOREVER",
+    "expected_successor_distinct": true
+  },
+  "release_negative_vectors": [
+    {"id": "RELEASE-NEG-01-PREDECESSOR-NOT-CLOSED", "failed_predicate": "predecessor_closed", "proof_status": "OBSERVED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_PREDECESSOR_NOT_CLOSED"},
+    {"id": "RELEASE-NEG-02-NOT-OBSERVED", "failed_predicate": "proof_status", "proof_status": "NOT_OBSERVED", "reason": "SNAPSHOT_SEMANTICS_NOT_OBSERVED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_RESNAPSHOT_NOT_OBSERVED"},
+    {"id": "RELEASE-NEG-03-UNKNOWN", "failed_predicate": "proof_status", "proof_status": "UNKNOWN", "reason": "TTL_NOT_OBSERVED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_RESNAPSHOT_UNKNOWN"},
+    {"id": "RELEASE-NEG-04-UNSIGNED-CAPABILITY", "failed_predicate": "signed_accepted_capability_evidence", "proof_status": "UNKNOWN", "reason": "CAPABILITY_EVIDENCE_NOT_ACCEPTED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_CAPABILITY_EVIDENCE_NOT_ACCEPTED"},
+    {"id": "RELEASE-NEG-05-FOOTBALL-STALE", "failed_predicate": "football_state", "value": "STALE", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_FOOTBALL_STATE_NOT_FRESH"},
+    {"id": "RELEASE-NEG-06-OPERATOR-UNKNOWN", "failed_predicate": "operator_state", "value": "UNKNOWN", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_OPERATOR_STATE_NOT_FRESH"},
+    {"id": "RELEASE-NEG-07-BOOK-INCOMPLETE", "failed_predicate": "market_book", "value": "FRESH_INCOMPLETE", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_MARKET_BOOK_NOT_COMPLETE_OPEN"},
+    {"id": "RELEASE-NEG-08-NOT-STRICTLY-POST-SHOCK", "failed_predicate": "conservative_lower_bounds_strictly_after_shock_upper", "value": false, "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_NOT_STRICTLY_POST_SHOCK"},
+    {"id": "RELEASE-NEG-09-MAPPING-CLOSED", "surface": "JSON_SCHEMA_AND_SQL", "failed_predicate": "proof_bound_mappings_open_unclosed_valid_at_release", "value": false, "attempt": "AFTER_VALID_CANDIDATE_ACCEPTANCE_PERMANENTLY_CLOSE_PROOF_BOUND_FOOTBALL_STATE_MAPPING_THEN_INSERT_RELEASE_TRANSITION_AND_OPEN_CONTROLLER", "mapping_binding_role": "FOOTBALL_STATE", "mapping_closed_after_candidate_acceptance": true, "freshness_bindings_valid_at_release": true, "continuity_bindings_valid_at_release": true, "expected_state": "NEW_EPOCH_PENDING", "expected_schema": "REJECT_RELEASE_TRANSITION", "expected_sql_error": "E_RELEASE_BINDING", "expected_error": "E_MAPPING_CLOSED"},
+    {"id": "RELEASE-NEG-10-IDENTITY-MISMATCH", "failed_predicate": "identities_orientation_generations_agree", "value": false, "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_IDENTITY_OR_GENERATION_MISMATCH"},
+    {"id": "RELEASE-NEG-11-CURSOR-GAP", "failed_predicate": "cursor_ranges_contiguous", "value": false, "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_CURSOR_NOT_CONTIGUOUS"},
+    {"id": "RELEASE-NEG-12-BLOCKING-GAP", "failed_predicate": "gap_conflict_schema_lifecycle_mapping_or_later_shock_absent", "value": false, "blocker": "GAP", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_RELEASE_BLOCKED"},
+    {"id": "RELEASE-NEG-13-STATE-DISAGREEMENT", "failed_predicate": "score_period_suspension_and_shock_fields_agree", "value": false, "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_STATE_FIELDS_DISAGREE"},
+    {"id": "RELEASE-NEG-14-LATER-SHOCK", "failed_predicate": "gap_conflict_schema_lifecycle_mapping_or_later_shock_absent", "value": false, "blocker": "LATER_OR_INTERSECTING_SHOCK", "expected_state": "WAITING_FOR_RESNAPSHOT", "candidate_epoch_state": "CLOSED_FOREVER", "expected_error": "E_CANDIDATE_CLOSED_BY_NEW_SHOCK"},
+    {"id": "RELEASE-NEG-15-REOPEN-PREDECESSOR", "attempt": "REOPEN_CLOSED_PREDECESSOR_EPOCH", "expected_state": "CLOSED_FOREVER", "expected_error": "E_PREDECESSOR_EPOCH_IMMUTABLE"},
+    {"id": "RELEASE-NEG-16-NO-CANDIDATE", "attempt": "NEW_EPOCH_PENDING_TO_NEW_EPOCH_OPEN_WITH_CANDIDATE_NOT_CREATED", "proof_status": "UNKNOWN", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_RELEASE_BINDING"},
+    {"id": "RELEASE-NEG-17-SAME-EPOCH", "attempt": "CONTROLLER_RELEASE_RETAINS_PREDECESSOR_AS_CURRENT_EPOCH", "proof_status": "OBSERVED", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_INVALID_COHERENCE_TRANSITION"},
+    {"id": "RELEASE-NEG-18-NON-GENESIS-PREDECESSOR-NOT-CLOSED", "attempt": "CREATE_NON_GENESIS_EPOCH_WITH_PREDECESSOR_PERMANENTLY_CLOSED_FALSE", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_NON_GENESIS_PREDECESSOR_NOT_CLOSED"},
+    {"id": "RELEASE-NEG-19-UNBOUND-PROOF", "attempt": "RELEASE_WITH_OBSERVED_PROOF_NOT_BOUND_TO_CANDIDATE_FRESHNESS_SHOCK_MAPPINGS_AND_CONTINUITY", "expected_state": "NEW_EPOCH_PENDING", "expected_error": "E_RELEASE_BINDING"}
+  ],
+  "candidate_acceptance_negative_vectors": [
+    {"id": "CANDIDATE-NEG-01-JSON-UNKNOWN", "surface": "JSON_SCHEMA", "attempt": "WAITING_FOR_RESNAPSHOT_TO_NEW_EPOCH_PENDING_WITH_UNKNOWN_PROOF", "proof_status_at_transition": "UNKNOWN", "proof_verified": false, "release_predicate": "NOT_SATISFIED", "freshness_binding_verified": false, "shock_binding_verified": false, "mapping_bindings_verified": false, "continuity_bindings_verified": false, "expected_state": "WAITING_FOR_RESNAPSHOT", "expected": "REJECT_SCHEMA"},
+    {"id": "CANDIDATE-NEG-02-SQL-UNKNOWN", "surface": "SQL", "attempt": "INSERT_UNKNOWN_NOT_SATISFIED_PROOF_THEN_CANDIDATE_ACCEPTED_TRANSITION_AND_CONTROLLER_UPDATE", "proof_status": "UNKNOWN", "proof_verified": false, "release_predicate": "NOT_SATISFIED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_RESNAPSHOT_CANDIDATE_BINDING"},
+    {"id": "CANDIDATE-NEG-03-NOT-OBSERVED", "surface": "JSON_AND_SQL", "attempt": "WAITING_FOR_RESNAPSHOT_TO_NEW_EPOCH_PENDING_WITH_NOT_OBSERVED_PROOF", "proof_status": "NOT_OBSERVED", "proof_verified": false, "release_predicate": "NOT_SATISFIED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_RESNAPSHOT_CANDIDATE_BINDING"},
+    {"id": "CANDIDATE-NEG-04-UNSIGNED-UNVERIFIED", "surface": "JSON_AND_SQL", "attempt": "WAITING_FOR_RESNAPSHOT_TO_NEW_EPOCH_PENDING_WITH_UNSIGNED_OR_UNVERIFIED_PROOF", "proof_status": "UNKNOWN", "proof_verified": false, "release_predicate": "NOT_SATISFIED", "expected_state": "WAITING_FOR_RESNAPSHOT", "expected_error": "E_RESNAPSHOT_CANDIDATE_BINDING"}
+  ]
+}

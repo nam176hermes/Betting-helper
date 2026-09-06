@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Hybrid Discovery v6.2 REPO0",
+  "version": "6.2.0",
+  "description": "Inert authoring baseline. Discovery execution is not authorized.",
+  "minimum_chrome_version": "116",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwNvHE6TTy2adxztgucntNmg8qtLhcAIBs4b4BQFRzVHHGtldCv67OZwqBv2DhKRDzJUSOIZDU+F/qUCIFDwPqRl9SDAAufbQ+zdJhfIUVvGzp9pqJcqA7E0khaZwaO9UxgBz7+3N4JAjQcA48RqQrOfJ/GTJIHIuL+Pj7YCHgOjE/wvbu77FEJNEr3XQJ8JYW9X/NDCJUlqqxb2UXlftlv0Yn2dYD/C1DS2QS0E6NALBXWbJmcD/P7fC4djHNGn1zgBv1aUcNVLM7K6xJAaRy2a6gpAhvUzri3VwyHfXRO+yA0fCycLQXBPByF8B+g9uH4xOD2wt6Slb9Dzqtv2uNwIDAQAB",
+  "permissions": ["activeTab", "debugger", "scripting", "unlimitedStorage", "webNavigation"],
+  "optional_permissions": [],
+  "host_permissions": [],
+  "optional_host_permissions": [],
+  "content_scripts": [],
+  "web_accessible_resources": [],
+  "action": {
+    "default_title": "Hybrid Discovery held pending review"
+  },
+  "background": {
+    "service_worker": "dist/bootstrap.js",
+    "type": "module"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' ws://127.0.0.1:8765"
+  }
+}

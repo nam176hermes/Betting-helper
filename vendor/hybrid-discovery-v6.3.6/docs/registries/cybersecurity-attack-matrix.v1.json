@@ -1,0 +1,173 @@
+{
+  "schema_version": "cybersecurity-attack-matrix/v1",
+  "entries": [
+    {
+      "command_id": "SEC_CAPABILITY_MANIFEST",
+      "source": "runtime/tests/security/test_capability_manifest.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_CAPABILITY_MANIFEST-ALLOW",
+      "negative_vector_id": "SEC_CAPABILITY_MANIFEST-DENY",
+      "mutation_vector_id": "SEC_CAPABILITY_MANIFEST-MUTATE",
+      "case_contract": "extra tabs or webRequest permission; allowed passive capability set",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_CDP_REACHABILITY",
+      "source": "runtime/extension/test/security/cdp-reachability.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_CDP_REACHABILITY-ALLOW",
+      "negative_vector_id": "SEC_CDP_REACHABILITY-DENY",
+      "mutation_vector_id": "SEC_CDP_REACHABILITY-MUTATE",
+      "case_contract": "Runtime.evaluate, Input dispatch, Page.navigate denied; permitted bounded Network read",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_DYNAMIC_DISPATCH",
+      "source": "runtime/extension/test/security/dynamic-dispatch.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_DYNAMIC_DISPATCH-ALLOW",
+      "negative_vector_id": "SEC_DYNAMIC_DISPATCH-DENY",
+      "mutation_vector_id": "SEC_DYNAMIC_DISPATCH-MUTATE",
+      "case_contract": "computed property, alias and re-export reach forbidden dispatcher",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_TARGET_ESCAPE",
+      "source": "runtime/extension/test/security/target-escape.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_TARGET_ESCAPE-ALLOW",
+      "negative_vector_id": "SEC_TARGET_ESCAPE-DENY",
+      "mutation_vector_id": "SEC_TARGET_ESCAPE-MUTATE",
+      "case_contract": "wrong target/session/domain denied before attach",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_MESSAGE_SMUGGLING",
+      "source": "runtime/extension/test/security/message-smuggling.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_MESSAGE_SMUGGLING-ALLOW",
+      "negative_vector_id": "SEC_MESSAGE_SMUGGLING-DENY",
+      "mutation_vector_id": "SEC_MESSAGE_SMUGGLING-MUTATE",
+      "case_contract": "command-bearing unknown nested field denied before persistence",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_OUTBOUND_NETWORK",
+      "source": "runtime/extension/test/security/outbound-network.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_OUTBOUND_NETWORK-ALLOW",
+      "negative_vector_id": "SEC_OUTBOUND_NETWORK-DENY",
+      "mutation_vector_id": "SEC_OUTBOUND_NETWORK-MUTATE",
+      "case_contract": "generic fetch/WebSocket/HTTP denied; authorized bounded local message accepted",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_AUTHORIZATION_TRUST",
+      "source": "runtime/tests/security/test_authorization_trust.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_AUTHORIZATION_TRUST-ALLOW",
+      "negative_vector_id": "SEC_AUTHORIZATION_TRUST-DENY",
+      "mutation_vector_id": "SEC_AUTHORIZATION_TRUST-MUTATE",
+      "case_contract": "wrong key, role, audience, boot or trust epoch denied",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_REPLAY_REVOCATION",
+      "source": "runtime/tests/security/test_replay_revocation.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_REPLAY_REVOCATION-ALLOW",
+      "negative_vector_id": "SEC_REPLAY_REVOCATION-DENY",
+      "mutation_vector_id": "SEC_REPLAY_REVOCATION-MUTATE",
+      "case_contract": "consumed, revoked, expired, future not-before receipt denied",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_CREDENTIAL_EVIDENCE",
+      "source": "runtime/tests/security/test_credential_evidence_boundary.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_CREDENTIAL_EVIDENCE-ALLOW",
+      "negative_vector_id": "SEC_CREDENTIAL_EVIDENCE-DENY",
+      "mutation_vector_id": "SEC_CREDENTIAL_EVIDENCE-MUTATE",
+      "case_contract": "cookie/token/raw response denied before log/hash/spool/DB",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_CANONICAL_HASHING",
+      "source": "runtime/tests/security/test_canonical_hashing.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_CANONICAL_HASHING-ALLOW",
+      "negative_vector_id": "SEC_CANONICAL_HASHING-DENY",
+      "mutation_vector_id": "SEC_CANONICAL_HASHING-MUTATE",
+      "case_contract": "cross-language canonical bytes agree; altered content/hash rejected",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_NO_ARCHIVE",
+      "source": "runtime/tests/security/test_no_archive_policy.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_NO_ARCHIVE-ALLOW",
+      "negative_vector_id": "SEC_NO_ARCHIVE-DENY",
+      "mutation_vector_id": "SEC_NO_ARCHIVE-MUTATE",
+      "case_contract": "archive/backup/compaction path denied; ordinary bounded receipt allowed",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_BUBBLEWRAP_ISOLATION",
+      "source": "runtime/tests/security/test_bubblewrap_isolation.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_BUBBLEWRAP_ISOLATION-ALLOW",
+      "negative_vector_id": "SEC_BUBBLEWRAP_ISOLATION-DENY",
+      "mutation_vector_id": "SEC_BUBBLEWRAP_ISOLATION-MUTATE",
+      "case_contract": "authoring/peer/key mounts absent; host escape and writable input denied",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_SUPPLY_CHAIN",
+      "source": "runtime/tests/security/test_supply_chain_integrity.py",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_SUPPLY_CHAIN-ALLOW",
+      "negative_vector_id": "SEC_SUPPLY_CHAIN-DENY",
+      "mutation_vector_id": "SEC_SUPPLY_CHAIN-MUTATE",
+      "case_contract": "changed lock/vendor byte or untracked dependency rejected",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    },
+    {
+      "command_id": "SEC_PRODUCTION_BUILD_EXCLUSION",
+      "source": "runtime/extension/test/security/production-build-exclusion.test.ts",
+      "creation_owner": "V636-P01-T02",
+      "implementation_owner": "V636-P05-T03",
+      "review_owner": "V636-P10-T02",
+      "positive_vector_id": "SEC_PRODUCTION_BUILD_EXCLUSION-ALLOW",
+      "negative_vector_id": "SEC_PRODUCTION_BUILD_EXCLUSION-DENY",
+      "mutation_vector_id": "SEC_PRODUCTION_BUILD_EXCLUSION-MUTATE",
+      "case_contract": "privileged harness absent from dist/dependency graph",
+      "proof": "Call the actual pinned boundary; corrupt one enforcement input and require rejection. Assert no denied side effect occurred."
+    }
+  ]
+}
