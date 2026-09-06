@@ -11,9 +11,11 @@ import sqlite3
 import sys
 from collections import Counter
 from contextlib import closing
+from functools import lru_cache
 from pathlib import Path
 from shutil import which
 from subprocess import run
+from tempfile import TemporaryDirectory
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -839,7 +841,66 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
         raise ValueError("E_ACK_BROWSER_PROCESS_REPLACED")
 
 
-def _verify_retained_typescript_graph(row: dict[str, Any], error: str) -> None:
+@lru_cache(maxsize=4)
+def _compiled_browser_module_hashes(input_binding: str) -> dict[str, str]:
+    """Compile the current pinned sources in isolation; the binding is the cache authority."""
+    if not input_binding:
+        raise ValueError("E_TYPESCRIPT_COMPILE_BINDING")
+    pnpm = which("pnpm")
+    if pnpm is None:
+        raise FileNotFoundError("E_TYPESCRIPT_PNPM_PREREQUISITE")
+    with TemporaryDirectory(prefix="bh-browser-graph-") as directory:
+        output = Path(directory)
+        completed = run(  # noqa: S603 -- resolved package manager, fixed offline local compile.
+            [pnpm, "--dir", str(ROOT / "extension"), "exec", "tsc", "-p",
+             "tsconfig.test.json", "--outDir", str(output)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=120,
+        )
+        if completed.returncode:
+            raise ValueError("E_TYPESCRIPT_COMPILE:" + completed.stderr.strip())
+        sources = {
+            "indexeddb-crash-child.js": output / "test-harness/indexeddb-crash-child.js",
+            "repair-probe.js": output / "test-harness/repair-probe.js",
+            "src/errors.js": output / "src/errors.js",
+            "src/spool.js": output / "src/spool.js",
+        }
+        hashes = {name: _sha(path) for name, path in sources.items()}
+        canonical = (output / "src/canonical.js").read_text().replace(
+            'from "canonicalize"', 'from "./canonicalize.js"'
+        ).encode()
+        hashes["src/canonical.js"] = hashlib.sha256(canonical).hexdigest()
+        hashes["src/canonicalize.js"] = _sha(
+            ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"
+        )
+        return hashes
+
+
+def _typescript_compile_binding(current: dict[str, Any]) -> str:
+    pnpm = which("pnpm")
+    if pnpm is None:
+        raise FileNotFoundError("E_TYPESCRIPT_PNPM_PREREQUISITE")
+    files = {
+        "pnpm": Path(pnpm).resolve(),
+        "typescript": ROOT / "extension/node_modules/typescript/lib/tsc.js",
+        "typescript_package": ROOT / "extension/node_modules/typescript/package.json",
+        "canonicalize": ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js",
+    }
+    toolchain = {
+        name: {"path": str(path), "sha256": _sha(path)} for name, path in files.items()
+    }
+    payload = {"current": current, "toolchain": toolchain}
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def _verify_retained_typescript_graph(
+    row: dict[str, Any], current: dict[str, Any], error: str
+) -> None:
     """Verify the immutable module graph actually loaded by the retained browser case."""
     extension = Path(row["case_directory"]) / "test-extension"
     modules = row["module_hashes"]
@@ -858,6 +919,7 @@ def _verify_retained_typescript_graph(row: dict[str, Any], error: str) -> None:
         }
         or any(_sha(extension / name) != digest for name, digest in modules.items())
         or modules.get("src/spool.js") != row["identity"]["module_sha256"]
+        or modules != _compiled_browser_module_hashes(_typescript_compile_binding(current))
     ):
         raise ValueError(error)
     execution_binding = row.get("typescript_execution_binding")
@@ -925,7 +987,7 @@ def _verify_browser_ack(
     if _sha(browser) != row["browser"]["sha256"]:
         raise ValueError("E_ACK_BROWSER")
     _verify_browser_binding(row, current)
-    _verify_retained_typescript_graph(row, "E_ACK_MODULE_GRAPH")
+    _verify_retained_typescript_graph(row, current, "E_ACK_MODULE_GRAPH")
     inputs = {
         name: _sqlite_descriptor(row, value, "E_ACK_INPUT:" + name)
         for name, value in row["inputs"].items()

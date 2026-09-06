@@ -282,7 +282,7 @@ def test_release_rejects_mutation_campaign_with_different_control_bytes(
         )
 
 
-def test_retained_browser_graph_replays_without_generated_tree(tmp_path: Path) -> None:
+def test_arbitrary_rehashed_retained_browser_graph_is_rejected(tmp_path: Path) -> None:
     extension = tmp_path / "test-extension"
     (extension / "src").mkdir(parents=True)
     names = {
@@ -314,7 +314,7 @@ def test_retained_browser_graph_replays_without_generated_tree(tmp_path: Path) -
             "sha256": hashlib.sha256(binding_path.read_bytes()).hexdigest(),
         },
     }
-    evidence_gate._verify_retained_typescript_graph(row, "E_TEST_GRAPH")
-    (extension / "src/spool.js").write_text("changed")
     with pytest.raises(ValueError, match="E_TEST_GRAPH"):
-        evidence_gate._verify_retained_typescript_graph(row, "E_TEST_GRAPH")
+        evidence_gate._verify_retained_typescript_graph(
+            row, evidence_gate.capture_binding(), "E_TEST_GRAPH"
+        )

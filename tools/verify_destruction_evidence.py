@@ -242,7 +242,7 @@ def verify_destruction(
         raise ValueError("E_DESTRUCTION_BROWSER_IDENTITY")
     _verify_browser_binding(row, current)
     case = Path(row["case_directory"])
-    _verify_retained_typescript_graph(row, "E_DESTRUCTION_MODULE")
+    _verify_retained_typescript_graph(row, current, "E_DESTRUCTION_MODULE")
     loaded_inputs = {
         key: _sqlite_descriptor(row, descriptor, "E_DESTRUCTION_INPUT")
         for key, descriptor in row["inputs"].items()
