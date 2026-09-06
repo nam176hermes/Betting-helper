@@ -49,16 +49,13 @@ node_modules/
 """
 EXPECTED_EXECUTION_ENVIRONMENT = {
     "FORCE_COLOR": "0",
-    "HOME": "/home/thenam176",
+    "HOME": str(Path.home()),
     "LANG": "C.UTF-8",
     "LC_ALL": "C.UTF-8",
     "NPM_CONFIG_IGNORE_SCRIPTS": "true",
     "NPM_CONFIG_USERCONFIG": "/dev/null",
     "NO_COLOR": "1",
-    "PATH": (
-        "/home/thenam176/.npm-global/bin:/home/thenam176/.local/share/mise/shims:"
-        "/home/thenam176/.local/bin:/usr/local/bin:/usr/bin:/bin"
-    ),
+    "PATH": os.environ.get("PATH", os.defpath),
     "PYTHONHASHSEED": "0",
     "TMPDIR": "/tmp",
     "TZ": "UTC",
@@ -120,7 +117,9 @@ def _require_vendored_bytes(path: Path, raw: bytes) -> None:
         _fail("BYTES")
 
 
-def validate_registry(path: Path = Path("task-command-registry.json")) -> dict[str, object]:
+def validate_registry(
+    path: Path = RUNTIME_ROOT / "task-command-registry.json",
+) -> dict[str, object]:
     raw = path.read_bytes()
     registry = _read_object(path)
     commands = registry.get("commands")
@@ -393,7 +392,11 @@ def main() -> int:
     else:
         if args.registry is None or args.registry != Path("task-command-registry.json"):
             parser.error("candidate qualification requires --registry task-command-registry.json")
-        print(json.dumps(run_registry(args.registry), sort_keys=True))
+        print(
+            json.dumps(
+                run_registry(RUNTIME_ROOT / "task-command-registry.json"), sort_keys=True
+            )
+        )
     return 0
 
 
