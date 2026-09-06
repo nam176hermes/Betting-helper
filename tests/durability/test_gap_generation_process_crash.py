@@ -201,7 +201,7 @@ def test_semantic_view_must_be_reprojected_from_reader_facts(report: dict[str, o
     }
     result = aggregate_repair_evidence([row["case_id"]], [row])
     assert result["result"] == "FAIL"
-    assert result["errors"][0]["error"] == "E_GAP_COMPARISON"
+    assert result["errors"][0]["error"] == "E_GAP_STATE_EVOLUTION"
 
 
 def test_new_shock_persistently_closes_named_candidate(report: dict[str, object]) -> None:
@@ -303,5 +303,30 @@ def test_retained_snapshot_verification_is_order_independent_and_database_portab
     database.rename(held)
     try:
         assert aggregate_repair_evidence([row["case_id"]], [row])["result"] == "PASS"
+    finally:
+        held.rename(database)
+
+
+def test_database_absent_controller_history_forgery_is_rejected(
+    report: dict[str, object],
+) -> None:
+    row = copy.deepcopy(report["records"][0])
+    row["after_restart"]["tables"]["coherence_controllers"][0]["predecessor_epoch_id"] = "epoch:0"
+    reader = row["reader_runs"][1]
+    output = json.loads(Path(reader["output"]["path"]).read_text())
+    output["state"] = row["after_restart"]
+    forged = Path(row["case_directory"]) / "forged-controller-history-reader.json"
+    forged.write_text(json.dumps(output, sort_keys=True))
+    reader["output"] = {
+        "path": str(forged),
+        "sha256": hashlib.sha256(forged.read_bytes()).hexdigest(),
+    }
+    database = Path(row["case_directory"]) / row["identity"]["run_id"] / "run.sqlite3"
+    held = database.with_suffix(".sqlite3.held")
+    database.rename(held)
+    try:
+        result = aggregate_repair_evidence([row["case_id"]], [row])
+        assert result["result"] == "FAIL"
+        assert result["errors"][0]["error"] == "E_GAP_STATE_EVOLUTION"
     finally:
         held.rename(database)

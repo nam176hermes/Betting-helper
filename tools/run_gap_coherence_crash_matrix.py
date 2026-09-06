@@ -582,9 +582,7 @@ def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> Non
             or successor is None
             or predecessor["generation_state"] == "ACTIVE"
             or predecessor["close_reason"] != gap["gap_reason"]
-            or (
-                successor["generation_state"] != "ACTIVE" and not successor_was_reclosed
-            )
+            or (successor["generation_state"] != "ACTIVE" and not successor_was_reclosed)
             or generation_transition["predecessor_generation"] != gap["predecessor_generation"]
             or generation_transition["successor_generation"] != gap["successor_generation"]
             or transition is None
@@ -757,6 +755,122 @@ def _validate_snapshot_ddl(state: dict[str, Any]) -> None:
         raise ValueError("E_GAP_SNAPSHOT_DDL") from exc
 
 
+def _validate_state_evolution(
+    baseline: dict[str, Any], before: dict[str, Any], after: dict[str, Any]
+) -> None:
+    """Replay persisted controller transitions across retained snapshots."""
+
+    immutable = set(baseline["tables"]) - {
+        "run_meta",
+        "stream_generations",
+        "coherence_controllers",
+    }
+
+    def contains_rows(earlier: dict[str, Any], later: dict[str, Any]) -> bool:
+        return all(
+            row in later["tables"][name] for name in immutable for row in earlier["tables"][name]
+        )
+
+    def generations_reachable(earlier: dict[str, Any], later: dict[str, Any]) -> bool:
+        later_by_id = {row["generation_id"]: row for row in later["tables"]["stream_generations"]}
+        allowed = {
+            "ACTIVE": {"ACTIVE", "QUARANTINED_GAP", "CLOSED"},
+            "QUARANTINED_GAP": {"QUARANTINED_GAP", "CLOSED"},
+            "CLOSED": {"CLOSED"},
+        }
+        mutable = {"generation_state", "close_reason", "closed_at_us"}
+        for old in earlier["tables"]["stream_generations"]:
+            new = later_by_id.get(old["generation_id"])
+            if (
+                new is None
+                or any(new[key] != value for key, value in old.items() if key not in mutable)
+                or new["generation_state"] not in allowed[old["generation_state"]]
+                or (
+                    new["generation_state"] == "ACTIVE"
+                    and (new["close_reason"] is not None or new["closed_at_us"] is not None)
+                )
+                or (
+                    new["generation_state"] != "ACTIVE"
+                    and (new["close_reason"] is None or new["closed_at_us"] is None)
+                )
+            ):
+                return False
+        return True
+
+    def replay_controller(earlier: dict[str, Any], later: dict[str, Any]) -> bool:
+        old_rows = earlier["tables"]["coherence_controllers"]
+        new_rows = later["tables"]["coherence_controllers"]
+        if len(old_rows) != 1 or len(new_rows) != 1:
+            return False
+        current = copy.deepcopy(old_rows[0])
+        wanted = new_rows[0]
+        immutable_fields = {"coherence_controller_id", "run_id", "fixture_id"}
+        if any(current[name] != wanted[name] for name in immutable_fields):
+            return False
+        old_transition_ids = {
+            row["coherence_transition_id"] for row in earlier["tables"]["coherence_transitions"]
+        }
+        pending = [
+            row
+            for row in later["tables"]["coherence_transitions"]
+            if row["coherence_transition_id"] not in old_transition_ids
+            and row["coherence_controller_id"] == current["coherence_controller_id"]
+        ]
+        while pending:
+            candidates = [
+                row for row in pending if row["from_state"] == current["controller_state"]
+            ]
+            if not candidates:
+                return False
+            transition = min(
+                candidates,
+                key=lambda row: (row["transitioned_at_us"], row["coherence_transition_id"]),
+            )
+            reason = transition["transition_reason"]
+            if transition["predecessor_epoch_id"] != current["current_epoch_id"] and reason in {
+                "SHOCK_ATOMIC_CLOSE",
+                "RESNAPSHOT_CANDIDATE_ACCEPTED",
+                "RELEASE_PREDICATE_SATISFIED",
+                "NEW_SHOCK_CLOSED_CANDIDATE",
+            }:
+                return False
+            if reason == "SHOCK_ATOMIC_CLOSE":
+                current["candidate_epoch_id"] = None
+                current["active_shock_observation_id"] = transition["shock_observation_id"]
+            elif reason == "RESNAPSHOT_CANDIDATE_ACCEPTED":
+                current["candidate_epoch_id"] = transition["candidate_epoch_id"]
+                current["predecessor_epoch_id"] = transition["predecessor_epoch_id"]
+            elif reason == "RELEASE_PREDICATE_SATISFIED":
+                if current["candidate_epoch_id"] != transition["candidate_epoch_id"]:
+                    return False
+                current["predecessor_epoch_id"] = current["current_epoch_id"]
+                current["current_epoch_id"] = current["candidate_epoch_id"]
+                current["candidate_epoch_id"] = None
+            elif reason == "NEW_SHOCK_CLOSED_CANDIDATE":
+                if current["candidate_epoch_id"] != transition["candidate_epoch_id"]:
+                    return False
+                current["candidate_epoch_id"] = None
+                current["active_shock_observation_id"] = transition["shock_observation_id"]
+            elif reason != "CLOSE_RECORDED":
+                return False
+            current["controller_state"] = transition["to_state"]
+            current["controller_revision"] += 1
+            current["updated_at_us"] = transition["transitioned_at_us"]
+            pending.remove(transition)
+        return bool(current == wanted)
+
+    for earlier, later in ((baseline, before), (before, after)):
+        if (
+            earlier["run_id"] != later["run_id"]
+            or earlier["tables"]["run_meta"] != later["tables"]["run_meta"]
+            or not contains_rows(earlier, later)
+            or not generations_reachable(earlier, later)
+            or not replay_controller(earlier, later)
+            or any(row not in later["spool"]["rows"] for row in earlier["spool"]["rows"])
+        ):
+            raise ValueError("E_GAP_STATE_EVOLUTION")
+
+
 def _run_process(
     entry: dict[str, Any], case: Path, ordinal: int, shim: Path, *, input_mutation: bool = False
 ) -> dict[str, Any]:
@@ -925,8 +1039,10 @@ def _record(
     entry: dict[str, Any], run: dict[str, Any], binding: dict[str, Any], expected: dict[str, Any]
 ) -> dict[str, Any]:
     actual = _semantic_view(run["before"], run["baseline"], expected, run["scenario"])
+    _validate_snapshot_ddl(run["baseline"])
     _validate_snapshot_ddl(run["before"])
     _validate_snapshot_ddl(run["after"])
+    _validate_state_evolution(run["baseline"], run["before"], run["after"])
     comparison = _compare(actual, expected)
     recovery_validation = _validate_recovery(run["before"], run["after"], run["scenario"])
     actual_path = Path(run["case_directory"]) / "actual-semantic.json"
@@ -1090,8 +1206,10 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         raise ValueError("E_GAP_TERMINATION")
     scenario = json.loads(Path(row["scenario_artifact"]["path"]).read_text())
     baseline = json.loads(Path(row["baseline_artifact"]["path"]).read_text())
+    _validate_snapshot_ddl(baseline)
     _validate_snapshot_ddl(row["before_restart"])
     _validate_snapshot_ddl(row["after_restart"])
+    _validate_state_evolution(baseline, row["before_restart"], row["after_restart"])
     if _semantic_view(row["before_restart"], baseline, row["expected"], scenario) != row["actual"]:
         raise ValueError("E_GAP_COMPARISON")
     database_dir = Path(row["case_directory"]) / row["identity"]["run_id"]
