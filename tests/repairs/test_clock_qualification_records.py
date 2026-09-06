@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import copy
 import json
+import sys
 from pathlib import Path
+from subprocess import run
 from typing import Any
 
 import pytest
@@ -15,6 +17,14 @@ ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
 VECTORS = "docs/vectors/inherited/clock-coherence-v6.2.json"
 COVERAGE = "docs/registries/clock-vector-coverage.v1.json"
+
+MUTATION_IDS = {
+    "wrong_expected_error", "inverse_eligibility", "raw_timestamp",
+    "missing_result", "duplicate_result", "same_wrong_result",
+    "hash_field_removal", "drift_input_change", "midpoint_corruption",
+    "selection_candidate_order", "post_close_selection",
+    "candidate_proof_corruption", "release_mapping_close",
+}
 
 
 def changed_pack(tmp_path: Path, field: str, value: object) -> Path:
@@ -49,7 +59,8 @@ def test_actual_artifacts_and_mutations_have_recomputable_counters(tmp_path: Pat
     rows = result["records"]
     assert result["covered_vector_count"] == sum(row["status"] == "PASS" for row in rows) == 65
     assert result["skipped_vectors"] == sum(not row["executed"] for row in rows) == 0
-    assert result["mutation_executions"] == len(result["mutation_records"]) == 12
+    assert result["mutation_executions"] == len(result["mutation_records"]) == 13
+    assert {row["case_id"] for row in result["mutation_records"]} == MUTATION_IDS
     assert result["mutation_survivors"] == sum(
         not row["detected"] for row in result["mutation_records"]
     ) == 0
@@ -126,6 +137,27 @@ def test_post_close_mutation_is_executed_and_detected(tmp_path: Path) -> None:
     assert control["actual"]["python"]["history"][0]["mapping_id"] == "MAP:" + "c" * 64
     assert trial["actual"]["python"]["history"][0]["mapping_id"].endswith("-MUTATED")
     assert trial["actual"]["python"]["accepted"] is True
+
+
+def test_selection_order_mutation_executes_real_selection_without_metadata_detection(
+    tmp_path: Path,
+) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    mutation = next(
+        row for row in result["mutation_records"]
+        if row["case_id"] == "selection_candidate_order"
+    )
+    assert mutation["executed"] is True
+    assert mutation["detected"] is True
+    assert runner.verify_record(mutation)
+    control = mutation["actual"]["control"]
+    trial = mutation["actual"]["trial"]
+    for row in (control, trial):
+        assert row["executed"] is True
+        assert set(row["evaluator_artifacts"]) == {"python", "typescript"}
+        assert "operation_metadata" not in row
+    assert control["actual"]["python"]["mapping_id"] != trial["actual"]["python"]["mapping_id"]
+    assert trial["status"] == "FAIL"
 
 
 def test_candidate_proof_and_release_mapping_mutations_execute_real_operations(
@@ -246,11 +278,48 @@ def test_damaged_mutation_evidence_fails_without_erasing_execution(
     monkeypatch.setattr(runner, "_mutations", damaged)
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     assert result["result"] == "FAIL"
-    assert result["mutation_attempts"] == result["mutation_executions"] == 12
-    assert result["mutation_verified_executions"] == 11
+    assert result["mutation_attempts"] == result["mutation_executions"] == 13
+    assert result["mutation_verified_executions"] == 12
     assert result["mutation_survivors"] is None
     assert result["mutation_evidence_errors"] == [{
         "case_id": "wrong_expected_error", "error": "E_CLOCK_MUTATION_EVIDENCE",
     }]
-    assert len(result["mutation_records"]) == 12
+    assert len(result["mutation_records"]) == 13
     assert result["covered_vector_count"] == 65
+
+
+def test_recursive_artifact_and_stale_binding_damage_fail(tmp_path: Path) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+
+    nested = copy.deepcopy(result["mutation_records"][0])
+    nested["actual"]["trial"]["evidence_binding"]["revision"] = "stale"
+    assert runner.verify_record(nested) is False
+
+    evaluator = copy.deepcopy(result["records"][0])
+    Path(evaluator["evaluator_artifacts"]["python"]["path"]).unlink()
+    assert runner.verify_record(evaluator) is False
+
+
+@pytest.mark.parametrize("damage", ["remove", "duplicate"])
+def test_missing_or_duplicate_mutation_row_fails_qualification(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, damage: str,
+) -> None:
+    original = runner._mutations
+
+    def damaged(*args: Any, **kwargs: Any) -> list[dict[str, Any]]:
+        rows = original(*args, **kwargs)
+        return rows[1:] if damage == "remove" else [*rows, copy.deepcopy(rows[0])]
+
+    monkeypatch.setattr(runner, "_mutations", damaged)
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    assert result["mutation_id_set_complete"] is False
+    assert result["result"] == "FAIL"
+
+
+def test_cli_rejects_missing_evidence_directory() -> None:
+    completed = run(  # noqa: S603 -- fixed local Python and script path
+        [sys.executable, str(ROOT / "tools/run_clock_vector_qualification.py")],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    assert completed.returncode != 0
+    assert "--evidence-dir" in completed.stderr

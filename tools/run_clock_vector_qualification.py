@@ -2,6 +2,7 @@
 # ruff: noqa: E402
 from __future__ import annotations
 
+import argparse
 import copy
 import hashlib
 import json
@@ -97,6 +98,13 @@ _HANDLER_REFS = {
 }
 _VECTOR_PATH = "docs/vectors/inherited/clock-coherence-v6.2.json"
 _COVERAGE_PATH = "docs/registries/clock-vector-coverage.v1.json"
+_MUTATION_NAMES = (
+    "wrong_expected_error", "inverse_eligibility", "raw_timestamp",
+    "missing_result", "duplicate_result", "same_wrong_result",
+    "hash_field_removal", "drift_input_change", "midpoint_corruption",
+    "selection_candidate_order", "post_close_selection",
+    "candidate_proof_corruption", "release_mapping_close",
+)
 _NODE = r'''
 const { pathToFileURL } = require("node:url");
 const { readFileSync, readdirSync } = require("node:fs");
@@ -998,8 +1006,16 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                    execution_kind="OFFLINE_SHARED_CLOCK_EVALUATOR", **fields)
 
 
-def verify_record(row: dict[str, Any]) -> bool:
+def verify_record(
+    row: dict[str, Any], *, _current_binding: dict[str, Any] | None = None,
+) -> bool:
     try:
+        if _current_binding is None:
+            from tools.verify_repair_evidence import capture_binding
+
+            _current_binding = capture_binding()
+        if row["evidence_binding"] != _current_binding:
+            return False
         if row.get("execution_kind") != "QUALIFICATION_MUTATION":
             from tools.verify_repair_evidence import validate_case_status
 
@@ -1011,7 +1027,10 @@ def verify_record(row: dict[str, Any]) -> bool:
         artifact = row["actual_artifact"]
         digest = hashlib.sha256(Path(artifact["path"]).read_bytes()).hexdigest()
         evaluator_artifacts = row.get("evaluator_artifacts", {})
-        evaluator_match = all(
+        evaluator_match = (
+            row.get("execution_kind") == "QUALIFICATION_MUTATION"
+            or set(evaluator_artifacts) == {"python", "typescript"}
+        ) and all(
             hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
             == reference["sha256"] == _hash(row["actual"][language])
             for language, reference in evaluator_artifacts.items()
@@ -1035,18 +1054,22 @@ def verify_record(row: dict[str, Any]) -> bool:
                 and artifact["sha256"] == _hash(row["actual"])
                 and hashes_match
                 and evaluator_match and sql_match and operation_match
-                and all(verify_record(row["actual"][key]) for key in ("control", "trial")
+                and all(verify_record(row["actual"][key], _current_binding=_current_binding)
+                        for key in ("control", "trial")
                         if key in row["actual"]))
     except (OSError, KeyError, TypeError, ValueError):
         return False
 
 
 def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[str, Any]:
-    from tools.verify_repair_evidence import aggregate_repair_evidence
+    from tools.verify_repair_evidence import aggregate_repair_evidence, capture_binding
 
     counts = Counter(row["case_id"] for row in records)
     exact = len(required_ids) == len(set(required_ids)) and counts == Counter(required_ids)
-    valid = [row for row in records if verify_record(row)]
+    current_binding = capture_binding()
+    valid = [
+        row for row in records if verify_record(row, _current_binding=current_binding)
+    ]
     passed = [row for row in valid if row["status"] == "PASS" and row["executed"]
               and row["comparison"]["matched"] and row["cross_language_drift"] is False
               and all(not _diff(row["actual"][lang], row["expected"])
@@ -1078,12 +1101,8 @@ def _mutations(
     close_case = next(c for c in cases if c["case_id"] == "CLOSE-NEG-USE-AFTER-CLOSE")
     candidate_case = next(c for c in cases if c["case_id"].startswith("CANDIDATE-"))
     release_case = next(c for c in cases if c["case_id"] == "RELEASE-POS-01")
-    names = ("wrong_expected_error", "inverse_eligibility", "raw_timestamp",
-             "missing_result", "duplicate_result", "same_wrong_result",
-             "hash_field_removal", "drift_input_change", "midpoint_corruption",
-             "post_close_selection", "candidate_proof_corruption",
-             "release_mapping_close")
-    for name in names:
+    selection_case = next(c for c in cases if c["case_id"] == "SELECT-01-NARROWEST")
+    for name in _MUTATION_NAMES:
         workspace = Path(mkdtemp(prefix=name + "-", dir=directory))
         original = (negative if name in {"wrong_expected_error", "inverse_eligibility"}
                     else hash_case if name == "hash_field_removal"
@@ -1091,6 +1110,8 @@ def _mutations(
                     else midpoint_case if name == "midpoint_corruption" else golden)
         if name == "post_close_selection":
             original = close_case
+        elif name == "selection_candidate_order":
+            original = selection_case
         elif name == "candidate_proof_corruption":
             original = copy.deepcopy(candidate_case)
             original.pop("sql_surface", None)
@@ -1123,6 +1144,9 @@ def _mutations(
             case["input"]["x"] += 1
         elif name == "midpoint_corruption":
             case["input"]["offset_midpoint_us"] += 1
+        elif name == "selection_candidate_order":
+            first, second = case["input"]["candidates"]
+            first["width_us"], second["width_us"] = second["width_us"], first["width_us"]
         elif name == "candidate_proof_corruption":
             case["input"]["shock_binding_verified"] = False
         trial = _execute(case, runtime, workspace / "trial", context,
@@ -1204,11 +1228,15 @@ def run_clock_vector_qualification(
     summary = summarize(ids, records)
     executed_mutations = [r for r in mutations if r["executed"]]
     evidence_errors = [{"case_id": r["case_id"], "error": "E_CLOCK_MUTATION_EVIDENCE"}
-                       for r in mutations if not verify_record(r)]
+                       for r in mutations if not verify_record(
+                           r, _current_binding=context["evidence_binding"],
+                       )]
+    mutation_ids = [row["case_id"] for row in mutations]
+    mutation_exact = Counter(mutation_ids) == Counter(_MUTATION_NAMES)
     # Lost execution evidence makes detection unknown; it cannot erase an execution.
     survivors = (None if evidence_errors
                  else sum(not row["detected"] for row in executed_mutations))
-    if evidence_errors:
+    if evidence_errors or not mutation_exact:
         summary["result"] = "FAIL"
     elif survivors or len(executed_mutations) != len(mutations):
         summary["result"] = "FAIL" if survivors or summary["result"] == "FAIL" else "HOLD"
@@ -1216,9 +1244,35 @@ def run_clock_vector_qualification(
               "registry_source_sha256": coverage["source_sha256"],
               "required_vector_ids": ids, "records": records, "mutation_records": mutations,
               "mutation_attempts": len(mutations), "mutation_evidence_errors": evidence_errors,
-              "mutation_verified_executions": sum(verify_record(r) for r in executed_mutations),
+              "mutation_verified_executions": sum(
+                  verify_record(r, _current_binding=context["evidence_binding"])
+                  for r in executed_mutations
+              ),
               "mutation_executions": len(executed_mutations), "mutation_survivors": survivors,
+              "mutation_id_set_complete": mutation_exact,
               "evidence_directory": str(evidence.resolve())}
     with (evidence / "qualification.json").open("xb") as stream:
         stream.write(_bytes(report))
     return report
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Execute the offline clock qualification")
+    parser.add_argument("--evidence-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
+    report = run_clock_vector_qualification(
+        RUNTIME_ROOT / "vendor/hybrid-discovery-v6.3.6",
+        RUNTIME_ROOT,
+        evidence_dir=args.evidence_dir,
+    )
+    print(json.dumps({
+        "qualification": str((args.evidence_dir / "qualification.json").resolve()),
+        "result": report["result"],
+        "covered_vector_count": report["covered_vector_count"],
+        "mutation_executions": report["mutation_executions"],
+    }, sort_keys=True))
+    return 0 if report["result"] == "PASS" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

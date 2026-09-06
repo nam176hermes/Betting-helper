@@ -103,7 +103,7 @@ def _verify_clock(row: dict[str, Any], current: dict[str, Any]) -> None:
         _sha(Path(path)) != digest for path, digest in row["code"]["sha256"].items()
     ):
         raise ValueError("E_REPAIR_SOURCE")
-    if not clock.verify_record(row):
+    if not clock.verify_record(row, _current_binding=current):
         raise ValueError("E_REPAIR_ARTIFACT")
     if row["status"] != "PASS":
         return
