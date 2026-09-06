@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, cast
@@ -10,6 +11,7 @@ import pytest
 
 from moj_discovery.durability_release import validate_full_durability_release
 from tools import run_indexeddb_crash_matrix as full
+from tools import verify_repair_evidence as evidence_gate
 
 ROOT = Path(__file__).parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
@@ -200,6 +202,15 @@ def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
             mutation_summary={"required": 105, "verified": 105, "survivors": 0,
                               "complete": True},
         )
+    with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_EVIDENCE_REQUIRED"):
+        validate_full_durability_release(
+            required,
+            required,
+            mutation_survivors=0,
+            evidence=[{"case_id": "one"}],
+            mutation_summary={"required": 105, "verified": 105, "survivors": 0,
+                              "complete": True},
+        )
 
 
 def test_mutation_campaign_cannot_omit_its_positive_controls(
@@ -269,12 +280,41 @@ def test_release_rejects_mutation_campaign_with_different_control_bytes(
             evidence=evidence,
             mutation_evidence=mutation_evidence,
         )
-    with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_EVIDENCE_REQUIRED"):
-        validate_full_durability_release(
-            required,
-            required,
-            mutation_survivors=0,
-            evidence=[{"case_id": "one"}],
-            mutation_summary={"required": 105, "verified": 105, "survivors": 0,
-                              "complete": True},
+
+
+def test_retained_browser_graph_replays_without_generated_tree(tmp_path: Path) -> None:
+    extension = tmp_path / "test-extension"
+    (extension / "src").mkdir(parents=True)
+    names = {
+        "indexeddb-crash-child.js",
+        "repair-probe.js",
+        "src/canonical.js",
+        "src/canonicalize.js",
+        "src/errors.js",
+        "src/spool.js",
+    }
+    for name in names:
+        path = extension / name
+        path.write_text(
+            'import value from "./canonicalize.js";' if name == "src/canonical.js" else name
         )
+    modules = {
+        name: hashlib.sha256((extension / name).read_bytes()).hexdigest() for name in names
+    }
+    binding = {"before": modules, "after": modules}
+    binding_path = tmp_path / "typescript-execution-binding.json"
+    binding_path.write_text(json.dumps(binding, sort_keys=True, separators=(",", ":")))
+    row = {
+        "case_directory": str(tmp_path),
+        "identity": {"module_sha256": modules["src/spool.js"]},
+        "module_hashes": modules,
+        "typescript_execution_binding": binding,
+        "typescript_execution_binding_artifact": {
+            "path": str(binding_path),
+            "sha256": hashlib.sha256(binding_path.read_bytes()).hexdigest(),
+        },
+    }
+    evidence_gate._verify_retained_typescript_graph(row, "E_TEST_GRAPH")
+    (extension / "src/spool.js").write_text("changed")
+    with pytest.raises(ValueError, match="E_TEST_GRAPH"):
+        evidence_gate._verify_retained_typescript_graph(row, "E_TEST_GRAPH")

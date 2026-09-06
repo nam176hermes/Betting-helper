@@ -755,7 +755,6 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
             row, row["artifacts"]["profile-" + phase], "E_ACK_PROFILE_READBACK"
         ):
             raise ValueError("E_ACK_PROFILE_SENTINEL")
-
     configured = _canonical_browser_executable(
         Path(os.environ.get("BH_CHROME_BINARY", str(CHROME)))
     )
@@ -840,6 +839,38 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
         raise ValueError("E_ACK_BROWSER_PROCESS_REPLACED")
 
 
+def _verify_retained_typescript_graph(row: dict[str, Any], error: str) -> None:
+    """Verify the immutable module graph actually loaded by the retained browser case."""
+    extension = Path(row["case_directory"]) / "test-extension"
+    modules = row["module_hashes"]
+    expected = {
+        "indexeddb-crash-child.js",
+        "repair-probe.js",
+        "src/canonical.js",
+        "src/canonicalize.js",
+        "src/errors.js",
+        "src/spool.js",
+    }
+    if (
+        set(modules) != expected
+        or set(modules) != {
+            str(path.relative_to(extension)) for path in extension.rglob("*.js")
+        }
+        or any(_sha(extension / name) != digest for name, digest in modules.items())
+        or modules.get("src/spool.js") != row["identity"]["module_sha256"]
+    ):
+        raise ValueError(error)
+    execution_binding = row.get("typescript_execution_binding")
+    descriptor = row.get("typescript_execution_binding_artifact")
+    if (
+        execution_binding != {"before": modules, "after": modules}
+        or _sqlite_descriptor(row, descriptor, error) != execution_binding
+        or 'from "./canonicalize.js"'
+        not in (extension / "src/canonical.js").read_text()
+    ):
+        raise ValueError(error)
+
+
 def _verify_browser_ack(
     row: dict[str, Any],
     current: dict[str, Any],
@@ -894,35 +925,7 @@ def _verify_browser_ack(
     if _sha(browser) != row["browser"]["sha256"]:
         raise ValueError("E_ACK_BROWSER")
     _verify_browser_binding(row, current)
-    modules = row["module_hashes"]
-    extension = Path(row["case_directory"]) / "test-extension"
-    # Every loaded module is retained and bound, including the canonical dependency.
-    if (
-        not modules
-        or set(modules) != {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
-        or any(_sha(extension / name) != digest for name, digest in modules.items())
-        or modules.get("src/spool.js") != identity["module_sha256"]
-    ):
-        raise ValueError("E_ACK_MODULE_GRAPH")
-    for name in ("spool", "errors"):
-        if modules.get(f"src/{name}.js") != _sha(ROOT / f"extension/.test-build/src/{name}.js"):
-            raise ValueError("E_ACK_MODULE_GRAPH")
-    canonical = (
-        (ROOT / "extension/.test-build/src/canonical.js")
-        .read_text()
-        .replace('from "canonicalize"', 'from "./canonicalize.js"')
-    )
-    if modules.get("src/canonical.js") != hashlib.sha256(
-        canonical.encode()
-    ).hexdigest() or modules.get("src/canonicalize.js") != _sha(
-        ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"
-    ):
-        raise ValueError("E_ACK_MODULE_GRAPH")
-    for name in ("indexeddb-crash-child", "repair-probe"):
-        if modules.get(name + ".js") != _sha(
-            ROOT / f"extension/.test-build/test-harness/{name}.js"
-        ):
-            raise ValueError("E_ACK_MODULE_GRAPH")
+    _verify_retained_typescript_graph(row, "E_ACK_MODULE_GRAPH")
     inputs = {
         name: _sqlite_descriptor(row, value, "E_ACK_INPUT:" + name)
         for name, value in row["inputs"].items()

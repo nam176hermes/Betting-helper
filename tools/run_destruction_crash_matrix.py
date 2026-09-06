@@ -130,6 +130,10 @@ def run_destruction_case(
     marker = profile / "BH_R05_PROFILE_ID"
     marker.write_text(profile_id)
     extension, extension_id, module_hash = _prepare_test_extension(ROOT, case)
+    module_hashes_before = {
+        str(path.relative_to(extension)): _artifact(path)["sha256"]
+        for path in sorted(extension.rglob("*.js"))
+    }
     binary = _canonical_browser_executable(Path(os.environ.get("BH_CHROME_BINARY", str(CHROME))))
     origin = "chrome-extension://" + extension_id
     process, socket = _start_chrome(
@@ -252,6 +256,15 @@ def run_destruction_case(
             },
         )
         save("browser-process-after", _browser_process_observation(process))
+        module_hashes_after = {
+            str(path.relative_to(extension)): _artifact(path)["sha256"]
+            for path in sorted(extension.rglob("*.js"))
+        }
+        execution_binding = {
+            "before": module_hashes_before,
+            "after": module_hashes_after,
+        }
+        binding_path = save("typescript-execution-binding", execution_binding)
         binding = capture_binding()
         row = {
             "case_id": entry["vector_id"],
@@ -285,10 +298,9 @@ def run_destruction_case(
             "loaded_assets": {
                 name: _artifact(extension / name) for name in ("manifest.json", "repair-probe.html")
             },
-            "module_hashes": {
-                str(path.relative_to(extension)): _artifact(path)["sha256"]
-                for path in extension.rglob("*.js")
-            },
+            "module_hashes": module_hashes_after,
+            "typescript_execution_binding": execution_binding,
+            "typescript_execution_binding_artifact": _artifact(binding_path),
             "profile_readbacks": {
                 "before": artifacts["profile-before"],
                 "after": artifacts["profile-after"],

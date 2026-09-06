@@ -210,6 +210,7 @@ def verify_destruction(
         _sqlite_descriptor,
         _sqlite_file,
         _verify_browser_binding,
+        _verify_retained_typescript_graph,
     )
 
     if (
@@ -241,29 +242,7 @@ def verify_destruction(
         raise ValueError("E_DESTRUCTION_BROWSER_IDENTITY")
     _verify_browser_binding(row, current)
     case = Path(row["case_directory"])
-    extension = case / "test-extension"
-    modules = row["module_hashes"]
-    if (
-        set(modules) != {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
-        or modules.get("src/spool.js") != identity["module_sha256"]
-    ):
-        raise ValueError("E_DESTRUCTION_MODULE")
-    for path in extension.rglob("*.js"):
-        name = str(path.relative_to(extension))
-        if modules.get(name) != hashlib.sha256(path.read_bytes()).hexdigest():
-            raise ValueError("E_DESTRUCTION_MODULE")
-        source = (
-            ROOT
-            / "extension/.test-build"
-            / (name if name.startswith("src/") else "test-harness/" + name)
-        )
-        if name == "src/canonicalize.js":
-            source = ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"
-        raw = source.read_bytes()
-        if name == "src/canonical.js":
-            raw = raw.replace(b'from "canonicalize"', b'from "./canonicalize.js"')
-        if path.read_bytes() != raw:
-            raise ValueError("E_DESTRUCTION_MODULE")
+    _verify_retained_typescript_graph(row, "E_DESTRUCTION_MODULE")
     loaded_inputs = {
         key: _sqlite_descriptor(row, descriptor, "E_DESTRUCTION_INPUT")
         for key, descriptor in row["inputs"].items()

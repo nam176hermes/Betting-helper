@@ -701,6 +701,10 @@ def run_browser_handshake(
         for name in ("manifest.json", "repair-probe.html")
     }
     marker = profile / "BH_R05_PROFILE_ID"
+    module_hashes_before = {
+        str(path.relative_to(extension)): _sha(path)
+        for path in sorted(extension.rglob("*.js"))
+    }
     marker_artifact = {"path": str(marker.resolve()), "sha256": _sha(marker)}
     profile_before = save(
         "profile-before",
@@ -939,6 +943,15 @@ def run_browser_handshake(
             path.name: save(path.stem, json.loads(path.read_text()))
             for path in sorted(case.glob("wire-*.json"))
         }
+        module_hashes_after = {
+            str(path.relative_to(extension)): _sha(path)
+            for path in sorted(extension.rglob("*.js"))
+        }
+        execution_binding = {
+            "before": module_hashes_before,
+            "after": module_hashes_after,
+        }
+        execution_binding_artifact = save("typescript-execution-binding", execution_binding)
         row = {
             "vector_id": entry["vector_id"],
             "case_id": entry["vector_id"],
@@ -983,10 +996,9 @@ def run_browser_handshake(
                 "before": browser_before,
                 "after": browser_after_process,
             },
-            "module_hashes": {
-                str(path.relative_to(extension)): _sha(path)
-                for path in sorted(extension.rglob("*.js"))
-            },
+            "module_hashes": module_hashes_after,
+            "typescript_execution_binding": execution_binding,
+            "typescript_execution_binding_artifact": execution_binding_artifact,
         }
         from tools.verify_repair_evidence import _verify_browser_ack
 
