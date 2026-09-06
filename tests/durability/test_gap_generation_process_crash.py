@@ -6,7 +6,11 @@ from pathlib import Path
 import pytest
 
 from moj_discovery.vendor import pack_root
-from tools.run_gap_coherence_crash_matrix import run_gap_coherence_crash_matrix
+from tools.run_gap_coherence_crash_matrix import (
+    _validate_snapshot_ddl,
+    run_gap_coherence_crash_matrix,
+    verify_gap_mutation,
+)
 from tools.verify_repair_evidence import aggregate_repair_evidence
 
 ROOT = Path(__file__).parents[2]
@@ -221,3 +225,83 @@ def test_new_shock_persistently_closes_named_candidate(report: dict[str, object]
     schema = (PACK / "schemas/clock-coherence-records.schema.json").read_text()
     assert "NEW_SHOCK_CLOSED_CANDIDATE" in ddl
     assert "NEW_SHOCK_CLOSED_CANDIDATE" in schema
+
+
+def test_after_restart_coherent_reader_rehash_is_rejected(report: dict[str, object]) -> None:
+    row = copy.deepcopy(report["records"][0])
+    row["after_restart"]["tables"]["coherence_controllers"][0]["controller_state"] = "OPEN"
+    reader = row["reader_runs"][1]
+    output = json.loads(Path(reader["output"]["path"]).read_text())
+    output["state"] = row["after_restart"]
+    path = Path(row["case_directory"]) / "forged-after-reader.json"
+    path.write_text(json.dumps(output, sort_keys=True))
+    reader["output"] = {
+        "path": str(path),
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+    }
+    assert aggregate_repair_evidence([row["case_id"]], [row])["result"] == "FAIL"
+
+
+def test_coherent_pid_pgid_forgery_is_rejected(report: dict[str, object]) -> None:
+    row = copy.deepcopy(report["records"][0])
+    row["identity"]["pid"] = 999999
+    row["process_observation"].update(pid=999999, pgid=999999)
+    row["termination"].update(target_pid=999999, target_pgid=999999)
+    for name in ("checkpoint_artifact", "boundary_artifact", "terminal_artifact"):
+        value = json.loads(Path(row[name]["path"]).read_text())
+        if name == "checkpoint_artifact":
+            value["pid"] = 999999
+        elif name == "boundary_artifact":
+            value["identity"]["pid"] = 999999
+        else:
+            value["identity"]["pid"] = 999999
+            value["child_process"].update(pid=999999, pgid=999999)
+            value["termination"].update(target_pid=999999, target_pgid=999999)
+        path = Path(row["case_directory"]) / f"pid-forged-{name}.json"
+        path.write_text(json.dumps(value, sort_keys=True))
+        row[name] = {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    assert aggregate_repair_evidence([row["case_id"]], [row])["result"] == "FAIL"
+
+
+def test_mutation_rows_are_recursively_bound_and_exact(report: dict[str, object]) -> None:
+    binding = report["records"][0]["evidence_binding"]
+    for mutation in report["mutation_results"]:
+        assert mutation["evidence_binding"] == binding
+        assert mutation["revision"] == binding["revision"]
+        assert mutation["environment"] == binding["environment"]
+        verify_gap_mutation(mutation, binding)
+    input_mutation = next(
+        item for item in report["mutation_results"] if item["mutation"].endswith("MUT-INPUT")
+    )
+    assert input_mutation["observed_error"] == "CONTENT_HASH_MISMATCH"
+    assert input_mutation["mutated_input"] != input_mutation["original_input"]
+    expected_mutation = next(
+        item for item in report["mutation_results"] if item["mutation"].endswith("MUT-EXPECTED")
+    )
+    assert expected_mutation["mutated_expected"] != expected_mutation["governed_expected"]
+    assert expected_mutation["observed_error"] == "E_GAP_STATE_MISMATCH"
+    forged = copy.deepcopy(input_mutation)
+    forged["exit"] = 9
+    forged["command_exit"] = {"child": 9}
+    forged["observed_error"] = "UNRELATED_CHILD_FAILURE"
+    with pytest.raises(ValueError, match="E_GAP_MUTATION_INPUT"):
+        verify_gap_mutation(forged, binding)
+
+
+def test_retained_snapshot_verification_is_order_independent_and_database_portable(
+    report: dict[str, object],
+) -> None:
+    row = copy.deepcopy(report["records"][0])
+    state = copy.deepcopy(row["after_restart"])
+    state["tables"] = {
+        name: list(reversed(rows)) for name, rows in reversed(list(state["tables"].items()))
+    }
+    _validate_snapshot_ddl(state)
+
+    database = Path(row["case_directory"]) / row["identity"]["run_id"] / "run.sqlite3"
+    held = database.with_suffix(".sqlite3.held")
+    database.rename(held)
+    try:
+        assert aggregate_repair_evidence([row["case_id"]], [row])["result"] == "PASS"
+    finally:
+        held.rename(database)

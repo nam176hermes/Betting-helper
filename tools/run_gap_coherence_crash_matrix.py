@@ -15,6 +15,7 @@ from time import monotonic, sleep
 from typing import Any
 from uuid import uuid4
 
+from tools.gap_state_reader import read_gap_state
 from tools.loopback_ack_crash_child import position
 from tools.run_indexeddb_crash_matrix import _observations
 from tools.run_loopback_ack_crash_matrix import PHASES, run_family
@@ -38,9 +39,7 @@ def _key(case_id: str) -> str:
     return "-".join(case_id.split("-")[:2])
 
 
-def _scenario(
-    entry: dict[str, Any], run_id: str, *, input_mutation: bool = False
-) -> dict[str, Any]:
+def _scenario(entry: dict[str, Any], run_id: str) -> dict[str, Any]:
     key = _key(entry["vector_id"])
     observation = _observations(run_id)[0]
     scenario: dict[str, Any] = {
@@ -56,7 +55,6 @@ def _scenario(
         else "UNCHANGED",
         "capacity": None,
         "no_kill": entry["kill_action"] == "NONE",
-        "input_mutation": input_mutation,
     }
     if key == "GAP-09":
         scenario.update(phase="during_commit", during_commit=True)
@@ -137,11 +135,28 @@ def _scenario(
     return scenario
 
 
-def _proc_observation(process: subprocess.Popen[bytes]) -> dict[str, Any]:
-    stat = Path(f"/proc/{process.pid}/stat").read_text().split()
-    argv = Path(f"/proc/{process.pid}/cmdline").read_bytes().rstrip(b"\0").split(b"\0")
-    executable = Path(f"/proc/{process.pid}/exe").resolve()
-    return {
+def _proc_observation(
+    process: subprocess.Popen[bytes], artifact_path: Path
+) -> tuple[dict[str, Any], dict[str, str]]:
+    stat_path = Path(f"/proc/{process.pid}/stat")
+    cmdline_path = Path(f"/proc/{process.pid}/cmdline")
+    executable_path = Path(f"/proc/{process.pid}/exe")
+    stat_raw = stat_path.read_text()
+    cmdline_raw = cmdline_path.read_bytes()
+    stat = stat_raw.split()
+    argv = cmdline_raw.rstrip(b"\0").split(b"\0")
+    executable = executable_path.resolve()
+    raw = {
+        "captured_by_pid": os.getpid(),
+        "proc_stat": stat_raw,
+        "proc_cmdline_hex": cmdline_raw.hex(),
+        "proc_exe_link": os.readlink(executable_path),
+        "proc_exe_resolved": str(executable),
+        "proc_exe_sha256": _sha(executable),
+        "boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+    }
+    artifact_path.write_text(json.dumps(raw, sort_keys=True))
+    observation = {
         "pid": process.pid,
         "pgid": os.getpgid(process.pid),
         "start_ticks": stat[21],
@@ -149,6 +164,35 @@ def _proc_observation(process: subprocess.Popen[bytes]) -> dict[str, Any]:
         "executable_sha256": _sha(executable),
         "argv": [item.decode() for item in argv],
     }
+    return observation, _artifact(artifact_path)
+
+
+def _verify_proc_observation(
+    observation: dict[str, Any], descriptor: dict[str, str], command: list[str]
+) -> None:
+    path = Path(descriptor["path"])
+    if _sha(path) != descriptor["sha256"]:
+        raise ValueError("E_GAP_PROCESS_PROVENANCE")
+    raw = json.loads(path.read_text())
+    stat = raw["proc_stat"].split()
+    cmdline = bytes.fromhex(raw["proc_cmdline_hex"]).rstrip(b"\0").split(b"\0")
+    derived = {
+        "pid": int(stat[0]),
+        "pgid": int(stat[4]),
+        "start_ticks": stat[21],
+        "executable": raw["proc_exe_resolved"],
+        "executable_sha256": raw["proc_exe_sha256"],
+        "argv": [item.decode() for item in cmdline],
+    }
+    if (
+        observation != derived
+        or derived["argv"] != command
+        or raw["proc_exe_link"] != str(Path(sys.executable).resolve())
+        or derived["executable"] != str(Path(sys.executable).resolve())
+        or derived["executable_sha256"] != _sha(Path(sys.executable).resolve())
+        or not raw["boot_id"]
+    ):
+        raise ValueError("E_GAP_PROCESS_PROVENANCE")
 
 
 def _read(
@@ -356,12 +400,373 @@ def _compare(actual: dict[str, Any], expected: dict[str, Any]) -> dict[str, Any]
     return {"matched": matches, "actual": actual}
 
 
+def _validate_recovery(
+    before: dict[str, Any], after: dict[str, Any], scenario: dict[str, Any]
+) -> dict[str, Any]:
+    if (
+        before["run_id"] != scenario["run_id"]
+        or after["run_id"] != scenario["run_id"]
+        or before["ddl_sha256"] != after["ddl_sha256"]
+    ):
+        raise ValueError("E_GAP_RECOVERY_BINDING")
+    before_tables, after_tables = before["tables"], after["tables"]
+    mutable = {"coherence_controllers", "stream_generations", "run_meta"}
+    if any(
+        len(after_tables[name]) < len(rows)
+        for name, rows in before_tables.items()
+        if name not in mutable
+    ):
+        raise ValueError("E_GAP_RECOVERY_REGRESSION")
+    controller = after_tables["coherence_controllers"][0]
+    operation = scenario["operation"]
+    target_stream = scenario["delivery"]["stream_id"]
+    target_generations = {
+        row["generation"]: row["generation_state"]
+        for row in after_tables["stream_generations"]
+        if row["stream_id"] == target_stream
+    }
+    target_gaps_before = [
+        row for row in before_tables["gap_records"] if row["stream_id"] == target_stream
+    ]
+    target_gaps_after = [
+        row for row in after_tables["gap_records"] if row["stream_id"] == target_stream
+    ]
+    if operation == "GAP" and not target_gaps_before:
+        if (
+            len(target_gaps_after) != 1
+            or target_generations != {0: "QUARANTINED_GAP", 1: "ACTIVE"}
+            or controller["controller_state"] != "SHOCKED_CLOSED"
+        ):
+            raise ValueError("E_GAP_RECOVERY_PREDICATE")
+    elif operation == "GAP" and (  # noqa: SIM114 -- distinct recovery contracts
+        target_gaps_after != target_gaps_before
+        or len(after_tables["raw_commits"]) != len(before_tables["raw_commits"])
+    ):
+        raise ValueError("E_GAP_RECOVERY_PREDICATE")
+    elif operation == "CLOCK" and (  # noqa: SIM114 -- distinct recovery contracts
+        not after_tables["clock_mapping_closures"]
+        or not after_tables["shock_observations"]
+        or controller["controller_state"] != "SHOCKED_CLOSED"
+    ):
+        raise ValueError("E_GAP_RECOVERY_PREDICATE")
+    elif operation == "CAPACITY" and (
+        after_tables != before_tables
+        or after["spool"] != before["spool"]
+        or after["capacity"] != before["capacity"]
+    ):
+        raise ValueError("E_GAP_RECOVERY_PREDICATE")
+    elif operation == "EPOCH":
+        wanted = {
+            "shock": "WAITING_FOR_RESNAPSHOT",
+            "pending": "NEW_EPOCH_PENDING",
+            "release": "NEW_EPOCH_OPEN",
+            "new_shock": "WAITING_FOR_RESNAPSHOT",
+        }[scenario["epoch_step"]]
+        if controller["controller_state"] != wanted:
+            raise ValueError("E_GAP_RECOVERY_PREDICATE")
+        if scenario["epoch_step"] == "new_shock":
+            closures = [
+                row
+                for row in after_tables["coherence_transitions"]
+                if row["transition_reason"] == "NEW_SHOCK_CLOSED_CANDIDATE"
+            ]
+            if len(closures) != 1:
+                raise ValueError("E_GAP_RECOVERY_PREDICATE")
+            closure = closures[0]
+            closed_candidate = closure["candidate_epoch_id"]
+            successors = [
+                row
+                for row in after_tables["coherence_epochs"]
+                if row["predecessor_epoch_id"] == closed_candidate
+            ]
+            if (
+                not closed_candidate
+                or closure["from_state"] != "NEW_EPOCH_PENDING"
+                or closure["to_state"] != "WAITING_FOR_RESNAPSHOT"
+                or closure["coherence_controller_id"] != controller["coherence_controller_id"]
+                or closure["shock_observation_id"] != controller["active_shock_observation_id"]
+                or controller["candidate_epoch_id"] is not None
+                or len(successors) != 1
+                or successors[0]["coherence_epoch_id"] == closed_candidate
+                or successors[0]["predecessor_permanently_closed"] != 1
+            ):
+                raise ValueError("E_GAP_RECOVERY_PREDICATE")
+    return {
+        "run_id": after["run_id"],
+        "ddl_sha256": after["ddl_sha256"],
+        "controller_state": controller["controller_state"],
+        "target_generations": target_generations,
+        "target_gap_count": len(target_gaps_after),
+        "late_repair_count": sum(
+            row["disposition"] == "LATE_REPAIR_ONLY" for row in after_tables["raw_commits"]
+        ),
+        "new_shock_candidate_closures": sum(
+            row["transition_reason"] == "NEW_SHOCK_CLOSED_CANDIDATE"
+            for row in after_tables["coherence_transitions"]
+        ),
+    }
+
+
+def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> None:
+    """Validate final-state equivalents of history-sensitive DDL triggers."""
+
+    def indexed(name: str, key: str) -> dict[Any, dict[str, Any]]:
+        rows = tables[name]
+        result = {row[key]: row for row in rows}
+        if len(result) != len(rows):
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+        return result
+
+    generations = indexed("stream_generations", "generation_id")
+    gaps = indexed("gap_records", "gap_id")
+    bindings = indexed("gap_epoch_bindings", "gap_epoch_binding_id")
+    generation_transitions = indexed("generation_transitions", "generation_transition_id")
+    controllers = indexed("coherence_controllers", "coherence_controller_id")
+    epochs = indexed("coherence_epochs", "coherence_epoch_id")
+    transitions = indexed("coherence_transitions", "coherence_transition_id")
+    shocks = indexed("shock_observations", "shock_observation_id")
+    freshness = indexed("input_freshness_vectors", "input_freshness_vector_id")
+    proofs = indexed("authoritative_resnapshot_proofs", "authoritative_resnapshot_proof_id")
+    mappings = indexed("clock_mappings", "clock_mapping_id")
+    closed_mappings = {row["clock_mapping_id"] for row in tables["clock_mapping_closures"]}
+    cursors = indexed("reducer_cursors", "reducer_cursor_id")
+
+    generation_key = {
+        (
+            row["run_id"],
+            row["browser_run_id"],
+            row["producer_id"],
+            row["stream_id"],
+            row["generation"],
+        ): row
+        for row in generations.values()
+    }
+    for raw in tables["raw_commits"]:
+        key = tuple(
+            raw[field]
+            for field in (*("run_id", "browser_run_id", "producer_id", "stream_id"), "generation")
+        )
+        if (
+            raw["disposition"] == "LATE_REPAIR_ONLY"
+            and generation_key[key]["generation_state"] == "ACTIVE"
+        ):
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+
+    gap_binding_by_gap = {row["gap_id"]: row for row in bindings.values()}
+    generation_transition_by_gap = {row["gap_id"]: row for row in generation_transitions.values()}
+    if len(gap_binding_by_gap) != len(bindings) or len(generation_transition_by_gap) != len(
+        generation_transitions
+    ):
+        raise ValueError("E_GAP_SNAPSHOT_RELATION")
+    for gap_id, gap in gaps.items():
+        binding = gap_binding_by_gap.get(gap_id)
+        generation_transition = generation_transition_by_gap.get(gap_id)
+        if binding is None or generation_transition is None:
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+        base = (gap["run_id"], gap["browser_run_id"], gap["producer_id"], gap["stream_id"])
+        predecessor = generation_key.get((*base, gap["predecessor_generation"]))
+        successor = generation_key.get((*base, gap["successor_generation"]))
+        successor_was_reclosed = any(
+            later["run_id"] == gap["run_id"]
+            and later["browser_run_id"] == gap["browser_run_id"]
+            and later["producer_id"] == gap["producer_id"]
+            and later["stream_id"] == gap["stream_id"]
+            and later["predecessor_generation"] == gap["successor_generation"]
+            for later in gaps.values()
+        )
+        transition = transitions.get(binding["coherence_transition_id"])
+        controller = controllers.get(binding["coherence_controller_id"])
+        shock = shocks.get(binding["shock_observation_id"])
+        if (
+            predecessor is None
+            or successor is None
+            or predecessor["generation_state"] == "ACTIVE"
+            or predecessor["close_reason"] != gap["gap_reason"]
+            or (
+                successor["generation_state"] != "ACTIVE" and not successor_was_reclosed
+            )
+            or generation_transition["predecessor_generation"] != gap["predecessor_generation"]
+            or generation_transition["successor_generation"] != gap["successor_generation"]
+            or transition is None
+            or controller is None
+            or shock is None
+            or binding["binding_role"] != "AFFECTED_EPOCH_PERMANENTLY_CLOSED"
+            or transition["coherence_controller_id"] != controller["coherence_controller_id"]
+            or transition["predecessor_epoch_id"] != binding["predecessor_epoch_id"]
+            or transition["shock_observation_id"] != shock["shock_observation_id"]
+            or transition["from_state"] not in {"OPEN", "NEW_EPOCH_OPEN"}
+            or transition["to_state"] != "SHOCKED_CLOSED"
+            or transition["transition_reason"] != "SHOCK_ATOMIC_CLOSE"
+            or transition["bindings_verified"] != 1
+            or controller["run_id"] != gap["run_id"]
+            or controller["fixture_id"] != shock["fixture_id"]
+            or shock["run_id"] != gap["run_id"]
+            or shock["shock_type"]
+            not in {
+                "SEQUENCE_GAP",
+                "SCHEMA_CONFLICT",
+                "LIFECYCLE_INVALIDATION",
+                "EQUIVALENT_UNKNOWN_SHOCK",
+            }
+        ):
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+
+    for transition in transitions.values():
+        controller = controllers[transition["coherence_controller_id"]]
+        predecessor = epochs[transition["predecessor_epoch_id"]]
+        shock = (
+            shocks[transition["shock_observation_id"]]
+            if transition["shock_observation_id"] is not None
+            else None
+        )
+        if (
+            transition["fixture_id"] != controller["fixture_id"]
+            or predecessor["run_id"] != controller["run_id"]
+            or predecessor["fixture_id"] != controller["fixture_id"]
+            or (
+                shock is not None
+                and (shock["run_id"], shock["fixture_id"])
+                != (controller["run_id"], controller["fixture_id"])
+            )
+        ):
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+        candidate_id = transition["candidate_epoch_id"]
+        candidate = epochs[candidate_id] if candidate_id is not None else None
+        if candidate is not None and (
+            candidate["run_id"] != controller["run_id"]
+            or candidate["fixture_id"] != controller["fixture_id"]
+            or candidate["predecessor_epoch_id"] != predecessor["coherence_epoch_id"]
+        ):
+            raise ValueError("E_GAP_SNAPSHOT_RELATION")
+        if transition["transition_reason"] in {
+            "RESNAPSHOT_CANDIDATE_ACCEPTED",
+            "RELEASE_PREDICATE_SATISFIED",
+        }:
+            proof = proofs.get(transition["resnapshot_proof_id"])
+            vector = freshness.get(transition["input_freshness_vector_id"])
+            if (
+                candidate is None
+                or proof is None
+                or vector is None
+                or proof["predecessor_epoch_id"] != predecessor["coherence_epoch_id"]
+                or proof["candidate_epoch_id"] != candidate["coherence_epoch_id"]
+                or proof["shock_observation_id"] != transition["shock_observation_id"]
+                or proof["freshness_vector_id"] != vector["input_freshness_vector_id"]
+                or proof["proof_status"] != "OBSERVED"
+                or proof["proof_verified"] != 1
+                or proof["release_predicate"] != "SATISFIED"
+                or any(
+                    proof[name] not in mappings or proof[name] in closed_mappings
+                    for name in (
+                        "football_mapping_id",
+                        "operator_mapping_id",
+                        "market_book_mapping_id",
+                    )
+                )
+                or proof["continuity_reducer_cursor_id"] not in cursors
+                or any(
+                    vector[name] != "FRESH"
+                    for name in (
+                        "football_state_status",
+                        "operator_state_status",
+                        "market_book_status",
+                    )
+                )
+            ):
+                raise ValueError("E_GAP_SNAPSHOT_RELATION")
+
+
+def _validate_snapshot_ddl(state: dict[str, Any]) -> None:
+    import sqlite3
+    from contextlib import closing
+
+    from moj_discovery.store import TABLES, validate_journal, verified_ddl
+
+    ddl = verified_ddl()
+    if (
+        not isinstance(state, dict)
+        or set(state)
+        != {
+            "schema_version",
+            "run_id",
+            "ddl_sha256",
+            "tables",
+            "spool",
+            "capacity",
+        }
+        or state["schema_version"] != 1
+        or not isinstance(state["run_id"], str)
+        or not state["run_id"]
+        or state["ddl_sha256"] != hashlib.sha256(ddl.encode()).hexdigest()
+        or not isinstance(state["tables"], dict)
+    ):
+        raise ValueError("E_GAP_SNAPSHOT_DDL")
+    tables = state["tables"]
+    try:
+        journal = {name: tables[name] for name in TABLES}
+        validate_journal(journal)
+        with closing(sqlite3.connect(":memory:")) as reference:
+            reference.executescript(ddl)
+            names = {
+                row[0]
+                for row in reference.execute(
+                    "SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+                )
+            }
+            if set(tables) != names:
+                raise ValueError("E_GAP_SNAPSHOT_DDL")
+            triggers = [
+                row[0]
+                for row in reference.execute("SELECT name FROM sqlite_schema WHERE type='trigger'")
+            ]
+            for trigger in triggers:
+                reference.execute(f'DROP TRIGGER "{trigger}"')  # noqa: S608
+            reference.execute("PRAGMA foreign_keys=ON")
+            reference.execute("BEGIN")
+            reference.execute("PRAGMA defer_foreign_keys=ON")
+            # Deferred foreign keys make this independent of serialized table
+            # and row order. Exact CHECK/UNIQUE/FK rules remain active; the
+            # history-sensitive trigger invariants are verified above by the
+            # approved journal validator and below by recovery predicates.
+            for name in sorted(names):
+                columns = [
+                    str(row[1])
+                    for row in reference.execute(f'PRAGMA table_info("{name}")')  # noqa: S608
+                ]
+                rows = tables[name]
+                if not isinstance(rows, list):
+                    raise ValueError("E_GAP_SNAPSHOT_DDL")
+                for row in rows:
+                    if not isinstance(row, dict) or set(row) != set(columns):
+                        raise ValueError("E_GAP_SNAPSHOT_DDL")
+                    if "run_id" in row and row["run_id"] != state["run_id"]:
+                        raise ValueError("E_GAP_SNAPSHOT_DDL")
+                    column_sql = ",".join(f'"{column}"' for column in columns)
+                    placeholders = ",".join("?" for _ in columns)
+                    reference.execute(
+                        f'INSERT INTO "{name}" ({column_sql}) VALUES ({placeholders})',  # noqa: S608
+                        tuple(row[column] for column in columns),
+                    )
+            reference.commit()
+            if reference.execute("PRAGMA foreign_key_check").fetchall():
+                raise ValueError("E_GAP_SNAPSHOT_DDL")
+        _validate_snapshot_relations(tables)
+    except (KeyError, TypeError, sqlite3.DatabaseError, ValueError) as exc:
+        if isinstance(exc, ValueError) and str(exc) == "E_GAP_SNAPSHOT_DDL":
+            raise
+        raise ValueError("E_GAP_SNAPSHOT_DDL") from exc
+
+
 def _run_process(
     entry: dict[str, Any], case: Path, ordinal: int, shim: Path, *, input_mutation: bool = False
 ) -> dict[str, Any]:
     case.mkdir(parents=True)
     run_id, nonce = str(uuid4()), secrets.token_hex(16)
-    scenario = _scenario(entry, run_id, input_mutation=input_mutation)
+    scenario = _scenario(entry, run_id)
+    original_input = copy.deepcopy(scenario["delivery"])
+    launch_ready = case / "launch-ready.json"
+    if input_mutation:
+        scenario["delivery"]["content_hash"] = "0" * 64
     scenario_path = case / "scenario.json"
     scenario_path.write_text(json.dumps(scenario, sort_keys=True))
     ready = case / "checkpoint.json"
@@ -392,6 +797,8 @@ def _run_process(
         nonce,
         "--hold",
     ]
+    if input_mutation:
+        command.extend(("--launch-ready", str(launch_ready.resolve())))
     with (case / "child.stdout").open("wb") as stdout, (case / "child.stderr").open("wb") as stderr:
         child = subprocess.Popen(  # noqa: S603 -- fixed owned local child
             command, cwd=ROOT, stdout=stdout, stderr=stderr, start_new_session=True
@@ -406,14 +813,19 @@ def _run_process(
         "test_nonce": nonce,
     }
     deadline = monotonic() + 10
-    while not ready.is_file() and monotonic() < deadline and child.poll() is None:
+    awaited = launch_ready if input_mutation else ready
+    while not awaited.is_file() and monotonic() < deadline and child.poll() is None:
         sleep(0.02)
     if input_mutation:
-        if not ready.is_file() or json.loads(ready.read_text()) != identity:
+        if not launch_ready.is_file() or json.loads(launch_ready.read_text()) != identity:
             raise RuntimeError(f"E_GAP_MUTATION_CHECKPOINT:{entry['vector_id']}:{child.poll()}")
-        process_observation = _proc_observation(child)
-        (case / "continue.json").write_text("{}")
+        process_observation, process_artifact = _proc_observation(
+            child, case / "parent-proc-observation.json"
+        )
+        (case / "launch-continue.json").write_text("{}")
         exit_code = child.wait(timeout=5)
+        stderr_text = (case / "child.stderr").read_text()
+        observed_error = "CONTENT_HASH_MISMATCH" if "CONTENT_HASH_MISMATCH" in stderr_text else None
         terminal_path = case / "mutation-terminal.json"
         terminal_path.write_text(
             json.dumps(
@@ -421,29 +833,34 @@ def _run_process(
                     "identity": identity,
                     "process": process_observation,
                     "exit": exit_code,
-                    "rejection": "E_GAP_MUTATED_INPUT",
+                    "rejection": observed_error,
                 },
                 sort_keys=True,
             )
         )
         return {
-            "mutation_detected": exit_code != 0,
+            "mutation_detected": exit_code == 1 and observed_error == "CONTENT_HASH_MISMATCH",
             "case_directory": str(case.resolve()),
             "pid": child.pid,
             "identity": identity,
             "process_observation": process_observation,
+            "process_observation_artifact": process_artifact,
             "command": command,
             "exit": exit_code,
+            "observed_error": observed_error,
+            "original_input": original_input,
+            "mutated_input": scenario["delivery"],
             "scenario_artifact": _artifact(scenario_path),
-            "checkpoint_artifact": _artifact(ready),
-            "boundary_artifact": _artifact(case / "boundary.json"),
+            "launch_artifact": _artifact(launch_ready),
             "stderr_artifact": _artifact(case / "child.stderr"),
             "database_artifact": _artifact(case / run_id / "run.sqlite3"),
             "terminal_artifact": _artifact(terminal_path),
         }
     if not ready.is_file() or json.loads(ready.read_text()) != identity:
         raise RuntimeError(f"E_GAP_CHECKPOINT:{entry['vector_id']}:{child.poll()}")
-    process_observation = _proc_observation(child)
+    process_observation, process_artifact = _proc_observation(
+        child, case / "parent-proc-observation.json"
+    )
     if entry["kill_action"] == "NONE":
         (case / "continue.json").write_text("{}")
         exit_code = child.wait(timeout=5)
@@ -484,6 +901,7 @@ def _run_process(
         "command": command,
         "exit": exit_code,
         "process_observation": process_observation,
+        "process_observation_artifact": process_artifact,
         "termination": termination,
         "before": before,
         "after": after,
@@ -507,7 +925,10 @@ def _record(
     entry: dict[str, Any], run: dict[str, Any], binding: dict[str, Any], expected: dict[str, Any]
 ) -> dict[str, Any]:
     actual = _semantic_view(run["before"], run["baseline"], expected, run["scenario"])
+    _validate_snapshot_ddl(run["before"])
+    _validate_snapshot_ddl(run["after"])
     comparison = _compare(actual, expected)
+    recovery_validation = _validate_recovery(run["before"], run["after"], run["scenario"])
     actual_path = Path(run["case_directory"]) / "actual-semantic.json"
     actual_path.write_text(json.dumps(actual, sort_keys=True))
     row = {
@@ -528,12 +949,14 @@ def _record(
         "observed_error": None if comparison["matched"] else "E_GAP_STATE_MISMATCH",
         "before_restart": run["before"],
         "after_restart": run["after"],
+        "recovery_validation": recovery_validation,
         "evidence_binding": binding,
         "revision": binding["revision"],
         "environment": binding["environment"],
         "command": run["command"],
         "command_exit": {"child": run["exit"], "recovery": run["recovery_exit"], "reader": 0},
         "process_observation": run["process_observation"],
+        "process_observation_artifact": run["process_observation_artifact"],
         "termination": run["termination"],
         "reader_runs": run["reader_runs"],
         "recovery_command": run["recovery_command"],
@@ -598,11 +1021,13 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         "recovery_process_artifact",
         "terminal_artifact",
         "actual_artifact",
+        "process_observation_artifact",
     ):
         descriptor = row[name]
         if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
             raise ValueError("E_GAP_ARTIFACT")
     python = str(Path(sys.executable).absolute())
+    _verify_proc_observation(process, row["process_observation_artifact"], row["command"])
     if (
         row["command"][:3] != [python, "-I", str(CHILD.resolve())]
         or process["argv"] != row["command"]
@@ -665,13 +1090,109 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         raise ValueError("E_GAP_TERMINATION")
     scenario = json.loads(Path(row["scenario_artifact"]["path"]).read_text())
     baseline = json.loads(Path(row["baseline_artifact"]["path"]).read_text())
+    _validate_snapshot_ddl(row["before_restart"])
+    _validate_snapshot_ddl(row["after_restart"])
     if _semantic_view(row["before_restart"], baseline, row["expected"], scenario) != row["actual"]:
         raise ValueError("E_GAP_COMPARISON")
+    database_dir = Path(row["case_directory"]) / row["identity"]["run_id"]
+    persisted_after = (
+        read_gap_state(database_dir)
+        if (database_dir / "run.sqlite3").is_file()
+        else row["after_restart"]
+    )
+    if persisted_after != row["after_restart"] or row["recovery_validation"] != _validate_recovery(
+        row["before_restart"], persisted_after, scenario
+    ):
+        raise ValueError("E_GAP_RECOVERY_PREDICATE")
     if (
         _sha(Path(row["shim"]["path"])) != row["shim"]["binary_sha256"]
         or _sha(SHIM_SOURCE) != row["shim"]["source_sha256"]
     ):
         raise ValueError("E_GAP_SHIM")
+
+
+def verify_gap_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
+    if (
+        row["evidence_binding"] != binding
+        or row["revision"] != binding["revision"]
+        or row["environment"] != binding["environment"]
+        or row.get("detected") is not True
+    ):
+        raise ValueError("E_GAP_MUTATION_BINDING")
+    entry = next(
+        item
+        for item in json.loads(REGISTRY.read_text())["entries"]
+        if row["mutation"] in item["mutation_vector_ids"]
+    )
+    if row["vector_id"] != entry["vector_id"]:
+        raise ValueError("E_GAP_MUTATION_BINDING")
+    if row["kind"] == "EXPECTED":
+        evidence = row["evidence"]
+        governed = entry["expected_post_restart_state"]
+        if (
+            row["governed_expected"] != governed
+            or row["mutated_expected"] == governed
+            or evidence["expected"] != row["mutated_expected"]
+            or evidence["comparison"] != _compare(evidence["actual"], row["mutated_expected"])
+            or evidence["comparison"]["matched"]
+            or evidence["observed_error"] != "E_GAP_STATE_MISMATCH"
+            or row["observed_error"] != "E_GAP_STATE_MISMATCH"
+        ):
+            raise ValueError("E_GAP_MUTATION_EXPECTED")
+        control = copy.deepcopy(evidence)
+        control.update(
+            expected=governed,
+            comparison=_compare(evidence["actual"], governed),
+            observed_error=None,
+            status="PASS",
+            result="PASS",
+        )
+        verify_gap_record(control, binding)
+        return
+    if row["kind"] != "INPUT" or row["observed_error"] != "CONTENT_HASH_MISMATCH":
+        raise ValueError("E_GAP_MUTATION_INPUT")
+    if row["exit"] != 1 or row["command_exit"] != {"child": 1}:
+        raise ValueError("E_GAP_MUTATION_INPUT")
+    for descriptor in row["artifacts"]:
+        if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
+            raise ValueError("E_GAP_MUTATION_ARTIFACT")
+    _verify_proc_observation(
+        row["process_observation"], row["process_observation_artifact"], row["command"]
+    )
+    scenario = json.loads(Path(row["scenario_artifact"]["path"]).read_text())
+    original, mutated = row["original_input"], row["mutated_input"]
+    from moj_discovery.canonical import canonical_content_hash
+    from moj_discovery.store import VENDOR
+
+    registry = VENDOR / "registries/canonical-hash-domains.v1.json"
+    if (
+        scenario["delivery"] != mutated
+        or original == mutated
+        or {key for key in original if original[key] != mutated[key]} != {"content_hash"}
+        or canonical_content_hash("RawObservation", original, registry_path=registry)
+        != original["content_hash"]
+        or canonical_content_hash("RawObservation", mutated, registry_path=registry)
+        == mutated["content_hash"]
+    ):
+        raise ValueError("E_GAP_MUTATION_INPUT")
+    launch = json.loads(Path(row["launch_artifact"]["path"]).read_text())
+    terminal = json.loads(Path(row["terminal_artifact"]["path"]).read_text())
+    stderr = Path(row["stderr_artifact"]["path"]).read_text()
+    if (
+        launch != row["identity"]
+        or terminal
+        != {
+            "identity": row["identity"],
+            "process": row["process_observation"],
+            "exit": 1,
+            "rejection": "CONTENT_HASH_MISMATCH",
+        }
+        or "CONTENT_HASH_MISMATCH" not in stderr
+    ):
+        raise ValueError("E_GAP_MUTATION_INPUT")
+    state = read_gap_state(Path(row["case_directory"]) / row["identity"]["run_id"])
+    if state["run_id"] != row["identity"]["run_id"]:
+        raise ValueError("E_GAP_MUTATION_INPUT")
 
 
 def run_gap_coherence_crash_matrix(
@@ -710,23 +1231,33 @@ def run_gap_coherence_crash_matrix(
             entry, workspace / f"mutation-expected-{ordinal:02d}", 100 + ordinal, shim
         )
         expected_row = _record(entry, expected_run, binding, wrong)
-        mutations.append(
-            {
-                "mutation": entry["mutation_vector_ids"][0],
-                "detected": expected_row["status"] == "FAIL",
-                "case_directory": expected_run["case_directory"],
-                "pid": expected_run["identity"]["pid"],
-                "process_observation": expected_run["process_observation"],
-                "termination": expected_run["termination"],
-                "artifacts": [
-                    expected_run["scenario_artifact"],
-                    expected_run["checkpoint_artifact"],
-                    expected_run["boundary_artifact"],
-                    expected_row["actual_artifact"],
-                    expected_run["terminal_artifact"],
-                ],
-            }
-        )
+        expected_mutation = {
+            "mutation": entry["mutation_vector_ids"][0],
+            "vector_id": entry["vector_id"],
+            "kind": "EXPECTED",
+            "detected": expected_row["status"] == "FAIL",
+            "case_directory": expected_run["case_directory"],
+            "pid": expected_run["identity"]["pid"],
+            "process_observation": expected_run["process_observation"],
+            "termination": expected_run["termination"],
+            "governed_expected": entry["expected_post_restart_state"],
+            "mutated_expected": wrong,
+            "observed_error": expected_row["observed_error"],
+            "evidence": expected_row,
+            "evidence_binding": binding,
+            "revision": binding["revision"],
+            "environment": binding["environment"],
+            "artifacts": [
+                expected_run["scenario_artifact"],
+                expected_run["checkpoint_artifact"],
+                expected_run["boundary_artifact"],
+                expected_run["process_observation_artifact"],
+                expected_row["actual_artifact"],
+                expected_run["terminal_artifact"],
+            ],
+        }
+        verify_gap_mutation(expected_mutation, binding)
+        mutations.append(expected_mutation)
         input_run = _run_process(
             entry,
             workspace / f"mutation-input-{ordinal:02d}",
@@ -734,25 +1265,41 @@ def run_gap_coherence_crash_matrix(
             shim,
             input_mutation=True,
         )
-        mutations.append(
-            {
-                "mutation": entry["mutation_vector_ids"][1],
-                "detected": input_run["mutation_detected"],
-                "case_directory": input_run["case_directory"],
-                "pid": input_run["pid"],
-                "process_observation": input_run["process_observation"],
-                "command": input_run["command"],
-                "exit": input_run["exit"],
-                "artifacts": [
-                    input_run["scenario_artifact"],
-                    input_run["checkpoint_artifact"],
-                    input_run["boundary_artifact"],
-                    input_run["stderr_artifact"],
-                    input_run["database_artifact"],
-                    input_run["terminal_artifact"],
-                ],
-            }
-        )
+        input_mutation = {
+            "mutation": entry["mutation_vector_ids"][1],
+            "vector_id": entry["vector_id"],
+            "kind": "INPUT",
+            "detected": input_run["mutation_detected"],
+            "case_directory": input_run["case_directory"],
+            "pid": input_run["pid"],
+            "identity": input_run["identity"],
+            "process_observation": input_run["process_observation"],
+            "process_observation_artifact": input_run["process_observation_artifact"],
+            "command": input_run["command"],
+            "exit": input_run["exit"],
+            "command_exit": {"child": input_run["exit"]},
+            "observed_error": input_run["observed_error"],
+            "original_input": input_run["original_input"],
+            "mutated_input": input_run["mutated_input"],
+            "scenario_artifact": input_run["scenario_artifact"],
+            "launch_artifact": input_run["launch_artifact"],
+            "stderr_artifact": input_run["stderr_artifact"],
+            "database_artifact": input_run["database_artifact"],
+            "terminal_artifact": input_run["terminal_artifact"],
+            "evidence_binding": binding,
+            "revision": binding["revision"],
+            "environment": binding["environment"],
+            "artifacts": [
+                input_run["scenario_artifact"],
+                input_run["launch_artifact"],
+                input_run["process_observation_artifact"],
+                input_run["stderr_artifact"],
+                input_run["database_artifact"],
+                input_run["terminal_artifact"],
+            ],
+        }
+        verify_gap_mutation(input_mutation, binding)
+        mutations.append(input_mutation)
     survivors = sum(not row["detected"] for row in mutations)
     return {
         "result": "PASS" if not survivors else "FAIL",

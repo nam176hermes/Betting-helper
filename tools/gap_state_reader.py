@@ -21,13 +21,6 @@ if __package__ in {None, ""}:
 from moj_discovery.store import verified_ddl  # noqa: E402
 from tools.restart_state_reader import read_restart_state  # noqa: E402
 
-EXTRA_TABLES = (
-    "clock_mappings",
-    "clock_mapping_closures",
-    "input_freshness_vectors",
-    "authoritative_resnapshot_proofs",
-)
-
 
 def read_gap_state(run_dir: Path) -> dict[str, Any]:
     state = read_restart_state(run_dir)
@@ -35,12 +28,19 @@ def read_gap_state(run_dir: Path) -> dict[str, Any]:
     with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)) as connection:
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA query_only=ON")
+        table_names = [
+            row[0]
+            for row in connection.execute(
+                "SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+            )
+        ]
         extras = {
             table: sorted(
                 (dict(row) for row in connection.execute(f'SELECT * FROM "{table}"')),  # noqa: S608
                 key=lambda row: json.dumps(row, sort_keys=True),
             )
-            for table in EXTRA_TABLES
+            for table in table_names
+            if table not in state["tables"]
         }
     spool_path = run_dir.parent / "spool-events.jsonl"
     spool_rows = (

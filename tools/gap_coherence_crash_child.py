@@ -19,9 +19,13 @@ if __package__ in {None, ""}:
     root = Path(__file__).resolve().parents[1]
     sys.path[:0] = [str(root / "src"), str(root)]
 
-from moj_discovery.canonical import canonical_content_hash  # noqa: E402
+from moj_discovery.canonical import (  # noqa: E402
+    canonical_content_hash,
+    verify_canonical_content_hash,
+)
 from moj_discovery.generation import GenerationController  # noqa: E402
 from moj_discovery.ingest import Ingestor  # noqa: E402
+from moj_discovery.schema_registry import validate_artifact  # noqa: E402
 from moj_discovery.store import VENDOR, RunStore, read_journal  # noqa: E402
 from tools.gap_state_reader import read_gap_state  # noqa: E402
 from tools.loopback_ack_crash_child import (  # noqa: E402
@@ -515,6 +519,7 @@ def main() -> None:
     parser.add_argument("--ordinal", type=int, default=0)
     parser.add_argument("--test-nonce", default="recovery")
     parser.add_argument("--hold", action="store_true")
+    parser.add_argument("--launch-ready", type=Path)
     args = parser.parse_args()
     if args.recover:
         _recover(args.recover)
@@ -525,10 +530,20 @@ def main() -> None:
     scenario = json.loads((case / "scenario.json").read_text())
     database = case / scenario["run_id"] / "run.sqlite3"
     store = RunStore(database) if database.is_file() else _bootstrap(scenario, database)
-    if scenario.get("input_mutation"):
-        with closing(store.connect()) as connection:
-            _checkpoint(args, connection, "input_validation_rejected", hold=False)
-        raise ValueError("E_GAP_MUTATED_INPUT")
+    if args.launch_ready:
+        args.launch_ready.write_text(json.dumps(_identity(args), sort_keys=True))
+        release = args.launch_ready.with_name("launch-continue.json")
+        while not release.is_file():
+            sleep(0.02)
+    validate_artifact(
+        scenario["delivery"], "raw-observation.schema.json", bootstrap_only=True, vendor=VENDOR
+    )
+    verify_canonical_content_hash(
+        "RawObservation",
+        scenario["delivery"],
+        scenario["delivery"]["content_hash"],
+        registry_path=VENDOR / "registries/canonical-hash-domains.v1.json",
+    )
     phase, operation = scenario["phase"], scenario["operation"]
     fresh_case = not (case / "baseline-state.json").is_file()
     if fresh_case and scenario.get("prepare_successor"):
