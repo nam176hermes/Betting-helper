@@ -221,6 +221,59 @@ class Ingestor:
             raise ValueError(rejected)
         return ack
 
+    def confirm_ack(self, ack: dict[str, Any]) -> dict[str, Any]:
+        """Persist an idempotent confirmation only for the exact durable outbox ACK."""
+        with closing(self.store.connect()) as connection, connection:
+            connection.execute("BEGIN IMMEDIATE")
+            validate_journal(read_journal(connection))
+            durable = connection.execute(
+                "SELECT * FROM ack_outbox WHERE ack_outbox_id=?", (ack.get("ack_outbox_id"),)
+            ).fetchone()
+            if durable is None or dict(durable) != ack:
+                raise ValueError("E_ACK_CONFIRMATION_BINDING")
+            key = tuple(
+                ack[name]
+                for name in (
+                    "run_id",
+                    "browser_run_id",
+                    "producer_id",
+                    "stream_id",
+                    "generation",
+                )
+            )
+            previous = connection.execute(
+                f"SELECT * FROM ack_cursors WHERE {POSITION} AND owner='BACKEND' "  # noqa: S608
+                "ORDER BY highest_contiguous_sequence DESC LIMIT 1",
+                key,
+            ).fetchone()
+            if previous is not None:
+                if previous["highest_contiguous_sequence"] > ack["highest_contiguous_sequence"]:
+                    raise ValueError("E_ACK_CONFIRMATION_REGRESSION")
+                if previous["highest_contiguous_sequence"] == ack["highest_contiguous_sequence"]:
+                    if previous["cursor_hash"] != ack["cursor_hash"]:
+                        raise ValueError("E_ACK_CONFIRMATION_BINDING")
+                    return dict(previous)
+            identifier = "confirmation:" + ack["cursor_hash"]
+            connection.execute(
+                "INSERT INTO ack_cursors VALUES (?,?,?,?,?,?,'BACKEND',?,?,1,"
+                "'BACKEND_DURABLE_CHAIN',?,?)",
+                (
+                    identifier,
+                    *key,
+                    ack["highest_contiguous_sequence"],
+                    ack["cursor_hash"],
+                    None if previous is None else previous["ack_cursor_id"],
+                    time_ns() // 1000,
+                ),
+            )
+            result = dict(
+                connection.execute(
+                    "SELECT * FROM ack_cursors WHERE ack_cursor_id=?",
+                    (identifier,),
+                ).fetchone()
+            )
+        return result
+
     @staticmethod
     def _gap(
         connection: sqlite3.Connection,

@@ -13,7 +13,8 @@ type Request = {
   identity: Record<string, unknown>;
   options: { browser_run_id: string; producer_id: string; stream_id: string; generation: string; registry: CanonicalRegistry };
   observations: string[];
-  operation: "crash" | "read" | "exercise";
+  operation: "crash" | "read" | "exercise" | "deliver" | "recover";
+  transport?: { endpoint: string; token: string };
   mutation?: "delete-row" | "corrupt-ack";
 };
 const reply = (value: unknown): void => { globalThis.postMessage(value); };
@@ -69,6 +70,67 @@ globalThis.onmessage = (event: MessageEvent<Request>): void => {
     const spool = new Spool(request.options);
     if (request.operation === "read") {
       reply({ ...evidence, ...await actualRows(request) });
+      return;
+    }
+    if (request.operation === "deliver" || request.operation === "recover") {
+      const transport = request.transport;
+      if (!transport || !/^http:\/\/127\.0\.0\.1:[0-9]+$/.test(transport.endpoint)) throw new Error("E_TEST_LOOPBACK");
+      const post = async (path: string, value: unknown): Promise<Record<string, unknown>> => {
+        const response = await fetch(transport.endpoint + path, { method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: transport.token, value }) });
+        if (!response.ok) throw new Error(`E_TEST_LOOPBACK_STATUS:${String(response.status)}`);
+        return await response.json() as Record<string, unknown>;
+      };
+      const boundary = request.operation === "recover" ? "" : request.identity.checkpoint_id;
+      await spool.enumeratePending();
+      const rawRows = await actualRows(request) as { entries: { sanitized_observation: unknown }[] };
+      if (request.operation === "deliver") {
+        const raw = request.observations[0];
+        if (raw === undefined) throw new Error("E_TEST_INPUT");
+        await spool.append(envelope(raw));
+      } else if (rawRows.entries.length === 0) {
+        const raw = request.observations[0];
+        if (raw === undefined) throw new Error("E_TEST_REOBSERVATION_REQUIRED");
+        await spool.append(envelope(raw));
+      }
+      const rows = await actualRows(request) as { entries: { sanitized_observation: unknown }[] };
+      const raw = rows.entries[0]?.sanitized_observation;
+      if (!raw) throw new Error("E_TEST_REPLAY_ROW");
+      let wireAck: Record<string, unknown> | undefined;
+      const pause = (): never => {
+        reply({ ...evidence, boundary, wire_ack: wireAck });
+        for (;;) { /* owner terminates this exact Worker before transaction completion */ }
+      };
+      const deliver = async (): Promise<Record<string, unknown>> => {
+        const received = await post("/ingest", raw);
+        const ack = received.ack as Record<string, unknown> | undefined;
+        if (!ack || ack.run_id !== request.options.browser_run_id ||
+            ack.browser_run_id !== request.options.browser_run_id ||
+            ack.producer_id !== request.options.producer_id || ack.stream_id !== request.options.stream_id ||
+            ack.generation !== Number(request.options.generation) || ack.cursor_hash_verified !== 1) throw new Error("E_TEST_ACK_BINDING");
+        wireAck = ack;
+        if (boundary === "ack_01_before_extension_ack_transaction") pause();
+        if (boundary === "ack_02_during_extension_ack_transaction") {
+          // eslint-disable-next-line @typescript-eslint/unbound-method -- native receiver preserved.
+          const put = IDBObjectStore.prototype.put;
+          IDBObjectStore.prototype.put = function (...args: Parameters<typeof put>): IDBRequest<IDBValidKey> {
+            const result = put.apply(this, args);
+            result.addEventListener("success", pause);
+            return result;
+          };
+        }
+        await spool.persistVerifiedAck(String(ack.generation), String(ack.highest_contiguous_sequence), String(ack.cursor_hash));
+        if (boundary === "ack_03_after_extension_ack_transaction") pause();
+        await post("/confirm", ack);
+        return ack;
+      };
+      const ack = await deliver();
+      if (boundary === "ack_06_duplicate_identical") {
+        const duplicate = await deliver();
+        if (JSON.stringify(ack) !== JSON.stringify(duplicate)) throw new Error("E_TEST_DUPLICATE_ACK");
+      }
+      reply({ ...evidence, boundary, wire_ack: ack, ...await actualRows(request) });
       return;
     }
     const first = request.observations[0];

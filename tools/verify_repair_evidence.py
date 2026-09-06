@@ -39,6 +39,7 @@ def capture_binding() -> dict[str, Any]:
     ) for p in (ROOT / directory).rglob("*" + suffix)]
     sources += [ROOT / name for name in (
         "pyproject.toml", "extension/package.json", "extension/tsconfig.test.json",
+        "extension/test-harness/repair-manifest.json", "extension/test-harness/repair-probe.html",
     ) if (ROOT / name).is_file()]
     node = which("node")
     return {
@@ -662,7 +663,9 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
 
 
 def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
-    if row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
+    if row.get("execution_kind") == "BROWSER_LOOPBACK_ACK":
+        _verify_browser_ack(row, current)
+    elif row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
         _verify_indexeddb(row, current)
     elif row.get("execution_kind") == "OFFLINE_SHARED_CLOCK_EVALUATOR":
         _verify_clock(row, current)
@@ -670,6 +673,382 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
         _verify_sqlite(row, current)
     else:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
+
+
+def _verify_browser_ack(
+    row: dict[str, Any],
+    current: dict[str, Any],
+    *,
+    terminal: bool = True,
+) -> None:
+    """Validate actual cross-component records against the registered parent-only oracle."""
+    from tools.run_indexeddb_crash_matrix import (
+        PRODUCER,
+        REGISTRY,
+        STREAM,
+        compare_indexeddb_state,
+    )
+
+    validate_case_status(row)
+    if row["evidence_binding"] != current or row["revision"] != current["revision"]:
+        raise ValueError("E_REPAIR_STALE_BINDING")
+    if (
+        row["environment"] != current["environment"]
+        or row["observed_error"] is not None
+        or row["comparison"] != {"matched": True}
+        or row["qualification_scope"] != "BROWSER_LOOPBACK_ACK"
+    ):
+        raise ValueError("E_ACK_EXECUTION")
+    entries = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())[
+        "entries"
+    ]
+    entry = next(value for value in entries if value["vector_id"] == row["case_id"])
+    if entry["harness"] not in {"CHROME_INDEXEDDB", "LOOPBACK_ACK"}:
+        raise ValueError("E_ACK_CASE")
+    expected = entry["expected_post_restart_state"]
+    if row["expected"] != expected:
+        raise ValueError("E_ACK_ORACLE")
+    identity = row["identity"]
+    if (
+        identity["case_id"] != entry["vector_id"]
+        or identity["checkpoint_id"] != entry["crash_checkpoint"]
+        or identity["component"] != entry["harness"]
+        or identity["origin"] != "chrome-extension://jnegjfjalhnpdeejfcjlobpbdpabdfhp"
+        or identity["protocol"] != "chrome-extension:"
+        or identity["module_url"] != identity["origin"] + "/src/spool.js"
+        or not isinstance(identity["pid"], int)
+        or identity["pid"] <= 0
+        or not identity["profile_id"]
+        or len(identity["test_nonce"]) != 32
+    ):
+        raise ValueError("E_ACK_IDENTITY")
+    browser = Path(row["browser"]["executable"])
+    if _sha(browser) != row["browser"]["sha256"]:
+        raise ValueError("E_ACK_BROWSER")
+    modules = row["module_hashes"]
+    extension = Path(row["case_directory"]) / "test-extension"
+    # Every loaded module is retained and bound, including the canonical dependency.
+    if (
+        not modules
+        or set(modules) != {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
+        or any(_sha(extension / name) != digest for name, digest in modules.items())
+        or modules.get("src/spool.js") != identity["module_sha256"]
+    ):
+        raise ValueError("E_ACK_MODULE_GRAPH")
+    for name in ("spool", "errors"):
+        if modules.get(f"src/{name}.js") != _sha(ROOT / f"extension/.test-build/src/{name}.js"):
+            raise ValueError("E_ACK_MODULE_GRAPH")
+    canonical = (
+        (ROOT / "extension/.test-build/src/canonical.js")
+        .read_text()
+        .replace('from "canonicalize"', 'from "./canonicalize.js"')
+    )
+    if modules.get("src/canonical.js") != hashlib.sha256(
+        canonical.encode()
+    ).hexdigest() or modules.get("src/canonicalize.js") != _sha(
+        ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js"
+    ):
+        raise ValueError("E_ACK_MODULE_GRAPH")
+    for name in ("indexeddb-crash-child", "repair-probe"):
+        if modules.get(name + ".js") != _sha(
+            ROOT / f"extension/.test-build/test-harness/{name}.js"
+        ):
+            raise ValueError("E_ACK_MODULE_GRAPH")
+    inputs = {
+        name: _sqlite_descriptor(row, value, "E_ACK_INPUT:" + name)
+        for name, value in row["inputs"].items()
+    }
+    artifacts = {
+        name: _sqlite_descriptor(row, value, "E_ACK_ARTIFACT:" + name)
+        for name, value in row["artifacts"].items()
+    }
+    if set(inputs) != {
+        "server-input-0",
+        "server-input-1",
+        "worker",
+        "recovery-worker",
+        "reader-before",
+        "reader-after",
+        "browser-reader-before",
+        "browser-reader-after",
+    }:
+        raise ValueError("E_ACK_INPUT_SET")
+    if _contains_expected(inputs):
+        raise ValueError("E_ACK_INPUT_ORACLE")
+    request_identity = {
+        key: identity[key]
+        for key in (
+            "run_id",
+            "case_id",
+            "checkpoint_id",
+            "test_nonce",
+            "profile_id",
+            "component",
+            "ordinal",
+            "pid",
+        )
+    }
+    options = {
+        "browser_run_id": identity["run_id"],
+        "producer_id": PRODUCER,
+        "stream_id": STREAM,
+        "generation": "0",
+        "registry": json.loads(REGISTRY.read_text()),
+    }
+    worker = inputs["worker"]
+    if (
+        set(worker) != {"identity", "options", "operation", "observations", "transport"}
+        or worker["identity"] != request_identity
+        or worker["options"] != options
+        or [json.loads(raw) for raw in worker["observations"]] != row["observations"]
+        or worker["operation"] != ("crash" if entry["harness"] == "CHROME_INDEXEDDB" else "deliver")
+        or row["observations"][0]["discovery_run_id"] != identity["run_id"]
+    ):
+        raise ValueError("E_ACK_WORKER_INPUT")
+    if (
+        artifacts["expected"] != expected
+        or artifacts["checkpoint"] != row["checkpoint"]
+        or artifacts["browser-before"] != row["actual"]
+        or artifacts["browser-after"] != row["browser_after"]
+        or artifacts["backend-before"] != row["backend_before"]
+        or artifacts["backend-after"] != row["backend_after"]
+    ):
+        raise ValueError("E_ACK_ARTIFACT_LINK")
+    count = expected["indexeddb_spool_delta"] if entry["harness"] == "CHROME_INDEXEDDB" else 1
+    ack = int(expected["extension_ack"] == "GEN0_Q1_H1")
+    for value in (row["actual"], row["browser_after"]):
+        if set(value) != set(identity) | {"worker_id", "entries", "states", "keys"}:
+            raise ValueError("E_ACK_BROWSER_STATE_FIELDS")
+    compare_indexeddb_state(row["actual"], identity, row["observations"], count, ack=ack)
+    compare_indexeddb_state(row["browser_after"], identity, row["observations"], 1, ack=1)
+    workers = [
+        row["worker_id"],
+        row["actual"]["worker_id"],
+        row["browser_after"]["worker_id"],
+        artifacts["recovery-worker-output"]["worker_id"],
+    ]
+    if len(set(workers)) != 4:
+        raise ValueError("E_ACK_WORKER_IDENTITY")
+    if count and row["actual"]["entries"] != row["browser_after"]["entries"]:
+        raise ValueError("E_ACK_RETAINED_ROWS")
+    recovery_output = artifacts["recovery-worker-output"]
+    compare_indexeddb_state(recovery_output, identity, row["observations"], 1, ack=1)
+    if (
+        recovery_output["boundary"] != ""
+        or recovery_output["wire_ack"] != row["backend_after"]["tables"]["ack_outbox"][0]
+    ):
+        raise ValueError("E_ACK_RECOVERY_OUTPUT")
+    for phase in ("before", "after"):
+        if inputs["browser-reader-" + phase] != {
+            "identity": request_identity,
+            "options": options,
+            "operation": "read",
+            "observations": [],
+        }:
+            raise ValueError("E_ACK_READER_INPUT")
+    child_identity = {
+        key: value for key, value in request_identity.items() if key not in {"pid", "profile_id"}
+    }
+    processes = row["backend_processes"]
+    if len(processes) != 2 or processes[0]["pid"] == processes[1]["pid"]:
+        raise ValueError("E_ACK_PROCESS_IDENTITY")
+    for ordinal, process in enumerate(processes):
+        prefix = _sqlite_process_prefix(
+            process["provenance"],
+            ROOT / "tools/loopback_ack_crash_child.py",
+            current,
+            "E_ACK_PROCESS_PROVENANCE",
+        )
+        config = inputs[f"server-input-{ordinal}"]
+        if (
+            config
+            != {
+                "identity": child_identity,
+                "observation": row["observations"][0],
+                "origin": identity["origin"],
+                "token": config["token"],
+                "restart": bool(ordinal),
+            }
+            or len(config["token"]) != 64
+            or process["identity"] != {**child_identity, "pid": process["pid"]}
+            or process["pgid"] != process["pid"]
+            or process["argv"]
+            != [*prefix, "--browser-server", row["inputs"][f"server-input-{ordinal}"]["path"]]
+        ):
+            raise ValueError("E_ACK_PROCESS_INPUT")
+        killed = ordinal == 0 and entry["kill_action"] == "SIGKILL_BACKEND_CHILD"
+        if process["exit"] != (-signal.SIGKILL if killed else -signal.SIGTERM) or process[
+            "mechanism"
+        ] != (
+            "POSIX_OWNED_PROCESS_GROUP_SIGKILL"
+            if killed
+            else "POSIX_OWNED_PROCESS_GROUP_SIGTERM_CLEANUP"
+        ):
+            raise ValueError("E_ACK_PROCESS_EXIT")
+        ready = _sqlite_descriptor(row, process["ready"], "E_ACK_SERVER_READY")
+        if (
+            ready != artifacts[f"server-ready-{ordinal}"]
+            or ready["identity"] != process["identity"]
+        ):
+            raise ValueError("E_ACK_SERVER_READY")
+        transport = worker["transport"] if ordinal == 0 else inputs["recovery-worker"]["transport"]
+        if ready["address"][0] != "127.0.0.1" or transport != {
+            "endpoint": "http://127.0.0.1:" + str(ready["address"][1]),
+            "token": config["token"],
+        }:
+            raise ValueError("E_ACK_TRANSPORT")
+    if inputs["server-input-0"]["token"] == inputs["server-input-1"]["token"]:
+        raise ValueError("E_ACK_STALE_PAIRING")
+    if inputs["recovery-worker"] != {
+        **worker,
+        "operation": "recover",
+        "transport": inputs["recovery-worker"]["transport"],
+        "observations": worker["observations"][:1] if not count else [],
+    }:
+        raise ValueError("E_ACK_RECOVERY_INPUT")
+    checkpoint = row["checkpoint"]
+    if entry["kill_action"] == "SIGKILL_BACKEND_CHILD":
+        if checkpoint != processes[0]["identity"] or row["termination"] != {
+            "method": "POSIX_OWNED_PROCESS_GROUP_SIGKILL",
+            "pid": processes[0]["pid"],
+            "returncode": -signal.SIGKILL,
+        }:
+            raise ValueError("E_ACK_TERMINATION")
+        boundary = artifacts["backend-boundary"]
+        if (
+            boundary["identity"] != checkpoint
+            or boundary["in_transaction"] is not False
+            or boundary["tables"] != row["backend_before"]["tables"]
+            or boundary["path"] != ("/ingest" if row["case_id"].startswith("SEND") else "/confirm")
+            or boundary["value"]
+            != (
+                row["observations"][0]
+                if row["case_id"].startswith("SEND")
+                else row["backend_before"]["tables"]["ack_outbox"][0]
+            )
+        ):
+            raise ValueError("E_ACK_CHECKPOINT_BOUNDARY")
+    else:
+        if (
+            any(checkpoint.get(key) != value for key, value in identity.items())
+            or checkpoint["worker_id"] != row["worker_id"]
+            or checkpoint["boundary"] != entry["crash_checkpoint"]
+            or row["termination"]
+            != (
+                {"method": "NONE"}
+                if entry["kill_action"] == "NONE"
+                else {"method": "Worker.terminate", "worker_id": row["worker_id"]}
+            )
+        ):
+            raise ValueError("E_ACK_TERMINATION")
+        if (
+            entry["harness"] == "LOOPBACK_ACK"
+            and checkpoint["wire_ack"] != row["backend_before"]["tables"]["ack_outbox"][0]
+        ):
+            raise ValueError("E_ACK_WIRE_CHECKPOINT")
+    readers = row["reader_runs"]
+    if len(readers) != 2 or [item["phase"] for item in readers] != ["before", "after"]:
+        raise ValueError("E_ACK_READER_SET")
+    for reader in readers:
+        phase = reader["phase"]
+        run_dir = str((Path(row["case_directory"]) / identity["run_id"]).resolve())
+        reader_input = inputs["reader-" + phase]
+        argv = [
+            str(Path(sys.executable).absolute()),
+            "-I",
+            str(ROOT / "tools/restart_state_reader.py"),
+            run_dir,
+            "--identity",
+            row["inputs"]["reader-" + phase]["path"],
+        ]
+        output = _sqlite_descriptor(row, reader["artifact"], "E_ACK_READER_ARTIFACT")
+        if (
+            reader_input
+            != {
+                "run_dir": run_dir,
+                "run_id": identity["run_id"],
+                "case_id": entry["vector_id"],
+                "checkpoint_id": entry["crash_checkpoint"],
+                "phase": phase,
+            }
+            or reader["exit"] != 0
+            or reader["argv"] != argv
+            or output != {"identity": reader_input, "state": row["backend_" + phase]}
+        ):
+            raise ValueError("E_ACK_READER_OUTPUT")
+        state = row["backend_" + phase]
+        _validate_sqlite_ddl_snapshot(state["tables"])
+        confirms = state["tables"]["ack_cursors"]
+        confirmed = phase == "after" or row["case_id"].startswith(("ACK-05", "ACK-06"))
+        if len(confirms) != int(confirmed):
+            raise ValueError("E_ACK_CONFIRMATION_STATE")
+        if confirmed:
+            outbox = state["tables"]["ack_outbox"][0]
+            expected_confirmation = {
+                "ack_cursor_id": "confirmation:" + outbox["cursor_hash"],
+                **{
+                    key: outbox[key]
+                    for key in (
+                        "run_id",
+                        "browser_run_id",
+                        "producer_id",
+                        "stream_id",
+                        "generation",
+                        "highest_contiguous_sequence",
+                        "cursor_hash",
+                    )
+                },
+                "owner": "BACKEND",
+                "chain_verified": 1,
+                "verified_against": "BACKEND_DURABLE_CHAIN",
+                "previous_ack_cursor_id": None,
+                "recorded_at_us": confirms[0]["recorded_at_us"],
+            }
+            if confirms != [expected_confirmation]:
+                raise ValueError("E_ACK_CONFIRMATION_STATE")
+        stripped = {**state, "tables": {**state["tables"], "ack_cursors": []}}
+        committed = int(phase == "after" or expected["backend_ack"] == "GEN0_Q1_H1")
+        _validate_sqlite_state(stripped, {"observation": row["observations"][0]}, committed)
+    for name, rows in row["backend_before"]["tables"].items():
+        if rows and rows != row["backend_after"]["tables"][name]:
+            raise ValueError("E_ACK_RETAINED_JOURNAL")
+    first_count = (
+        0
+        if entry["harness"] == "CHROME_INDEXEDDB" or row["case_id"].startswith("SEND")
+        else 4
+        if entry["kill_action"] == "NONE"
+        else 1
+    )
+    wire_names = {
+        f"wire-{ordinal}-{serial}.json"
+        for ordinal, count in ((0, first_count), (1, 2))
+        for serial in range(1, count + 1)
+    }
+    if set(row["wire_artifacts"]) != wire_names:
+        raise ValueError("E_ACK_WIRE_SET")
+    for name, descriptor in row["wire_artifacts"].items():
+        wire = _sqlite_descriptor(row, descriptor, "E_ACK_WIRE_ARTIFACT")
+        _, ordinal_text, serial_text = name.removesuffix(".json").split("-")
+        ordinal, serial = int(ordinal_text), int(serial_text)
+        ingest = serial % 2 == 1
+        outbox = row["backend_after"]["tables"]["ack_outbox"][0]
+        confirmation = row["backend_after"]["tables"]["ack_cursors"][0]
+        wanted_wire = {
+            "identity": processes[ordinal]["identity"],
+            "serial": serial,
+            "path": "/ingest" if ingest else "/confirm",
+            "request": {
+                "token": inputs[f"server-input-{ordinal}"]["token"],
+                "value": row["observations"][0] if ingest else outbox,
+            },
+            "response": {"ack": outbox} if ingest else {"confirmation": confirmation},
+        }
+        if wire != wanted_wire or wire != artifacts[name.removesuffix(".json")]:
+            raise ValueError("E_ACK_WIRE_BINDING")
+    if terminal:
+        saved = _sqlite_descriptor(row, row["terminal_artifact"], "E_ACK_TERMINAL_ARTIFACT")
+        if saved != {key: value for key, value in row.items() if key != "terminal_artifact"}:
+            raise ValueError("E_ACK_TERMINAL_ARTIFACT")
 
 
 def aggregate_repair_evidence(

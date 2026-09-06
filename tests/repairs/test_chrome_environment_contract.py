@@ -100,7 +100,7 @@ def test_valid_extension_crash_evidence_is_accepted() -> None:
     validate_qualification_evidence(_valid_evidence())
 
 
-def test_test_extension_has_fixed_separate_identity_and_no_permissions() -> None:
+def test_test_extension_has_fixed_separate_identity_and_loopback_only() -> None:
     production = json.loads((ROOT / "extension/manifest.json").read_text())
     repair = json.loads(
         (ROOT / "extension/test-harness/repair-manifest.json").read_text()
@@ -108,7 +108,7 @@ def test_test_extension_has_fixed_separate_identity_and_no_permissions() -> None
 
     assert repair["key"] != production["key"]
     assert repair["permissions"] == []
-    assert repair["host_permissions"] == []
+    assert repair["host_permissions"] == ["http://127.0.0.1/*"]
     assert repair["web_accessible_resources"] == []
 
 

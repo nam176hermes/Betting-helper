@@ -199,6 +199,7 @@ def run_indexeddb_case(
     browser_binary: Path | None = None,
     mutation: str | None = None,
     operation: str = "crash",
+    full: bool = False,
 ) -> dict[str, Any]:
     from tools.verify_repair_evidence import capture_binding
 
@@ -256,7 +257,7 @@ def run_indexeddb_case(
             "checkpoint_id": entry["crash_checkpoint"],
             "test_nonce": token_hex(16),
             "profile_id": profile_id,
-            "component": "CHROME_INDEXEDDB",
+            "component": entry["harness"],
             "ordinal": 0,
             "pid": process.pid,
         }
@@ -281,6 +282,20 @@ def run_indexeddb_case(
                 json.dumps(value, sort_keys=True, separators=(",", ":")) for value in observations
             ],
         }
+        if full:
+            from tools.run_loopback_ack_crash_matrix import run_browser_handshake
+
+            return run_browser_handshake(
+                entry,
+                workspace,
+                socket,
+                request,
+                identity,
+                evidence_binding,
+                extension,
+                binary,
+                observations,
+            )
         worker_input = workspace / "input.json"
         worker_input.write_text(json.dumps(request, sort_keys=True))
         (workspace / "expected.json").write_text(
@@ -436,11 +451,14 @@ def run_full_repair_evidence(
         for row in run_family(pack, workspace / "unused-no-launch", family, None)["records"]
     }
     indexeddb = run_indexeddb_crash_matrix(
-        pack, workspace / "indexeddb", browser_binary=browser_binary,
+        pack,
+        workspace / "indexeddb",
+        browser_binary=browser_binary,
     )
     replacements = {row["vector_id"]: row for row in indexeddb["records"]}
     expected = {
-        entry["vector_id"] for entry in registry["entries"]
+        entry["vector_id"]
+        for entry in registry["entries"]
         if entry["harness"] == "CHROME_INDEXEDDB"
     }
     if set(replacements) != expected:
@@ -450,7 +468,9 @@ def run_full_repair_evidence(
         for entry in registry["entries"]
     ]
     clock = run_clock_vector_qualification(
-        pack, runtime, evidence_dir=workspace / "clock",
+        pack,
+        runtime,
+        evidence_dir=workspace / "clock",
     )
     records = [*crash, *clock["records"]]
     result = {
@@ -468,6 +488,7 @@ def run_indexeddb_crash_matrix(
     workspace: Path,
     *,
     browser_binary: Path | None = None,
+    full: bool = True,
 ) -> dict[str, Any]:
     entries = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())[
         "entries"
@@ -483,7 +504,10 @@ def run_indexeddb_crash_matrix(
         raise ValueError("E_INDEXEDDB_REQUIRED_CASES")
     records = [
         run_indexeddb_case(
-            entry, workspace / f"case-{uuid4()}", browser_binary=browser_binary,
+            entry,
+            workspace / f"case-{uuid4()}",
+            browser_binary=browser_binary,
+            full=full,
         )
         for entry in selected
     ]
@@ -494,6 +518,6 @@ def run_indexeddb_crash_matrix(
         "executed_vector_ids": [row["vector_id"] for row in records if row["result"] == "PASS"],
         "records": records,
         "killed_child_count": sum(row["result"] == "PASS" for row in records),
-        "qualification_scope": "INDEXEDDB_SPOOL_ONLY",
+        "qualification_scope": "BROWSER_LOOPBACK_ACK" if full else "INDEXEDDB_SPOOL_ONLY",
         "legacy_full_qualification": "HOLD",
     }

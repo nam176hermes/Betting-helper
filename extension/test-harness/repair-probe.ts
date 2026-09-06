@@ -102,11 +102,22 @@ declare global {
       writeSentinel: typeof writeSentinel;
       startWorker: typeof startWorker;
       terminateWorker: typeof terminateWorker;
+      beginWorker: typeof beginWorker;
+      waitWorker: typeof waitWorker;
     }>;
   }
 }
 
 let ownedWorker: { id: string; worker: Worker } | undefined;
+let workerResult: Promise<unknown> | undefined;
+const beginWorker = (workerId: string, input: unknown): object => {
+  workerResult = startWorker(workerId, input);
+  return { worker_id: workerId };
+};
+const waitWorker = async (): Promise<unknown> => {
+  if (!workerResult) throw new Error("E_TEST_WORKER_MISSING");
+  return await workerResult;
+};
 const startWorker = (workerId: string, input: unknown): Promise<unknown> => {
   if (ownedWorker) throw new Error("E_TEST_WORKER_ALREADY_OWNED");
   const worker = new Worker(`indexeddb-crash-child.js?worker_id=${encodeURIComponent(workerId)}`, { type: "module" });
@@ -124,4 +135,4 @@ const terminateWorker = (workerId: string): Readonly<{ method: string; worker_id
   return { method: "Worker.terminate", worker_id: workerId };
 };
 
-window.repairProbe = Object.freeze({ readSentinel, writeSentinel, startWorker, terminateWorker });
+window.repairProbe = Object.freeze({ readSentinel, writeSentinel, startWorker, terminateWorker, beginWorker, waitWorker });

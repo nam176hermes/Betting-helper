@@ -234,7 +234,7 @@ def _start_chrome(
                 "--disable-gpu",
                 "--disable-sync",
                 "--metrics-recording-only",
-                "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost",
+                "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1",
                 "--no-first-run",
                 "--no-default-browser-check",
                 "--remote-debugging-address=127.0.0.1",

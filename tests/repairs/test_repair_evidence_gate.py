@@ -32,7 +32,7 @@ def clock_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
 @pytest.fixture(scope="module")
 def indexeddb_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
     return indexeddb.run_indexeddb_crash_matrix(
-        PACK, tmp_path_factory.mktemp("r08-indexeddb"),
+        PACK, tmp_path_factory.mktemp("r08-indexeddb"), full=False,
     )
 
 

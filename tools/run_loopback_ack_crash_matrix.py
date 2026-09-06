@@ -4,13 +4,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import platform
+import signal
 import sqlite3
 import subprocess
 import sys
 from contextlib import closing
 from pathlib import Path
+from secrets import token_hex
+from time import monotonic, sleep
 from typing import Any, cast
+from uuid import uuid4
 
 from moj_discovery.schema_registry import validate_artifact
 from moj_discovery.store import TABLES, VENDOR
@@ -609,5 +614,315 @@ def run_loopback_ack_crash_matrix(
     workspace: Path,
     *,
     observation_input: dict[str, Any] | None = None,
+    browser_binary: Path | None = None,
 ) -> dict[str, Any]:
-    return run_family(pack, workspace, "LOOPBACK_ACK", observation_input)
+    from tools.run_indexeddb_crash_matrix import PACK, run_indexeddb_case
+
+    registry_path = "docs/registries/crash-harness-registry.v1.json"
+    entries = [
+        row
+        for row in json.loads((pack / registry_path).read_text())["entries"]
+        if row["harness"] == "LOOPBACK_ACK"
+    ]
+    required = [
+        row
+        for row in json.loads((PACK / registry_path).read_text())["entries"]
+        if row["harness"] == "LOOPBACK_ACK"
+    ]
+    if entries != required:
+        raise ValueError("E_ACK_REQUIRED_CASES")
+    if observation_input is not None:
+        # Preserve the explicitly scoped legacy diagnostic API.
+        return run_family(pack, workspace, "LOOPBACK_ACK", observation_input)
+    records = [
+        run_indexeddb_case(
+            row,
+            workspace / str(uuid4()),
+            full=True,
+            operation="deliver",
+            browser_binary=browser_binary,
+        )
+        for row in entries
+    ]
+    return {
+        "result": "PASS"
+        if all(row["result"] == "PASS" for row in records)
+        else "BLOCKED_ENVIRONMENT",
+        "records": records,
+        "executed_vector_ids": [row["case_id"] for row in records if row["result"] == "PASS"],
+        "killed_child_count": sum(
+            row.get("termination", {}).get("method") not in {None, "NONE"} for row in records
+        ),
+        "legacy_full_qualification": "HOLD",
+        "production_authority": "NONE",
+    }
+
+
+def run_browser_handshake(
+    entry: dict[str, Any],
+    case: Path,
+    socket: str,
+    request: dict[str, Any],
+    identity: dict[str, Any],
+    binding: dict[str, Any],
+    extension: Path,
+    binary: Path,
+    observations: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Use the existing browser owner and independent SQLite reader for one full case."""
+    from tools.inspect_restart_state import _checkpoint, _kill_owned_child
+    from tools.run_indexeddb_crash_matrix import _call
+
+    root = Path(__file__).resolve().parents[1]
+    inputs: dict[str, Any] = {}
+    artifacts: dict[str, Any] = {}
+
+    def save(name: str, value: Any, *, is_input: bool = False) -> dict[str, str]:
+        path = case / (name + ".json")
+        path.write_text(json.dumps(value, sort_keys=True, separators=(",", ":")))
+        descriptor = {"path": str(path.resolve()), "sha256": _sha(path)}
+        (inputs if is_input else artifacts)[name] = descriptor
+        return descriptor
+
+    processes: list[dict[str, Any]] = []
+    owned: subprocess.Popen[bytes] | None = None
+    child_identity = {
+        key: value for key, value in request["identity"].items() if key not in {"profile_id", "pid"}
+    }
+
+    def start(restart: bool) -> dict[str, Any]:
+        nonlocal owned
+        config = {
+            "identity": child_identity,
+            "observation": observations[0],
+            "origin": identity["origin"],
+            "token": token_hex(32),
+            "restart": restart,
+        }
+        descriptor = save(f"server-input-{int(restart)}", config, is_input=True)
+        command = [*_trusted_command(), "--browser-server", descriptor["path"]]
+        with (case / f"server-{int(restart)}.log").open("wb") as log:
+            owned = subprocess.Popen(  # noqa: S603 -- owned isolated local synthetic receiver
+                command,
+                cwd=root,
+                stdout=log,
+                stderr=log,
+                start_new_session=True,
+            )
+        ready = case / f"server-{int(restart)}.json"
+        deadline = monotonic() + 10
+        while not ready.is_file() and monotonic() < deadline:
+            if owned.poll() is not None:
+                raise RuntimeError("E_ACK_SERVER_FAILED")
+            sleep(0.02)
+        if not ready.is_file():
+            raise RuntimeError("E_ACK_SERVER_TIMEOUT")
+        actual = json.loads(ready.read_text())
+        if (
+            actual["identity"] != {**child_identity, "pid": owned.pid}
+            or actual["address"][0] != "127.0.0.1"
+        ):
+            raise ValueError("E_ACK_SERVER_IDENTITY")
+        processes.append(
+            {
+                "argv": command,
+                "pid": owned.pid,
+                "pgid": os.getpgid(owned.pid),
+                "identity": actual["identity"],
+                "ready": save(f"server-ready-{int(restart)}", actual),
+                "provenance": _launch_provenance(_trusted_command()),
+            }
+        )
+        return {
+            "endpoint": "http://127.0.0.1:" + str(actual["address"][1]),
+            "token": config["token"],
+        }
+
+    def stop(kill: bool) -> None:
+        if owned is None or owned.poll() is not None or os.getpgid(owned.pid) != owned.pid:
+            raise RuntimeError("E_ACK_SERVER_NOT_OWNED")
+        if kill:
+            if not _kill_owned_child(owned):
+                raise RuntimeError("E_ACK_SERVER_NOT_KILLED")
+        else:
+            os.killpg(owned.pid, signal.SIGTERM)
+        code = owned.wait(timeout=5)
+        if code != (-signal.SIGKILL if kill else -signal.SIGTERM):
+            raise RuntimeError("E_ACK_SERVER_EXIT")
+        processes[-1].update(
+            exit=code,
+            mechanism="POSIX_OWNED_PROCESS_GROUP_SIGKILL"
+            if kill
+            else "POSIX_OWNED_PROCESS_GROUP_SIGTERM_CLEANUP",
+        )
+
+    reader_runs: list[dict[str, Any]] = []
+
+    def read_backend(phase: str) -> dict[str, Any]:
+        run_dir = case / identity["run_id"]
+        reader_input = {
+            "run_dir": str(run_dir.resolve()),
+            "run_id": identity["run_id"],
+            "case_id": entry["vector_id"],
+            "checkpoint_id": entry["crash_checkpoint"],
+            "phase": phase,
+        }
+        descriptor = save("reader-" + phase, reader_input, is_input=True)
+        command = [
+            str(Path(sys.executable).absolute()),
+            "-I",
+            str(root / "tools/restart_state_reader.py"),
+            str(run_dir.resolve()),
+            "--identity",
+            descriptor["path"],
+        ]
+        result = subprocess.run(  # noqa: S603 -- fixed independent read-only local reader
+            command,
+            cwd=root,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        output = json.loads(result.stdout)
+        if output["identity"] != reader_input:
+            raise ValueError("E_ACK_READER_IDENTITY")
+        artifact = save("reader-output-" + phase, output)
+        reader_runs.append(
+            {"phase": phase, "argv": command, "exit": result.returncode, "artifact": artifact}
+        )
+        return cast(dict[str, Any], output["state"])
+
+    def read_browser(phase: str) -> dict[str, Any]:
+        value = {
+            "identity": request["identity"],
+            "options": request["options"],
+            "operation": "read",
+            "observations": [],
+        }
+        save("browser-reader-" + phase, value, is_input=True)
+        worker_id = str(uuid4())
+        result = _call(socket, "startWorker", worker_id, value)
+        _call(socket, "terminateWorker", worker_id)
+        if result.get("worker_id") != worker_id:
+            raise ValueError("E_ACK_READER_WORKER")
+        save("browser-" + phase, result)
+        return result
+
+    try:
+        transport = start(False)
+        request = {**request, "transport": transport}
+        save("worker", request, is_input=True)
+        worker_id = str(uuid4())
+        _call(socket, "beginWorker", worker_id, request)
+        action = entry["kill_action"]
+        if action == "SIGKILL_BACKEND_CHILD":
+            assert owned is not None
+            backend_identity = {**child_identity, "pid": owned.pid}
+            try:
+                _checkpoint(
+                    case / "backend-checkpoint.json", owned, backend_identity, entry["vector_id"]
+                )
+            except RuntimeError:
+                _call(socket, "waitWorker")
+                raise
+            checkpoint = json.loads((case / "backend-checkpoint.json").read_text())
+            save("backend-boundary", json.loads((case / "backend-boundary.json").read_text()))
+            stop(True)
+            termination = {
+                "method": "POSIX_OWNED_PROCESS_GROUP_SIGKILL",
+                "pid": owned.pid,
+                "returncode": -signal.SIGKILL,
+            }
+        else:
+            checkpoint = _call(socket, "waitWorker")
+            if (
+                any(checkpoint.get(key) != value for key, value in identity.items())
+                or checkpoint.get("worker_id") != worker_id
+                or checkpoint.get("boundary") != entry["crash_checkpoint"]
+            ):
+                raise ValueError("E_ACK_WORKER_CHECKPOINT")
+            termination = (
+                {"method": "Worker.terminate", "worker_id": worker_id}
+                if action != "NONE"
+                else {"method": "NONE"}
+            )
+        _call(socket, "terminateWorker", worker_id)
+        if action != "SIGKILL_BACKEND_CHILD":
+            stop(False)
+        save("checkpoint", checkpoint)
+        transport = start(True)
+        actual = read_browser("before")
+        backend_before = read_backend("before")
+        recovery = {
+            **request,
+            "operation": "recover",
+            "transport": transport,
+            "observations": request["observations"][:1] if not actual["entries"] else [],
+        }
+        save("recovery-worker", recovery, is_input=True)
+        recovery_id = str(uuid4())
+        recovery_result = _call(socket, "startWorker", recovery_id, recovery)
+        _call(socket, "terminateWorker", recovery_id)
+        save("recovery-worker-output", recovery_result)
+        browser_after = read_browser("after")
+        backend_after = read_backend("after")
+        stop(False)
+        save("backend-before", backend_before)
+        save("backend-after", backend_after)
+        save("expected", entry["expected_post_restart_state"])
+        wires = {
+            path.name: save(path.stem, json.loads(path.read_text()))
+            for path in sorted(case.glob("wire-*.json"))
+        }
+        row = {
+            "vector_id": entry["vector_id"],
+            "case_id": entry["vector_id"],
+            "case_directory": str(case.resolve()),
+            "status": "PASS",
+            "result": "PASS",
+            "executed": True,
+            "launch_attempted": True,
+            "qualification_scope": "BROWSER_LOOPBACK_ACK",
+            "execution_kind": "BROWSER_LOOPBACK_ACK",
+            "legacy_full_qualification": "HOLD",
+            "identity": identity,
+            "worker_id": worker_id,
+            "checkpoint": checkpoint,
+            "termination": termination,
+            "actual": actual,
+            "backend_before": backend_before,
+            "browser_after": browser_after,
+            "backend_after": backend_after,
+            "observations": observations,
+            "expected": entry["expected_post_restart_state"],
+            "observed_error": None,
+            "comparison": {"matched": True},
+            "evidence_binding": binding,
+            "revision": binding["revision"],
+            "environment": binding["environment"],
+            "inputs": inputs,
+            "artifacts": artifacts,
+            "wire_artifacts": wires,
+            "reader_runs": reader_runs,
+            "backend_processes": processes,
+            "browser": {"executable": str(binary), "sha256": _sha(binary)},
+            "module_hashes": {
+                str(path.relative_to(extension)): _sha(path)
+                for path in sorted(extension.rglob("*.js"))
+            },
+        }
+        from tools.verify_repair_evidence import _verify_browser_ack
+
+        _verify_browser_ack(row, binding, terminal=False)
+        terminal_path = case / "terminal-result.json"
+        terminal_path.write_text(json.dumps(row, sort_keys=True, separators=(",", ":")))
+        row["terminal_artifact"] = {
+            "path": str(terminal_path.resolve()),
+            "sha256": _sha(terminal_path),
+        }
+        return row
+    finally:
+        if owned is not None and owned.poll() is None:
+            _kill_owned_child(owned)
+            owned.wait(timeout=5)

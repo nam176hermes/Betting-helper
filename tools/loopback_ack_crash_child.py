@@ -11,6 +11,7 @@ import sqlite3
 import sys
 from collections.abc import Callable
 from contextlib import closing
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import Any
 
@@ -159,6 +160,7 @@ def recover(case: Path, *, replay: bool = False) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--recover", type=Path)
+    parser.add_argument("--browser-server", type=Path)
     parser.add_argument("--replay", action="store_true")
     parser.add_argument("--vector-id")
     parser.add_argument("--ready", type=Path)
@@ -170,6 +172,9 @@ def main() -> None:
     parser.add_argument("--test-nonce")
     parser.add_argument("--hold", action="store_true")
     args = parser.parse_args()
+    if args.browser_server is not None:
+        browser_server(args.browser_server)
+        return
     if args.recover is not None:
         recover(args.recover, replay=args.replay)
         return
@@ -244,6 +249,114 @@ def main() -> None:
                     with closing(store.connect()) as connection:
                         pause(connection)
                 raise RuntimeError("E_CRASH_BOUNDARY_NOT_REACHED")
+
+
+def browser_server(input_path: Path) -> None:
+    """Disposable loopback transport. Token authorizes this fixture only, never discovery."""
+    config = json.loads(input_path.read_text())
+    if set(config) != {"identity", "observation", "origin", "token", "restart"}:
+        raise ValueError("E_ACK_SERVER_INPUT")
+    case = input_path.parent
+    identity = {**config["identity"], "pid": os.getpid()}
+    base = config["observation"]
+    store = (
+        RunStore(case / base["discovery_run_id"] / "run.sqlite3")
+        if config["restart"]
+        else provision(case, base)
+    )
+    with closing(store.connect()):
+        pass
+    checkpoint = identity["checkpoint_id"] if not config["restart"] else ""
+    serial = 0
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, _format: str, *args: object) -> None:
+            pass
+
+        def do_OPTIONS(self) -> None:
+            self.send_response(204)
+            self.send_header("Access-Control-Allow-Origin", config["origin"])
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Access-Control-Allow-Methods", "POST")
+            self.end_headers()
+
+        def do_POST(self) -> None:
+            nonlocal serial
+            size = int(self.headers.get("Content-Length", "0"))
+            (case / "request-metadata.json").write_text(
+                json.dumps(
+                    {
+                        "origin": self.headers.get("Origin"),
+                        "path": self.path,
+                        "size": size,
+                    }
+                )
+            )
+            if (
+                self.headers.get("Origin") != config["origin"]
+                or not 0 < size < 65536
+                or self.path not in {"/ingest", "/confirm"}
+            ):
+                self.send_error(403)
+                return
+            request = json.loads(self.rfile.read(size))
+            if set(request) != {"token", "value"} or request["token"] != config["token"]:
+                self.send_error(403)
+                return
+            serial += 1
+            value = request["value"]
+
+            def pause() -> None:
+                with closing(store.connect()) as connection:
+                    witness = {
+                        "identity": identity,
+                        "path": self.path,
+                        "value": value,
+                        "in_transaction": connection.in_transaction,
+                        "tables": read_journal(connection),
+                    }
+                (case / "backend-boundary.json").write_text(json.dumps(witness, sort_keys=True))
+                ready = case / "backend-checkpoint.json"
+                temporary = ready.with_suffix(".tmp")
+                temporary.write_text(json.dumps(identity, sort_keys=True))
+                temporary.replace(ready)
+                while True:
+                    signal.pause()
+
+            if self.path == "/ingest":
+                if value != base:
+                    raise ValueError("E_ACK_SERVER_OBSERVATION")
+                if checkpoint == "send_01_after_send_before_backend_begin":
+                    pause()
+                result = {"ack": Ingestor(store).apply(value)}
+            else:
+                if checkpoint == "ack_04_before_backend_confirmation_commit":
+                    pause()
+                result = {"confirmation": Ingestor(store).confirm_ack(value)}
+                if checkpoint == "ack_05_after_backend_confirmation_commit":
+                    pause()
+            record = {
+                "identity": identity,
+                "request": request,
+                "path": self.path,
+                "response": result,
+                "serial": serial,
+            }
+            (case / f"wire-{int(config['restart'])}-{serial}.json").write_text(
+                json.dumps(record, sort_keys=True)
+            )
+            data = json.dumps(result, sort_keys=True).encode()
+            self.send_response(200)
+            self.send_header("Access-Control-Allow-Origin", config["origin"])
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+    with HTTPServer(("127.0.0.1", 0), Handler) as server:
+        ready = {"identity": identity, "address": list(server.server_address)}
+        (case / f"server-{int(config['restart'])}.json").write_text(json.dumps(ready))
+        server.serve_forever(poll_interval=0.05)
 
 
 if __name__ == "__main__":
