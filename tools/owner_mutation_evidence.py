@@ -414,6 +414,10 @@ def browser_input(
     from tools.run_indexeddb_crash_matrix import _call
     from tools.verify_repair_evidence import _verify_browser_ack
 
+    module_hashes_before = {
+        str(path.relative_to(extension)): _artifact(path)["sha256"]
+        for path in sorted(extension.rglob("*.js"))
+    }
     initialize = {
         "identity": request["identity"],
         "options": request["options"],
@@ -464,6 +468,13 @@ def browser_input(
     retain("backend-before", backend_before)
     retain("backend-after", backend_after)
     retain("expected", entry["expected_post_restart_state"])
+    module_hashes_after = {
+        str(path.relative_to(extension)): _artifact(path)["sha256"]
+        for path in sorted(extension.rglob("*.js"))
+    }
+    execution_binding = {"before": module_hashes_before, "after": module_hashes_after}
+    execution_binding_path = case / "typescript-execution-binding.json"
+    retain("typescript-execution-binding", execution_binding)
     row = {
         "case_id": entry["vector_id"],
         "vector_id": entry["vector_id"],
@@ -502,9 +513,9 @@ def browser_input(
             "sentinel": sentinel,
         },
         "browser_provenance": {"launch": launch, "before": browser_before, "after": browser_after},
-        "module_hashes": {
-            str(p.relative_to(extension)): _artifact(p)["sha256"] for p in extension.rglob("*.js")
-        },
+        "module_hashes": module_hashes_after,
+        "typescript_execution_binding": execution_binding,
+        "typescript_execution_binding_artifact": _artifact(execution_binding_path),
     }
     _verify_browser_ack(row, binding, terminal=False, input_mutation=True)
     row["terminal_artifact"] = save(case / "terminal-result.json", row)
