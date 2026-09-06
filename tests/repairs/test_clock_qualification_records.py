@@ -9,6 +9,7 @@ from typing import Any
 import pytest
 
 from tools import run_clock_vector_qualification as runner
+from tools import verify_repair_evidence as evidence_gate
 
 ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
@@ -142,9 +143,56 @@ def test_candidate_proof_and_release_mapping_mutations_execute_real_operations(
     release = rows["release_mapping_close"]["actual"]
     for phase in ("control", "trial"):
         for language in ("python", "typescript"):
-            assert release[phase]["actual"][language]["mapping_close_executed"] is True
+            assert "mapping_close_executed" not in release[phase]["actual"][language]
+            assert release[phase]["operation_metadata"][language][
+                "mapping_close_executed"
+            ] is True
     assert release["control"]["actual"]["python"]["accepted"] is True
     assert release["trial"]["actual"]["python"]["error"] == "E_MAPPING_CLOSED"
+
+
+def test_release_mapping_guard_bypass_makes_mutation_survive_and_fail_qualification(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    original = runner._mutations
+
+    def bypass(*args: Any, **kwargs: Any) -> list[dict[str, Any]]:
+        return original(*args, **kwargs, bypass_release_mapping_guard=True)
+
+    monkeypatch.setattr(runner, "_mutations", bypass)
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    mutation = next(
+        row for row in result["mutation_records"] if row["case_id"] == "release_mapping_close"
+    )
+    assert mutation["executed"] is True
+    assert mutation["detected"] is False
+    assert mutation["actual"]["trial"]["status"] == "PASS"
+    assert result["mutation_survivors"] == 1
+    assert result["result"] == "FAIL"
+
+
+@pytest.mark.parametrize("damage", ["tamper", "remove"])
+def test_imported_coherence_javascript_is_bound_and_damage_fails_evidence(
+    tmp_path: Path, damage: str,
+) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    row = next(item for item in result["records"] if item["case_id"] == "RELEASE-POS-01")
+    executable = ROOT / "extension/.test-build/src/contracts/clock-coherence.js"
+    key = "extension/.test-build/src/contracts/clock-coherence.js"
+    assert key in row["evidence_binding"]["source_sha256"]
+    assert str(executable.resolve()) in row["code"]["sha256"]
+    original = executable.read_bytes()
+    try:
+        if damage == "tamper":
+            executable.write_bytes(original + b"\n// tampered\n")
+        else:
+            executable.unlink()
+        checked = evidence_gate.aggregate_repair_evidence([row["case_id"]], [row])
+        assert checked["result"] == "FAIL"
+        assert any("E_REPAIR_STALE_BINDING" in error["error"]
+                   or "E_REPAIR_SOURCE" in error["error"] for error in checked["errors"])
+    finally:
+        executable.write_bytes(original)
 
 
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(

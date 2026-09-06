@@ -161,14 +161,14 @@ const { readFileSync, readdirSync } = require("node:fs");
       const mappingId = c.release_mapping_close_bound
         ? c.input.proof_bound_mapping_ids[0] : `MAP:${"f".repeat(64)}`;
       const history = module.closeClockMapping(mappingId, "SLEEP_RESUME");
-      const valid = !history.some(item =>
+      const valid = c.bypass_release_mapping_guard || !history.some(item =>
         c.input.proof_bound_mapping_ids.includes(item.mapping_id));
       input = { ...c.input, proof_bound_mappings_open_unclosed_valid_at_release: valid };
       closureEvidence = { mapping_close_executed: true, closed_mapping_id: mappingId, history };
     }
     value = c.handler === "accept_candidate"
       ? coherence.acceptCandidate(input) : coherence.evaluateRelease(input);
-    if (closureEvidence) value = { ...value, ...closureEvidence };
+    if (closureEvidence) value.__operation_metadata = closureEvidence;
     if (c.input.schema_record) {
       const schemas = readdirSync(process.argv[3]).filter(name => name.endsWith(".json"))
         .map(name => JSON.parse(readFileSync(process.argv[3] + "/" + name, "utf8")));
@@ -208,6 +208,7 @@ def _source_age(actual: dict[str, Any]) -> dict[str, Any]:
 def _python(
     case: dict[str, Any], *, mutate_closed_state: bool = False,
     release_mapping_close_bound: bool | None = None,
+    bypass_release_mapping_guard: bool = False,
 ) -> dict[str, Any]:
     handler = case["handler"]
     actual: dict[str, Any]
@@ -287,16 +288,18 @@ def _python(
             history = ClockMapper().close(str(mapping_id), "SLEEP_RESUME")
             release_input = {
                 **release_input,
-                "proof_bound_mappings_open_unclosed_valid_at_release": not any(
-                    closure.mapping_id in case["input"]["proof_bound_mapping_ids"]
-                    for closure in history
+                "proof_bound_mappings_open_unclosed_valid_at_release": (
+                    bypass_release_mapping_guard or not any(
+                        closure.mapping_id in case["input"]["proof_bound_mapping_ids"]
+                        for closure in history
+                    )
                 ),
             }
             actual = CoherenceController().evaluate_release(release_input)
-            actual.update(
-                mapping_close_executed=True, closed_mapping_id=mapping_id,
-                history=[asdict(item) for item in history],
-            )
+            actual["__operation_metadata"] = {
+                "mapping_close_executed": True, "closed_mapping_id": mapping_id,
+                "history": [asdict(item) for item in history],
+            }
         else:
             actual = CoherenceController().evaluate_release(release_input)
     else:
@@ -323,12 +326,14 @@ def _python(
 def _typescript(
     case: dict[str, Any], runtime: Path, *, mutate_closed_state: bool = False,
     release_mapping_close_bound: bool | None = None,
+    bypass_release_mapping_guard: bool = False,
 ) -> dict[str, Any]:
     # Expected fields and IDs never cross the evaluator boundary.
     payload = {
         "handler": case["handler"], "input": case["input"],
         "mutate_closed_state": mutate_closed_state,
         "release_mapping_close_bound": release_mapping_close_bound,
+        "bypass_release_mapping_guard": bypass_release_mapping_guard,
     }
     if case["handler"] in {"raw", "stored"}:
         payload.update({key: case[key] for key in ("raw", "stored", "guardrails")})
@@ -527,8 +532,8 @@ def _case(entry: dict[str, Any], vectors: dict[str, Any]) -> dict[str, Any]:
                 "expected_successor_distinct",
             }},
             "controller_state": "NEW_EPOCH_PENDING",
-            "predecessor_epoch_id": "EPOCH:predecessor",
-            "candidate_epoch_id": "EPOCH:candidate",
+            "predecessor_epoch_id": "EPOCH:" + "1" * 64,
+            "candidate_epoch_id": "EPOCH:" + "2" * 64,
             "proof_verified": True,
             "candidate_created": True,
             "candidate_distinct_from_predecessor": True,
@@ -881,13 +886,16 @@ def _coherence_sql_observation(
 def _execute(case: dict[str, Any], runtime: Path, directory: Path,
              context: dict[str, Any], *, corrupt_both: bool = False,
              mutate_closed_state: bool = False,
-             release_mapping_close_bound: bool | None = None) -> dict[str, Any]:
+             release_mapping_close_bound: bool | None = None,
+             bypass_release_mapping_guard: bool = False) -> dict[str, Any]:
     actual: dict[str, Any] = {}
     status, error, executed = "NOT_IMPLEMENTED", "E_CLOCK_NO_EXECUTABLE_ADAPTER", False
     drift: bool | None = None
     comparison: dict[str, Any] = {"matched": False, "diff": {}}
     exits: dict[str, Any] = {"python": None, "typescript": None}
     evaluator_artifacts: dict[str, dict[str, str]] = {}
+    operation_metadata: dict[str, dict[str, Any]] = {}
+    operation_metadata_artifacts: dict[str, dict[str, str]] = {}
     sql_observation: dict[str, Any] | None = None
     try:
         if case["handler"] in {
@@ -902,13 +910,19 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
             actual["python"] = _python(
                 case, mutate_closed_state=mutate_closed_state,
                 release_mapping_close_bound=release_mapping_close_bound,
+                bypass_release_mapping_guard=bypass_release_mapping_guard,
             )
             exits["python"] = 0
             actual["typescript"] = _typescript(
                 case, runtime, mutate_closed_state=mutate_closed_state,
                 release_mapping_close_bound=release_mapping_close_bound,
+                bypass_release_mapping_guard=bypass_release_mapping_guard,
             )
             exits["typescript"] = 0
+            for language in ("python", "typescript"):
+                metadata = actual[language].pop("__operation_metadata", None)
+                if metadata is not None:
+                    operation_metadata[language] = metadata
             if corrupt_both:
                 for language in ("python", "typescript"):
                     actual[language]["network_rtt_us"] = 0
@@ -921,6 +935,10 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
             evaluator_artifacts = {
                 language: _write_artifact(directory, f"{language}.json", value)
                 for language, value in actual.items()
+            }
+            operation_metadata_artifacts = {
+                language: _write_artifact(directory, f"{language}-operation.json", value)
+                for language, value in operation_metadata.items()
             }
             sql_observation = None
             if case["handler"] == "validate_midpoint":
@@ -966,6 +984,9 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                      "available": False} if status == "BLOCKED_ENVIRONMENT" else None)
     fields = ({"comparison": comparison, "cross_language_drift": drift, "command_exit": exits,
                "evaluator_artifacts": evaluator_artifacts,
+               **({"operation_metadata": operation_metadata,
+                   "operation_metadata_artifacts": operation_metadata_artifacts}
+                  if operation_metadata else {}),
                **({"sql_observation": sql_observation,
                    "sql_observation_artifact": _write_artifact(
                        directory, "sqlite.json", sql_observation,
@@ -1000,10 +1021,20 @@ def verify_record(row: dict[str, Any]) -> bool:
             hashlib.sha256(Path(sql_reference["path"]).read_bytes()).hexdigest()
             == sql_reference["sha256"] == _hash(row["sql_observation"])
         )
+        operation_metadata = row.get("operation_metadata", {})
+        operation_artifacts = row.get("operation_metadata_artifacts", {})
+        operation_match = (
+            set(operation_metadata) == set(operation_artifacts)
+            and all(
+            hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            == reference["sha256"] == _hash(operation_metadata[language])
+            for language, reference in operation_artifacts.items()
+            )
+        )
         return bool(digest == artifact["sha256"]
                 and artifact["sha256"] == _hash(row["actual"])
                 and hashes_match
-                and evaluator_match and sql_match
+                and evaluator_match and sql_match and operation_match
                 and all(verify_record(row["actual"][key]) for key in ("control", "trial")
                         if key in row["actual"]))
     except (OSError, KeyError, TypeError, ValueError):
@@ -1034,8 +1065,10 @@ def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[st
             "required_id_set_complete": exact}
 
 
-def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
-               context: dict[str, Any]) -> list[dict[str, Any]]:
+def _mutations(
+    cases: list[dict[str, Any]], runtime: Path, directory: Path,
+    context: dict[str, Any], *, bypass_release_mapping_guard: bool = False,
+) -> list[dict[str, Any]]:
     rows = []
     golden = next(c for c in cases if c["section"] == "golden_mapping")
     negative = next(c for c in cases if c["case_id"] == "MAP-NEG-01-TARGET-ORDER")
@@ -1073,15 +1106,6 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
             }
         elif name == "release_mapping_close":
             original = copy.deepcopy(release_case)
-            mapping_id = "MAP:" + "f" * 64
-            closure = {
-                "mapping_id": mapping_id, "reason": "SLEEP_RESUME",
-                "permanent": True, "reopen_permitted": False,
-            }
-            original["expected"].update(
-                mapping_close_executed=True, closed_mapping_id=mapping_id,
-                history=[closure],
-            )
         control = _execute(
             copy.deepcopy(original), runtime, workspace / "control", context,
             release_mapping_close_bound=(False if name == "release_mapping_close" else None),
@@ -1106,6 +1130,10 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
                          mutate_closed_state=name == "post_close_selection",
                          release_mapping_close_bound=(
                              True if name == "release_mapping_close" else None
+                         ),
+                         bypass_release_mapping_guard=(
+                             bypass_release_mapping_guard
+                             if name == "release_mapping_close" else False
                          ))
         observed = [trial]
         if name == "missing_result":
@@ -1159,6 +1187,7 @@ def run_clock_vector_qualification(
              runtime / "extension/src/canonical.ts",
              runtime / "extension/src/schema-registry.ts",
              runtime / "extension/.test-build/src/contracts/clock-vectors.js",
+             runtime / "extension/.test-build/src/contracts/clock-coherence.js",
              pack / _VECTOR_PATH, pack / _COVERAGE_PATH,
              pack / "sql/discovery-store-v1.sql",
              pack / "schemas/clock-coherence-records.schema.json",

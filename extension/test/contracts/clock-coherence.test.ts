@@ -14,8 +14,8 @@ import {
 
 const releaseInput = (): ReleaseInput => ({
   controller_state: "NEW_EPOCH_PENDING",
-  predecessor_epoch_id: "EPOCH:predecessor",
-  candidate_epoch_id: "EPOCH:candidate",
+  predecessor_epoch_id: `EPOCH:${"1".repeat(64)}`,
+  candidate_epoch_id: `EPOCH:${"2".repeat(64)}`,
   predecessor_closed: true,
   proof_status: "OBSERVED",
   proof_verified: true,
@@ -86,4 +86,25 @@ void test("candidate and release gates fail closed", () => {
   assert.deepEqual(evaluateRelease({ ...releaseInput(), proof_bindings_valid: false }), {
     accepted: false, error: "E_RELEASE_BINDING", state: "NEW_EPOCH_PENDING",
   });
+});
+
+void test("release admission validates state and epoch IDs with frozen precedence", () => {
+  for (const [changes, error] of [
+    [{ controller_state: null }, "E_INVALID_COHERENCE_TRANSITION"],
+    [{ controller_state: "OPEN", candidate_epoch_id: null }, "E_INVALID_COHERENCE_TRANSITION"],
+    [{ predecessor_epoch_id: null }, "E_RELEASE_BINDING"],
+    [{ predecessor_epoch_id: 1 }, "E_RELEASE_BINDING"],
+    [{ predecessor_epoch_id: "bad" }, "E_RELEASE_BINDING"],
+    [{ candidate_epoch_id: null, predecessor_closed: false }, "E_RELEASE_BINDING"],
+    [{ candidate_epoch_id: 1 }, "E_RELEASE_BINDING"],
+    [{ candidate_epoch_id: "bad" }, "E_RELEASE_BINDING"],
+    [{ candidate_epoch_id: `EPOCH:${"1".repeat(64)}`, predecessor_permanently_closed: false },
+      "E_INVALID_COHERENCE_TRANSITION"],
+    [{ predecessor_reopen_requested: true, controller_state: null },
+      "E_PREDECESSOR_EPOCH_IMMUTABLE"],
+  ] as const) {
+    const result = evaluateRelease({ ...releaseInput(), ...changes } as ReleaseInput);
+    assert.equal(result.accepted, false);
+    assert.equal(result.error, error);
+  }
 });

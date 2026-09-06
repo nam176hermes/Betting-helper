@@ -20,8 +20,8 @@ def _release_input() -> dict[str, object]:
            if key not in {"id", "expected_transition", "expected_predecessor_state",
                           "expected_successor_distinct"}},
         "controller_state": "NEW_EPOCH_PENDING",
-        "predecessor_epoch_id": "EPOCH:predecessor",
-        "candidate_epoch_id": "EPOCH:candidate",
+        "predecessor_epoch_id": "EPOCH:" + "1" * 64,
+        "candidate_epoch_id": "EPOCH:" + "2" * 64,
         "proof_verified": True,
         "candidate_created": True,
         "candidate_distinct_from_predecessor": True,
@@ -147,3 +147,43 @@ def test_release_positive_and_all_frozen_negative_results() -> None:
         assert result["accepted"] is False
         assert result["error"] == vector["expected_error"]
         assert result["state"] == vector["expected_state"]
+
+
+@pytest.mark.parametrize(
+    ("changes", "error"),
+    [
+        ({"controller_state": None}, "E_INVALID_COHERENCE_TRANSITION"),
+        ({"controller_state": "OPEN"}, "E_INVALID_COHERENCE_TRANSITION"),
+        ({"predecessor_epoch_id": None}, "E_RELEASE_BINDING"),
+        ({"predecessor_epoch_id": 1}, "E_RELEASE_BINDING"),
+        ({"predecessor_epoch_id": "bad"}, "E_RELEASE_BINDING"),
+        ({"candidate_epoch_id": None}, "E_RELEASE_BINDING"),
+        ({"candidate_epoch_id": 1}, "E_RELEASE_BINDING"),
+        ({"candidate_epoch_id": "bad"}, "E_RELEASE_BINDING"),
+        ({"candidate_epoch_id": "EPOCH:" + "1" * 64}, "E_INVALID_COHERENCE_TRANSITION"),
+    ],
+)
+def test_release_admission_rejects_invalid_state_and_epoch_ids(
+    changes: dict[str, object], error: str,
+) -> None:
+    result = CoherenceController().evaluate_release({**_release_input(), **changes})
+    assert result["accepted"] is False
+    assert result["error"] == error
+
+
+@pytest.mark.parametrize(
+    ("changes", "error"),
+    [
+        ({"predecessor_reopen_requested": True, "controller_state": None},
+         "E_PREDECESSOR_EPOCH_IMMUTABLE"),
+        ({"controller_state": "OPEN", "candidate_epoch_id": None},
+         "E_INVALID_COHERENCE_TRANSITION"),
+        ({"candidate_epoch_id": None, "predecessor_closed": False}, "E_RELEASE_BINDING"),
+        ({"candidate_epoch_id": "EPOCH:" + "1" * 64,
+          "predecessor_permanently_closed": False}, "E_INVALID_COHERENCE_TRANSITION"),
+    ],
+)
+def test_release_admission_precedence_is_frozen(
+    changes: dict[str, object], error: str,
+) -> None:
+    assert CoherenceController().evaluate_release({**_release_input(), **changes})["error"] == error

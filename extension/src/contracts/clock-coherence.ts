@@ -25,6 +25,8 @@ const transitions: Readonly<Record<string, string>> = {
 };
 
 const rejected = (error: string, state: string): Evaluation => ({ accepted: false, error, state });
+const validArtifactId = (value: unknown): value is string =>
+  typeof value === "string" && /^[A-Z][A-Z0-9_]*:[0-9a-f]{64}$/.test(value);
 
 export const validateCoherenceArtifact = (
   artifact: unknown,
@@ -58,7 +60,9 @@ export const acceptCandidate = (value: Record<string, unknown>): Evaluation => {
 
 export const evaluateRelease = (value: ReleaseInput): Evaluation => {
   if (value.predecessor_reopen_requested === true) return rejected("E_PREDECESSOR_EPOCH_IMMUTABLE", "CLOSED_FOREVER");
-  if (value.candidate_created !== true || !value.candidate_epoch_id) return rejected("E_RELEASE_BINDING", "NEW_EPOCH_PENDING");
+  if (value.controller_state !== "NEW_EPOCH_PENDING") return rejected("E_INVALID_COHERENCE_TRANSITION", "NEW_EPOCH_PENDING");
+  if (value.candidate_created !== true || !validArtifactId(value.predecessor_epoch_id) ||
+      !validArtifactId(value.candidate_epoch_id)) return rejected("E_RELEASE_BINDING", "NEW_EPOCH_PENDING");
   if (value.candidate_epoch_id === value.predecessor_epoch_id) return rejected("E_INVALID_COHERENCE_TRANSITION", "NEW_EPOCH_PENDING");
   if (value.predecessor_permanently_closed !== true) return rejected("E_NON_GENESIS_PREDECESSOR_NOT_CLOSED", "WAITING_FOR_RESNAPSHOT");
   if (value.predecessor_closed !== true) return rejected("E_PREDECESSOR_NOT_CLOSED", "WAITING_FOR_RESNAPSHOT");

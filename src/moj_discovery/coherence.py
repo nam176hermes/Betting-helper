@@ -1,3 +1,4 @@
+import re
 from collections.abc import Mapping
 
 _TRANSITIONS = {
@@ -12,6 +13,14 @@ _TRANSITIONS = {
 
 def _rejected(error: str, state: str) -> dict[str, object]:
     return {"accepted": False, "error": error, "state": state}
+
+
+def _valid_artifact_id(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and re.fullmatch(r"[A-Z][A-Z0-9_]*:[0-9a-f]{64}", value) is not None
+    )
+
 
 class CoherenceController:
     def transition(self, state: str, reason: str) -> str:
@@ -40,9 +49,17 @@ class CoherenceController:
     def evaluate_release(self, value: Mapping[str, object]) -> dict[str, object]:
         if value.get("predecessor_reopen_requested") is True:
             return _rejected("E_PREDECESSOR_EPOCH_IMMUTABLE", "CLOSED_FOREVER")
-        if value.get("candidate_created") is not True or not value.get("candidate_epoch_id"):
+        if value.get("controller_state") != "NEW_EPOCH_PENDING":
+            return _rejected("E_INVALID_COHERENCE_TRANSITION", "NEW_EPOCH_PENDING")
+        predecessor_id = value.get("predecessor_epoch_id")
+        candidate_id = value.get("candidate_epoch_id")
+        if (
+            value.get("candidate_created") is not True
+            or not _valid_artifact_id(predecessor_id)
+            or not _valid_artifact_id(candidate_id)
+        ):
             return _rejected("E_RELEASE_BINDING", "NEW_EPOCH_PENDING")
-        if value.get("candidate_epoch_id") == value.get("predecessor_epoch_id"):
+        if candidate_id == predecessor_id:
             return _rejected("E_INVALID_COHERENCE_TRANSITION", "NEW_EPOCH_PENDING")
         if value.get("predecessor_permanently_closed") is not True:
             return _rejected("E_NON_GENESIS_PREDECESSOR_NOT_CLOSED", "WAITING_FOR_RESNAPSHOT")
