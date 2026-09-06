@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Hybrid Discovery BH-R04 Storage Probe",
+  "version": "1.0.0",
+  "description": "Test-only isolated IndexedDB durability probe.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6Hnppd/biFHgRgiaWdDk3htCnl4QytyRwmOOaZsonocOcEEJyxmklTcoJGABEoH7E67QM9C0E1ACOAJfKtBd+Vvl6bc0eFnzUeUrq1k4stAniR2dWSx3hsQMWoPQoozSd3mXvFofFQT11aJPWkpF+Su+BG5hsG/l9xk9ji3l6FFUJQPGFHhY5/CZbyZfbzSq1gimUik2K5l2V6PLEe8iLh4GcTIzdksFbwj1F/jCvgGFNTdOcGjdsthclSXcnbGKbrjStl8jgiw4YlW/r7N0anoLTEtCGiWwN5ZNeaCxpQn25JVYaz52IXfmeB6sE2d5h/ffctm482COOQKZ9VmGYQIDAQAB",
+  "permissions": [],
+  "host_permissions": [],
+  "web_accessible_resources": [],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
