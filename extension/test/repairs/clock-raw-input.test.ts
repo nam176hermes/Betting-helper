@@ -73,6 +73,34 @@ void test("adapter metadata is inert", () => {
   assert.deepEqual(clock.evaluateClockMappingVector({ ...golden, id: "ARBITRARY", expected: { accepted: false, network_rtt_us: 0 } }, guards), clock.evaluateClockMappingVector(golden, guards));
 });
 
+void test("sparse stored intervals reject with the stored validation error", () => {
+  const missingLower = new Array<number>(2);
+  missingLower[1] = 5230;
+  const missingUpper = new Array<number>(2);
+  missingUpper[0] = 4770;
+  for (const interval of [new Array<unknown>(2), missingLower, missingUpper]) {
+    const actual = clock.validateStoredMapping({ offset_interval_us: interval }, golden, guards);
+    assert.equal(actual.error, "E_STORED_MAPPING_MISMATCH");
+    assert.equal(actual.accepted, false);
+  }
+});
+
+void test("sparse raw interval tuples and collections reject without throwing", () => {
+  const missingLower = new Array<number>(2);
+  missingLower[1] = 5230;
+  const missingUpper = new Array<number>(2);
+  missingUpper[0] = 4770;
+  const cases = [
+    [new Array<unknown>(2)], [missingLower], [missingUpper],
+    new Array<unknown>(2), [[4770, 5230], ...new Array<unknown>(1)],
+  ];
+  for (const intervals of cases) {
+    const actual = clock.deriveClockMapping({ ...golden, eligible_target_intervals: intervals as [number, number][] }, guards);
+    assert.equal(actual.error, "E_INVALID_RAW_CLOCK_INPUT");
+    assert.equal(actual.accepted, false);
+  }
+});
+
 void test("odd-width intervals enclose both endpoints including beyond 2^53", () => {
   for (const shift of [0n, -10000n, 2n ** 60n, -(2n ** 60n)]) {
     const actual = clock.deriveClockMapping({ ...golden, t2: 1005200n + shift, t3: 1005300n + shift, t4: 1000501n }, guards);

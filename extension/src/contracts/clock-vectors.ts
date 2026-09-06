@@ -24,6 +24,7 @@ const rawFields = new Set(["source", "target", ...timestamps, ...endpointFields,
 const storedFields = new Set(["accepted", "error", "raw_lower_us", "raw_upper_us", "network_rtt_us", "padding_us", "offset_interval_us", "offset_midpoint_us", "base_uncertainty_us", "offset_lower_us", "offset_upper_us"]);
 const limitFields = ["max_network_rtt_us", "max_base_uncertainty_us", "minimum_valid_samples", "max_mapping_segment_age_us", "wall_step_tolerance_us"] as const;
 const isInteger = (n: unknown): n is Integer => typeof n === "bigint" || (typeof n === "number" && Number.isSafeInteger(n));
+const isIntegerPair = (value: unknown): value is [Integer, Integer] => Array.isArray(value) && value.length === 2 && Object.hasOwn(value, 0) && Object.hasOwn(value, 1) && isInteger(value[0]) && isInteger(value[1]);
 const isRecord = (value: unknown): value is MappingInput => typeof value === "object" && value !== null && !Array.isArray(value);
 const nonempty = (value: unknown): value is string => typeof value === "string" && value.length > 0;
 
@@ -56,7 +57,8 @@ const validInput = (raw: unknown, guards: unknown): boolean => {
   if ("proven_mapping" in raw && typeof raw.proven_mapping !== "boolean") return false;
   if ("eligible_target_intervals" in raw) {
     const intervals = raw.eligible_target_intervals;
-    if (!Array.isArray(intervals) || !intervals.length || intervals.some(i => !Array.isArray(i) || i.length !== 2 || !i.every(isInteger))) return false;
+    if (!Array.isArray(intervals) || !intervals.length) return false;
+    for (const interval of intervals) if (!isIntegerPair(interval)) return false;
   }
   return true;
 };
@@ -109,7 +111,7 @@ export const validateStoredMapping = (stored: MappingInput, raw: RawClockInput, 
   const normalized: MappingInput = {};
   for (const [key, value] of Object.entries(stored)) {
     if (key === "offset_interval_us") {
-      if (!Array.isArray(value) || value.length !== 2 || !value.every(isInteger)) return reject(actual, "E_STORED_MAPPING_MISMATCH");
+      if (!isIntegerPair(value)) return reject(actual, "E_STORED_MAPPING_MISMATCH");
       normalized[key] = value.map(v => BigInt(v));
     } else if (typeof expected[key] === "bigint") {
       if (!isInteger(value)) return reject(actual, "E_STORED_MAPPING_MISMATCH");
