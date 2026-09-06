@@ -8,15 +8,21 @@ import os
 import signal
 import socket
 import sqlite3
+import sys
 from collections.abc import Callable
 from contextlib import closing
 from pathlib import Path
 from typing import Any
 
-from moj_discovery.canonical import canonical_content_hash
-from moj_discovery.ingest import Ingestor
-from moj_discovery.store import VENDOR, RunStore, read_journal
-from tools.restart_state_reader import read_restart_state
+if __package__ in {None, ""}:
+    # Direct -I invocation ignores caller cwd/PYTHONPATH; load only this checkout.
+    root = Path(__file__).resolve().parents[1]
+    sys.path[:0] = [str(root / "src"), str(root)]
+
+from moj_discovery.canonical import canonical_content_hash  # noqa: E402
+from moj_discovery.ingest import Ingestor  # noqa: E402
+from moj_discovery.store import VENDOR, RunStore, read_journal  # noqa: E402
+from tools.restart_state_reader import read_restart_state  # noqa: E402
 
 # SQLite traces a statement BEFORE executing it. Pause before the next statement,
 # never pretend the COMMIT trace is a checkpoint inside SQLite's commit machinery.

@@ -1,6 +1,7 @@
 """Backend-only real process evidence; never extension/46-case qualification."""
 
 import copy
+import hashlib
 import importlib
 import json
 import os
@@ -53,6 +54,21 @@ def test_actual_ingest_checkpoint_kill_reopen_and_ack_replay(tmp_path: Path, pre
     assert row["input_sha256"] and row["actual_state_sha256"] and row["checkpoint_sha256"]
     assert row["comparison"] == "PASS"
     assert "expected" not in (case / "scenario.json").read_text()
+    provenance = row["launch_provenance"]
+    assert provenance["argv"][:3] == provenance["command_prefix"]
+    assert provenance["command_prefix"][1:] == [
+        "-I",
+        str((ROOT / "tools/loopback_ack_crash_child.py").resolve()),
+    ]
+    for component in ("executable", "entrypoint"):
+        assert (
+            provenance[component]["sha256"]
+            == hashlib.sha256(Path(provenance[component]["path"]).read_bytes()).hexdigest()
+        )
+    for name in ("reopen", "replay"):
+        launch = json.loads((case / f"{name}-launch.json").read_text())
+        assert launch["argv"][:3] == provenance["command_prefix"]
+        assert launch["entrypoint"] == provenance["entrypoint"]
 
 
 def test_wrong_expected_is_detected_after_real_execution(tmp_path: Path) -> None:

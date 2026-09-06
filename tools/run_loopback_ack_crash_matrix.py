@@ -5,13 +5,15 @@ from __future__ import annotations
 import hashlib
 import json
 import platform
+import sqlite3
 import subprocess
 import sys
+from contextlib import closing
 from pathlib import Path
 from typing import Any, cast
 
 from moj_discovery.schema_registry import validate_artifact
-from moj_discovery.store import VENDOR
+from moj_discovery.store import TABLES, VENDOR
 from tools.inspect_restart_state import execute_crash_matrix
 from tools.loopback_ack_crash_child import BEFORE_STATEMENT, position
 from tools.restart_state_reader import read_restart_state
@@ -46,11 +48,32 @@ GAP_INSERTS = (
     "stream_generations",
 )
 H0 = "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"
-CHILD = [sys.executable, "-m", "tools.loopback_ack_crash_child"]
 
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _trusted_command() -> list[str]:
+    return [
+        str(Path(sys.executable).absolute()),
+        "-I",
+        str(Path(__file__).with_name("loopback_ack_crash_child.py").resolve()),
+    ]
+
+
+def _launch_provenance(command: list[str]) -> dict[str, Any]:
+    if command != _trusted_command():
+        raise ValueError("E_CRASH_CHILD_PROVENANCE")
+    return {
+        "command_prefix": command,
+        "executable": {
+            "path": command[0],
+            "resolved_path": str(Path(command[0]).resolve()),
+            "sha256": _sha(Path(command[0])),
+        },
+        "entrypoint": {"path": command[2], "sha256": _sha(Path(command[2]))},
+    }
 
 
 def _snapshot(state: dict[str, Any]) -> dict[str, Any]:
@@ -130,6 +153,8 @@ def run_backend_case(
     *,
     command_prefix: list[str] | None = None,
 ) -> dict[str, Any]:
+    command = _trusted_command() if command_prefix is None else list(command_prefix)
+    provenance = _launch_provenance(command)  # Reject substitutions before provision/launch.
     key = "-".join(entry["vector_id"].split("-")[:2])
     if key not in PHASES:
         raise ValueError("E_CRASH_BOUNDARY_NOT_IMPLEMENTED:" + key)
@@ -194,12 +219,47 @@ def run_backend_case(
 
     def prepare(case: Path) -> None:
         (case / "scenario.json").write_text(json.dumps(scenario, sort_keys=True))
+        (case / "launch-input.json").write_text(
+            json.dumps(
+                {
+                    **provenance,
+                    "scenario_sha256": _sha(case / "scenario.json"),
+                },
+                sort_keys=True,
+            )
+        )
 
     def boundary(case: Path, identity: dict[str, object]) -> None:
+        if _launch_provenance(command) != provenance:
+            raise ValueError("E_CRASH_CHILD_PROVENANCE")
         path = case / "boundary.json"
         if not path.is_file():
             raise RuntimeError("E_CRASH_BOUNDARY_MISSING")
         witness = json.loads(path.read_text())
+        if (
+            not isinstance(witness, dict)
+            or set(witness)
+            != {
+                "identity",
+                "phase",
+                "received_observation_hash",
+                "transport_address",
+                "in_transaction",
+                "tables",
+                "ingest_result",
+                "wire_ack",
+            }
+            or not isinstance(witness["tables"], dict)
+            or set(witness["tables"]) != set(TABLES)
+            or type(witness["in_transaction"]) is not bool
+            or not isinstance(witness["transport_address"], list)
+            or len(witness["transport_address"]) != 2
+            or any(
+                not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows)
+                for rows in witness["tables"].values()
+            )
+        ):
+            raise RuntimeError("E_CRASH_BOUNDARY_SCHEMA")
         if (
             witness["identity"] != identity
             or witness["phase"] != phase
@@ -209,6 +269,28 @@ def run_backend_case(
         ):
             raise RuntimeError("E_CRASH_BOUNDARY_MISMATCH")
         tables = witness["tables"]
+        # Separate reads see committed prerequisites, never the pending INSERTs.
+        # The uncommitted witness belongs to the pinned child instrumentation.
+        durable = read_restart_state(case / observation["discovery_run_id"])
+        database = case / observation["discovery_run_id"] / "run.sqlite3"
+        with closing(sqlite3.connect(database.resolve().as_uri() + "?mode=ro", uri=True)) as db:
+            for name in TABLES:
+                columns = {
+                    item[0]
+                    for item in db.execute(
+                        f"SELECT * FROM {name} LIMIT 0"  # noqa: S608 -- fixed verified table allowlist
+                    ).description
+                }
+                if any(set(row) != columns for row in tables[name]):
+                    raise RuntimeError("E_CRASH_BOUNDARY_SCHEMA")
+        baseline = (
+            _oracle(observation, base_committed, late)
+            if phase in BEFORE_STATEMENT
+            else _oracle(observation, committed, gap_committed)
+        )
+        if _snapshot(durable) != baseline:
+            raise RuntimeError("E_CRASH_BOUNDARY_DURABLE_STATE")
+        (case / "prerequisite-state.json").write_text(json.dumps(durable, sort_keys=True))
         if phase in BEFORE_STATEMENT and witness["ingest_result"] is not None:
             raise RuntimeError("E_CRASH_ACK_BEFORE_COMMIT")
         if key in {"GAP-10", "LATE-01"} and witness["ingest_result"] != {
@@ -239,13 +321,19 @@ def run_backend_case(
                 raise RuntimeError("E_CRASH_WIRE_ACK")
 
     def recover(case: Path, *, replay: bool = False) -> None:
+        if _launch_provenance(command) != provenance:
+            raise ValueError("E_CRASH_CHILD_PROVENANCE")
         suffix = "replay" if replay else "reopen"
+        argv = [*command, "--recover", str(case), *(["--replay"] if replay else [])]
+        (case / f"{suffix}-launch.json").write_text(
+            json.dumps({**provenance, "argv": argv}, sort_keys=True)
+        )
         with (
             (case / f"{suffix}.stdout").open("wb") as stdout,
             (case / f"{suffix}.stderr").open("wb") as stderr,
         ):
             subprocess.run(  # noqa: S603 -- fixed local child and owned temporary directory
-                [*CHILD, "--recover", str(case), *(["--replay"] if replay else [])],
+                argv,
                 cwd=Path(__file__).resolve().parents[1],
                 check=True,
                 timeout=10,
@@ -271,14 +359,9 @@ def run_backend_case(
             "replay": replay.get("error", "ACK"),
         }
 
-    child_module = {
-        "SQLITE_TRANSACTION": "tools.sqlite_crash_child",
-        "GAP_GENERATION_COHERENCE": "tools.gap_coherence_crash_child",
-        "LOOPBACK_ACK": "tools.loopback_ack_crash_child",
-    }[entry["harness"]]
     result = execute_crash_matrix(
         [{**entry, "expected_post_restart_state": expected_state}],
-        [sys.executable, "-m", child_module] if command_prefix is None else command_prefix,
+        command,
         workspace,
         state_reader=actual,
         prepare_case=prepare,
@@ -286,7 +369,13 @@ def run_backend_case(
         validate_boundary=boundary,
     )
     for row in cast(list[dict[str, Any]], result["records"]):
+        if _launch_provenance(command) != provenance or row["command"][:3] != command:
+            raise ValueError("E_CRASH_CHILD_PROVENANCE")
         case = Path(row["case_directory"])
+        if json.loads((case / "launch-input.json").read_text())["scenario_sha256"] != _sha(
+            case / "scenario.json"
+        ):
+            raise ValueError("E_CRASH_CHILD_PROVENANCE")
         root = Path(__file__).resolve().parents[1]
         row.update(
             input_sha256=_sha(case / "scenario.json"),
@@ -299,6 +388,8 @@ def run_backend_case(
             ).hexdigest(),
             execution_kind="BACKEND_ONLY_PROCESS_CRASH",
             phase=phase,
+            launch_provenance={**provenance, "argv": row["command"]},
+            prerequisite_state_sha256=_sha(case / "prerequisite-state.json"),
             comparison_state_sha256=_sha(case / "comparison-state.json"),
             code_revision=subprocess.run(  # noqa: S603 -- read-only local Git identity
                 ["git", "rev-parse", "HEAD"],  # noqa: S607 -- existing repository Git executable

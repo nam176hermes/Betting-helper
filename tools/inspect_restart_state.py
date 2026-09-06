@@ -177,6 +177,7 @@ def execute_crash_matrix(
                         "vector_id": vector_id,
                         "case_directory": str(case_directory),
                         "pid": child.pid,
+                        "command": child.args,
                         "termination_returncode": return_code,
                         "termination_mechanism": "POSIX_OWNED_PROCESS_GROUP_SIGKILL",
                         "checkpoint": identity,
