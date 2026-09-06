@@ -200,6 +200,7 @@ def run_indexeddb_case(
     mutation: str | None = None,
     operation: str = "crash",
     full: bool = False,
+    input_rejection: bool = False,
 ) -> dict[str, Any]:
     from tools.verify_repair_evidence import capture_binding
 
@@ -300,6 +301,7 @@ def run_indexeddb_case(
                 observations,
                 browser_process=process, profile=profile, sentinel=sentinel,
                 initial_sentinel=initial_sentinel,
+                input_rejection=input_rejection,
             )
         worker_input = workspace / "input.json"
         worker_input.write_text(json.dumps(request, sort_keys=True))
@@ -640,6 +642,11 @@ def validate_full_mutation_reports(
             if row.get("detected") is not True:
                 survivors += 1
                 raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
+            if "control" in row and row["control"] != next(
+                control for control in controls
+                if control.get("case_id", control.get("vector_id")) == _mutation_control_id(row)
+            ):
+                raise ValueError("E_FULL_MUTATION_CONTROL_LINK")
             _verify_owner_mutation(harness, row, binding)
             verified += 1
     clock_mutations = list(clock_report.get("mutation_records", []))
@@ -672,6 +679,7 @@ def run_indexeddb_crash_matrix(
     *,
     browser_binary: Path | None = None,
     full: bool = True,
+    include_mutations: bool = True,
 ) -> dict[str, Any]:
     entries = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())[
         "entries"
@@ -694,12 +702,18 @@ def run_indexeddb_crash_matrix(
         )
         for entry in selected
     ]
+    from tools.owner_mutation_evidence import campaign
+
+    mutations = (
+        campaign(selected, workspace / "mutations", records) if full and include_mutations else []
+    )
     return {
         "result": "PASS"
         if all(row["result"] == "PASS" for row in records)
         else "BLOCKED_ENVIRONMENT",
         "executed_vector_ids": [row["vector_id"] for row in records if row["result"] == "PASS"],
         "records": records,
+        "mutation_results": mutations,
         "killed_child_count": sum(row["result"] == "PASS" for row in records),
         "qualification_scope": "BROWSER_LOOPBACK_ACK" if full else "INDEXEDDB_SPOOL_ONLY",
         "legacy_full_qualification": "HOLD",

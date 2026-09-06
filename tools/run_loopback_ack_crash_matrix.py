@@ -615,6 +615,7 @@ def run_loopback_ack_crash_matrix(
     *,
     observation_input: dict[str, Any] | None = None,
     browser_binary: Path | None = None,
+    include_mutations: bool = True,
 ) -> dict[str, Any]:
     from tools.run_indexeddb_crash_matrix import PACK, run_indexeddb_case
 
@@ -644,11 +645,15 @@ def run_loopback_ack_crash_matrix(
         )
         for row in entries
     ]
+    from tools.owner_mutation_evidence import campaign
+
+    mutations = campaign(entries, workspace / "mutations", records) if include_mutations else []
     return {
         "result": "PASS"
         if all(row["result"] == "PASS" for row in records)
         else "BLOCKED_ENVIRONMENT",
         "records": records,
+        "mutation_results": mutations,
         "executed_vector_ids": [row["case_id"] for row in records if row["result"] == "PASS"],
         "killed_child_count": sum(
             row.get("termination", {}).get("method") not in {None, "NONE"} for row in records
@@ -673,6 +678,7 @@ def run_browser_handshake(
     profile: Path,
     sentinel: str,
     initial_sentinel: dict[str, Any],
+    input_rejection: bool = False,
 ) -> dict[str, Any]:
     """Use the existing browser owner and independent SQLite reader for one full case."""
     from tools.inspect_restart_state import _checkpoint, _kill_owned_child
@@ -758,8 +764,11 @@ def run_browser_handshake(
             or actual["address"][0] != "127.0.0.1"
         ):
             raise ValueError("E_ACK_SERVER_IDENTITY")
+        from tools.run_gap_coherence_crash_matrix import _proc_observation
+        observed, raw = _proc_observation(owned, case / f"server-process-{int(restart)}.json")
         processes.append(
             {
+                "observed": observed, "raw_process": raw,
                 "argv": command,
                 "pid": owned.pid,
                 "pgid": os.getpgid(owned.pid),
@@ -848,6 +857,15 @@ def run_browser_handshake(
         transport = start(False)
         request = {**request, "transport": transport}
         save("worker", request, is_input=True)
+        if input_rejection:
+            from tools.owner_mutation_evidence import browser_input
+
+            return browser_input(
+                entry, case, socket, request, identity, binding, extension, binary, observations,
+                browser_process, profile, sentinel, inputs, artifacts, processes, reader_runs,
+                loaded_assets, marker_artifact, profile_before, browser_before, launch,
+                save, read_browser, read_backend, stop,
+            )
         worker_id = str(uuid4())
         _call(socket, "beginWorker", worker_id, request)
         action = entry["kill_action"]

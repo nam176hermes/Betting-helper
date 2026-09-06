@@ -126,7 +126,7 @@ def test_full_runner_wires_every_owner_in_registry_order(
 
 
 @pytest.mark.parametrize(
-    "damage", ["missing", "duplicate", "survivor", "unverified", "control-linkage"]
+    "damage", ["missing", "duplicate", "survivor", "unverified", "control-linkage", "control-bytes"]
 )
 def test_registered_mutation_damage_fails_closed(
     damage: str, monkeypatch: pytest.MonkeyPatch,
@@ -150,6 +150,8 @@ def test_registered_mutation_damage_fails_closed(
         target[0]["detected"] = False
     elif damage == "unverified":
         target[0]["verified"] = False
+    elif damage == "control-bytes":
+        target[0]["control"] = {**reports["SQLITE_TRANSACTION"]["records"][0], "substituted": True}
     else:
         target[0]["source_vector_id"] = "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND"
 
@@ -176,7 +178,7 @@ def test_bare_verified_markers_are_not_recursive_evidence() -> None:
         }
     }
     clock_report = _clock_report()
-    with pytest.raises(ValueError, match="E_FULL_MUTATION_OWNER_UNSUPPORTED"):
+    with pytest.raises(ValueError, match="E_OWNER_MUTATION_BINDING"):
         full.validate_full_mutation_reports(PACK, reports, clock_report)
 
 

@@ -13,7 +13,7 @@ type Request = {
   identity: Record<string, unknown>;
   options: { browser_run_id: string; producer_id: string; stream_id: string; generation: string; registry: CanonicalRegistry };
   observations: string[];
-  operation: "crash" | "read" | "exercise" | "deliver" | "recover" | "destruction-read" | "destruction-delete" | "destruction-prepare";
+  operation: "crash" | "read" | "initialize" | "exercise" | "deliver" | "recover" | "destruction-read" | "destruction-delete" | "destruction-prepare";
   final_ack?: { generation: string; sequence: string; cursor_hash: string };
   transport?: { endpoint: string; token: string };
   mutation?: "delete-row" | "corrupt-ack";
@@ -69,6 +69,11 @@ globalThis.onmessage = (event: MessageEvent<Request>): void => {
       module_sha256: Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join(""),
       origin: location.origin, protocol: location.protocol };
     const spool = new Spool(request.options);
+    if (request.operation === "initialize") {
+      await spool.enumeratePending();
+      reply({ ...evidence, ...await actualRows(request) });
+      return;
+    }
     if (request.operation.startsWith("destruction-")) {
       // Only the disposable test Worker exposes whole-database deletion.
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(request.options.browser_run_id)) throw new Error("E_DESTRUCTION_RUN_ID");

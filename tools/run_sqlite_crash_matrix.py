@@ -60,18 +60,23 @@ def run_sqlite_crash_matrix(
     workspace: Path,
     *,
     observation_input: dict[str, Any] | None = None,
+    entries: list[dict[str, Any]] | None = None,
+    include_mutations: bool = True,
 ) -> dict[str, Any]:
     from tools.verify_repair_evidence import capture_binding
 
     workspace.mkdir(parents=True, exist_ok=True)
-    entries = [
+    registered = [
         row
         for row in json.loads(
             (pack / "docs/registries/crash-harness-registry.v1.json").read_text()
         )["entries"]
         if row["harness"] == "SQLITE_TRANSACTION"
     ]
-    if len(entries) != 7:
+    if len(registered) != 7:
+        raise ValueError("E_SQL_CRASH_REGISTRY")
+    entries = registered if entries is None else entries
+    if not entries or any(entry not in registered for entry in entries):
         raise ValueError("E_SQL_CRASH_REGISTRY")
     observation = observation_input or _observations(str(uuid4()))[0]
     shim = _compile_commit_shim(workspace)
@@ -170,12 +175,16 @@ def run_sqlite_crash_matrix(
         result_path.write_text(json.dumps(terminal, sort_keys=True, separators=(",", ":")))
         terminal["terminal_artifact"] = _artifact(result_path)
         records.append(terminal)
+    from tools.owner_mutation_evidence import campaign
+
+    mutations = campaign(entries, workspace / "mutations", records) if include_mutations else []
     return {
         "result": "PASS",
         "executed_vector_ids": [row["case_id"] for row in records],
         "killed_child_count": len(records),
         "mutation_survivors": 0,
         "records": records,
+        "mutation_results": mutations,
         "legacy_full_qualification": "HOLD",
         "production_authority": "NONE",
     }

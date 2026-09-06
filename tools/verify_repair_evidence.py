@@ -687,9 +687,10 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
 def verify_owner_mutation(
     harness: str, row: dict[str, Any], current: dict[str, Any]
 ) -> None:
-    """Fail closed until the named SQL/browser owner mutation is recursively supported."""
-    del row, current
-    raise ValueError("E_FULL_MUTATION_OWNER_UNSUPPORTED:" + harness)
+    """Recursively validate fresh registered SQL/browser mutation executions."""
+    from tools.owner_mutation_evidence import verify_mutation
+
+    verify_mutation(harness, row, current)
 
 
 def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> None:
@@ -844,6 +845,7 @@ def _verify_browser_ack(
     current: dict[str, Any],
     *,
     terminal: bool = True,
+    input_mutation: bool = False,
 ) -> None:
     """Validate actual cross-component records against the registered parent-only oracle."""
     from tools.run_indexeddb_crash_matrix import (
@@ -854,11 +856,13 @@ def _verify_browser_ack(
     )
 
     validate_case_status(row)
+    if bool(row.get("input_rejection")) != input_mutation:
+        raise ValueError("E_OWNER_MUTATION_IDENTITY")
     if row["evidence_binding"] != current or row["revision"] != current["revision"]:
         raise ValueError("E_REPAIR_STALE_BINDING")
     if (
         row["environment"] != current["environment"]
-        or row["observed_error"] is not None
+        or row["observed_error"] != ("E_SPOOL_OBSERVATION_BINDING" if input_mutation else None)
         or row["comparison"] != {"matched": True}
         or row["qualification_scope"] != "BROWSER_LOOPBACK_ACK"
     ):
@@ -927,6 +931,11 @@ def _verify_browser_ack(
         name: _sqlite_descriptor(row, value, "E_ACK_ARTIFACT:" + name)
         for name, value in row["artifacts"].items()
     }
+    if input_mutation:
+        from tools.owner_mutation_evidence import verify_browser_input
+
+        verify_browser_input(row, inputs, artifacts, terminal=terminal)
+        return
     if set(inputs) != {
         "server-input-0",
         "server-input-1",
