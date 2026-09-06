@@ -37,6 +37,7 @@
         },
         {
           "name": "Run portable verification offline",
+          "shell": "bash",
           "env": {
             "NPM_CONFIG_IGNORE_SCRIPTS": "true",
             "UV_NO_PROGRESS": "1",

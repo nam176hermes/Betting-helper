@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, cast
 
@@ -27,6 +28,10 @@ def _run(job: dict[str, Any], name: str) -> str:
     return cast(str, next(step["run"] for step in _steps(job) if step["name"] == name))
 
 
+def _all_steps(workflow: dict[str, Any]) -> list[dict[str, Any]]:
+    return [step for job in workflow["jobs"].values() for step in _steps(job)]
+
+
 def test_ci_profiles_are_read_only_pinned_and_separate() -> None:
     workflow = _workflow()
     assert workflow["permissions"] == {"contents": "read"}
@@ -37,6 +42,12 @@ def test_ci_profiles_are_read_only_pinned_and_separate() -> None:
     assert "secrets." not in serialized
     assert "self-hosted" not in serialized
     assert all(f"{name}@{pin}" in serialized for name, pin in ACTION_PINS.items())
+    for step in _all_steps(workflow):
+        if uses := step.get("uses"):
+            assert re.fullmatch(r"[^@\s]+@[0-9a-f]{40}", uses)
+        assert step.get("continue-on-error") is not True
+        if command := step.get("run"):
+            assert re.search(r"(?m)^\s*exit\s+0\s*$", command) is None
 
     portable = workflow["jobs"]["portable"]
     assert portable["runs-on"] == "ubuntu-24.04"
@@ -45,6 +56,12 @@ def test_ci_profiles_are_read_only_pinned_and_separate() -> None:
         portable, "Provision locked dependencies"
     )
     portable_verify = _run(portable, "Run portable verification offline")
+    portable_step = next(
+        step
+        for step in _steps(portable)
+        if step["name"] == "Run portable verification offline"
+    )
+    assert portable_step["shell"] == "bash"
     assert "uv run --frozen --offline python tools/verify_local.py --profile portable" in (
         portable_verify
     )
