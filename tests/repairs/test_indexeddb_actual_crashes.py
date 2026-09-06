@@ -3,6 +3,7 @@
 import copy
 import json
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 import pytest
@@ -93,6 +94,44 @@ def test_missing_browser_is_blocked_without_a_node_success_route(tmp_path: Path)
     )
     assert record["result"] == "BLOCKED_ENVIRONMENT"
     assert record["attempted_real_browser"] is False
+
+
+def test_post_launch_environment_block_has_complete_hold_contract(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from tools import verify_repair_evidence
+    from tools.qualify_chrome_indexeddb import _EnvironmentBlocked
+
+    browser = tmp_path / "chrome"
+    browser.write_bytes(b"test browser")
+    extension = tmp_path / "extension"
+    extension.mkdir()
+    process = SimpleNamespace(pid=123, poll=lambda: None)
+    monkeypatch.setattr(verify_repair_evidence, "capture_binding", lambda: {})
+    monkeypatch.setattr(matrix, "_prepare_test_extension", lambda *_: (extension, "id", "hash"))
+    monkeypatch.setattr(matrix, "_start_chrome", lambda *_: (process, "socket"))
+    monkeypatch.setattr(matrix, "_process_executable", lambda _: browser)
+    monkeypatch.setattr(matrix, "_canonical_browser_executable", lambda _: browser)
+    monkeypatch.setattr(
+        matrix,
+        "_wait_for_probe",
+        lambda _: (_ for _ in ()).throw(
+            _EnvironmentBlocked("E_EXTENSION_TARGET_UNAVAILABLE", "test")
+        ),
+    )
+    monkeypatch.setattr(matrix, "_kill_owned_process_group", lambda _: None)
+
+    row = matrix.run_indexeddb_case(
+        committed_case(), tmp_path / "post-launch", browser_binary=browser
+    )
+    assert row["result"] == row["status"] == "BLOCKED_ENVIRONMENT"
+    assert row["executed"] is row["launch_attempted"] is False
+    assert row["attempted_real_browser"] is True
+    assert row["case_id"] == row["vector_id"]
+    assert row["prerequisite"]["available"] is False
+    aggregate = verify_repair_evidence.aggregate_repair_evidence([row["case_id"]], [row])
+    assert aggregate["result"] == "HOLD"
+    assert aggregate["errors"] == []
 
 
 @pytest.mark.parametrize("mode", ["empty", "duplicate", "missing"])

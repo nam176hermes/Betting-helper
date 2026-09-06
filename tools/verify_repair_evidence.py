@@ -168,12 +168,16 @@ def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
         raise ValueError("E_INDEXEDDB_COMMAND")
     if _contains_expected(row["actual"]):
         raise ValueError("E_INDEXEDDB_ACTUAL_ORACLE")
-    if not {"entries", "states", "keys"}.issubset(row["actual"]):
+    if set(row["actual"]) != set(row["identity"]) | {
+        "worker_id", "entries", "states", "keys",
+    }:
         raise ValueError("E_INDEXEDDB_READBACK")
     if _indexeddb_artifact(row, "actual_artifact") != row["actual"]:
         raise ValueError("E_INDEXEDDB_ARTIFACT:actual")
     worker = _indexeddb_artifact(row, "worker_input_artifact")
     reader = _indexeddb_artifact(row, "reader_input_artifact")
+    if not isinstance(worker, dict) or not isinstance(reader, dict):
+        raise ValueError("E_INDEXEDDB_INPUT")
     if (
         row["input_sha256"] != row["worker_input_artifact"]["sha256"]
         or row["expected_sha256"] != row["expected_artifact"]["sha256"]
@@ -211,16 +215,19 @@ def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
             "component", "ordinal", "pid",
         )
     }
+    input_fields = {"identity", "options", "operation", "observations"}
+    reader_expected: dict[str, object] = {
+        "identity": request_identity,
+        "options": worker.get("options"),
+        "operation": "read",
+        "observations": [],
+    }
     if (
-        not isinstance(worker, dict)
-        or not isinstance(reader, dict)
+        set(worker) != input_fields
+        or set(reader) not in (input_fields, input_fields | {"mutation"})
         or worker.get("identity") != request_identity
-        or reader != {
-            "identity": request_identity,
-            "options": worker.get("options"),
-            "operation": "read",
-            "observations": [],
-        }
+        or any(reader.get(key) != value for key, value in reader_expected.items())
+        or reader.get("mutation") not in (None, "delete-row", "corrupt-ack")
     ):
         raise ValueError("E_INDEXEDDB_INPUT")
     compare_indexeddb_state(

@@ -167,6 +167,30 @@ def test_indexeddb_evidence_damage_fails(
     assert error in result["errors"][0]["error"]
 
 
+@pytest.mark.parametrize("artifact_name", ["actual_artifact", "worker_input_artifact"])
+def test_indexeddb_renamed_oracle_cannot_qualify(
+    indexeddb_report: dict[str, Any], tmp_path: Path, artifact_name: str,
+) -> None:
+    row = copy.deepcopy(indexeddb_report["records"][0])
+    payload = copy.deepcopy(
+        row["actual"]
+        if artifact_name == "actual_artifact"
+        else json.loads(Path(row[artifact_name]["path"]).read_text())
+    )
+    payload["oracle"] = row["expected"]
+    path = tmp_path / f"{artifact_name}.json"
+    path.write_text(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+    row[artifact_name] = {"path": str(path), "sha256": module_sha256(path)}
+    if artifact_name == "actual_artifact":
+        row["actual"] = payload
+    else:
+        row["input_sha256"] = row[artifact_name]["sha256"]
+
+    result = gate().aggregate_repair_evidence([row["vector_id"]], [row])
+    assert result["result"] == "FAIL"
+    assert "E_INDEXEDDB_" in result["errors"][0]["error"]
+
+
 def module_sha256(path: Path) -> str:
     import hashlib
 

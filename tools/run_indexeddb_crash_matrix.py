@@ -399,10 +399,16 @@ def run_indexeddb_case(
     except _EnvironmentBlocked as error:
         return {
             "result": "BLOCKED_ENVIRONMENT",
+            "status": "BLOCKED_ENVIRONMENT",
             "blocker_code": error.code,
             "blocker_detail": error.detail,
+            "reason": error.code,
+            "executed": False,
+            "launch_attempted": False,
+            "prerequisite": {"name": "Chrome for Testing extension origin", "available": False},
             "attempted_real_browser": True,
             "vector_id": entry["vector_id"],
+            "case_id": entry["vector_id"],
         }
     finally:
         if process is not None and process.poll() is None:
