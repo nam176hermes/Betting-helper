@@ -5,7 +5,9 @@ import json
 import sqlite3
 from contextlib import closing
 from pathlib import Path
+from typing import Any
 
+from .canonical import canonical_content_hash
 from .errors import ContractNotImplementedError
 
 VENDOR = Path(__file__).resolve().parents[2] / "vendor/hybrid-discovery-v6.3.6"
@@ -110,3 +112,135 @@ class RunStore:
         except BaseException:
             connection.close()
             raise
+
+
+TABLES = (
+    "run_meta",
+    "raw_commits",
+    "raw_conflicts",
+    "application_records",
+    "derived_revisions",
+    "reducer_cursors",
+    "ack_outbox",
+    "ack_cursors",
+    "stream_generations",
+    "gap_records",
+    "gap_epoch_bindings",
+    "generation_transitions",
+    "coherence_epochs",
+    "coherence_controllers",
+    "coherence_transitions",
+    "shock_observations",
+)
+KEY = ("run_id", "browser_run_id", "producer_id", "stream_id", "generation")
+
+
+def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
+    # ponytail: quadratic scan for bounded offline runs; index by position if runs grow.
+    schema = json.loads((VENDOR / "schemas/durability-records.schema.json").read_text())
+    h0 = schema["$defs"]["CursorChainContract"]["properties"]["seed_hash_h0"]["const"]
+    applied = [row for row in tables["raw_commits"] if row["disposition"] == "APPLIED"]
+    chains: dict[tuple[Any, ...], tuple[int, str]] = {}
+    linked_tables = ("application_records", "derived_revisions", "reducer_cursors", "ack_outbox")
+    if any(len(tables[name]) != len(applied) for name in linked_tables):
+        raise ValueError("E_STORE_DURABLE_CHAIN")
+    for raw in sorted(applied, key=lambda row: tuple(row[field] for field in (*KEY, "sequence"))):
+        key = tuple(raw[field] for field in KEY)
+        sequence, prior = chains.get(key, (0, h0))
+        digest = canonical_content_hash(
+            "CursorStep",
+            {
+                "schema_version": "cursor-step/v1",
+                "discovery_run_id": raw["run_id"],
+                "browser_run_id": raw["browser_run_id"],
+                "producer_id": raw["producer_id"],
+                "stream_id": raw["stream_id"],
+                "generation": str(raw["generation"]),
+                "sequence": str(raw["sequence"]),
+                "raw_observation_hash": raw["raw_observation_content_hash"],
+                "previous_cursor_hash": prior,
+            },
+            registry_path=VENDOR / "registries/canonical-hash-domains.v1.json",
+        )
+        if (raw["sequence"], raw["previous_cursor_hash"], raw["cursor_hash"]) != (
+            sequence + 1,
+            prior,
+            digest,
+        ):
+            raise ValueError("E_STORE_DURABLE_CHAIN")
+        records: dict[str, dict[str, Any]] = {}
+        for name in linked_tables:
+            matches = [
+                row
+                for row in tables[name]
+                if tuple(row[field] for field in KEY) == key
+                and row.get("sequence", row.get("highest_contiguous_sequence")) == sequence + 1
+            ]
+            if len(matches) != 1:
+                raise ValueError("E_STORE_DURABLE_CHAIN")
+            records[name] = matches[0]
+        app, revision, cursor, ack = (records[name] for name in linked_tables)
+        if not (
+            app["raw_commit_id"]
+            == revision["raw_commit_id"]
+            == ack["raw_commit_id"]
+            == raw["raw_commit_id"]
+            and revision["application_id"] == ack["application_id"] == app["application_id"]
+            and cursor["derived_revision_id"]
+            == ack["derived_revision_id"]
+            == revision["derived_revision_id"]
+            and ack["reducer_cursor_id"] == cursor["reducer_cursor_id"]
+            and app["input_cursor_hash"] == cursor["previous_cursor_hash"] == prior
+            and app["raw_observation_content_hash"]
+            == cursor["raw_observation_content_hash"]
+            == raw["raw_observation_content_hash"]
+            and cursor["cursor_hash"] == ack["cursor_hash"] == revision["revision_hash"] == digest
+            and revision["revision"] == sequence + 1
+            and revision["previous_revision_hash"] == (None if sequence == 0 else prior)
+        ):
+            raise ValueError("E_STORE_DURABLE_CHAIN")
+        chains[key] = (sequence + 1, digest)
+    histories: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for ack in sorted(
+        tables["ack_cursors"],
+        key=lambda row: tuple(
+            row[field] for field in (*KEY, "owner", "highest_contiguous_sequence")
+        ),
+    ):
+        key = tuple(ack[field] for field in KEY)
+        owner_key = (*key, ack["owner"])
+        previous = histories.get(owner_key)
+        required_binding = {"BACKEND": "BACKEND_DURABLE_CHAIN", "EXTENSION": "LOCAL_SPOOL_CHAIN"}
+        if ack["verified_against"] != required_binding.get(ack["owner"]):
+            raise ValueError("E_STORE_ACK_CHAIN")
+        if ack["highest_contiguous_sequence"] == 0:
+            valid = (
+                previous is None
+                and ack["previous_ack_cursor_id"] is None
+                and ack["cursor_hash"] == h0
+            )
+        else:
+            valid = (
+                previous is not None
+                and ack["previous_ack_cursor_id"] == previous["ack_cursor_id"]
+                and previous["highest_contiguous_sequence"] < ack["highest_contiguous_sequence"]
+                and any(
+                    tuple(row[field] for field in KEY) == key
+                    and row["highest_contiguous_sequence"] == ack["highest_contiguous_sequence"]
+                    and row["cursor_hash"] == ack["cursor_hash"]
+                    for row in tables["ack_outbox"]
+                )
+            )
+        if not valid:
+            raise ValueError("E_STORE_ACK_CHAIN")
+        histories[owner_key] = ack
+
+
+def read_journal(connection: sqlite3.Connection) -> dict[str, list[dict[str, Any]]]:
+    return {
+        table: sorted(
+            (dict(row) for row in connection.execute(f"SELECT * FROM {table}")),  # noqa: S608 -- fixed allowlist
+            key=lambda row: json.dumps(row, sort_keys=True),
+        )
+        for table in TABLES
+    }

@@ -313,12 +313,16 @@ def test_conflict_persists_evidence_and_blocks_generation_without_inventing_gap(
     value["content_hash"] = canonical_content_hash("RawObservation", value, registry_path=REGISTRY)
     with pytest.raises(ValueError, match="E_INGEST_CONFLICT"):
         Ingestor(store).apply(value)
-    with pytest.raises(ValueError, match="E_INGEST_CONFLICT"):
+    with pytest.raises(ValueError, match="E_INGEST_RUN_BINDING"):
         Ingestor(RunStore(store.db_path)).apply(observation(2))
     assert counts(store) == [1, 1, 1, 1, 1]
     with closing(sqlite3.connect(store.db_path)) as connection:
         assert connection.execute("SELECT count(*) FROM raw_conflicts").fetchone() == (1,)
         assert connection.execute("SELECT count(*) FROM gap_records").fetchone() == (0,)
+        assert connection.execute("SELECT run_status FROM run_meta").fetchone() == ("CLOSED",)
+        assert connection.execute(
+            "SELECT generation_state,close_reason FROM stream_generations"
+        ).fetchone() == ("CLOSED", "RUN_CLOSED")
 
 
 def test_store_denies_schema_changes_deletion_and_attach(tmp_path: Path) -> None:
@@ -398,3 +402,130 @@ def test_journal_replay_digests_are_deterministic_across_stores(tmp_path: Path) 
     assert [row[0] for row in revisions[0]] == [1, 2]
     assert revisions[0][0][1] is None
     assert revisions[0][1][1] == revisions[0][0][2]
+
+
+def corrupt_journal(store: RunStore, table: str, column: str | None) -> None:
+    """Test-only corruption restores the exact trigger and preserves SQL integrity."""
+    operation = "delete" if column is None else "update"
+    trigger_name = f"{table}_no_{operation}"
+    with closing(sqlite3.connect(store.db_path)) as connection, connection:
+        trigger = connection.execute(
+            "SELECT sql FROM sqlite_schema WHERE name=?", (trigger_name,)
+        ).fetchone()[0]
+        connection.execute(f"DROP TRIGGER {trigger_name}")  # noqa: S608 -- fixed test inputs
+        if column is None:
+            connection.execute(f"DELETE FROM {table}")  # noqa: S608 -- fixed test input
+        else:
+            connection.execute(f"UPDATE {table} SET {column}=?", ("f" * 64,))  # noqa: S608
+        connection.execute(trigger)
+        assert connection.execute("PRAGMA integrity_check").fetchone() == ("ok",)
+        assert connection.execute("PRAGMA foreign_key_check").fetchall() == []
+
+
+@pytest.mark.parametrize("sequence", [1, 2])
+@pytest.mark.parametrize(
+    "table,column",
+    [
+        ("raw_commits", "raw_observation_content_hash"),
+        ("derived_revisions", "revision_hash"),
+        ("reducer_cursors", "cursor_hash"),
+        ("ack_outbox", "cursor_hash"),
+        ("ack_outbox", None),
+    ],
+)
+def test_ingest_rejects_corrupted_committed_journal_without_ack_or_write(
+    tmp_path: Path,
+    sequence: int,
+    table: str,
+    column: str | None,
+) -> None:
+    store = prepared_store(tmp_path)
+    Ingestor(store).apply(observation())
+    corrupt_journal(store, table, column)
+    before = counts(store)
+    with pytest.raises(ValueError, match="^E_STORE_DURABLE_CHAIN$"):
+        Ingestor(store).apply(observation(sequence))
+    assert counts(store) == before
+
+
+def test_ingest_validates_after_connection_open_under_same_write_transaction(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    store = prepared_store(tmp_path)
+    Ingestor(store).apply(observation())
+    original = store.connect
+    statements: list[str] = []
+
+    def mutate_after_open() -> sqlite3.Connection:
+        connection = original()
+        corrupt_journal(store, "ack_outbox", "cursor_hash")
+        connection.set_trace_callback(statements.append)
+        return connection
+
+    monkeypatch.setattr(store, "connect", mutate_after_open)
+    with pytest.raises(ValueError, match="^E_STORE_DURABLE_CHAIN$"):
+        Ingestor(store).apply(observation(2))
+    begin = statements.index("BEGIN IMMEDIATE")
+    assert any(sql.startswith("SELECT * FROM ack_outbox") for sql in statements[begin + 1 :])
+    assert not any(sql.startswith("INSERT") for sql in statements)
+    assert counts(store) == [1, 1, 1, 1, 1]
+
+
+def test_conflict01_successor_contract_requires_unobserved_later_sequence(tmp_path: Path) -> None:
+    """HOLD_CONTRACT evidence, not a PASS for the full CONFLICT-01 scenario."""
+    store = prepared_store(tmp_path)
+    Ingestor(store).apply(observation())
+    with closing(sqlite3.connect(store.db_path)) as connection:
+        connection.execute("PRAGMA foreign_keys=ON")
+        # CONFLICT-01 observes another hash at q1 only. The truthful range and
+        # detected position are q1; inventing q2 would make the CHECK pass.
+        with pytest.raises(sqlite3.IntegrityError, match="detected_sequence > missing_to_sequence"):
+            connection.execute(
+                "INSERT INTO gap_records VALUES ('gap:conflict',?,?,?,?,0,1,1,1,1,"
+                "'CONFLICTING_DUPLICATE','OPEN',0,1)",
+                (RUN, BROWSER, PRODUCER, STREAM),
+            )
+        connection.rollback()
+        with pytest.raises(
+            sqlite3.IntegrityError, match="E_GENERATION_CLOSE_WITHOUT_COHERENCE_CLOSURE"
+        ):
+            connection.execute(
+                "UPDATE stream_generations SET generation_state='CLOSED',closed_at_us=1,"
+                "close_reason='CONFLICTING_DUPLICATE'"
+            )
+
+
+@pytest.mark.parametrize("denied_table", ["run_meta", "stream_generations"])
+def test_conflict_terminal_stop_is_atomic(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    denied_table: str,
+) -> None:
+    store = prepared_store(tmp_path)
+    Ingestor(store).apply(observation())
+    original = store.connect
+
+    def deny_close() -> sqlite3.Connection:
+        connection = original()
+        connection.set_authorizer(
+            lambda action, table, *_: (
+                sqlite3.SQLITE_DENY
+                if action == sqlite3.SQLITE_UPDATE and table == denied_table
+                else sqlite3.SQLITE_OK
+            )
+        )
+        return connection
+
+    monkeypatch.setattr(store, "connect", deny_close)
+    value = observation()
+    value["facts"]["terminal_code"] = "BUDGET_STOP"
+    value["content_hash"] = canonical_content_hash("RawObservation", value, registry_path=REGISTRY)
+    with pytest.raises(sqlite3.DatabaseError, match="not authorized"):
+        Ingestor(store).apply(value)
+    with closing(sqlite3.connect(store.db_path)) as connection:
+        assert connection.execute("SELECT count(*) FROM raw_conflicts").fetchone() == (0,)
+        assert connection.execute("SELECT run_status FROM run_meta").fetchone() == ("OPEN",)
+        assert connection.execute("SELECT generation_state FROM stream_generations").fetchone() == (
+            "ACTIVE",
+        )

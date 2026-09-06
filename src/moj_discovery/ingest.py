@@ -8,7 +8,7 @@ from typing import Any
 from .canonical import canonical_content_hash, verify_canonical_content_hash
 from .errors import ContractNotImplementedError
 from .schema_registry import validate_artifact
-from .store import VENDOR, RunStore
+from .store import VENDOR, RunStore, read_journal, validate_journal
 
 # The inherited DDL/schema select one universal H0, not a per-identity seed.
 H0 = "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"
@@ -47,6 +47,7 @@ class Ingestor:
         ack: dict[str, Any] = {}
         with closing(self.store.connect()) as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
+            validate_journal(read_journal(connection))
             meta = connection.execute("SELECT * FROM run_meta").fetchall()
             if len(meta) != 1 or (
                 meta[0]["run_id"] != run
@@ -108,6 +109,18 @@ class Ingestor:
                             content_hash,
                             now,
                         ),
+                    )
+                    # Truthful terminal stop: the DDL cannot encode a conflicting
+                    # duplicate as a missing range without inventing a later sequence.
+                    connection.execute(
+                        "UPDATE run_meta SET run_status='CLOSED',closed_at_us=? WHERE run_id=?",
+                        (now, run),
+                    )
+                    connection.execute(
+                        "UPDATE stream_generations SET generation_state='CLOSED',"
+                        "close_reason='RUN_CLOSED',closed_at_us=? WHERE run_id=? "
+                        "AND generation_state<>'CLOSED'",
+                        (now, run),
                     )
                     rejected = "E_INGEST_CONFLICT"
                 else:
