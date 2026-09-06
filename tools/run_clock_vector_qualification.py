@@ -105,6 +105,10 @@ _MUTATION_NAMES = (
     "selection_candidate_order", "post_close_selection",
     "candidate_proof_corruption", "release_mapping_close",
 )
+_TYPESCRIPT_MODULES = (
+    "contracts/clock-vectors.js", "contracts/clock-coherence.js",
+    "canonical.js", "schema-registry.js", "errors.js",
+)
 _NODE = r'''
 const { pathToFileURL } = require("node:url");
 const { readFileSync, readdirSync } = require("node:fs");
@@ -335,6 +339,7 @@ def _typescript(
     case: dict[str, Any], runtime: Path, *, mutate_closed_state: bool = False,
     release_mapping_close_bound: bool | None = None,
     bypass_release_mapping_guard: bool = False,
+    executable_artifacts: dict[str, dict[str, str]],
 ) -> dict[str, Any]:
     # Expected fields and IDs never cross the evaluator boundary.
     payload = {
@@ -349,6 +354,7 @@ def _typescript(
     node = which("node")
     if not node or not module.is_file():
         raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE:compile tsconfig.test.json")
+    before = _verify_typescript_executable(runtime, executable_artifacts)
     completed = run(  # noqa: S603 -- fixed JS bridge; data passed as JSON, no shell
         [node, "-e", _NODE, json.dumps(_json_for_node(payload)), str(module),
          str(runtime / "vendor/hybrid-discovery-v6.3.6/schemas"),
@@ -356,7 +362,51 @@ def _typescript(
          str(runtime / "extension/.test-build/src/contracts/clock-coherence.js")],
         capture_output=True, text=True, check=True, timeout=15,
     )
-    return _source_age(json.loads(completed.stdout))
+    after = _verify_typescript_executable(runtime, executable_artifacts)
+    if before != after:
+        raise RuntimeError("E_CLOCK_TYPESCRIPT_EXECUTABLE_CHANGED")
+    actual = _source_age(json.loads(completed.stdout))
+    actual["__typescript_execution_binding"] = {"before": before, "after": after}
+    return actual
+
+
+def _verify_typescript_executable(
+    runtime: Path, artifacts: dict[str, dict[str, str]],
+) -> dict[str, str]:
+    if set(artifacts) != set(_TYPESCRIPT_MODULES):
+        raise ValueError("E_CLOCK_TYPESCRIPT_EXECUTABLE_GRAPH")
+    observed: dict[str, str] = {}
+    for relative, reference in artifacts.items():
+        generated = runtime / "extension/.test-build/src" / relative
+        retained = Path(reference["path"])
+        if not generated.is_file() or not retained.is_file():
+            raise FileNotFoundError("E_CLOCK_TYPESCRIPT_EXECUTABLE_MODULE:" + relative)
+        generated_hash = hashlib.sha256(generated.read_bytes()).hexdigest()
+        retained_hash = hashlib.sha256(retained.read_bytes()).hexdigest()
+        if generated_hash != retained_hash or retained_hash != reference["sha256"]:
+            raise ValueError("E_CLOCK_TYPESCRIPT_EXECUTABLE_MISMATCH:" + relative)
+        observed[relative] = generated_hash
+    return observed
+
+
+def _retain_typescript_executable(
+    runtime: Path, evidence: Path,
+) -> dict[str, dict[str, str]]:
+    artifacts: dict[str, dict[str, str]] = {}
+    for relative in _TYPESCRIPT_MODULES:
+        source = runtime / "extension/.test-build/src" / relative
+        if not source.is_file():
+            raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE:compile tsconfig.test.json")
+        target = evidence / "typescript-executable" / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        content = source.read_bytes()
+        with target.open("xb") as stream:
+            stream.write(content)
+        artifacts[relative] = {
+            "path": str(target.resolve()),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        }
+    return artifacts
 
 
 def _json_for_node(value: object) -> object:
@@ -904,6 +954,7 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
     evaluator_artifacts: dict[str, dict[str, str]] = {}
     operation_metadata: dict[str, dict[str, Any]] = {}
     operation_metadata_artifacts: dict[str, dict[str, str]] = {}
+    typescript_execution_binding: dict[str, Any] | None = None
     sql_observation: dict[str, Any] | None = None
     try:
         if case["handler"] in {
@@ -925,8 +976,12 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                 case, runtime, mutate_closed_state=mutate_closed_state,
                 release_mapping_close_bound=release_mapping_close_bound,
                 bypass_release_mapping_guard=bypass_release_mapping_guard,
+                executable_artifacts=context["typescript_executable_artifacts"],
             )
             exits["typescript"] = 0
+            typescript_execution_binding = actual["typescript"].pop(
+                "__typescript_execution_binding", None,
+            )
             for language in ("python", "typescript"):
                 metadata = actual[language].pop("__operation_metadata", None)
                 if metadata is not None:
@@ -992,6 +1047,11 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
                      "available": False} if status == "BLOCKED_ENVIRONMENT" else None)
     fields = ({"comparison": comparison, "cross_language_drift": drift, "command_exit": exits,
                "evaluator_artifacts": evaluator_artifacts,
+               **({"typescript_execution_binding": typescript_execution_binding,
+                   "typescript_execution_binding_artifact": _write_artifact(
+                       directory, "typescript-execution.json",
+                       typescript_execution_binding,
+                   )} if typescript_execution_binding is not None else {}),
                **({"operation_metadata": operation_metadata,
                    "operation_metadata_artifacts": operation_metadata_artifacts}
                   if operation_metadata else {}),
@@ -1035,6 +1095,26 @@ def verify_record(
             == reference["sha256"] == _hash(row["actual"][language])
             for language, reference in evaluator_artifacts.items()
         )
+        executable_artifacts = row["typescript_executable_artifacts"]
+        evidence = Path(row["evidence_directory"]).resolve()
+        executable_match = set(executable_artifacts) == set(_TYPESCRIPT_MODULES) and all(
+            Path(reference["path"]).resolve().is_relative_to(
+                evidence / "typescript-executable"
+            )
+            and hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            == reference["sha256"]
+            for reference in executable_artifacts.values()
+        )
+        execution_binding = row.get("typescript_execution_binding")
+        execution_reference = row.get("typescript_execution_binding_artifact")
+        execution_match = row.get("execution_kind") == "QUALIFICATION_MUTATION" or (
+            execution_binding is not None
+            and execution_reference is not None
+            and execution_binding["before"] == execution_binding["after"]
+            == {key: value["sha256"] for key, value in executable_artifacts.items()}
+            and hashlib.sha256(Path(execution_reference["path"]).read_bytes()).hexdigest()
+            == execution_reference["sha256"] == _hash(execution_binding)
+        )
         sql_reference = row.get("sql_observation_artifact")
         sql_match = sql_reference is None or (
             hashlib.sha256(Path(sql_reference["path"]).read_bytes()).hexdigest()
@@ -1053,7 +1133,8 @@ def verify_record(
         return bool(digest == artifact["sha256"]
                 and artifact["sha256"] == _hash(row["actual"])
                 and hashes_match
-                and evaluator_match and sql_match and operation_match
+                and evaluator_match and executable_match and execution_match
+                and sql_match and operation_match
                 and all(verify_record(row["actual"][key], _current_binding=_current_binding)
                         for key in ("control", "trial")
                         if key in row["actual"]))
@@ -1195,6 +1276,7 @@ def run_clock_vector_qualification(
     cases = [_case(entry, vectors) for entry in entries]
     evidence = evidence_dir or Path(mkdtemp(prefix="clock-qualification-"))
     evidence.mkdir(parents=True, exist_ok=True)
+    executable_artifacts = _retain_typescript_executable(runtime, evidence)
     git = which("git")
     if not git:
         raise FileNotFoundError("E_CLOCK_GIT_PREREQUISITE")
@@ -1210,13 +1292,13 @@ def run_clock_vector_qualification(
              runtime / "extension/src/contracts/clock-vectors.ts",
              runtime / "extension/src/canonical.ts",
              runtime / "extension/src/schema-registry.ts",
-             runtime / "extension/.test-build/src/contracts/clock-vectors.js",
-             runtime / "extension/.test-build/src/contracts/clock-coherence.js",
              pack / _VECTOR_PATH, pack / _COVERAGE_PATH,
              pack / "sql/discovery-store-v1.sql",
              pack / "schemas/clock-coherence-records.schema.json",
              pack / "registries/canonical-hash-domains.v1.json"]
     context = {"evidence_binding": capture_binding(),
+               "evidence_directory": str(evidence.resolve()),
+               "typescript_executable_artifacts": executable_artifacts,
                "environment": {"python": platform.python_version(),
                                "platform": platform.platform(), "node": which("node")},
                "code": {"revision": revision, "sha256": {

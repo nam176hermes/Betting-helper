@@ -5,6 +5,7 @@ import copy
 import json
 import sys
 from pathlib import Path
+from shutil import which
 from subprocess import run
 from typing import Any
 
@@ -298,6 +299,59 @@ def test_recursive_artifact_and_stale_binding_damage_fail(tmp_path: Path) -> Non
     evaluator = copy.deepcopy(result["records"][0])
     Path(evaluator["evaluator_artifacts"]["python"]["path"]).unlink()
     assert runner.verify_record(evaluator) is False
+
+
+def test_retained_typescript_graph_verifies_after_clean_generated_restore(
+    tmp_path: Path,
+) -> None:
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
+    generated = {
+        relative: ROOT / "extension/.test-build/src" / relative
+        for relative in (
+            "contracts/clock-vectors.js", "contracts/clock-coherence.js",
+            "canonical.js", "schema-registry.js", "errors.js",
+        )
+    }
+    compiled = {relative: path.read_bytes() for relative, path in generated.items()}
+    try:
+        git = which("git")
+        assert git is not None
+        tracked = run(  # noqa: S603 -- fixed local git and tracked path
+            [git, "show", "HEAD:extension/.test-build/src/contracts/clock-vectors.js"],
+            cwd=ROOT, capture_output=True, check=True,
+        ).stdout
+        generated["contracts/clock-vectors.js"].write_bytes(tracked)
+        generated["contracts/clock-coherence.js"].unlink()
+
+        assert runner.summarize(result["required_vector_ids"], result["records"])[
+            "result"
+        ] == "PASS"
+        assert all(runner.verify_record(row) for row in result["mutation_records"])
+
+        row = result["records"][0]
+        assert all("/.test-build/" not in path for path in row["code"]["sha256"])
+        assert all(
+            not path.startswith("extension/.test-build/")
+            for path in row["evidence_binding"]["source_sha256"]
+        )
+        retained = row["typescript_executable_artifacts"]
+        retained_path = Path(retained["contracts/clock-vectors.js"]["path"])
+        retained_content = retained_path.read_bytes()
+        retained_path.write_bytes(retained_content + b"\n// tampered\n")
+        assert runner.summarize(result["required_vector_ids"], result["records"])[
+            "result"
+        ] == "FAIL"
+        assert not runner.verify_record(result["mutation_records"][0])
+        retained_path.write_bytes(retained_content)
+        retained_path.unlink()
+        assert runner.summarize(result["required_vector_ids"], result["records"])[
+            "result"
+        ] == "FAIL"
+        assert not runner.verify_record(result["mutation_records"][0])
+    finally:
+        for relative, content in compiled.items():
+            generated[relative].parent.mkdir(parents=True, exist_ok=True)
+            generated[relative].write_bytes(content)
 
 
 @pytest.mark.parametrize("damage", ["remove", "duplicate"])

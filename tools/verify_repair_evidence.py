@@ -36,8 +36,6 @@ def capture_binding() -> dict[str, Any]:
     ) for p in (ROOT / directory).rglob("*" + suffix)]
     sources += [ROOT / name for name in (
         "pyproject.toml", "extension/package.json", "extension/tsconfig.test.json",
-        "extension/.test-build/src/contracts/clock-vectors.js",
-        "extension/.test-build/src/contracts/clock-coherence.js",
     ) if (ROOT / name).is_file()]
     node = which("node")
     return {
