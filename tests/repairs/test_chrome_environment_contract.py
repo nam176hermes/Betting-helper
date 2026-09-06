@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+from signal import SIGKILL
 from typing import cast
 
 import pytest
@@ -120,17 +121,33 @@ def test_real_isolated_extension_indexeddb_survives_owned_sigkill(tmp_path: Path
     )
 
     if result["result"] == "BLOCKED_ENVIRONMENT":
-        assert result["blocker_code"] in {
+        blocker_code = result["blocker_code"]
+        assert blocker_code in {
             "E_BROWSER_UNAVAILABLE",
             "E_CHROME_START_FAILED",
             "E_EXTENSION_TARGET_UNAVAILABLE",
         }
-        assert result["attempted_real_browser"] is True
+        assert isinstance(result["blocker_detail"], str) and result["blocker_detail"]
+        assert result["attempted_real_browser"] is (blocker_code != "E_BROWSER_UNAVAILABLE")
         assert cast(dict[str, object], result["profile"])["fresh"] is True
         assert cast(dict[str, object], result["extension"])["load_requested"] is True
-        return
+        pytest.skip(f"{blocker_code}:{result['blocker_detail']}")
 
     assert result["result"] == "PASS"
     validate_qualification_evidence(result)
     sentinel = cast(dict[str, object], result["sentinel"])
-    assert sentinel["expected"] == sentinel["durable"]
+    assert sentinel["expected"] == sentinel["committed"] == sentinel["durable"]
+    termination = cast(dict[str, object], result["termination"])
+    assert termination == {
+        "method": "SIGKILL_PROCESS_GROUP",
+        "signal": SIGKILL,
+        "returncode": -SIGKILL,
+        "graceful": False,
+        "owned_process_group": True,
+    }
+    profile = cast(dict[str, object], result["profile"])
+    assert profile["expected_id"] == profile["first_id"] == profile["second_id"]
+    extension = cast(dict[str, object], result["extension"])
+    assert extension["first_protocol"] == extension["second_protocol"] == "chrome-extension:"
+    module = cast(dict[str, object], result["module"])
+    assert module["expected_sha256"] == module["first_sha256"] == module["second_sha256"]
