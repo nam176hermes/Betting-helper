@@ -13,7 +13,8 @@ type Request = {
   identity: Record<string, unknown>;
   options: { browser_run_id: string; producer_id: string; stream_id: string; generation: string; registry: CanonicalRegistry };
   observations: string[];
-  operation: "crash" | "read" | "exercise" | "deliver" | "recover";
+  operation: "crash" | "read" | "exercise" | "deliver" | "recover" | "destruction-read" | "destruction-delete" | "destruction-prepare";
+  final_ack?: { generation: string; sequence: string; cursor_hash: string };
   transport?: { endpoint: string; token: string };
   mutation?: "delete-row" | "corrupt-ack";
 };
@@ -68,6 +69,31 @@ globalThis.onmessage = (event: MessageEvent<Request>): void => {
       module_sha256: Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join(""),
       origin: location.origin, protocol: location.protocol };
     const spool = new Spool(request.options);
+    if (request.operation.startsWith("destruction-")) {
+      // Only the disposable test Worker exposes whole-database deletion.
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(request.options.browser_run_id)) throw new Error("E_DESTRUCTION_RUN_ID");
+      const name = `hybrid-discovery-v6.2-working-${request.options.browser_run_id}`;
+      if (request.operation === "destruction-prepare") {
+        const raw = request.observations[0];
+        const ack = request.final_ack;
+        if (!raw || !ack) throw new Error("E_DESTRUCTION_PREPARE");
+        await spool.append(envelope(raw));
+        await spool.persistVerifiedAck(ack.generation, ack.sequence, ack.cursor_hash);
+      }
+      if (request.operation === "destruction-delete") {
+        await new Promise<void>((resolve, reject) => {
+          const deletion = indexedDB.deleteDatabase(name);
+          deletion.onsuccess = () => { resolve(); };
+          deletion.onerror = () => { reject(deletion.error ?? new Error("E_DESTRUCTION_IDB_DELETE")); };
+          deletion.onblocked = () => { reject(new Error("E_DESTRUCTION_WRITER_PRESENT")); };
+        });
+      }
+      const names = (await indexedDB.databases()).map(database => database.name).sort();
+      const present = names.includes(name);
+      reply({ ...evidence, database_name: name, present, database_names: names,
+        ...(present ? await actualRows(request) : { states: [], entries: [], keys: [] }) });
+      return;
+    }
     if (request.operation === "read") {
       reply({ ...evidence, ...await actualRows(request) });
       return;

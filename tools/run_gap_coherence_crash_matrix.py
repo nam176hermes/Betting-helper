@@ -574,6 +574,14 @@ def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> Non
             and later["predecessor_generation"] == gap["successor_generation"]
             for later in gaps.values()
         )
+        successor_closed_with_run = (
+            successor is not None
+            and successor["generation_state"] == "CLOSED"
+            and successor["close_reason"] == "RUN_CLOSED"
+            and any(meta["run_id"] == gap["run_id"]
+                    and meta["run_status"] in {"CLOSED", "DESTRUCTION_PENDING"}
+                    for meta in tables["run_meta"])
+        )
         transition = transitions.get(binding["coherence_transition_id"])
         controller = controllers.get(binding["coherence_controller_id"])
         shock = shocks.get(binding["shock_observation_id"])
@@ -582,7 +590,8 @@ def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> Non
             or successor is None
             or predecessor["generation_state"] == "ACTIVE"
             or predecessor["close_reason"] != gap["gap_reason"]
-            or (successor["generation_state"] != "ACTIVE" and not successor_was_reclosed)
+            or (successor["generation_state"] != "ACTIVE"
+                and not successor_was_reclosed and not successor_closed_with_run)
             or generation_transition["predecessor_generation"] != gap["predecessor_generation"]
             or generation_transition["successor_generation"] != gap["successor_generation"]
             or transition is None

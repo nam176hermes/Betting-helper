@@ -664,7 +664,11 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
 
 
 def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
-    if row.get("execution_kind") == "BROWSER_LOOPBACK_ACK":
+    if row.get("execution_kind") == "DISPOSABLE_DESTRUCTION_PROCESS_CRASH":
+        from tools.verify_destruction_evidence import verify_destruction
+
+        verify_destruction(row, current)
+    elif row.get("execution_kind") == "BROWSER_LOOPBACK_ACK":
         _verify_browser_ack(row, current)
     elif row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
         _verify_indexeddb(row, current)
