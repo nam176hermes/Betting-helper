@@ -514,6 +514,7 @@ def run_full_repair_evidence(
             mutation_survivors=0,
             evidence=records,
             mutation_summary=mutation_summary,
+            mutation_evidence={"owner_reports": owner_reports, "clock_report": clock},
         )
     (workspace / "current-aggregate.json").write_text(json.dumps(result, sort_keys=True))
     return result
@@ -536,12 +537,8 @@ def _mutation_id(row: dict[str, Any]) -> str:
 
 
 def _verify_owner_mutation(
-    harness: str, row: dict[str, Any], binding: dict[str, Any] | None
+    harness: str, row: dict[str, Any], binding: dict[str, Any]
 ) -> None:
-    if binding is None:
-        if row.get("verified") is not True:
-            raise ValueError("E_FULL_MUTATION_UNVERIFIED")
-        return
     if harness == "GAP_GENERATION_COHERENCE":
         from tools.run_gap_coherence_crash_matrix import verify_gap_mutation
 
@@ -557,11 +554,7 @@ def _verify_owner_mutation(
         verify_owner_mutation(harness, row, binding)
 
 
-def _verify_clock_mutation(row: dict[str, Any], binding: dict[str, Any] | None) -> None:
-    if binding is None:
-        if row.get("verified") is not True:
-            raise ValueError("E_FULL_MUTATION_UNVERIFIED")
-        return
+def _verify_clock_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
     from tools.run_clock_vector_qualification import verify_record
 
     if not verify_record(row, _current_binding=binding):
@@ -589,7 +582,9 @@ def validate_full_mutation_reports(
         ]
         for harness in harnesses
     }
-    binding = None if clock_report is None else capture_binding()
+    if clock_report is None:
+        raise ValueError("E_FULL_MUTATION_CLOCK_EVIDENCE")
+    binding = capture_binding()
     verified = 0
     survivors = 0
     for harness, expected in expected_by_harness.items():
@@ -602,13 +597,7 @@ def validate_full_mutation_reports(
                 raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
             _verify_owner_mutation(harness, row, binding)
             verified += 1
-    if clock_report is None:
-        clock_mutations = [
-            row for report in owner_reports.values() for row in report.get("clock_mutations", [])
-        ]
-        binding = None
-    else:
-        clock_mutations = list(clock_report.get("mutation_records", []))
+    clock_mutations = list(clock_report.get("mutation_records", []))
     expected_clock = required_clock_mutation_ids()
     if [_mutation_id(row) for row in clock_mutations] != expected_clock:
         raise ValueError("E_FULL_MUTATION_REQUIRED_SET:CLOCK")

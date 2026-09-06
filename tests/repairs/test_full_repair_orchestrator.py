@@ -120,7 +120,9 @@ def test_full_runner_wires_every_owner_in_registry_order(
 
 
 @pytest.mark.parametrize("damage", ["missing", "duplicate", "survivor", "unverified"])
-def test_registered_mutation_damage_fails_closed(damage: str) -> None:
+def test_registered_mutation_damage_fails_closed(
+    damage: str, monkeypatch: pytest.MonkeyPatch,
+) -> None:
     reports = {
         harness: _report(harness)
         for harness in {
@@ -141,8 +143,41 @@ def test_registered_mutation_damage_fails_closed(damage: str) -> None:
     else:
         target[0]["verified"] = False
 
+    def verify_owner(_: str, row: dict[str, Any], __: dict[str, Any]) -> None:
+        if row.get("verified") is not True:
+            raise ValueError("E_FULL_MUTATION_UNVERIFIED")
+
+    monkeypatch.setattr(full, "_verify_owner_mutation", verify_owner)
+    monkeypatch.setattr(full, "_verify_clock_mutation", lambda *args: None)
+    clock_report = {
+        "mutation_records": [
+            {"case_id": name, "detected": True, "executed": True}
+            for name in full.required_clock_mutation_ids()
+        ]
+    }
     with pytest.raises(ValueError, match="E_FULL_MUTATION"):
-        full.validate_full_mutation_reports(PACK, reports, None)
+        full.validate_full_mutation_reports(PACK, reports, clock_report)
+
+
+def test_bare_verified_markers_are_not_recursive_evidence() -> None:
+    reports = {
+        harness: _report(harness)
+        for harness in {
+            "SQLITE_TRANSACTION",
+            "CHROME_INDEXEDDB",
+            "LOOPBACK_ACK",
+            "GAP_GENERATION_COHERENCE",
+            "WHOLE_RUN_DESTRUCTION",
+        }
+    }
+    clock_report = {
+        "mutation_records": [
+            {"case_id": name, "detected": True, "executed": True, "verified": True}
+            for name in full.required_clock_mutation_ids()
+        ]
+    }
+    with pytest.raises(ValueError, match="E_FULL_MUTATION_OWNER_UNSUPPORTED"):
+        full.validate_full_mutation_reports(PACK, reports, clock_report)
 
 
 def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
@@ -165,5 +200,10 @@ def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
         )
     with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_EVIDENCE_REQUIRED"):
         validate_full_durability_release(
-            required, required, mutation_survivors=0, evidence=[{"case_id": "one"}]
+            required,
+            required,
+            mutation_survivors=0,
+            evidence=[{"case_id": "one"}],
+            mutation_summary={"required": 105, "verified": 105, "survivors": 0,
+                              "complete": True},
         )
