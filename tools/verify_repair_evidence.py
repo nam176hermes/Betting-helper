@@ -150,7 +150,7 @@ def _indexeddb_artifact(row: dict[str, Any], name: str) -> object:
 
 def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
     """Validate browser spool evidence without using the clock adapter."""
-    from tools.run_indexeddb_crash_matrix import compare_indexeddb_state
+    from tools.run_indexeddb_crash_matrix import PRODUCER, STREAM, compare_indexeddb_state
 
     validate_case_status(row)
     if row["evidence_binding"] != current:
@@ -222,9 +222,21 @@ def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
         "operation": "read",
         "observations": [],
     }
+    options = worker.get("options")
+    options_expected: dict[str, object] = {
+        "browser_run_id": request_identity["run_id"],
+        "producer_id": PRODUCER,
+        "stream_id": STREAM,
+        "generation": "0",
+        "registry": json.loads(
+            (PACK / "registries/canonical-hash-domains.v1.json").read_text()
+        ),
+    }
     if (
         set(worker) != input_fields
         or set(reader) not in (input_fields, input_fields | {"mutation"})
+        or not isinstance(options, dict)
+        or options != options_expected
         or worker.get("identity") != request_identity
         or any(reader.get(key) != value for key, value in reader_expected.items())
         or reader.get("mutation") not in (None, "delete-row", "corrupt-ack")
