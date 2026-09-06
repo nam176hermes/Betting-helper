@@ -1,7 +1,7 @@
 {
   "schema_version": "schema-lock/v1",
   "vendor_path": "vendor/hybrid-discovery-v6.3.6",
-  "vendor_tree_sha256": "615da45ffdf210b10f64e1b7fad3e2cdc4e51625a445bcd485a2bbfe4ab6bf37",
+  "vendor_tree_sha256": "10022a3dc8ee14047c2814c89e3243238c8543cd16f2a81a134e2477541a2daa",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -216,7 +216,7 @@
     {
       "path": "docs/registries/normative-source-map.v1.json",
       "size_bytes": 24048,
-      "sha256": "923dd50b94b159fb260ff9128457e87bb8125e673f57756fb9085c9222eb2da1"
+      "sha256": "600baa3bbbc50774515e76b05fa16963ace576401c016bcb794594523e0e510a"
     },
     {
       "path": "docs/registries/path-registry.v1.json",
@@ -415,8 +415,8 @@
     },
     {
       "path": "schemas/durability-records.schema.json",
-      "size_bytes": 31223,
-      "sha256": "bebadf5dc5c1320ce54036123f00e7f777d9754759cb7c19d4675c64b95d271f"
+      "size_bytes": 31332,
+      "sha256": "1c14234a256e8f3c0228bd796d03cd18bb84d6ff0b865781ad4547de5ca31b5b"
     },
     {
       "path": "schemas/e0-evidence.schema.json",

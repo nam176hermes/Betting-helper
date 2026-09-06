@@ -36,6 +36,16 @@ def test_canonical_seed_matches_independent_published_preimage() -> None:
     )
 
 
+def test_spool_record_preserves_raw_observation_identifier() -> None:
+    schema = json.loads((VENDOR / "schemas/durability-records.schema.json").read_text())
+    Draft202012Validator(
+        {"$defs": schema["$defs"], "$ref": "#/$defs/RawObservationId"}
+    ).validate("observation:" + "1" * 64)
+    assert schema["$defs"]["SpoolRecord"]["properties"]["raw_observation_id"] == {
+        "$ref": "#/$defs/RawObservationId"
+    }
+
+
 @pytest.mark.parametrize("run_suffix", ["000000000010", "000000000011"])
 @pytest.mark.parametrize("boundary", ["first_raw_commit", "zero_ack"])
 @pytest.mark.parametrize("substitute_identity_seed", [False, True])

@@ -59,6 +59,10 @@
       "type": "string",
       "pattern": "^[A-Z][A-Z0-9_]*:[0-9a-f]{64}$"
     },
+    "RawObservationId": {
+      "type": "string",
+      "pattern": "^observation:[0-9a-f]{64}$"
+    },
     "UnsignedDecimal": {
       "type": "string",
       "pattern": "^(0|[1-9][0-9]*)$"
@@ -196,7 +200,7 @@
           "$ref": "#/$defs/Position"
         },
         "raw_observation_id": {
-          "$ref": "#/$defs/ArtifactId"
+          "$ref": "#/$defs/RawObservationId"
         },
         "raw_observation_content_hash": {
           "$ref": "#/$defs/Hash"
