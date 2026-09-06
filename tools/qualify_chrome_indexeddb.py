@@ -191,6 +191,56 @@ def _process_executable(process: Popen[bytes]) -> Path:
         raise QualificationRejected(f"E_BROWSER_PROCESS_IDENTITY:{error}") from error
 
 
+def _browser_process_observation(process: Popen[bytes]) -> dict[str, object]:
+    """Observe the owned live process, retaining raw proc data for later parsing."""
+    if process.poll() is not None:
+        raise QualificationRejected("E_BROWSER_PROCESS_EXITED")
+    executable = _process_executable(process)
+    proc = Path(f"/proc/{process.pid}")
+    cmdline = (proc / "cmdline").read_bytes()
+    return {
+        "pid": process.pid,
+        "pgid": os.getpgid(process.pid),
+        "executable": str(executable),
+        "sha256": _sha256(executable),
+        "argv": cmdline.rstrip(b"\0").decode().split("\0"),
+        "proc_cmdline_hex": cmdline.hex(),
+        "proc_stat": (proc / "stat").read_text(),
+    }
+
+
+def _browser_command(
+    command: Path,
+    profile: Path,
+    extension: Path,
+    extension_url: str,
+    port: int,
+) -> list[str]:
+    """Pinned isolated-browser launch; external requests cannot bypass a system proxy."""
+    return [
+        str(command.resolve()),
+        "--headless=new",
+        "--disable-background-networking",
+        "--disable-component-update",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-default-apps",
+        "--disable-gpu",
+        "--disable-sync",
+        "--metrics-recording-only",
+        "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1",
+        "--proxy-server=http://127.0.0.1:9",
+        "--proxy-bypass-list=127.0.0.1;localhost",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--remote-debugging-address=127.0.0.1",
+        f"--remote-debugging-port={port}",
+        f"--user-data-dir={profile.resolve()}",
+        f"--disable-extensions-except={extension.resolve()}",
+        f"--load-extension={extension.resolve()}",
+        extension_url,
+    ]
+
+
 def _wait_for_target(process: Popen[bytes], port: int, url: str) -> str:
     endpoint = f"http://127.0.0.1:{port}/json/list"
     deadline = monotonic() + 15
@@ -224,26 +274,7 @@ def _start_chrome(
     port = _free_port()
     with log_path.open("ab") as log:
         process = Popen(  # noqa: S603 - caller supplies the recorded local browser.
-            [
-                str(command),
-                "--headless=new",
-                "--disable-background-networking",
-                "--disable-component-update",
-                "--disable-component-extensions-with-background-pages",
-                "--disable-default-apps",
-                "--disable-gpu",
-                "--disable-sync",
-                "--metrics-recording-only",
-                "--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1",
-                "--no-first-run",
-                "--no-default-browser-check",
-                "--remote-debugging-address=127.0.0.1",
-                f"--remote-debugging-port={port}",
-                f"--user-data-dir={profile}",
-                f"--disable-extensions-except={extension}",
-                f"--load-extension={extension}",
-                extension_url,
-            ],
+            _browser_command(command, profile, extension, extension_url, port),
             stdin=DEVNULL,
             stdout=log,
             stderr=log,

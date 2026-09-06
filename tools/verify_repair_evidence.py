@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import signal
 import sqlite3
@@ -675,6 +676,153 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
 
 
+def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> None:
+    """Bind the actual browser assets, profile and OS observations to the pinned launch."""
+    from tools.qualify_chrome_indexeddb import _browser_command, _canonical_browser_executable
+    from tools.run_indexeddb_crash_matrix import CHROME
+
+    case = Path(row["case_directory"]).resolve()
+    extension, profile = case / "test-extension", case / "chrome-profile"
+    identity = row["identity"]
+    assets = row["loaded_assets"]
+    if extension.is_symlink() or set(assets) != {"manifest.json", "repair-probe.html"}:
+        raise ValueError("E_ACK_LOADED_ASSET")
+    for name, source in (
+        ("manifest.json", "repair-manifest.json"),
+        ("repair-probe.html", "repair-probe.html"),
+    ):
+        descriptor = assets[name]
+        path = _sqlite_file(row, descriptor["path"], descriptor["sha256"], "E_ACK_LOADED_ASSET")
+        source_path = "extension/test-harness/" + source
+        if (
+            path != extension / name
+            or descriptor["sha256"] != current["source_sha256"][source_path]
+            or path.read_bytes() != (ROOT / source_path).read_bytes()
+        ):
+            raise ValueError("E_ACK_LOADED_ASSET")
+    manifest = json.loads((extension / "manifest.json").read_text())
+    if (
+        manifest["host_permissions"] != ["http://127.0.0.1/*"]
+        or manifest["permissions"] != []
+        or manifest["web_accessible_resources"] != []
+    ):
+        raise ValueError("E_ACK_LOADED_ASSET_PERMISSIONS")
+
+    readbacks = row["profile_readbacks"]
+    if profile.is_symlink() or set(readbacks) != {"before", "after", "marker", "sentinel"}:
+        raise ValueError("E_ACK_PROFILE")
+    marker = _sqlite_file(
+        row, readbacks["marker"]["path"], readbacks["marker"]["sha256"], "E_ACK_PROFILE_MARKER"
+    )
+    if marker != profile / "BH_R05_PROFILE_ID" or marker.read_text() != identity["profile_id"]:
+        raise ValueError("E_ACK_PROFILE_MARKER")
+    expected_profile = {
+        "profile_path": str(profile),
+        "marker": identity["profile_id"],
+        "sentinel": {
+            "extensionId": identity["origin"].removeprefix("chrome-extension://"),
+            "moduleSha256": identity["module_sha256"],
+            "moduleUrl": identity["module_url"],
+            "origin": identity["origin"],
+            "profileId": identity["profile_id"],
+            "protocol": "chrome-extension:",
+            "sentinel": readbacks["sentinel"],
+            "spoolConstructor": "Spool",
+        },
+    }
+    if not isinstance(readbacks["sentinel"], str) or len(readbacks["sentinel"]) != 64:
+        raise ValueError("E_ACK_PROFILE_SENTINEL")
+    for phase in ("before", "after"):
+        value = _sqlite_descriptor(row, readbacks[phase], "E_ACK_PROFILE_READBACK")
+        if value != expected_profile or value != _sqlite_descriptor(
+            row, row["artifacts"]["profile-" + phase], "E_ACK_PROFILE_READBACK"
+        ):
+            raise ValueError("E_ACK_PROFILE_SENTINEL")
+
+    configured = _canonical_browser_executable(
+        Path(os.environ.get("BH_CHROME_BINARY", str(CHROME)))
+    )
+    expected_browser = {"executable": str(configured), "sha256": _sha(configured)}
+    if row["browser"] != expected_browser:
+        raise ValueError("E_ACK_BROWSER_CONFIGURED_EXECUTABLE")
+    provenance = row["browser_provenance"]
+    if set(provenance) != {"launch", "before", "after"}:
+        raise ValueError("E_ACK_BROWSER_PROVENANCE")
+    launch = _sqlite_descriptor(row, provenance["launch"], "E_ACK_BROWSER_LAUNCH")
+    if launch != _sqlite_descriptor(
+        row, row["artifacts"]["browser-launch"], "E_ACK_BROWSER_LAUNCH"
+    ):
+        raise ValueError("E_ACK_BROWSER_LAUNCH")
+    ports = [
+        value.removeprefix("--remote-debugging-port=")
+        for value in launch["argv"]
+        if isinstance(value, str) and value.startswith("--remote-debugging-port=")
+    ]
+    if len(ports) != 1 or not ports[0].isdigit() or not 0 < int(ports[0]) < 65536:
+        raise ValueError("E_ACK_BROWSER_LAUNCH")
+    expected_argv = _browser_command(
+        configured, profile, extension, identity["origin"] + "/repair-probe.html", int(ports[0])
+    )
+    expected_launch = {
+        **expected_browser,
+        "argv": expected_argv,
+        "pid": identity["pid"],
+        "pgid": identity["pid"],
+        "profile_path": str(profile),
+        "extension_path": str(extension),
+        "origin": identity["origin"],
+    }
+    if launch != expected_launch:
+        raise ValueError("E_ACK_BROWSER_LAUNCH")
+    # This Chrome build rewrites /proc argv to one display string and inserts
+    # four headless switches. Accept only this exact observed representation.
+    headless_argv = [
+        " ".join(
+            [
+                *expected_argv[:-1],
+                "--noerrdialogs",
+                "--ozone-platform=headless",
+                "--ozone-override-screen-size=800,600",
+                "--use-angle=swiftshader-webgl",
+                expected_argv[-1],
+            ]
+        )
+    ]
+    start_times = []
+    for phase in ("before", "after"):
+        observed = _sqlite_descriptor(row, provenance[phase], "E_ACK_BROWSER_OBSERVATION")
+        if observed != _sqlite_descriptor(
+            row, row["artifacts"]["browser-process-" + phase], "E_ACK_BROWSER_OBSERVATION"
+        ):
+            raise ValueError("E_ACK_BROWSER_OBSERVATION")
+        try:
+            raw_argv = (
+                bytes.fromhex(observed["proc_cmdline_hex"]).rstrip(b"\0").decode().split("\0")
+            )
+            proc_pid, _, proc_state = observed["proc_stat"].partition("(")
+            fields = proc_state.rpartition(")")[2].split()
+            raw_pid, raw_pgid, start_time = int(proc_pid), int(fields[2]), int(fields[19])
+        except (ValueError, IndexError, TypeError, KeyError) as error:
+            raise ValueError("E_ACK_BROWSER_OBSERVATION") from error
+        if (
+            set(observed)
+            != {"pid", "pgid", "executable", "sha256", "argv", "proc_cmdline_hex", "proc_stat"}
+            or observed["pid"] != identity["pid"]
+            or raw_pid != identity["pid"]
+            or observed["pgid"] != raw_pgid
+            or raw_pgid != identity["pid"]
+            or observed["executable"] != str(configured)
+            or observed["sha256"] != expected_browser["sha256"]
+            or observed["argv"] != raw_argv
+            or raw_argv not in (expected_argv, headless_argv)
+            or start_time <= 0
+        ):
+            raise ValueError("E_ACK_BROWSER_OBSERVATION")
+        start_times.append(start_time)
+    if start_times[0] != start_times[1]:
+        raise ValueError("E_ACK_BROWSER_PROCESS_REPLACED")
+
+
 def _verify_browser_ack(
     row: dict[str, Any],
     current: dict[str, Any],
@@ -725,6 +873,7 @@ def _verify_browser_ack(
     browser = Path(row["browser"]["executable"])
     if _sha(browser) != row["browser"]["sha256"]:
         raise ValueError("E_ACK_BROWSER")
+    _verify_browser_binding(row, current)
     modules = row["module_hashes"]
     extension = Path(row["case_directory"]) / "test-extension"
     # Every loaded module is retained and bound, including the canonical dependency.

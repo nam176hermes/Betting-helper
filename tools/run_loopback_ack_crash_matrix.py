@@ -668,9 +668,15 @@ def run_browser_handshake(
     extension: Path,
     binary: Path,
     observations: list[dict[str, Any]],
+    *,
+    browser_process: subprocess.Popen[bytes],
+    profile: Path,
+    sentinel: str,
+    initial_sentinel: dict[str, Any],
 ) -> dict[str, Any]:
     """Use the existing browser owner and independent SQLite reader for one full case."""
     from tools.inspect_restart_state import _checkpoint, _kill_owned_child
+    from tools.qualify_chrome_indexeddb import _browser_process_observation
     from tools.run_indexeddb_crash_matrix import _call
 
     root = Path(__file__).resolve().parents[1]
@@ -683,6 +689,35 @@ def run_browser_handshake(
         descriptor = {"path": str(path.resolve()), "sha256": _sha(path)}
         (inputs if is_input else artifacts)[name] = descriptor
         return descriptor
+
+    loaded_assets = {
+        name: {"path": str((extension / name).resolve()), "sha256": _sha(extension / name)}
+        for name in ("manifest.json", "repair-probe.html")
+    }
+    marker = profile / "BH_R05_PROFILE_ID"
+    marker_artifact = {"path": str(marker.resolve()), "sha256": _sha(marker)}
+    profile_before = save(
+        "profile-before",
+        {
+            "profile_path": str(profile.resolve()),
+            "marker": marker.read_text(),
+            "sentinel": initial_sentinel,
+        },
+    )
+    browser_before = save("browser-process-before", _browser_process_observation(browser_process))
+    launch = save(
+        "browser-launch",
+        {
+            "argv": browser_process.args,
+            "pid": browser_process.pid,
+            "pgid": os.getpgid(browser_process.pid),
+            "profile_path": str(profile.resolve()),
+            "extension_path": str(extension.resolve()),
+            "origin": identity["origin"],
+            "executable": str(binary),
+            "sha256": _sha(binary),
+        },
+    )
 
     processes: list[dict[str, Any]] = []
     owned: subprocess.Popen[bytes] | None = None
@@ -868,6 +903,17 @@ def run_browser_handshake(
         browser_after = read_browser("after")
         backend_after = read_backend("after")
         stop(False)
+        profile_after = save(
+            "profile-after",
+            {
+                "profile_path": str(profile.resolve()),
+                "marker": marker.read_text(),
+                "sentinel": _call(socket, "readSentinel", identity["profile_id"]),
+            },
+        )
+        browser_after_process = save(
+            "browser-process-after", _browser_process_observation(browser_process)
+        )
         save("backend-before", backend_before)
         save("backend-after", backend_after)
         save("expected", entry["expected_post_restart_state"])
@@ -907,6 +953,18 @@ def run_browser_handshake(
             "reader_runs": reader_runs,
             "backend_processes": processes,
             "browser": {"executable": str(binary), "sha256": _sha(binary)},
+            "loaded_assets": loaded_assets,
+            "profile_readbacks": {
+                "before": profile_before,
+                "after": profile_after,
+                "marker": marker_artifact,
+                "sentinel": sentinel,
+            },
+            "browser_provenance": {
+                "launch": launch,
+                "before": browser_before,
+                "after": browser_after_process,
+            },
             "module_hashes": {
                 str(path.relative_to(extension)): _sha(path)
                 for path in sorted(extension.rglob("*.js"))

@@ -11,7 +11,12 @@ from typing import Any
 import pytest
 
 from tools.run_loopback_ack_crash_matrix import run_loopback_ack_crash_matrix
-from tools.verify_repair_evidence import _contains_expected, aggregate_repair_evidence
+from tools.verify_repair_evidence import (
+    _contains_expected,
+    _verify_browser_ack,
+    aggregate_repair_evidence,
+    capture_binding,
+)
 
 ROOT = Path(__file__).parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
@@ -231,3 +236,206 @@ def test_exact_registry_required(tmp_path: Path, mutation: str) -> None:
     target.write_text(json.dumps({"entries": rows}))
     with pytest.raises(ValueError, match="E_ACK_REQUIRED_CASES"):
         run_loopback_ack_crash_matrix(tmp_path / "pack", tmp_path / "cases")
+
+
+@pytest.fixture(scope="module")
+def browser_record(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    from tools.run_indexeddb_crash_matrix import run_indexeddb_case
+
+    registry = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())
+    entry = next(row for row in registry["entries"] if row["vector_id"].startswith("ACK-05"))
+    return run_indexeddb_case(
+        entry, tmp_path_factory.mktemp("browser-binding") / "case", operation="deliver", full=True
+    )
+
+
+@pytest.mark.parametrize("name", ["manifest.json", "repair-probe.html"])
+@pytest.mark.parametrize("damage", ["missing", "tampered", "rehashed"])
+def test_loaded_browser_assets_are_source_bound(
+    browser_record: dict[str, Any],
+    name: str,
+    damage: str,
+) -> None:
+    row = copy.deepcopy(browser_record)
+    path = Path(row["case_directory"]) / "test-extension" / name
+    original = path.read_bytes()
+    moved = path.with_suffix(path.suffix + ".held")
+    try:
+        if damage == "missing":
+            path.rename(moved)
+        else:
+            if name == "manifest.json":
+                manifest = json.loads(original)
+                manifest["host_permissions"] = ["<all_urls>"]
+                content = json.dumps(manifest).encode()
+            else:
+                content = original + b"<!-- substituted page -->"
+            path.write_bytes(content)
+            if damage == "rehashed" and "loaded_assets" in row:
+                row["loaded_assets"][name]["sha256"] = hashlib.sha256(content).hexdigest()
+        with pytest.raises(ValueError, match="E_ACK_LOADED_ASSET"):
+            _verify_browser_ack(row, capture_binding(), terminal=False)
+    finally:
+        if moved.exists():
+            moved.rename(path)
+        else:
+            path.write_bytes(original)
+
+
+@pytest.mark.parametrize("damage", ["missing", "wrong"])
+def test_full_mode_profile_marker_is_read_back(
+    browser_record: dict[str, Any],
+    damage: str,
+) -> None:
+    path = Path(browser_record["case_directory"]) / "chrome-profile/BH_R05_PROFILE_ID"
+    original = path.read_bytes()
+    moved = path.with_suffix(".held")
+    try:
+        if damage == "missing":
+            path.rename(moved)
+        else:
+            path.write_text("wrong-profile")
+        with pytest.raises(ValueError, match="E_ACK_PROFILE"):
+            _verify_browser_ack(browser_record, capture_binding(), terminal=False)
+    finally:
+        if moved.exists():
+            moved.rename(path)
+        else:
+            path.write_bytes(original)
+
+
+def test_coherent_browser_executable_substitution_rejects(browser_record: dict[str, Any]) -> None:
+    row = copy.deepcopy(browser_record)
+    row["browser"] = {
+        "executable": str(Path(sys.executable).resolve()),
+        "sha256": hashlib.sha256(Path(sys.executable).read_bytes()).hexdigest(),
+    }
+    with pytest.raises(ValueError, match="E_ACK_BROWSER"):
+        _verify_browser_ack(row, capture_binding(), terminal=False)
+
+
+def test_full_mode_records_actual_profile_and_process_readbacks(
+    browser_record: dict[str, Any],
+) -> None:
+    assert "profile_readbacks" in browser_record
+    assert "browser_provenance" in browser_record
+    assert "loaded_assets" in browser_record
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "launch-pid",
+        "launch-pgid",
+        "launch-profile",
+        "launch-extension",
+        "launch-proxy",
+        "launch-resolver",
+        "observed-executable",
+        "observed-argv",
+        "observed-start",
+        "sentinel",
+        "sentinel-profile",
+        "sentinel-missing",
+    ],
+)
+def test_coherently_rehashed_browser_provenance_rejects(
+    browser_record: dict[str, Any],
+    damage: str,
+) -> None:
+    row = copy.deepcopy(browser_record)
+    profile_damage = damage.startswith("sentinel")
+    group = row["profile_readbacks"] if profile_damage else row["browser_provenance"]
+    descriptor = group["launch" if damage.startswith("launch") else "after"]
+    path = Path(descriptor["path"])
+    original = path.read_bytes()
+    value = json.loads(original)
+    if damage == "launch-pid":
+        value["pid"] += 1
+        value["pgid"] = value["pid"]
+        row["identity"]["pid"] = value["pid"]
+    elif damage == "launch-pgid":
+        value["pgid"] += 1
+    elif damage in {"launch-profile", "launch-extension"}:
+        field = "profile_path" if damage == "launch-profile" else "extension_path"
+        before = value[field]
+        value[field] += "-substituted"
+        value["argv"] = [arg.replace(before, value[field]) for arg in value["argv"]]
+    elif damage == "launch-proxy":
+        value["argv"] = [arg for arg in value["argv"] if not arg.startswith("--proxy-")]
+        value["argv"].insert(1, "--no-proxy-server")
+    elif damage == "launch-resolver":
+        value["argv"] = [arg for arg in value["argv"] if not arg.startswith("--host-resolver-")]
+    elif damage == "observed-executable":
+        value["executable"] = str(Path(sys.executable).resolve())
+        value["sha256"] = hashlib.sha256(Path(sys.executable).read_bytes()).hexdigest()
+    elif damage == "observed-argv":
+        value["argv"][0] += " --no-proxy-server"
+        value["proc_cmdline_hex"] = ("\0".join(value["argv"]) + "\0").encode().hex()
+    elif damage == "observed-start":
+        prefix, _, raw = value["proc_stat"].rpartition(")")
+        fields = raw.split()
+        fields[19] = str(int(fields[19]) + 1)
+        value["proc_stat"] = prefix + ") " + " ".join(fields)
+    elif damage == "sentinel":
+        value["sentinel"]["sentinel"] = "0" * 64
+    elif damage == "sentinel-profile":
+        value["sentinel"]["profileId"] = "wrong-profile"
+    else:
+        value["sentinel"].pop("sentinel")
+    try:
+        content = json.dumps(value, sort_keys=True).encode()
+        path.write_bytes(content)
+        for mapping in (row["artifacts"], row["profile_readbacks"], row["browser_provenance"]):
+            for item in mapping.values():
+                if isinstance(item, dict) and item.get("path") == str(path):
+                    item["sha256"] = hashlib.sha256(content).hexdigest()
+        with pytest.raises(ValueError, match="E_ACK_(PROFILE|BROWSER)"):
+            _verify_browser_ack(row, capture_binding(), terminal=False)
+    finally:
+        path.write_bytes(original)
+
+
+@pytest.mark.parametrize("damage", ["sentinel", "profileId", "marker"])
+def test_actual_full_mode_readback_failure_is_rejected(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    damage: str,
+) -> None:
+    from tools import run_indexeddb_crash_matrix as browser
+
+    original_call = browser._call
+    calls = []
+
+    def readback(socket: str, method: str, *arguments: object) -> dict[str, Any]:
+        result = original_call(socket, method, *arguments)
+        if method == "readSentinel":
+            calls.append(method)
+            if damage == "marker":
+                marker = next(tmp_path.rglob("BH_R05_PROFILE_ID"))
+                marker.write_text("wrong-marker-after-restart")
+            else:
+                result[damage] = "wrong-after-restart"
+        return result
+
+    monkeypatch.setattr(browser, "_call", readback)
+    registry = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())
+    entry = next(row for row in registry["entries"] if row["vector_id"].startswith("IDB-04"))
+    with pytest.raises(ValueError, match="E_ACK_PROFILE"):
+        browser.run_indexeddb_case(entry, tmp_path / "case", full=True)
+    assert calls == ["readSentinel"]
+
+
+@pytest.mark.parametrize("group", ["profile_readbacks", "browser_provenance"])
+def test_missing_browser_readback_artifact_is_rejected(
+    browser_record: dict[str, Any],
+    group: str,
+) -> None:
+    path = Path(browser_record[group]["after"]["path"])
+    moved = path.with_suffix(".held")
+    path.rename(moved)
+    try:
+        with pytest.raises(ValueError, match="E_ACK_(PROFILE|BROWSER)"):
+            _verify_browser_ack(browser_record, capture_binding(), terminal=False)
+    finally:
+        moved.rename(path)

@@ -248,7 +248,10 @@ def run_indexeddb_case(
             raise ValueError("E_BROWSER_BINARY_MISMATCH")
         _wait_for_probe(socket)
         sentinel = token_hex(32)
-        _call(socket, "writeSentinel", sentinel, profile_id)
+        initial_sentinel = _call(socket, "writeSentinel", sentinel, profile_id)
+        if (initial_sentinel.get("sentinel") != sentinel
+                or initial_sentinel.get("profileId") != profile_id):
+            raise ValueError("E_INDEXEDDB_PROFILE")
         run_id = str(uuid4())
         observations = _observations(run_id)
         binding = {
@@ -295,6 +298,8 @@ def run_indexeddb_case(
                 extension,
                 binary,
                 observations,
+                browser_process=process, profile=profile, sentinel=sentinel,
+                initial_sentinel=initial_sentinel,
             )
         worker_input = workspace / "input.json"
         worker_input.write_text(json.dumps(request, sort_keys=True))
