@@ -330,3 +330,35 @@ def test_database_absent_controller_history_forgery_is_rejected(
         assert result["errors"][0]["error"] == "E_GAP_STATE_EVOLUTION"
     finally:
         held.rename(database)
+
+
+def test_database_absent_same_state_generation_mutation_is_rejected(
+    report: dict[str, object],
+) -> None:
+    row = copy.deepcopy(
+        next(item for item in report["records"] if item["case_id"].startswith("LATE-01"))
+    )
+    for phase in ("before", "after"):
+        state = row[f"{phase}_restart"]
+        generation = next(
+            item for item in state["tables"]["stream_generations"] if item["generation"] == 0
+        )
+        generation["closed_at_us"] += 777
+        reader = next(item for item in row["reader_runs"] if item["phase"] == phase)
+        output = json.loads(Path(reader["output"]["path"]).read_text())
+        output["state"] = state
+        forged = Path(row["case_directory"]) / f"forged-{phase}-generation-reader.json"
+        forged.write_text(json.dumps(output, sort_keys=True))
+        reader["output"] = {
+            "path": str(forged),
+            "sha256": hashlib.sha256(forged.read_bytes()).hexdigest(),
+        }
+    database = Path(row["case_directory"]) / row["identity"]["run_id"] / "run.sqlite3"
+    held = database.with_suffix(".sqlite3.held")
+    database.rename(held)
+    try:
+        result = aggregate_repair_evidence([row["case_id"]], [row])
+        assert result["result"] == "FAIL"
+        assert result["errors"][0]["error"] == "E_GAP_STATE_EVOLUTION"
+    finally:
+        held.rename(database)

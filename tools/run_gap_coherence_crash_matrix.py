@@ -783,6 +783,7 @@ def _validate_state_evolution(
             new = later_by_id.get(old["generation_id"])
             if (
                 new is None
+                or (new["generation_state"] == old["generation_state"] and new != old)
                 or any(new[key] != value for key, value in old.items() if key not in mutable)
                 or new["generation_state"] not in allowed[old["generation_state"]]
                 or (
