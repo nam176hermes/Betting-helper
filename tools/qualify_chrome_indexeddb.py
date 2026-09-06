@@ -326,6 +326,15 @@ def _prepare_test_extension(repository_root: Path, workspace: Path) -> tuple[Pat
     shutil.copy2(required["probe"], extension / "repair-probe.js")
     shutil.copy2(required["spool"], extension / "src/spool.js")
     shutil.copy2(required["errors"], extension / "src/errors.js")
+    # Resolve the installed ESM dependency inside this isolated test extension.
+    canonical = (build_root / "src/canonical.js").read_text()
+    (extension / "src/canonical.js").write_text(
+        canonical.replace('from "canonicalize"', 'from "./canonicalize.js"')
+    )
+    shutil.copy2(source_root / "node_modules/canonicalize/lib/canonicalize.js",
+                 extension / "src/canonicalize.js")
+    shutil.copy2(build_root / "test-harness/indexeddb-crash-child.js",
+                 extension / "indexeddb-crash-child.js")
     manifest = cast(dict[str, object], json.loads((extension / "manifest.json").read_text()))
     key = manifest.get("key")
     if not isinstance(key, str):

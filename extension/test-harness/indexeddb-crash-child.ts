@@ -1,37 +1,130 @@
-import { fileURLToPath } from "node:url";
-import { writeFileSync } from "node:fs";
+/** Test-only owned Worker; never receives an expected state. */
+import { Spool } from "../src/spool.js";
+import type { CanonicalRegistry } from "../src/canonical.js";
+import type { PersistableSanitizedObservationV1 } from "../src/security/redaction.js";
 
+// The registered legacy Node executor remains unqualified for browser evidence.
 export const contractNotImplemented = (): never => {
   throw new Error("E_CONTRACT_NOT_IMPLEMENTED:V636-P01-T04");
 };
+if (typeof location === "undefined") contractNotImplemented();
 
-export const persistIndexedDbSentinel = async (
-  checkpoint: string,
-  sentinel = "HD636_INDEXEDDB_SENTINEL",
-): Promise<string> => {
+type Request = {
+  identity: Record<string, unknown>;
+  options: { browser_run_id: string; producer_id: string; stream_id: string; generation: string; registry: CanonicalRegistry };
+  observations: string[];
+  operation: "crash" | "read" | "exercise";
+  mutation?: "delete-row" | "corrupt-ack";
+};
+const reply = (value: unknown): void => { globalThis.postMessage(value); };
+const workerId = new URL(location.href).searchParams.get("worker_id");
+const moduleUrl = new URL("../src/spool.js", import.meta.url).href;
+const envelope = (raw: string): PersistableSanitizedObservationV1 => {
+  // Python-schema-validated synthetic fixtures only; no production projector claim.
+  const bytes = new TextEncoder().encode(raw);
+  return { canonicalSanitizedBytes: bytes, validatedRawObservation: { canonicalBytes: bytes } } as PersistableSanitizedObservationV1;
+};
+const actualRows = async (request: Request): Promise<object> => {
   const database = await new Promise<IDBDatabase>((resolve, reject) => {
-    const request = indexedDB.open("hd636-crash-harness", 1);
-    request.onupgradeneeded = () => request.result.createObjectStore("checkpoints");
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    const open = indexedDB.open(`hybrid-discovery-v6.2-working-${request.options.browser_run_id}`, 1);
+    open.onupgradeneeded = () => { open.transaction?.abort(); };
+    open.onsuccess = () => { resolve(open.result); };
+    open.onerror = () => { reject(open.error ?? new Error("E_TEST_DATABASE_OPEN")); };
   });
-  await new Promise<void>((resolve, reject) => {
-    const transaction = database.transaction("checkpoints", "readwrite");
-    transaction.objectStore("checkpoints").put(sentinel, checkpoint);
-    transaction.oncomplete = () => resolve();
-    transaction.onerror = () => reject(transaction.error);
-  });
-  database.close();
-  return sentinel;
+  try {
+    if (request.mutation) {
+      await new Promise<void>((resolve, reject) => {
+        const transaction = database.transaction(["stream_state_v1", "spool_entries_v1"], "readwrite", { durability: "strict" });
+        const key = [request.options.producer_id, request.options.stream_id];
+        if (request.mutation === "delete-row") {
+          transaction.objectStore("spool_entries_v1").delete([...key, "0".repeat(19), "1".padStart(19, "0")]);
+        } else {
+          const states = transaction.objectStore("stream_state_v1");
+          const get = states.get(key);
+          get.onsuccess = () => { states.put({ ...(get.result as Record<string, unknown>), ack_sequence: "1", ack_cursor_hash: "f".repeat(64) }, key); };
+        }
+        transaction.oncomplete = () => { resolve(); };
+        transaction.onabort = () => { reject(transaction.error ?? new Error("E_TEST_MUTATION_ABORT")); };
+      });
+    }
+    return await new Promise<object>((resolve, reject) => {
+      const transaction = database.transaction(["stream_state_v1", "spool_entries_v1"], "readonly");
+      const states = transaction.objectStore("stream_state_v1").getAll();
+      const entries = transaction.objectStore("spool_entries_v1").getAll();
+      const keys = transaction.objectStore("spool_entries_v1").getAllKeys();
+      transaction.oncomplete = () => { resolve({ states: states.result as unknown, entries: entries.result as unknown, keys: keys.result }); };
+      transaction.onabort = () => { reject(transaction.error ?? new Error("E_TEST_READ_ABORT")); };
+    });
+  } finally { database.close(); }
 };
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const vectorIndex = process.argv.indexOf("--vector-id");
-  const vectorId = process.argv[vectorIndex + 1];
-  if (!vectorId) contractNotImplemented();
-  const readyIndex = process.argv.indexOf("--ready");
-  const readyPath = process.argv[readyIndex + 1];
-  if (readyIndex >= 0 && readyPath) writeFileSync(readyPath, JSON.stringify({ vectorId }));
-  if (process.argv.includes("--hold")) setInterval(() => undefined, 1000);
-  else process.stdout.write(JSON.stringify({ vectorId }));
-}
+globalThis.onmessage = (event: MessageEvent<Request>): void => {
+  const request = event.data;
+  void (async () => {
+    const bytes = await (await fetch(moduleUrl)).arrayBuffer();
+    const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+    const evidence = { ...request.identity, worker_id: workerId, module_url: moduleUrl,
+      module_sha256: Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join(""),
+      origin: location.origin, protocol: location.protocol };
+    const spool = new Spool(request.options);
+    if (request.operation === "read") {
+      reply({ ...evidence, ...await actualRows(request) });
+      return;
+    }
+    const first = request.observations[0];
+    if (first === undefined) throw new Error("E_TEST_INPUT");
+    if (request.operation === "exercise") {
+      const [one, duplicate] = await Promise.all([
+        spool.append(envelope(first)), spool.append(envelope(first)),
+      ]);
+      const second = request.observations[1];
+      const third = request.observations[2];
+      if (second === undefined || third === undefined) throw new Error("E_TEST_INPUT");
+      const two = await spool.append(envelope(second));
+      let invalidAck = "";
+      try { await spool.persistVerifiedAck("0", "2", "f".repeat(64)); }
+      catch (error) { invalidAck = String(error); }
+      await spool.persistVerifiedAck("0", "1", one.cursor_hash);
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- applied to the intercepted receiver below.
+      const put = IDBObjectStore.prototype.put;
+      IDBObjectStore.prototype.put = function (...args: Parameters<typeof put>): IDBRequest<IDBValidKey> {
+        const result = put.apply(this, args);
+        this.transaction.abort();
+        return result;
+      };
+      let aborted = false;
+      try { await spool.append(envelope(third)); }
+      catch { aborted = true; }
+      IDBObjectStore.prototype.put = put;
+      reply({ ...evidence, ...await actualRows(request), duplicate,
+        first: one, second: two, invalid_ack: invalidAck, aborted,
+        pending: await spool.enumeratePending() });
+      return;
+    }
+    const pause = (): never => {
+      reply({ ...evidence, boundary: request.identity.checkpoint_id });
+      // The owned Worker blocks inside the IDB callback until Worker.terminate().
+      for (;;) { /* transaction cannot complete before termination */ }
+    };
+    const boundary = request.identity.checkpoint_id;
+    if (boundary === "idb_01_before_transaction") {
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- applied to the intercepted receiver below.
+      const transaction = IDBDatabase.prototype.transaction;
+      IDBDatabase.prototype.transaction = function (...args: Parameters<typeof transaction>): IDBTransaction {
+        if (args[1] === "readwrite") pause();
+        return transaction.apply(this, args);
+      };
+    } else if (boundary === "idb_02_during_sequence_allocation" || boundary === "idb_03_during_row_put") {
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- applied to the intercepted receiver below.
+      const add = IDBObjectStore.prototype.add;
+      IDBObjectStore.prototype.add = function (...args: Parameters<typeof add>): IDBRequest<IDBValidKey> {
+        if (boundary === "idb_02_during_sequence_allocation") pause();
+        const result = add.apply(this, args);
+        result.addEventListener("success", pause);
+        return result;
+      };
+    } else if (boundary !== "idb_04_after_commit") throw new Error("E_TEST_CHECKPOINT");
+    await spool.append(envelope(first));
+    pause();
+  })().catch((error: unknown) => { reply({ error: String(error), worker_id: workerId }); });
+};

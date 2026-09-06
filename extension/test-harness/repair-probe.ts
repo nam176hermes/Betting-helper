@@ -100,8 +100,28 @@ declare global {
     repairProbe: Readonly<{
       readSentinel: typeof readSentinel;
       writeSentinel: typeof writeSentinel;
+      startWorker: typeof startWorker;
+      terminateWorker: typeof terminateWorker;
     }>;
   }
 }
 
-window.repairProbe = Object.freeze({ readSentinel, writeSentinel });
+let ownedWorker: { id: string; worker: Worker } | undefined;
+const startWorker = (workerId: string, input: unknown): Promise<unknown> => {
+  if (ownedWorker) throw new Error("E_TEST_WORKER_ALREADY_OWNED");
+  const worker = new Worker(`indexeddb-crash-child.js?worker_id=${encodeURIComponent(workerId)}`, { type: "module" });
+  ownedWorker = { id: workerId, worker };
+  return new Promise((resolve, reject) => {
+    worker.onmessage = event => { resolve(event.data as unknown); };
+    worker.onerror = event => { reject(new Error(event.message)); };
+    worker.postMessage(input);
+  });
+};
+const terminateWorker = (workerId: string): Readonly<{ method: string; worker_id: string }> => {
+  if (!ownedWorker || ownedWorker.id !== workerId) throw new Error("E_TEST_WORKER_IDENTITY");
+  ownedWorker.worker.terminate();
+  ownedWorker = undefined;
+  return { method: "Worker.terminate", worker_id: workerId };
+};
+
+window.repairProbe = Object.freeze({ readSentinel, writeSentinel, startWorker, terminateWorker });
