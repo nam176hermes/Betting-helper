@@ -1,6 +1,7 @@
 """Release gate for completely executed process-level durability vectors."""
 from __future__ import annotations
 
+import json
 from typing import Any
 
 
@@ -24,12 +25,24 @@ def validate_full_durability_release(
         raise ValueError("E_DURABILITY_MUTATION_SURVIVOR")
     if mutation_evidence is None:
         raise ValueError("E_DURABILITY_MUTATION_EVIDENCE_REQUIRED")
-    from tools.run_indexeddb_crash_matrix import validate_full_mutation_reports
+    from tools.run_indexeddb_crash_matrix import (
+        full_control_records,
+        validate_full_mutation_reports,
+    )
 
+    owner_reports = mutation_evidence["owner_reports"]
+    clock_report = mutation_evidence["clock_report"]
+    controls = full_control_records(PACK, owner_reports, clock_report)
+    def canonical(value: object) -> bytes:
+        return json.dumps(
+            value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        ).encode()
+    if canonical(controls) != canonical(evidence):
+        raise ValueError("E_DURABILITY_MUTATION_CONTROL_MISMATCH")
     verified = validate_full_mutation_reports(
         PACK,
-        mutation_evidence["owner_reports"],
-        mutation_evidence["clock_report"],
+        owner_reports,
+        clock_report,
     )
     if verified != {
         "required": 105,

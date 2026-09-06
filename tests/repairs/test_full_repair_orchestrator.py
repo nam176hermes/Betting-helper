@@ -45,6 +45,23 @@ def _report(harness: str) -> dict[str, Any]:
     }
 
 
+def _clock_report() -> dict[str, Any]:
+    entries = json.loads(
+        (PACK / "docs/registries/clock-vector-coverage.v1.json").read_text()
+    )["entries"]
+    ids = [row["vector_id"] for row in entries]
+    return {
+        "result": "PASS",
+        "required_vector_ids": ids,
+        "records": [{"case_id": case_id, "status": "PASS"} for case_id in ids],
+        "mutation_records": [
+            {"case_id": name, "source_vector_id": ids[0], "detected": True,
+             "executed": True, "verified": True}
+            for name in full.required_clock_mutation_ids()
+        ],
+    }
+
+
 def test_full_runner_wires_every_owner_in_registry_order(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -74,20 +91,9 @@ def test_full_runner_wires_every_owner_in_registry_order(
         "tools.run_destruction_crash_matrix.run_destruction_crash_matrix",
         owner("destruction", "WHOLE_RUN_DESTRUCTION"),
     )
-    clock_ids = json.loads(
-        (PACK / "docs/registries/clock-vector-coverage.v1.json").read_text()
-    )["entries"]
-
     def clock(*args: object, **kwargs: object) -> dict[str, Any]:
         calls.append("clock")
-        return {
-            "result": "PASS",
-            "records": [{"case_id": row["vector_id"], "status": "PASS"} for row in clock_ids],
-            "mutation_records": [
-                {"case_id": name, "detected": True, "executed": True, "verified": True}
-                for name in full.required_clock_mutation_ids()
-            ],
-        }
+        return _clock_report()
 
     monkeypatch.setattr(
         "tools.run_clock_vector_qualification.run_clock_vector_qualification", clock
@@ -119,7 +125,9 @@ def test_full_runner_wires_every_owner_in_registry_order(
     }
 
 
-@pytest.mark.parametrize("damage", ["missing", "duplicate", "survivor", "unverified"])
+@pytest.mark.parametrize(
+    "damage", ["missing", "duplicate", "survivor", "unverified", "control-linkage"]
+)
 def test_registered_mutation_damage_fails_closed(
     damage: str, monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -140,8 +148,10 @@ def test_registered_mutation_damage_fails_closed(
         target[-1] = dict(target[0])
     elif damage == "survivor":
         target[0]["detected"] = False
-    else:
+    elif damage == "unverified":
         target[0]["verified"] = False
+    else:
+        target[0]["source_vector_id"] = "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND"
 
     def verify_owner(_: str, row: dict[str, Any], __: dict[str, Any]) -> None:
         if row.get("verified") is not True:
@@ -149,12 +159,7 @@ def test_registered_mutation_damage_fails_closed(
 
     monkeypatch.setattr(full, "_verify_owner_mutation", verify_owner)
     monkeypatch.setattr(full, "_verify_clock_mutation", lambda *args: None)
-    clock_report = {
-        "mutation_records": [
-            {"case_id": name, "detected": True, "executed": True}
-            for name in full.required_clock_mutation_ids()
-        ]
-    }
+    clock_report = _clock_report()
     with pytest.raises(ValueError, match="E_FULL_MUTATION"):
         full.validate_full_mutation_reports(PACK, reports, clock_report)
 
@@ -170,12 +175,7 @@ def test_bare_verified_markers_are_not_recursive_evidence() -> None:
             "WHOLE_RUN_DESTRUCTION",
         }
     }
-    clock_report = {
-        "mutation_records": [
-            {"case_id": name, "detected": True, "executed": True, "verified": True}
-            for name in full.required_clock_mutation_ids()
-        ]
-    }
+    clock_report = _clock_report()
     with pytest.raises(ValueError, match="E_FULL_MUTATION_OWNER_UNSUPPORTED"):
         full.validate_full_mutation_reports(PACK, reports, clock_report)
 
@@ -197,6 +197,75 @@ def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
             evidence=[{"case_id": "one"}],
             mutation_summary={"required": 105, "verified": 105, "survivors": 0,
                               "complete": True},
+        )
+
+
+def test_mutation_campaign_cannot_omit_its_positive_controls(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    reports = {
+        harness: _report(harness)
+        for harness in {
+            "SQLITE_TRANSACTION",
+            "CHROME_INDEXEDDB",
+            "LOOPBACK_ACK",
+            "GAP_GENERATION_COHERENCE",
+            "WHOLE_RUN_DESTRUCTION",
+        }
+    }
+    for report in reports.values():
+        report["records"] = []
+        report["executed_vector_ids"] = []
+    clock_report = {
+        "records": [],
+        "required_vector_ids": [],
+        "mutation_records": [
+            {"case_id": name, "detected": True, "executed": True}
+            for name in full.required_clock_mutation_ids()
+        ],
+    }
+    monkeypatch.setattr(full, "_verify_owner_mutation", lambda *args: None)
+    monkeypatch.setattr(full, "_verify_clock_mutation", lambda *args: None)
+    with pytest.raises(ValueError, match="E_FULL_CONTROL"):
+        full.validate_full_mutation_reports(PACK, reports, clock_report)
+
+
+def test_release_rejects_mutation_campaign_with_different_control_bytes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    required = ["one"]
+    evidence = [{"case_id": "one", "status": "PASS", "value": "governed"}]
+    mutation_evidence: dict[str, Any] = {
+        "owner_reports": {
+            "only": {
+                "records": [{"case_id": "one", "status": "PASS", "value": "different"}],
+                "executed_vector_ids": ["one"],
+            }
+        },
+        "clock_report": {"records": []},
+    }
+    monkeypatch.setattr("tools.verify_repair_evidence.full_required_ids", lambda: required)
+    monkeypatch.setattr(
+        "tools.verify_repair_evidence.aggregate_repair_evidence",
+        lambda *_: {"legacy_full_qualification": "PASS"},
+    )
+    monkeypatch.setattr(
+        full,
+        "validate_full_mutation_reports",
+        lambda *_: {"required": 105, "verified": 105, "survivors": 0, "complete": True},
+    )
+    monkeypatch.setattr(
+        full,
+        "full_control_records",
+        lambda *_: mutation_evidence["owner_reports"]["only"]["records"],
+    )
+    with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_CONTROL"):
+        validate_full_durability_release(
+            required,
+            required,
+            mutation_survivors=0,
+            evidence=evidence,
+            mutation_evidence=mutation_evidence,
         )
     with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_EVIDENCE_REQUIRED"):
         validate_full_durability_release(

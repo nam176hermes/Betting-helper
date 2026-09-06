@@ -536,6 +536,49 @@ def _mutation_id(row: dict[str, Any]) -> str:
     return str(row.get("mutation", row.get("vector_id", row.get("case_id", ""))))
 
 
+def _mutation_control_id(row: dict[str, Any]) -> str:
+    if "source_vector_id" in row:
+        return str(row["source_vector_id"])
+    if "mutation" in row:
+        return str(row.get("vector_id", ""))
+    execution = row.get("execution")
+    return str(execution.get("case_id", "")) if isinstance(execution, dict) else ""
+
+
+def full_control_records(
+    pack: Path,
+    owner_reports: dict[str, dict[str, Any]],
+    clock_report: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Return exact registry-ordered controls after validating every owner inventory."""
+    crash = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())[
+        "entries"
+    ]
+    clock = json.loads((pack / "docs/registries/clock-vector-coverage.v1.json").read_text())[
+        "entries"
+    ]
+    harnesses = list(dict.fromkeys(entry["harness"] for entry in crash))
+    if set(owner_reports) != set(harnesses):
+        raise ValueError("E_FULL_CONTROL_OWNER_SET")
+    controls: dict[str, dict[str, Any]] = {}
+    for harness in harnesses:
+        expected = [entry["vector_id"] for entry in crash if entry["harness"] == harness]
+        report = owner_reports[harness]
+        records = list(report.get("records", []))
+        actual = [str(row.get("case_id", row.get("vector_id", ""))) for row in records]
+        if actual != expected or report.get("executed_vector_ids") != expected:
+            raise ValueError("E_FULL_CONTROL_OWNER_RECORDS:" + harness)
+        if any(case_id in controls for case_id in actual):
+            raise ValueError("E_FULL_CONTROL_DUPLICATE")
+        controls.update(zip(actual, records, strict=True))
+    clock_ids = [entry["vector_id"] for entry in clock]
+    clock_records = list(clock_report.get("records", []))
+    actual_clock = [str(row.get("case_id", row.get("vector_id", ""))) for row in clock_records]
+    if actual_clock != clock_ids or clock_report.get("required_vector_ids") != clock_ids:
+        raise ValueError("E_FULL_CONTROL_CLOCK_RECORDS")
+    return [controls[entry["vector_id"]] for entry in crash] + clock_records
+
+
 def _verify_owner_mutation(
     harness: str, row: dict[str, Any], binding: dict[str, Any]
 ) -> None:
@@ -573,23 +616,25 @@ def validate_full_mutation_reports(
     harnesses = list(dict.fromkeys(entry["harness"] for entry in registry["entries"]))
     if set(owner_reports) != set(harnesses):
         raise ValueError("E_FULL_MUTATION_OWNER_SET")
+    if clock_report is None:
+        raise ValueError("E_FULL_MUTATION_CLOCK_EVIDENCE")
+    controls = full_control_records(pack, owner_reports, clock_report)
+    control_ids = {str(row.get("case_id", row.get("vector_id", ""))) for row in controls}
     expected_by_harness = {
         harness: [
-            mutation
+            (mutation, entry["vector_id"])
             for entry in registry["entries"]
             if entry["harness"] == harness
             for mutation in entry["mutation_vector_ids"]
         ]
         for harness in harnesses
     }
-    if clock_report is None:
-        raise ValueError("E_FULL_MUTATION_CLOCK_EVIDENCE")
     binding = capture_binding()
     verified = 0
     survivors = 0
-    for harness, expected in expected_by_harness.items():
+    for harness, expected_pairs in expected_by_harness.items():
         mutations = _owner_mutations(owner_reports[harness])
-        if [_mutation_id(row) for row in mutations] != expected:
+        if [(_mutation_id(row), _mutation_control_id(row)) for row in mutations] != expected_pairs:
             raise ValueError("E_FULL_MUTATION_REQUIRED_SET:" + harness)
         for row in mutations:
             if row.get("detected") is not True:
@@ -605,6 +650,17 @@ def validate_full_mutation_reports(
         if row.get("detected") is not True or row.get("executed") is not True:
             raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
         _verify_clock_mutation(row, binding)
+        actual = row.get("actual", {})
+        source = row.get("source_vector_id")
+        if source is None and isinstance(actual, dict):
+            control = actual.get("control", {})
+            trial = actual.get("trial", {})
+            if isinstance(control, dict) and isinstance(trial, dict):
+                if control.get("case_id") != trial.get("case_id"):
+                    raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
+                source = control.get("case_id")
+        if source not in control_ids:
+            raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
         verified += 1
     return {"required": 105, "verified": verified, "survivors": survivors,
             "complete": verified == 105 and survivors == 0}
