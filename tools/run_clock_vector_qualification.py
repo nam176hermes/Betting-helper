@@ -214,6 +214,10 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
         elif case["handler"] == "release_stub":
             CoherenceController().evaluate_release(case["input"])
         elif case["handler"] in {"raw", "stored"}:
+            if not which("node") or not (
+                runtime / "extension/.test-build/src/contracts/clock-vectors.js"
+            ).is_file():
+                raise FileNotFoundError("E_CLOCK_TYPESCRIPT_PREREQUISITE")
             actual["python"] = _python(case)
             exits["python"] = 0
             actual["typescript"] = _typescript(case, runtime)
@@ -231,17 +235,23 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
             error, executed = actual["python"]["error"], True
     except ContractNotImplementedError as exc:
         error = str(exc)
-    except (FileNotFoundError, TimeoutExpired) as exc:
-        status, error = "BLOCKED_ENVIRONMENT", str(exc)
+    except FileNotFoundError as exc:
+        status = "FAIL" if actual else "BLOCKED_ENVIRONMENT"
+        error = str(exc)
+    except TimeoutExpired as exc:
+        status, error = "FAIL", str(exc)
     except CalledProcessError as exc:
         exits["typescript"] = exc.returncode
         status, error = "FAIL", str(exc.stderr)
     except (RuntimeError, ValueError, TypeError, KeyError) as exc:
         status, error = "FAIL", str(exc)
     actual["execution_error"] = error if not executed else None
+    prerequisite = ({"name": "compiled TypeScript clock evaluator and Node",
+                     "available": False} if status == "BLOCKED_ENVIRONMENT" else None)
     return _record(case, actual, directory, context, status=status, executed=executed,
                    observed_error=error, comparison=comparison, cross_language_drift=drift,
-                   command_exit=exits, execution_kind="OFFLINE_SHARED_CLOCK_EVALUATOR")
+                   command_exit=exits, execution_kind="OFFLINE_SHARED_CLOCK_EVALUATOR",
+                   prerequisite=prerequisite)
 
 
 def verify_record(row: dict[str, Any]) -> bool:
@@ -259,6 +269,8 @@ def verify_record(row: dict[str, Any]) -> bool:
 
 
 def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[str, Any]:
+    from tools.verify_repair_evidence import aggregate_repair_evidence
+
     counts = Counter(row["case_id"] for row in records)
     exact = len(required_ids) == len(set(required_ids)) and counts == Counter(required_ids)
     valid = [row for row in records if verify_record(row)]
@@ -270,6 +282,8 @@ def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[st
                 or any(row["status"] == "FAIL" for row in records)
                 or sum(row["status"] == "PASS" for row in records) != len(passed))
     status = "FAIL" if failures else "PASS" if len(passed) == len(required_ids) else "HOLD"
+    if aggregate_repair_evidence(required_ids, records)["result"] == "FAIL":
+        status = "FAIL"
     return {"result": status,
             "covered_vector_count": len({row["case_id"] for row in passed}),
             "executed_vector_count": sum(row["executed"] for row in valid),
@@ -320,6 +334,8 @@ def _mutations(cases: list[dict[str, Any]], runtime: Path, directory: Path,
 def run_clock_vector_qualification(
     pack: Path, runtime: Path, *, evidence_dir: Path | None = None,
 ) -> dict[str, Any]:
+    from tools.verify_repair_evidence import capture_binding
+
     vectors = json.loads((pack / _VECTOR_PATH).read_text())
     coverage = json.loads((pack / _COVERAGE_PATH).read_text())
     entries = coverage["entries"]
@@ -344,7 +360,8 @@ def run_clock_vector_qualification(
              runtime / "extension/src/contracts/clock-vectors.ts",
              runtime / "extension/.test-build/src/contracts/clock-vectors.js",
              pack / _VECTOR_PATH, pack / _COVERAGE_PATH]
-    context = {"environment": {"python": platform.python_version(),
+    context = {"evidence_binding": capture_binding(),
+               "environment": {"python": platform.python_version(),
                                "platform": platform.platform(), "node": which("node")},
                "code": {"revision": revision, "sha256": {
                    str(p.resolve()): hashlib.sha256(p.read_bytes()).hexdigest()
