@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import platform
+import signal
 import sys
 from collections import Counter
 from pathlib import Path
@@ -247,19 +248,100 @@ def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
 
 
 def _sqlite_artifact(row: dict[str, Any], name: str) -> Any:
-    artifact = row[name]
-    path = Path(artifact["path"])
+    return _sqlite_descriptor(row, row[name], "E_SQLITE_ARTIFACT:" + name)
+
+
+def _sqlite_file(row: dict[str, Any], path_value: object, digest: object, error: str) -> Path:
+    if not isinstance(path_value, str) or not isinstance(digest, str):
+        raise ValueError(error)
+    path = Path(path_value)
     case = Path(row["case_directory"]).resolve()
     if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(case):
-        raise ValueError("E_SQLITE_ARTIFACT:" + name)
-    if _sha(path) != artifact["sha256"]:
-        raise ValueError("E_SQLITE_ARTIFACT:" + name)
-    return json.loads(path.read_text())
+        raise ValueError(error)
+    if _sha(path) != digest:
+        raise ValueError(error)
+    return path
 
 
+def _sqlite_descriptor(
+    row: dict[str, Any], artifact: object, error: str
+) -> Any:
+    if not isinstance(artifact, dict) or set(artifact) != {"path", "sha256"}:
+        raise ValueError(error)
+    path = _sqlite_file(row, artifact["path"], artifact["sha256"], error)
+    try:
+        return json.loads(path.read_text())
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError(error) from exc
+
+
+def _sqlite_process_prefix(
+    provenance: object, entrypoint: Path, current: dict[str, Any], error: str
+) -> list[str]:
+    if not isinstance(provenance, dict):
+        raise ValueError(error)
+    python = str(Path(sys.executable).absolute())
+    expected = [python, "-I", str(entrypoint.resolve())]
+    executable = provenance.get("executable")
+    script = provenance.get("entrypoint")
+    if (
+        provenance.get("command_prefix") != expected
+        or not isinstance(executable, dict)
+        or executable
+        != {
+            "path": python,
+            "resolved_path": current["environment"]["python_executable"],
+            "sha256": current["environment"]["python_sha256"],
+        }
+        or not isinstance(script, dict)
+        or script
+        != {
+            "path": str(entrypoint.resolve()),
+            "sha256": current["source_sha256"][str(entrypoint.relative_to(ROOT))],
+        }
+    ):
+        raise ValueError(error)
+    return expected
+
+
+def _validate_sqlite_state(
+    state: object, scenario: dict[str, Any], committed: int
+) -> dict[str, Any]:
+    from moj_discovery.store import TABLES, validate_journal, verified_ddl
+    from tools.run_loopback_ack_crash_matrix import CHAIN, _oracle, _snapshot
+
+    run_id = scenario["observation"]["discovery_run_id"]
+    if (
+        not isinstance(state, dict)
+        or set(state) != {"schema_version", "run_id", "ddl_sha256", "tables"}
+        or state["schema_version"] != 1
+        or state["run_id"] != run_id
+        or state["ddl_sha256"] != hashlib.sha256(verified_ddl().encode()).hexdigest()
+        or not isinstance(state["tables"], dict)
+        or set(state["tables"]) != set(TABLES)
+        or any(not isinstance(rows, list) for rows in state["tables"].values())
+        or any(
+            item.get("run_id") != run_id
+            for rows in state["tables"].values()
+            for item in rows
+            if isinstance(item, dict) and "run_id" in item
+        )
+    ):
+        raise ValueError("E_SQLITE_JOURNAL_STATE")
+    try:
+        validate_journal(state["tables"])
+        observed = _snapshot(state)
+        wanted = _oracle(scenario["observation"], bool(committed), False)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("E_SQLITE_JOURNAL_STATE") from exc
+    if observed != wanted or any(
+        len(state["tables"][name]) != committed for name in CHAIN
+    ):
+        raise ValueError("E_SQLITE_JOURNAL_STATE")
+    return observed
 def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
     """Validate fixed SQLite terminal evidence against registry and current bytes."""
-    from tools.run_loopback_ack_crash_matrix import CHAIN, PHASES
+    from tools.run_loopback_ack_crash_matrix import CHAIN, PHASES, _snapshot
 
     validate_case_status(row)
     if row["evidence_binding"] != current or row["revision"] != current["revision"]:
@@ -276,7 +358,8 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
         or row["qualification_scope"] != "SQLITE_TRANSACTION"
         or row["observed_error"] is not None
         or row["comparison"] != {"matched": True, "allowed_atomic_outcome": True}
-        or row["command_exit"] != {"child": -9, "reopen": 0, "replay": 0, "reader": 0}
+        or row["command_exit"]
+        != {"child": -signal.SIGKILL, "reopen": 0, "replay": 0, "reader": 0}
     ):
         raise ValueError("E_SQLITE_TERMINAL_RECORD")
     actual = _sqlite_artifact(row, "actual_artifact")
@@ -284,7 +367,6 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
     scenario = _sqlite_artifact(row, "input_artifact")
     checkpoint = _sqlite_artifact(row, "checkpoint_artifact")
     boundary = _sqlite_artifact(row, "boundary_artifact")
-    reader_input = _sqlite_artifact(row, "reader_input_artifact")
     if actual != row["actual"] or expected != row["expected"] or _contains_expected(scenario):
         raise ValueError("E_SQLITE_ARTIFACT_CONTENT")
     identity = row["identity"]
@@ -300,33 +382,44 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
         or boundary["identity"] != identity
     ):
         raise ValueError("E_SQLITE_CHECKPOINT_IDENTITY")
-    if (
-        _contains_expected(reader_input)
-        or set(reader_input) != {"run_dir", "run_id", "case_id", "checkpoint_id"}
-        or Path(reader_input["run_dir"]).name != reader_input["run_id"]
-        or reader_input["case_id"] != row["case_id"]
-        or reader_input["checkpoint_id"] != entry["crash_checkpoint"]
-    ):
-        raise ValueError("E_SQLITE_READER_INPUT")
+
     child = row["launch_provenance"]
     reader = row["reader_provenance"]
-    if (
-        Path(child["entrypoint"]["path"]).resolve()
-        != (ROOT / "tools/sqlite_crash_child.py").resolve()
-        or child["entrypoint"]["sha256"]
-        != current["source_sha256"]["tools/sqlite_crash_child.py"]
-        or Path(reader["entrypoint"]["path"]).resolve()
-        != (ROOT / "tools/restart_state_reader.py").resolve()
-        or reader["entrypoint"]["sha256"]
-        != current["source_sha256"]["tools/restart_state_reader.py"]
-        or len(reader["runs"]) != 2
-        or any(
-            item["exit"] != 0 or _sha(Path(item["path"])) != item["sha256"]
-            for item in reader["runs"]
-        )
-    ):
-        raise ValueError("E_SQLITE_PROCESS_PROVENANCE")
     shim = row["shim"]
+    child_prefix = _sqlite_process_prefix(
+        {**child, "command_prefix": child["command_prefix"][:3]},
+        ROOT / "tools/sqlite_crash_child.py",
+        current,
+        "E_SQLITE_CHILD_PROVENANCE",
+    )
+    if (
+        child["command_prefix"]
+        != [*child_prefix, "--commit-shim", str(Path(shim["path"]).resolve())]
+        or child["argv"] != row["command"]
+    ):
+        raise ValueError("E_SQLITE_CHILD_PROVENANCE")
+    expected_child_argv = [
+        *child["command_prefix"],
+        "--vector-id", row["case_id"],
+        "--ready", str((case_directory / "checkpoint.json").resolve()),
+        "--run-id", identity["run_id"],
+        "--case-id", row["case_id"],
+        "--checkpoint-id", entry["crash_checkpoint"],
+        "--component", "SQLITE_TRANSACTION",
+        "--ordinal", str(identity["ordinal"]),
+        "--test-nonce", identity["test_nonce"],
+        "--hold",
+    ]
+    if row["command"] != expected_child_argv:
+        raise ValueError("E_SQLITE_CHILD_PROVENANCE")
+    child_launch = _sqlite_artifact(row, "child_launch_artifact")
+    if child_launch != {
+        "command_prefix": child["command_prefix"],
+        "executable": child["executable"],
+        "entrypoint": child["entrypoint"],
+        "scenario_sha256": row["input_artifact"]["sha256"],
+    }:
+        raise ValueError("E_SQLITE_CHILD_PROVENANCE")
     if (
         shim["source_sha256"] != _sha(ROOT / "tools/sqlite_commit_crash_shim.c")
         or _sha(Path(shim["path"])) != shim["binary_sha256"]
@@ -348,8 +441,144 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
         or boundary["target"] not in {"rollback_journal", "database"}
     ):
         raise ValueError("E_SQLITE_COMMIT_IO")
-    before = actual["before"]["counts"]
-    after = actual["after"]["counts"]
+
+    if (
+        row["termination_returncode"] != -signal.SIGKILL
+        or row["termination_mechanism"] != "POSIX_OWNED_PROCESS_GROUP_SIGKILL"
+        or row["checkpoint_sha256"] != row["checkpoint_artifact"]["sha256"]
+        or row["pid"] != identity["pid"]
+    ):
+        raise ValueError("E_SQLITE_TERMINATION")
+
+    if not isinstance(reader, dict):
+        raise ValueError("E_SQLITE_READER_PROVENANCE")
+    reader_prefix = _sqlite_process_prefix(
+        reader,
+        ROOT / "tools/restart_state_reader.py",
+        current,
+        "E_SQLITE_READER_PROVENANCE",
+    )
+    runs = reader.get("runs")
+    inputs = row.get("reader_input_artifacts")
+    if (
+        not isinstance(runs, list)
+        or len(runs) != 2
+        or [item.get("phase") for item in runs if isinstance(item, dict)]
+        != ["before", "after"]
+        or not isinstance(inputs, dict)
+        or set(inputs) != {"before", "after"}
+    ):
+        raise ValueError("E_SQLITE_READER_OUTPUT")
+    reader_states: dict[str, dict[str, Any]] = {}
+    used_paths: set[Path] = set()
+    for phase_name, reader_run in zip(("before", "after"), runs, strict=True):
+        if not isinstance(reader_run, dict) or reader_run.get("exit") != 0:
+            raise ValueError("E_SQLITE_READER_PROVENANCE")
+        reader_input = _sqlite_descriptor(
+            row, inputs[phase_name], "E_SQLITE_READER_INPUT"
+        )
+        expected_input = {
+            "run_dir": str(
+                (case_directory / scenario["observation"]["discovery_run_id"]).resolve()
+            ),
+            "run_id": scenario["observation"]["discovery_run_id"],
+            "case_id": row["case_id"],
+            "checkpoint_id": entry["crash_checkpoint"],
+            "phase": phase_name,
+        }
+        if _contains_expected(reader_input) or reader_input != expected_input:
+            raise ValueError("E_SQLITE_READER_INPUT")
+        if (
+            reader_run.get("input_path") != inputs[phase_name]["path"]
+            or reader_run.get("input_sha256") != inputs[phase_name]["sha256"]
+            or reader_run.get("argv")
+            != [
+                *reader_prefix,
+                expected_input["run_dir"],
+                "--identity",
+                inputs[phase_name]["path"],
+            ]
+        ):
+            raise ValueError("E_SQLITE_READER_PROVENANCE")
+        output_path = _sqlite_file(
+            row,
+            reader_run.get("path"),
+            reader_run.get("sha256"),
+            "E_SQLITE_READER_OUTPUT",
+        )
+        input_path = Path(inputs[phase_name]["path"]).resolve()
+        if output_path.resolve() in used_paths or input_path in used_paths:
+            raise ValueError("E_SQLITE_READER_OUTPUT")
+        used_paths.update({output_path.resolve(), input_path})
+        try:
+            envelope = json.loads(output_path.read_text())
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError("E_SQLITE_READER_OUTPUT") from exc
+        if (
+            not isinstance(envelope, dict)
+            or set(envelope) != {"identity", "state"}
+            or envelope["identity"] != expected_input
+            or not isinstance(envelope["state"], dict)
+        ):
+            raise ValueError("E_SQLITE_READER_OUTPUT")
+        reader_states[phase_name] = envelope["state"]
+    if (
+        actual.get("before") != reader_states["before"]
+        or actual.get("after") != reader_states["after"]
+    ):
+        raise ValueError("E_SQLITE_READER_OUTPUT")
+
+    recovery_runs = row.get("recovery_runs")
+    if not isinstance(recovery_runs, list) or len(recovery_runs) != 2:
+        raise ValueError("E_SQLITE_RECOVERY_PROVENANCE")
+    for replay, recovery_run in zip((False, True), recovery_runs, strict=True):
+        phase_name = "replay" if replay else "reopen"
+        argv = [
+            *child["command_prefix"], "--recover", str(case_directory),
+            *(["--replay"] if replay else []),
+        ]
+        if (
+            not isinstance(recovery_run, dict)
+            or recovery_run.get("phase") != phase_name
+            or recovery_run.get("argv") != argv
+            or recovery_run.get("exit") != 0
+        ):
+            raise ValueError("E_SQLITE_RECOVERY_PROVENANCE")
+        for artifact_name in ("launch", "stdout", "stderr"):
+            artifact_path = _sqlite_file(
+                row,
+                recovery_run.get(artifact_name + "_path"),
+                recovery_run.get(artifact_name + "_sha256"),
+                "E_SQLITE_RECOVERY_PROVENANCE",
+            )
+            if artifact_name == "launch":
+                try:
+                    launch = json.loads(artifact_path.read_text())
+                except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+                    raise ValueError("E_SQLITE_RECOVERY_PROVENANCE") from exc
+                if launch != {
+                    "command_prefix": child["command_prefix"],
+                    "executable": child["executable"],
+                    "entrypoint": child["entrypoint"],
+                    "argv": argv,
+                }:
+                    raise ValueError("E_SQLITE_RECOVERY_PROVENANCE")
+
+    before_count = len(reader_states["before"]["tables"]["raw_commits"])
+    after_count = len(reader_states["after"]["tables"]["raw_commits"])
+    before_projection = _validate_sqlite_state(reader_states["before"], scenario, before_count)
+    after_projection = _validate_sqlite_state(reader_states["after"], scenario, after_count)
+    comparison = _sqlite_artifact(row, "comparison_artifact")
+    recovery = _sqlite_artifact(row, "recovery_artifact")
+    if (
+        comparison
+        != {"before": before_projection, "after": after_projection, "replay": actual["replay"]}
+        or recovery.get("after") != reader_states["after"]
+        or recovery.get("replay", {}).get("error", "ACK") != actual["replay"]
+    ):
+        raise ValueError("E_SQLITE_JOURNAL_STATE")
+    before = _snapshot(reader_states["before"])["counts"]
+    after = _snapshot(reader_states["after"])["counts"]
     old_or_new = before["raw_commits"]
     allowed = {0, 1} if row["case_id"] == "SQL-06-DURING-COMMIT" else {
         entry["expected_post_restart_state"]["sql_row_deltas"]["raw_commits"]
@@ -362,6 +591,14 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
         or actual["atomic_outcome"] != ("NEW" if old_or_new else "OLD")
     ):
         raise ValueError("E_SQLITE_ATOMIC_OUTCOME")
+
+    terminal = _sqlite_descriptor(
+        row, row.get("terminal_artifact"), "E_SQLITE_TERMINAL_ARTIFACT"
+    )
+    terminal_row = dict(row)
+    terminal_row.pop("terminal_artifact", None)
+    if terminal != terminal_row:
+        raise ValueError("E_SQLITE_TERMINAL_ARTIFACT")
 
 
 def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:

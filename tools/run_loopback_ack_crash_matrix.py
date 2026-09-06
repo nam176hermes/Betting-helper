@@ -366,6 +366,8 @@ def run_backend_case(
             if not isinstance(ack, dict) or ack.get("ack") != tables["ack_outbox"][0]:
                 raise RuntimeError("E_CRASH_WIRE_ACK")
 
+    recovery_runs: list[dict[str, Any]] = []
+
     def recover(case: Path, *, replay: bool = False) -> None:
         if _launch_provenance(command, trusted_command=trusted_command) != provenance:
             raise ValueError("E_CRASH_CHILD_PROVENANCE")
@@ -378,7 +380,7 @@ def run_backend_case(
             (case / f"{suffix}.stdout").open("wb") as stdout,
             (case / f"{suffix}.stderr").open("wb") as stderr,
         ):
-            subprocess.run(  # noqa: S603 -- fixed local child and owned temporary directory
+            completed = subprocess.run(  # noqa: S603 -- fixed local child and owned temporary directory
                 argv,
                 cwd=Path(__file__).resolve().parents[1],
                 check=True,
@@ -386,6 +388,16 @@ def run_backend_case(
                 stdout=stdout,
                 stderr=stderr,
             )
+        recovery_runs.append(
+            {
+                "phase": suffix,
+                "argv": argv,
+                "exit": completed.returncode,
+                "launch": case / f"{suffix}-launch.json",
+                "stdout": case / f"{suffix}.stdout",
+                "stderr": case / f"{suffix}.stderr",
+            }
+        )
 
     reader_runs: list[dict[str, Any]] = []
 
@@ -398,10 +410,11 @@ def run_backend_case(
             "run_id": observation["discovery_run_id"],
             "case_id": entry["vector_id"],
             "checkpoint_id": entry["crash_checkpoint"],
+            "phase": label,
         }
-        input_path = case / "reader-input.json"
+        input_path = case / f"reader-{label}-input.json"
         input_path.write_text(json.dumps(reader_input, sort_keys=True, separators=(",", ":")))
-        argv = [*reader_command, str(run_dir)]
+        argv = [*reader_command, str(run_dir), "--identity", str(input_path)]
         completed = subprocess.run(  # noqa: S603 -- fixed local read-only inspector
             argv,
             cwd=Path(__file__).resolve().parents[1],
@@ -412,8 +425,21 @@ def run_backend_case(
         )
         output = case / f"reader-{label}.json"
         output.write_text(completed.stdout)
-        reader_runs.append({"argv": argv, "exit": completed.returncode, "artifact": output})
-        return cast(dict[str, Any], json.loads(completed.stdout))
+        reader_runs.append(
+            {
+                "phase": label,
+                "argv": argv,
+                "exit": completed.returncode,
+                "input": input_path,
+                "artifact": output,
+            }
+        )
+        envelope = cast(dict[str, Any], json.loads(completed.stdout))
+        if envelope.get("identity") != reader_input or not isinstance(
+            envelope.get("state"), dict
+        ):
+            raise ValueError("E_CRASH_READER_OUTPUT")
+        return cast(dict[str, Any], envelope["state"])
 
     def actual(case: Path) -> dict[str, Any]:
         before = read_actual(case, "before")
@@ -506,12 +532,27 @@ def run_backend_case(
         )
         if reader_command is not None:
             row.update(
-                reader_input_sha256=_sha(case / "reader-input.json"),
                 reader_runs=[
-                    {"argv": item["argv"], "exit": item["exit"],
+                    {"phase": item["phase"], "argv": item["argv"], "exit": item["exit"],
+                     "input_path": str(item["input"].resolve()),
+                     "input_sha256": _sha(item["input"]),
                      "path": str(item["artifact"].resolve()),
                      "sha256": _sha(item["artifact"])}
                     for item in reader_runs
+                ],
+                recovery_runs=[
+                    {
+                        "phase": item["phase"],
+                        "argv": item["argv"],
+                        "exit": item["exit"],
+                        "launch_path": str(item["launch"].resolve()),
+                        "launch_sha256": _sha(item["launch"]),
+                        "stdout_path": str(item["stdout"].resolve()),
+                        "stdout_sha256": _sha(item["stdout"]),
+                        "stderr_path": str(item["stderr"].resolve()),
+                        "stderr_sha256": _sha(item["stderr"]),
+                    }
+                    for item in recovery_runs
                 ],
             )
         (case / "result.json").write_text(json.dumps(row, sort_keys=True))

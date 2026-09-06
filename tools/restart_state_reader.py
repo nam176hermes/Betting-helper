@@ -53,8 +53,27 @@ def read_restart_state(run_dir: Path) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_dir", type=Path)
+    parser.add_argument("--identity", type=Path)
     args = parser.parse_args()
-    print(json.dumps(read_restart_state(args.run_dir), sort_keys=True))
+    state = read_restart_state(args.run_dir)
+    if args.identity is None:
+        print(json.dumps(state, sort_keys=True))
+        return
+    identity = json.loads(args.identity.read_text())
+    if (
+        not isinstance(identity, dict)
+        or set(identity)
+        != {"run_dir", "run_id", "case_id", "checkpoint_id", "phase"}
+        or identity["run_dir"] != str(args.run_dir.resolve())
+        or identity["run_id"] != state["run_id"]
+        or not isinstance(identity["case_id"], str)
+        or not identity["case_id"]
+        or not isinstance(identity["checkpoint_id"], str)
+        or not identity["checkpoint_id"]
+        or identity["phase"] not in {"before", "after"}
+    ):
+        raise ValueError("E_RESTART_READER_IDENTITY")
+    print(json.dumps({"identity": identity, "state": state}, sort_keys=True))
 
 
 if __name__ == "__main__":

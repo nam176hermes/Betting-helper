@@ -45,8 +45,11 @@ def _compile_commit_shim(workspace: Path) -> Path:
 def _reader_provenance(command: list[str], row: dict[str, Any]) -> dict[str, Any]:
     return {
         "command_prefix": command,
-        "argv": [*command, row["reader_input"]["run_dir"]],
-        "executable": {"path": command[0], "sha256": _sha(Path(command[0]))},
+        "executable": {
+            "path": command[0],
+            "resolved_path": str(Path(command[0]).resolve()),
+            "sha256": _sha(Path(command[0])),
+        },
         "entrypoint": {"path": command[2], "sha256": _sha(Path(command[2]))},
         "runs": row.pop("reader_runs"),
     }
@@ -97,8 +100,18 @@ def run_sqlite_crash_matrix(
         )
         row = cast(dict[str, Any], result["records"][0])
         case = Path(row["case_directory"])
-        actual = json.loads((case / "comparison-state.json").read_text())
-        before_count = actual["before"]["counts"]["raw_commits"]
+        comparison_state = json.loads((case / "comparison-state.json").read_text())
+        reader_runs = row["reader_runs"]
+        reader_outputs = {
+            item["phase"]: json.loads(Path(item["path"]).read_text()) for item in reader_runs
+        }
+        actual = {
+            "before": reader_outputs["before"]["state"],
+            "after": reader_outputs["after"]["state"],
+            "replay": comparison_state["replay"],
+        }
+        before_count = actual["before"]["tables"]["raw_commits"]
+        before_count = len(before_count)
         actual["atomic_outcome"] = "NEW" if before_count == 1 else "OLD"
         actual_path = case / "terminal-actual.json"
         actual_path.write_text(json.dumps(actual, sort_keys=True, separators=(",", ":")))
@@ -106,7 +119,13 @@ def run_sqlite_crash_matrix(
         expected_path.write_text(
             json.dumps(entry["expected_post_restart_state"], sort_keys=True, separators=(",", ":"))
         )
-        reader_input = json.loads((case / "reader-input.json").read_text())
+        reader_input_artifacts = {
+            item["phase"]: {
+                "path": item["input_path"],
+                "sha256": item["input_sha256"],
+            }
+            for item in reader_runs
+        }
         terminal = {
             **row,
             "vector_id": entry["vector_id"],
@@ -132,12 +151,14 @@ def run_sqlite_crash_matrix(
             "command_exit": {"child": row["termination_returncode"], "reopen": 0,
                              "replay": 0, "reader": 0},
             "input_artifact": _artifact(case / "scenario.json"),
+            "child_launch_artifact": _artifact(case / "launch-input.json"),
             "checkpoint_artifact": _artifact(case / "checkpoint.json"),
             "boundary_artifact": _artifact(case / "boundary.json"),
             "actual_artifact": _artifact(actual_path),
             "expected_artifact": _artifact(expected_path),
-            "reader_input": reader_input,
-            "reader_input_artifact": _artifact(case / "reader-input.json"),
+            "comparison_artifact": _artifact(case / "comparison-state.json"),
+            "recovery_artifact": _artifact(case / "recovery.json"),
+            "reader_input_artifacts": reader_input_artifacts,
             "shim": {
                 "path": str(shim.resolve()),
                 "source_sha256": _sha(SHIM_SOURCE),
