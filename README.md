@@ -67,6 +67,13 @@ rewrites receipts, or falls back to another pack version. See
 `docs/repairs/external-evidence-index.md` for the obligations retained outside
 the portable profile.
 
+The current governed candidate commands target a different authoring runtime
+and cannot consume every supplied pack/evidence/test/cache/browser setting
+through the existing controller interface. This checkout therefore reports
+`CONTROLLER_CONFIG_UNBOUND` and does not delegate. Making that interface
+express the validated configuration requires a separately governed source
+change; this repair does not edit or bypass the registry.
+
 ## Authority
 
 - Portable profile: local repair evidence only.

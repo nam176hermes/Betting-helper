@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
-import re
+import shutil
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -16,6 +17,7 @@ from typing import Any, cast
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT))
 
+from tools import run_command_registry  # noqa: E402
 from tools.build_candidate_qualification_receipt import (  # noqa: E402
     validate_candidate_qualification_receipt,
 )
@@ -143,6 +145,133 @@ def _load_object(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], value)
 
 
+def _git_output(root: Path, *args: str) -> str:
+    git = shutil.which("git")
+    if git is None:
+        raise ValueError("receipt content mismatch")
+    completed = subprocess.run(  # noqa: S603 - fixed git executable and read-only args.
+        [git, "-C", str(root), *args],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    if completed.returncode != 0:
+        raise ValueError("receipt content mismatch")
+    return completed.stdout.strip()
+
+
+def _validate_bootstrap_receipt(receipt_path: Path, pack: Path) -> None:
+    receipt = _load_object(receipt_path)
+    authoring_root = pack.resolve(strict=True).parent
+    if (
+        set(receipt) != {"schema_version", "root", "head", "tree", "status"}
+        or receipt.get("schema_version") != "boot0-authoring-repository-receipt/v2"
+        or receipt.get("root") != str(authoring_root)
+        or receipt.get("head") != _git_output(authoring_root, "rev-parse", "HEAD")
+        or receipt.get("tree") != _git_output(authoring_root, "rev-parse", "HEAD^{tree}")
+        or receipt.get("status") != ""
+        or _git_output(authoring_root, "status", "--porcelain", "--untracked-files=all")
+    ):
+        raise ValueError("receipt content mismatch")
+
+
+def _validate_authoring_tests(root: Path) -> None:
+    delivery = _load_object(
+        REPOSITORY_ROOT
+        / "vendor/hybrid-discovery-v6.3.6/docs/registries/delivery-map.v1.json"
+    )
+    exports = delivery.get("authoring_source_exports")
+    if not isinstance(exports, list):
+        raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+    expected = {
+        Path(cast(str, item["source"])).name
+        for item in exports
+        if isinstance(item, dict)
+        and isinstance(item.get("source"), str)
+        and cast(str, item["source"]).startswith("authoring-tests/")
+    }
+    if not expected:
+        raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+    for name in expected:
+        path = root / name
+        try:
+            source = path.read_text()
+            tree = ast.parse(source)
+        except (OSError, UnicodeError, SyntaxError) as error:
+            raise ValueError("E_EXTERNAL_AUTHORING_TESTS") from error
+        if path.is_symlink() or not source or not any(
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name.startswith("test_")
+            for node in ast.walk(tree)
+        ):
+            raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+
+
+def _nonempty_directory(path: Path) -> bool:
+    return path.is_dir() and not path.is_symlink() and next(path.iterdir(), None) is not None
+
+
+def _validate_cache(root: Path, kind: str) -> None:
+    if kind == "uv":
+        tag = root / "CACHEDIR.TAG"
+        valid = tag.is_file() and bool(tag.read_bytes()) and any(
+            child.name.startswith(("archive-v", "wheels-v", "simple-v", "sdists-v"))
+            and _nonempty_directory(child)
+            for child in root.iterdir()
+        )
+        code = "E_UV_CACHE"
+    elif kind == "pnpm":
+        valid = all(_nonempty_directory(root / name) for name in ("files", "index"))
+        code = "E_PNPM_STORE"
+    else:
+        raise ValueError("E_CACHE_KIND")
+    if not valid:
+        raise ValueError(code)
+
+
+def _controller_binding(args: argparse.Namespace) -> dict[str, object]:
+    commands = run_command_registry.candidate_commands(run_command_registry.validate_registry())
+    values = [
+        cast(str, value)
+        for command in commands
+        for value in [command["cwd"], *cast(list[str], command["argv"])]
+    ]
+    root = str(REPOSITORY_ROOT)
+    configured = {
+        name: path
+        for name, path in {
+            "pack": args.pack,
+            "evidence_root": args.evidence_root,
+            "authoring_tests": args.authoring_tests,
+            "uv_cache": args.uv_cache,
+            "pnpm_store": args.pnpm_store,
+            "chrome": args.chrome,
+        }.items()
+        if path is not None
+    }
+    unbound = []
+    if {cast(str, command["cwd"]) for command in commands} != {root}:
+        unbound.append("checkout_root")
+    for name, path in configured.items():
+        resolved = str(path.resolve())
+        if not any(value == resolved or value.startswith(f"{resolved}/") for value in values):
+            unbound.append(name)
+    if unbound:
+        return {
+            "prerequisite_id": "controller_configuration_binding",
+            "path": None,
+            "status": "HOLD",
+            "code": "CONTROLLER_CONFIG_UNBOUND",
+            "detail": sorted(unbound),
+        }
+    return {
+        "prerequisite_id": "controller_configuration_binding",
+        "path": None,
+        "status": "PASS",
+    }
+
+
 def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
     pack = _configured_path("governed_source_pack", args.pack, directory=True)
     if pack["status"] == "PASS":
@@ -170,22 +299,12 @@ def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
         )
         if bootstrap["status"] == "PASS":
             try:
-                receipt = _load_object(bootstrap_path)
-                expected_root = (
-                    str(Path(cast(str, pack["path"])).parent)
-                    if pack["status"] == "PASS"
-                    else None
-                )
-                if (
-                    set(receipt) != {"schema_version", "root", "head", "tree", "status"}
-                    or receipt.get("schema_version") != "boot0-authoring-repository-receipt/v2"
-                    or receipt.get("root") != expected_root
-                    or receipt.get("status") != ""
-                    or re.fullmatch(r"[0-9a-f]{40}", str(receipt.get("head"))) is None
-                    or re.fullmatch(r"[0-9a-f]{40}", str(receipt.get("tree"))) is None
-                ):
+                if pack["status"] != "PASS":
                     raise ValueError("receipt content mismatch")
-            except (OSError, ValueError, json.JSONDecodeError) as error:
+                _validate_bootstrap_receipt(
+                    bootstrap_path, Path(cast(str, pack["path"]))
+                )
+            except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError) as error:
                 bootstrap.update(status="INVALID", detail=str(error))
 
         candidate_path = evidence_root / "CANDIDATE_QUALIFICATION.json"
@@ -207,6 +326,17 @@ def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
     authoring_tests = _configured_path(
         "external_authoring_tests", args.authoring_tests, directory=True
     )
+    if authoring_tests["status"] == "PASS":
+        try:
+            _validate_authoring_tests(Path(cast(str, authoring_tests["path"])))
+        except (OSError, ValueError) as error:
+            authoring_tests.update(status="INVALID", detail=str(error))
+    for record, kind in ((uv_cache, "uv"), (pnpm_store, "pnpm")):
+        if record["status"] == "PASS":
+            try:
+                _validate_cache(Path(cast(str, record["path"])), kind)
+            except (OSError, ValueError) as error:
+                record.update(status="INVALID", detail=str(error))
     chrome = _configured_path("chrome_binary", args.chrome, directory=False)
     if chrome["status"] == "PASS":
         chrome_path = Path(cast(str, chrome["path"]))
@@ -218,28 +348,20 @@ def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
             if not os.access(chrome_path, os.X_OK) or digest != args.chrome_sha256:
                 chrome.update(status="INVALID", detail="executable bit or SHA-256 mismatch")
 
-    return [pack, evidence, bootstrap, candidate, authoring_tests, uv_cache, pnpm_store, chrome]
+    return [
+        pack,
+        evidence,
+        bootstrap,
+        candidate,
+        authoring_tests,
+        uv_cache,
+        pnpm_store,
+        chrome,
+        _controller_binding(args),
+    ]
 
 
-def _run_full(args: argparse.Namespace) -> int:
-    prerequisites = _full_prerequisites(args)
-    ready = all(item["status"] == "PASS" for item in prerequisites)
-    print(
-        json.dumps(
-            {
-                "schema_version": "full-verification-prerequisites/v1",
-                "profile": "full",
-                "status": "READY" if ready else "HOLD",
-                "production_authority": "NONE",
-                "authoritative_controller": "PENDING" if ready else "NOT_EXECUTED",
-                "prerequisites": prerequisites,
-            },
-            sort_keys=True,
-        ),
-        flush=True,
-    )
-    if not ready:
-        return 2
+def _delegate_controller() -> int:
     completed = subprocess.run(  # noqa: S603 - fixed authoritative controller argv.
         [
             sys.executable,
@@ -253,6 +375,32 @@ def _run_full(args: argparse.Namespace) -> int:
         check=False,
     )
     return completed.returncode
+
+
+def _run_full(args: argparse.Namespace) -> int:
+    prerequisites = _full_prerequisites(args)
+    ready = all(item["status"] == "PASS" for item in prerequisites)
+    hold_codes = sorted(
+        cast(str, item["code"]) for item in prerequisites if isinstance(item.get("code"), str)
+    )
+    print(
+        json.dumps(
+            {
+                "schema_version": "full-verification-prerequisites/v1",
+                "profile": "full",
+                "status": "READY" if ready else "HOLD",
+                "production_authority": "NONE",
+                "authoritative_controller": "PENDING" if ready else "NOT_EXECUTED",
+                "hold_codes": hold_codes,
+                "prerequisites": prerequisites,
+            },
+            sort_keys=True,
+        ),
+        flush=True,
+    )
+    if not ready:
+        return 2
+    return _delegate_controller()
 
 
 def main(argv: Sequence[str] | None = None) -> int:
