@@ -11,6 +11,7 @@ import pytest
 
 from moj_discovery.durability_release import validate_full_durability_release
 from tools import run_clock_vector_qualification as clock
+from tools import run_indexeddb_crash_matrix as indexeddb
 
 ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
@@ -26,6 +27,26 @@ def clock_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
     return clock.run_clock_vector_qualification(
         PACK, ROOT, evidence_dir=tmp_path_factory.mktemp("r08-clock"),
     )
+
+
+@pytest.fixture(scope="module")
+def indexeddb_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    return indexeddb.run_indexeddb_crash_matrix(
+        PACK, tmp_path_factory.mktemp("r08-indexeddb"),
+    )
+
+
+def _crash_rows() -> list[dict[str, Any]]:
+    from tools.run_loopback_ack_crash_matrix import run_family
+
+    registry = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())
+    families = dict.fromkeys(entry["harness"] for entry in registry["entries"])
+    by_id = {
+        row["vector_id"]: row
+        for family in families
+        for row in run_family(PACK, Path("unused-no-launch"), family, None)["records"]
+    }
+    return [by_id[entry["vector_id"]] for entry in registry["entries"]]
 
 
 def test_full_inventory_keeps_actual_clock_and_durability_holds(
@@ -48,6 +69,108 @@ def test_full_inventory_keeps_actual_clock_and_durability_holds(
     assert result["security_review"] == "NOT_REVIEWED"
     assert result["production_authority"] == result["live_authority"] == "NONE"
     assert result["money_authority"] == "NONE"
+
+
+def test_full_inventory_consumes_four_actual_indexeddb_rows(
+    clock_report: dict[str, Any], indexeddb_report: dict[str, Any],
+) -> None:
+    module = gate()
+    actual = {row["vector_id"]: row for row in indexeddb_report["records"]}
+    crash = [actual.get(row["vector_id"], row) for row in _crash_rows()]
+    result = module.aggregate_repair_evidence(
+        module.full_required_ids(), [*crash, *clock_report["records"]],
+    )
+    assert result["result"] == "HOLD"
+    assert result["qualification_scope"] == "FULL"
+    assert result["status_counts"] == {"PASS": 21, "NOT_IMPLEMENTED": 90}
+    assert result["errors"] == []
+    assert result["production_authority"] == result["live_authority"] == "NONE"
+    assert result["money_authority"] == "NONE"
+
+
+def test_full_aggregate_runner_replaces_only_indexeddb_holds(tmp_path: Path) -> None:
+    workspace = tmp_path / "full"
+    result = indexeddb.run_full_repair_evidence(PACK, ROOT, workspace)
+    ids = [row.get("case_id", row.get("vector_id")) for row in result["records"]]
+    assert ids == gate().full_required_ids()
+    assert len(ids) == len(set(ids)) == 111
+    assert result["result"] == "HOLD"
+    assert result["status_counts"] == {"PASS": 21, "NOT_IMPLEMENTED": 90}
+    assert result["errors"] == []
+    assert result["security_review"] == "NOT_REVIEWED"
+    assert result["production_authority"] == result["live_authority"] == "NONE"
+    assert result["money_authority"] == "NONE"
+    assert json.loads((workspace / "current-aggregate.json").read_text()) == result
+
+
+def test_indexeddb_pass_does_not_use_clock_verifier(
+    indexeddb_report: dict[str, Any], monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(clock, "verify_record", lambda row: pytest.fail("clock verifier called"))
+    row = indexeddb_report["records"][0]
+    result = gate().aggregate_repair_evidence([row["vector_id"]], [row])
+    assert result["result"] == "PASS"
+
+
+def test_indexeddb_worker_and_reader_never_receive_expected_state(
+    indexeddb_report: dict[str, Any],
+) -> None:
+    for row in indexeddb_report["records"]:
+        for name in ("worker_input_artifact", "reader_input_artifact"):
+            payload = json.loads(Path(row[name]["path"]).read_text())
+            assert "expected" not in payload
+            assert "expected_post_restart_state" not in payload
+
+
+@pytest.mark.parametrize(
+    ("damage", "error"),
+    [
+        ("revision", "E_REPAIR_STALE_BINDING"),
+        ("source", "E_REPAIR_STALE_BINDING"),
+        ("environment", "E_INDEXEDDB_ENVIRONMENT"),
+        ("artifact", "E_INDEXEDDB_ARTIFACT"),
+        ("missing_readback", "E_INDEXEDDB_READBACK"),
+        ("expected", "E_INDEXEDDB_EXPECTED"),
+        ("oracle_in_actual", "E_INDEXEDDB_ACTUAL_ORACLE"),
+        ("command_exit", "E_INDEXEDDB_COMMAND"),
+    ],
+)
+def test_indexeddb_evidence_damage_fails(
+    indexeddb_report: dict[str, Any], tmp_path: Path, damage: str, error: str,
+) -> None:
+    row = copy.deepcopy(indexeddb_report["records"][0])
+    if damage in {"revision", "source"}:
+        key = "revision" if damage == "revision" else "source_sha256"
+        row["evidence_binding"][key] = "wrong"
+    elif damage == "environment":
+        row["environment"] = {"system": "wrong", "release": "wrong"}
+    elif damage == "artifact":
+        row["actual_artifact"]["sha256"] = "0" * 64
+    elif damage in {"missing_readback", "oracle_in_actual"}:
+        actual = copy.deepcopy(row["actual"])
+        if damage == "missing_readback":
+            actual.pop("entries")
+        else:
+            actual["expected"] = row["expected"]
+        path = tmp_path / f"{damage}.json"
+        path.write_text(json.dumps(actual, sort_keys=True, separators=(",", ":")))
+        row["actual"] = actual
+        row["actual_artifact"] = {
+            "path": str(path), "sha256": module_sha256(path),
+        }
+    elif damage == "expected":
+        row["expected"] = {**row["expected"], "indexeddb_spool_delta": 999}
+    else:
+        row["command_exit"]["reader"] = 1
+    result = gate().aggregate_repair_evidence([row["vector_id"]], [row])
+    assert result["result"] == "FAIL"
+    assert error in result["errors"][0]["error"]
+
+
+def module_sha256(path: Path) -> str:
+    import hashlib
+
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def test_complete_subset_is_explicitly_not_full(clock_report: dict[str, Any]) -> None:

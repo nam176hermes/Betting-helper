@@ -128,6 +128,115 @@ def _verify_clock(row: dict[str, Any], current: dict[str, Any]) -> None:
         raise ValueError("E_REPAIR_EXECUTION_COMPARISON")
 
 
+def _contains_expected(value: object) -> bool:
+    if isinstance(value, dict):
+        return any(
+            str(key).lower() in {"expected", "expected_post_restart_state"}
+            or _contains_expected(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, list):
+        return any(_contains_expected(item) for item in value)
+    return False
+
+
+def _indexeddb_artifact(row: dict[str, Any], name: str) -> object:
+    artifact = row[name]
+    path = Path(artifact["path"])
+    if _sha(path) != artifact["sha256"]:
+        raise ValueError("E_INDEXEDDB_ARTIFACT:" + name)
+    return json.loads(path.read_text())
+
+
+def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
+    """Validate browser spool evidence without using the clock adapter."""
+    from tools.run_indexeddb_crash_matrix import compare_indexeddb_state
+
+    validate_case_status(row)
+    if row["evidence_binding"] != current:
+        raise ValueError("E_REPAIR_STALE_BINDING")
+    if row["revision"] != current["revision"]:
+        raise ValueError("E_REPAIR_REVISION")
+    if row["source_sha256"] != current["source_sha256"]["extension/src/spool.ts"]:
+        raise ValueError("E_INDEXEDDB_SOURCE")
+    if row["environment"] != {"system": platform.system(), "release": platform.release()}:
+        raise ValueError("E_INDEXEDDB_ENVIRONMENT")
+    if (
+        set(row["command_exit"]) != {"browser", "worker", "reader"}
+        or any(type(value) is not int or value != 0 for value in row["command_exit"].values())
+    ):
+        raise ValueError("E_INDEXEDDB_COMMAND")
+    if _contains_expected(row["actual"]):
+        raise ValueError("E_INDEXEDDB_ACTUAL_ORACLE")
+    if not {"entries", "states", "keys"}.issubset(row["actual"]):
+        raise ValueError("E_INDEXEDDB_READBACK")
+    if _indexeddb_artifact(row, "actual_artifact") != row["actual"]:
+        raise ValueError("E_INDEXEDDB_ARTIFACT:actual")
+    worker = _indexeddb_artifact(row, "worker_input_artifact")
+    reader = _indexeddb_artifact(row, "reader_input_artifact")
+    if (
+        row["input_sha256"] != row["worker_input_artifact"]["sha256"]
+        or row["expected_sha256"] != row["expected_artifact"]["sha256"]
+    ):
+        raise ValueError("E_INDEXEDDB_ARTIFACT:binding")
+    if _contains_expected(worker) or _contains_expected(reader):
+        raise ValueError("E_INDEXEDDB_INPUT_ORACLE")
+    registry = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())
+    entry = next(item for item in registry["entries"] if item["vector_id"] == row["case_id"])
+    expected = entry["expected_post_restart_state"]
+    if entry["harness"] != "CHROME_INDEXEDDB" or row["expected"] != expected:
+        raise ValueError("E_INDEXEDDB_EXPECTED")
+    if _indexeddb_artifact(row, "expected_artifact") != expected:
+        raise ValueError("E_INDEXEDDB_EXPECTED_ARTIFACT")
+    if (
+        row["execution_kind"] != "EXTENSION_DEDICATED_WORKER_TERMINATION"
+        or row["comparison"] != {"matched": True, "scope": "INDEXEDDB_SPOOL_ONLY"}
+        or row["identity"]["case_id"] != row["case_id"]
+        or row["actual"]["module_sha256"] != row["identity"]["module_sha256"]
+        or row["module_hashes"].get("src/spool.js") != row["identity"]["module_sha256"]
+        or row["identity"]["module_sha256"]
+        != _sha(ROOT / "extension/.test-build/src/spool.js")
+        or row["module_hashes"].get("indexeddb-crash-child.js")
+        != _sha(ROOT / "extension/.test-build/test-harness/indexeddb-crash-child.js")
+    ):
+        raise ValueError("E_INDEXEDDB_COMPARISON")
+    browser = Path(row["browser"]["executable"])
+    if _sha(browser) != row["browser"]["sha256"]:
+        raise ValueError("E_INDEXEDDB_BROWSER")
+    identity = row["identity"]
+    request_identity = {
+        key: identity[key]
+        for key in (
+            "run_id", "case_id", "checkpoint_id", "test_nonce", "profile_id",
+            "component", "ordinal", "pid",
+        )
+    }
+    if (
+        not isinstance(worker, dict)
+        or not isinstance(reader, dict)
+        or worker.get("identity") != request_identity
+        or reader != {
+            "identity": request_identity,
+            "options": worker.get("options"),
+            "operation": "read",
+            "observations": [],
+        }
+    ):
+        raise ValueError("E_INDEXEDDB_INPUT")
+    compare_indexeddb_state(
+        row["actual"], identity, row["observations"], expected["indexeddb_spool_delta"],
+    )
+
+
+def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
+    if row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
+        _verify_indexeddb(row, current)
+    elif row.get("execution_kind") == "OFFLINE_SHARED_CLOCK_EVALUATOR":
+        _verify_clock(row, current)
+    else:
+        raise ValueError("E_REPAIR_EXECUTION_KIND")
+
+
 def aggregate_repair_evidence(
     required_ids: list[str], results: list[dict[str, Any]],
 ) -> dict[str, Any]:
@@ -153,16 +262,16 @@ def aggregate_repair_evidence(
             if "case_id" in row and "vector_id" in row and row["case_id"] != row["vector_id"]:
                 raise ValueError("E_REPAIR_CASE_ID")
             if status == "PASS":
-                _verify_clock(row, current)
+                _verify_executed(row, current)
             elif status == "FAIL":
-                _verify_clock(row, current)
+                _verify_executed(row, current)
                 raise ValueError("E_REPAIR_REPORTED_FAILURE")
             else:
                 if not (row.get("reason") or row.get("observed_error")):
                     raise ValueError("E_REPAIR_REASON_REQUIRED")
                 # Existing evidence cannot disappear behind a non-PASS status.
                 if "actual_artifact" in row or "evidence_binding" in row:
-                    _verify_clock(row, current)
+                    _verify_executed(row, current)
         except (KeyError, ValueError, TypeError, OSError, StopIteration) as error:
             errors.append({"case_id": str(case_id), "error": str(error)})
     full = exact and set(required_ids) == set(full_required_ids())

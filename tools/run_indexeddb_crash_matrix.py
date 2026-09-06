@@ -200,15 +200,24 @@ def run_indexeddb_case(
     mutation: str | None = None,
     operation: str = "crash",
 ) -> dict[str, Any]:
+    from tools.verify_repair_evidence import capture_binding
+
     browser_binary = browser_binary or Path(os.environ.get("BH_CHROME_BINARY", str(CHROME)))
     workspace.mkdir(parents=True, exist_ok=False)
     if not browser_binary.is_file():
         return {
             "result": "BLOCKED_ENVIRONMENT",
+            "status": "BLOCKED_ENVIRONMENT",
             "blocker_code": "E_BROWSER_UNAVAILABLE",
+            "reason": "E_BROWSER_UNAVAILABLE",
+            "executed": False,
+            "launch_attempted": False,
+            "prerequisite": {"name": "Chrome for Testing", "available": False},
             "attempted_real_browser": False,
             "vector_id": entry["vector_id"],
+            "case_id": entry["vector_id"],
         }
+    evidence_binding = capture_binding()
     registered = json.loads((PACK / "docs/registries/crash-harness-registry.v1.json").read_text())[
         "entries"
     ]
@@ -272,7 +281,8 @@ def run_indexeddb_case(
                 json.dumps(value, sort_keys=True, separators=(",", ":")) for value in observations
             ],
         }
-        (workspace / "input.json").write_text(json.dumps(request, sort_keys=True))
+        worker_input = workspace / "input.json"
+        worker_input.write_text(json.dumps(request, sort_keys=True))
         (workspace / "expected.json").write_text(
             json.dumps(entry["expected_post_restart_state"], sort_keys=True)
         )
@@ -298,6 +308,8 @@ def run_indexeddb_case(
         }
         if mutation:
             reader["mutation"] = mutation
+        reader_input = workspace / "reader-input.json"
+        reader_input.write_text(json.dumps(reader, sort_keys=True))
         actual = _call(socket, "startWorker", second_id, reader)
         _call(socket, "terminateWorker", second_id)
         persisted = _call(socket, "readSentinel", profile_id)
@@ -311,11 +323,16 @@ def run_indexeddb_case(
             raise ValueError("E_INDEXEDDB_WORKER_IDENTITY")
         record = {
             "vector_id": entry["vector_id"],
+            "case_id": entry["vector_id"],
             "identity": identity,
             "checkpoint": checkpoint,
             "termination": termination,
             "actual": actual,
             "execution_kind": "EXTENSION_DEDICATED_WORKER_TERMINATION",
+            "executed": True,
+            "launch_attempted": True,
+            "evidence_binding": evidence_binding,
+            "command_exit": {"browser": 0, "worker": 0, "reader": 0},
             "browser": {"executable": str(binary), "sha256": _sha256(binary)},
             "profile": str(profile),
             "source_sha256": _sha256(ROOT / "extension/src/spool.ts"),
@@ -354,7 +371,27 @@ def run_indexeddb_case(
             timeout=10,
         ).stdout.strip()
         record["result"] = "PASS"
+        record["status"] = "PASS"
         record["comparison"] = {"matched": True, "scope": "INDEXEDDB_SPOOL_ONLY"}
+        actual_artifact = workspace / "actual.json"
+        actual_artifact.write_text(json.dumps(actual, sort_keys=True, separators=(",", ":")))
+        record["actual_artifact"] = {
+            "path": str(actual_artifact.resolve()),
+            "sha256": _sha256(actual_artifact),
+        }
+        record["worker_input_artifact"] = {
+            "path": str(worker_input.resolve()),
+            "sha256": _sha256(worker_input),
+        }
+        record["reader_input_artifact"] = {
+            "path": str(reader_input.resolve()),
+            "sha256": _sha256(reader_input),
+        }
+        expected_artifact = workspace / "expected.json"
+        record["expected_artifact"] = {
+            "path": str(expected_artifact.resolve()),
+            "sha256": _sha256(expected_artifact),
+        }
         (workspace / "observation.json").write_text(json.dumps(record, sort_keys=True))
         record["artifact"] = str(workspace / "observation.json")
         record["artifact_sha256"] = _sha256(workspace / "observation.json")
@@ -372,7 +409,60 @@ def run_indexeddb_case(
             _kill_owned_process_group(process)
 
 
-def run_indexeddb_crash_matrix(pack: Path, workspace: Path) -> dict[str, Any]:
+def run_full_repair_evidence(
+    pack: Path,
+    runtime: Path,
+    workspace: Path,
+    *,
+    browser_binary: Path | None = None,
+) -> dict[str, Any]:
+    """Execute current clocks/browser spool and retain every other governed hold."""
+    from tools.run_clock_vector_qualification import run_clock_vector_qualification
+    from tools.run_loopback_ack_crash_matrix import run_family
+    from tools.verify_repair_evidence import aggregate_repair_evidence, full_required_ids
+
+    workspace.mkdir(parents=True, exist_ok=False)
+    registry = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())
+    families = dict.fromkeys(entry["harness"] for entry in registry["entries"])
+    pending = {
+        row["vector_id"]: row
+        for family in families
+        for row in run_family(pack, workspace / "unused-no-launch", family, None)["records"]
+    }
+    indexeddb = run_indexeddb_crash_matrix(
+        pack, workspace / "indexeddb", browser_binary=browser_binary,
+    )
+    replacements = {row["vector_id"]: row for row in indexeddb["records"]}
+    expected = {
+        entry["vector_id"] for entry in registry["entries"]
+        if entry["harness"] == "CHROME_INDEXEDDB"
+    }
+    if set(replacements) != expected:
+        raise ValueError("E_INDEXEDDB_REQUIRED_CASES")
+    crash = [
+        replacements.get(entry["vector_id"], pending[entry["vector_id"]])
+        for entry in registry["entries"]
+    ]
+    clock = run_clock_vector_qualification(
+        pack, runtime, evidence_dir=workspace / "clock",
+    )
+    records = [*crash, *clock["records"]]
+    result = {
+        **aggregate_repair_evidence(full_required_ids(), records),
+        "records": records,
+        "indexeddb_report": indexeddb,
+        "clock_report": clock,
+    }
+    (workspace / "current-aggregate.json").write_text(json.dumps(result, sort_keys=True))
+    return result
+
+
+def run_indexeddb_crash_matrix(
+    pack: Path,
+    workspace: Path,
+    *,
+    browser_binary: Path | None = None,
+) -> dict[str, Any]:
     entries = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())[
         "entries"
     ]
@@ -385,7 +475,12 @@ def run_indexeddb_crash_matrix(pack: Path, workspace: Path) -> dict[str, Any]:
     ]
     if [entry["vector_id"] for entry in selected] != required_ids:
         raise ValueError("E_INDEXEDDB_REQUIRED_CASES")
-    records = [run_indexeddb_case(entry, workspace / f"case-{uuid4()}") for entry in selected]
+    records = [
+        run_indexeddb_case(
+            entry, workspace / f"case-{uuid4()}", browser_binary=browser_binary,
+        )
+        for entry in selected
+    ]
     return {
         "result": "PASS"
         if all(row["result"] == "PASS" for row in records)
