@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "b2d269cf9e4cfc256394256fabaaf66505eb850420342ce7c5c3bda59e775b94",
+  "tree_sha256": "d1a0828beda6ca88e18e6986367595280394cd10afe18eb656c4a0bcd865a53c",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -16,8 +16,8 @@
     },
     {
       "path": "docs/configs/full-verifier-controller.v1.json",
-      "size_bytes": 2279,
-      "sha256": "e6008cc1038cf476f72ecf77bb1f88d9be429222629e9f6cc35b151af74bdb1e"
+      "size_bytes": 2285,
+      "sha256": "c4fcb099ad6aa2dcd5d021d11d16bb332061611a8084a2f21b7cf5fdef86ffab"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -271,8 +271,8 @@
     },
     {
       "path": "docs/registries/task-command-registry.v1.json",
-      "size_bytes": 100308,
-      "sha256": "a03101b0aa3cbd8684d1a1773d4e9b952ec55773108e78017bfd26101a88cfc1"
+      "size_bytes": 100322,
+      "sha256": "1289141cf3087729e60c29a0d52c5ac65184c1396603fadee3a4e0faa697ef58"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",

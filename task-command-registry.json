@@ -2946,6 +2946,7 @@
         "--offline",
         "python",
         "-I",
+        "-B",
         "-m",
         "pytest",
         "-q",

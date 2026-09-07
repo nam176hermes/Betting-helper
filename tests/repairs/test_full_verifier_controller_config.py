@@ -152,6 +152,7 @@ def test_external_authoring_environment_drops_python_and_pytest_injection(
     assert "PYTHONPATH" not in environment
     python_index = config.external_authoring_argv.index("python")
     assert config.external_authoring_argv[python_index + 1] == "-I"
+    assert config.external_authoring_argv[python_index + 2] == "-B"
 
 
 def test_external_authoring_suite_is_executed_with_declared_argv_and_cwd(
@@ -246,6 +247,8 @@ def test_controller_preserves_t01_t02_t03_order_and_stops_before_issuance(
         "_execute_external_authoring_suite",
         lambda _config: {"passed": True},
     )
+    monkeypatch.setattr(verify_local, "_validate_bootstrap_receipt", lambda *_a: None)
+    monkeypatch.setattr(verify_local, "_validate_authoring_tests", lambda *_a: None)
     monkeypatch.setattr(
         run_command_registry,
         "validate_registry",
@@ -267,3 +270,38 @@ def test_controller_preserves_t01_t02_t03_order_and_stops_before_issuance(
     assert verify_local._delegate_controller(config) == 1
     assert seen == ["VERIFY_V636_P07_T01", "VERIFY_V636_P07_T02"]
     assert not config.candidate_qualification_receipt.exists()
+
+
+@pytest.mark.parametrize("drift", ["source", "dirty"])
+def test_post_external_authoring_drift_blocks_t01(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, drift: str
+) -> None:
+    original = load_controller_config(SOURCE_CONFIG)
+    authoring = tmp_path / "authoring"
+    shutil.copytree(original.external_authoring_tests, authoring / "authoring-tests")
+    shutil.copytree(
+        original.external_authoring_tests.parent / "authoring-tools",
+        authoring / "authoring-tools",
+    )
+    config = replace(original, external_authoring_tests=authoring / "authoring-tests")
+    seen: list[str] = []
+
+    def external(_config: object) -> dict[str, object]:
+        if drift == "source":
+            (authoring / "authoring-tests/conftest.py").write_text("# post-suite drift\n")
+        return {"passed": True}
+
+    def receipt(*_args: object) -> None:
+        if drift == "dirty":
+            raise ValueError("receipt content mismatch")
+
+    monkeypatch.setattr(verify_local, "_execute_external_authoring_suite", external)
+    monkeypatch.setattr(verify_local, "_validate_bootstrap_receipt", receipt)
+    monkeypatch.setattr(
+        run_command_registry,
+        "validate_registry",
+        lambda: seen.append("T01-visible") or {"commands": []},
+    )
+
+    assert verify_local._delegate_controller(config) == 1
+    assert seen == []

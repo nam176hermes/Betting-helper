@@ -449,7 +449,19 @@ def _delegate_controller(config: FullVerifierConfig) -> int:
     external_result = _execute_external_authoring_suite(config)
     if external_result["passed"] is not True:
         return 1
-    registry = run_command_registry.validate_registry()
+    try:
+        _validate_bootstrap_receipt(
+            config.authoring_repository_receipt,
+            config.governed_source_pack,
+            config.accepted_authoring_ancestor,
+        )
+        _validate_authoring_tests(
+            config.external_authoring_tests,
+            config.external_authoring_source_sha256,
+        )
+        registry = run_command_registry.validate_registry()
+    except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
+        return 1
 
     def execute(command_id: str) -> dict[str, object]:
         command = next(

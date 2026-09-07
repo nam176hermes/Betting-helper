@@ -6,12 +6,12 @@
   "governed_source_pack": "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack",
   "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller",
   "external_authoring_tests": "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
-  "external_authoring_source_sha256": "4e252c9940b97cfbc9c5ad8555465aa361446adf3684473168e224f6af521bac",
+  "external_authoring_source_sha256": "2f23dbee243a45f2808ccbb005c02f49dc09715680613c48fde2bce70272c6ce",
   "external_authoring_command": {
     "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
     "argv": [
       "uv", "run", "--project", "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
-      "--frozen", "--offline", "python", "-I", "-m", "pytest", "-q",
+      "--frozen", "--offline", "python", "-I", "-B", "-m", "pytest", "-q",
       "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
       "-c", "/dev/null", "--confcutdir", "/home/thenam176/betting-helper/authoring-controller-config-worktree",
       "-o", "cache_dir=/tmp/bh-v636-authoring-tests"
