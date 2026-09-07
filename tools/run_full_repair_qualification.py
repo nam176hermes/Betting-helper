@@ -56,7 +56,18 @@ def _artifact_references(value: object) -> list[tuple[str, str]]:
 
     def visit(item: object) -> None:
         if isinstance(item, dict):
-            if item.get("qualification_scope") in _GRAPH_OWNER_SCOPES:
+            scope = item.get("qualification_scope")
+            # run_indexeddb_crash_matrix shares its scope with its case records.
+            campaign = (
+                scope in {"BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"}
+                and set(item) == {
+                    "result", "executed_vector_ids", "records", "mutation_results",
+                    "killed_child_count", "qualification_scope", "legacy_full_qualification",
+                }
+                and isinstance(item["records"], list)
+                and isinstance(item["mutation_results"], list)
+            )
+            if scope in _GRAPH_OWNER_SCOPES and not campaign:
                 execution_binding = item.get("typescript_execution_binding")
                 modules = item.get("module_hashes")
                 case_directory = item.get("case_directory")

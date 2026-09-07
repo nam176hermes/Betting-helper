@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 import sys
+from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
@@ -70,6 +71,21 @@ def _clock_report() -> dict[str, Any]:
             }
             for name in full.required_clock_mutation_ids()
         ],
+    }
+
+
+def _indexeddb_campaign(
+    records: list[dict[str, Any]], mutations: list[dict[str, Any]], scope: str
+) -> dict[str, Any]:
+    # Exact wrapper shape returned by run_indexeddb_crash_matrix.
+    return {
+        "result": "PASS",
+        "executed_vector_ids": [row["vector_id"] for row in records],
+        "records": records,
+        "mutation_results": mutations,
+        "killed_child_count": len(records),
+        "qualification_scope": scope,
+        "legacy_full_qualification": "HOLD",
     }
 
 
@@ -670,6 +686,7 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
     binding_path.write_text(json.dumps(binding, sort_keys=True, separators=(",", ":")))
     row = {
         "qualification_scope": owner,
+        "vector_id": "IDB-01",
         "case_directory": str(case),
         "identity": {"module_sha256": modules["src/spool.js"]},
         "module_hashes": modules,
@@ -679,8 +696,14 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
             "sha256": hashlib.sha256(binding_path.read_bytes()).hexdigest(),
         },
     }
+    report = (
+        {"records": [row]}
+        if owner == "DISPOSABLE_DESTRUCTION"
+        else _indexeddb_campaign([row], [{"control": row}], owner)
+    )
     sources = collect_retained_sources(
-        row, retained_boundaries=(case,), live_roots=(ROOT,)
+        {"records": [row], "owner_reports": {"owner": report}},
+        retained_boundaries=(case,), live_roots=(ROOT,),
     )
     sealed = tmp_path / "sealed"
     sealed.mkdir()
@@ -717,8 +740,14 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         evidence_gate._RETAINED_ARTIFACTS.reset(token)
 
 
-def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collision() -> None:
-    from tools.run_full_repair_qualification import retained_artifact_declarations
+@pytest.mark.parametrize("scope", ["BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"])
+def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collision(
+    scope: str,
+) -> None:
+    from tools.run_full_repair_qualification import (
+        retained_artifact_declarations,
+        validate_inventory_closure,
+    )
 
     names = {
         "indexeddb-crash-child.js",
@@ -729,33 +758,124 @@ def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collis
         "src/spool.js",
     }
 
-    def row(scope: str, case: str, character: str) -> dict[str, object]:
+    def row(scope: str, case: str, character: str) -> dict[str, Any]:
         modules = {name: character * 64 for name in names}
         return {
             "qualification_scope": scope,
+            "vector_id": "IDB-01" if scope != "DISPOSABLE_DESTRUCTION" else "DESTROY-01",
             "case_directory": case,
             "module_hashes": modules,
             "typescript_execution_binding": {"before": modules, "after": modules},
         }
 
-    declarations = retained_artifact_declarations(
-        {
-            "owner_reports": {
-                "ack": row("BROWSER_LOOPBACK_ACK", "/recorded/ack", "a"),
-                "destruction": row(
-                    "DISPOSABLE_DESTRUCTION", "/recorded/destruction", "b"
-                ),
-            }
+    control = row(scope, "/recorded/ack", "a")
+    execution = row(scope, "/recorded/ack-mutation", "b")
+    destruction = row("DISPOSABLE_DESTRUCTION", "/recorded/destruction", "c")
+    destruction["mutations"] = [{
+        "vector_id": "DESTROY-01-MUT-INPUT",
+        "kind": "INPUT",
+        "execution": row("DISPOSABLE_DESTRUCTION", "/recorded/destruction-mutation", "d"),
+        "observed_error": "E_DESTRUCTION_HUMAN_INVOCATION",
+        "expected_error": "E_DESTRUCTION_HUMAN_INVOCATION",
+        "detected": True,
+    }]
+    campaign = _indexeddb_campaign([control], [{"control": control, "execution": execution}], scope)
+    aggregate: dict[str, Any] = {
+        "records": [control, destruction],
+        "owner_reports": {
+            "CHROME_INDEXEDDB": campaign,
+            "WHOLE_RUN_DESTRUCTION": {"records": [destruction]},
         },
+    }
+    raw = json.dumps(aggregate, sort_keys=True).encode()
+    declarations = retained_artifact_declarations(
+        aggregate,
         retained_boundaries=("/recorded",),
         live_roots=(),
     )
-    assert len(declarations) == 12
-    assert {path for path, _boundary, _digest in declarations} == {
-        f"/recorded/{owner}/test-extension/{name}"
-        for owner in ("ack", "destruction")
+    assert len(declarations) == 24
+    assert set(declarations) == {
+        (f"/recorded/{owner}/test-extension/{name}", "/recorded", character * 64)
+        for owner, character in (
+            ("ack", "a"), ("ack-mutation", "b"),
+            ("destruction", "c"), ("destruction-mutation", "d"),
+        )
         for name in names
     }
+    assert json.dumps(aggregate, sort_keys=True).encode() == raw
+
+    manifest: dict[str, Any] = {
+        "recorded_boundaries": ["/recorded"],
+        "files": [
+            {
+                "recorded_locator": "/recorded/aggregate.json",
+                "sha256": hashlib.sha256(raw).hexdigest(),
+            },
+            *[{"recorded_locator": path, "sha256": digest} for path, _, digest in declarations],
+        ],
+    }
+    validate_inventory_closure(
+        manifest, aggregate, aggregate_locator="/recorded/aggregate.json",
+        aggregate_raw=raw, live_roots=(),
+    )
+    for damage in ("missing", "duplicate", "changed"):
+        damaged_manifest = deepcopy(manifest)
+        if damage == "missing":
+            damaged_manifest["files"].pop()
+        elif damage == "duplicate":
+            damaged_manifest["files"].append(damaged_manifest["files"][-1])
+        else:
+            damaged_manifest["files"][-1]["sha256"] = "f" * 64
+        with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+            validate_inventory_closure(
+                damaged_manifest, aggregate, aggregate_locator="/recorded/aggregate.json",
+                aggregate_raw=raw, live_roots=(),
+            )
+
+    for location in ("records", "control", "execution", "destruction"):
+        for field in ("case_directory", "module_hashes", "typescript_execution_binding"):
+            damaged = json.loads(raw)
+            wrapper = damaged["owner_reports"]["CHROME_INDEXEDDB"]
+            if location == "records":
+                leaf = wrapper["records"][0]
+            elif location == "destruction":
+                leaf = damaged["records"][1]["mutations"][0]["execution"]
+            else:
+                leaf = wrapper["mutation_results"][0][location]
+            del leaf[field]
+            with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+                retained_artifact_declarations(
+                    damaged, retained_boundaries=("/recorded",), live_roots=(),
+                )
+
+    for damage in ("conflict", "traversal", "invalid-hash", "binding", "extra-module", "container"):
+        damaged = deepcopy(campaign)
+        leaf = damaged["mutation_results"][0]["execution"]
+        if damage == "conflict":
+            leaf["case_directory"] = "/recorded/ack"
+        elif damage == "traversal":
+            leaf["case_directory"] = "/recorded/../outside"
+        elif damage == "invalid-hash":
+            leaf["module_hashes"]["src/spool.js"] = "not-a-sha256"
+        elif damage == "binding":
+            leaf["typescript_execution_binding"]["after"] = {}
+        elif damage == "extra-module":
+            leaf["module_hashes"]["../outside.js"] = "a" * 64
+        else:
+            leaf.pop("module_hashes")
+            leaf.update(_indexeddb_campaign([], [], scope))
+        with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION|E_RETAINED_ARTIFACT"):
+            retained_artifact_declarations(
+                {"owner_reports": {"CHROME_INDEXEDDB": damaged}},
+                retained_boundaries=("/recorded",), live_roots=(),
+            )
+
+    for field in ("records", "mutation_results"):
+        malformed = {**campaign, field: {}}
+        with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+            retained_artifact_declarations(
+                malformed, retained_boundaries=("/recorded",), live_roots=(),
+            )
 
 
 def test_malformed_supported_graph_owner_is_rejected() -> None:
