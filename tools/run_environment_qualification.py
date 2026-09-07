@@ -491,7 +491,15 @@ def run_browser_restart(workspace: Path) -> dict[str, Any]:
 
 
 def verify_browser_restart(report: dict[str, Any]) -> None:
+    from jsonschema.exceptions import ValidationError  # type: ignore[import-untyped]
+
     from tools.qualify_chrome_indexeddb import _browser_command, _extension_id
+    from tools.run_indexeddb_crash_matrix import (
+        PRODUCER,
+        REGISTRY,
+        STREAM,
+        compare_indexeddb_state,
+    )
     from tools.verify_repair_evidence import (
         _compiled_browser_module_hashes,
         _typescript_compile_binding,
@@ -527,6 +535,7 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
             raise ValueError("profile")
         if report["processes"][0]["pid"] == report["processes"][1]["pid"]:
             raise ValueError("restart")
+        observations = _observations(report["profile_id"])
         for phase, process, termination, descriptor, sentinel, argv in zip(
             ("before", "after"),
             report["processes"],
@@ -572,6 +581,28 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
                 raise ValueError("process")
             value = json.loads((case / f"{phase}-worker.json").read_text())
             request = json.loads(checked(descriptor))
+            ordinary_request: dict[str, Any] = {
+                "operation": "exercise" if phase == "before" else "read",
+                "identity": {"run_id": report["profile_id"], "pid": process["pid"], "phase": phase},
+                "options": {
+                    "browser_run_id": report["profile_id"],
+                    "producer_id": PRODUCER,
+                    "stream_id": STREAM,
+                    "generation": "0",
+                    "registry": json.loads(REGISTRY.read_text()),
+                },
+                "observations": [
+                    json.dumps(raw, sort_keys=True, separators=(",", ":")) for raw in observations
+                ]
+                if phase == "before"
+                else [],
+            }
+            if (
+                set(request) != {"worker_id", "request"}
+                or request["request"] != ordinary_request
+                or Path(descriptor["path"]) != case / f"{phase}-input.json"
+            ):
+                raise ValueError("ordinary input")
             if (
                 value != report[phase]
                 or value.get("error")
@@ -586,16 +617,25 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
                 raise ValueError("readback")
             if phase == "after" and request["request"]["observations"]:
                 raise ValueError("reader input")
+            # Only observations 1 and 2 survived; 3 was aborted. Validate the
+            # actual envelopes, cursor chain, keys, ACK=1 and next sequence=3.
+            compare_indexeddb_state(value, ordinary_request["identity"], observations, 2, ack=1)
+        before = report["before"]
+        first, second = [entry["spool_record"] for entry in before["entries"]]
         if (
-            len(report["before"]["entries"]) != 2
-            or not report["before"]["aborted"]
+            before["aborted"] is not True
+            or before["first"] != first
+            or before["second"] != second
+            or before["duplicate"] != first
+            or before["pending"] != [second]
+            or before["invalid_ack"] != "Error: E_SPOOL_ACK"
             or any(
                 report["before"][key] != report["after"][key]
                 for key in ("entries", "states", "keys")
             )
         ):
             raise ValueError("state")
-    except (KeyError, ValueError, TypeError, OSError, StopIteration) as error:
+    except (KeyError, ValueError, TypeError, OSError, StopIteration, ValidationError) as error:
         raise ValueError("E_ENV_BROWSER_EVIDENCE") from error
 
 

@@ -1,9 +1,12 @@
 """Environment evidence is real, bounded and never physical-power qualification."""
 
 import copy
+import hashlib
 import importlib
+import json
 from pathlib import Path
 from types import ModuleType
+from typing import Any
 
 import pytest
 
@@ -93,3 +96,79 @@ def test_retained_browser_evidence_rejects_tampering(tmp_path: Path) -> None:
             altered["modules"]["src/spool.js"] = "0" * 64
         with pytest.raises(ValueError, match="E_ENV_BROWSER_EVIDENCE"):
             module.verify_browser_restart(altered)
+
+
+@pytest.fixture(scope="module")
+def browser_survivor_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    return dict(owner().run_browser_restart(tmp_path_factory.mktemp("browser-survivors")))
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "duplicate_survivor",
+        "aborted_survivor",
+        "first",
+        "second",
+        "duplicate",
+        "pending",
+        "invalid_ack",
+        "aborted_nonbool",
+        "input_oracle",
+        "input_observation",
+    ],
+)
+def test_coherent_survivor_substitutions_are_rejected(
+    browser_survivor_report: dict[str, Any],
+    damage: str,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Consistent readbacks cannot turn the wrong observations into durable survivors."""
+    report = copy.deepcopy(browser_survivor_report)
+    case = Path(report["case_directory"])
+    original_text, original_bytes = Path.read_text, Path.read_bytes
+    replacements: dict[Path, bytes] = {}
+    input_path = Path(report["inputs"][0]["path"])
+    request = json.loads(original_bytes(input_path))
+    if damage == "duplicate_survivor":
+        for phase in ("before", "after"):
+            report[phase]["entries"][1] = copy.deepcopy(report[phase]["entries"][0])
+    elif damage == "aborted_survivor":
+        for phase in ("before", "after"):
+            report[phase]["entries"][1]["sanitized_observation"] = json.loads(
+                request["request"]["observations"][2]
+            )
+    elif damage in {"first", "second", "duplicate"}:
+        report["before"][damage] = {"substituted": True}
+    elif damage == "pending":
+        report["before"]["pending"] = [report["before"]["first"]]
+    elif damage == "invalid_ack":
+        report["before"]["invalid_ack"] = ""
+    elif damage == "aborted_nonbool":
+        report["before"]["aborted"] = "yes"
+    else:
+        if damage == "input_oracle":
+            request["request"]["expected"] = {"survivors": 2}
+        else:
+            request["request"]["observations"][1] = request["request"]["observations"][0]
+        replacements[input_path] = json.dumps(request, sort_keys=True).encode()
+        report["inputs"][0]["sha256"] = hashlib.sha256(replacements[input_path]).hexdigest()
+    for phase in ("before", "after"):
+        replacements[case / f"{phase}-worker.json"] = json.dumps(
+            report[phase], sort_keys=True
+        ).encode()
+
+    def read_text(path: Path, *args: Any, **kwargs: Any) -> str:
+        return (
+            replacements[path].decode()
+            if path in replacements
+            else original_text(path, *args, **kwargs)
+        )
+
+    def read_bytes(path: Path) -> bytes:
+        return replacements[path] if path in replacements else original_bytes(path)
+
+    monkeypatch.setattr(Path, "read_text", read_text)
+    monkeypatch.setattr(Path, "read_bytes", read_bytes)
+    with pytest.raises(ValueError, match="E_ENV_BROWSER_EVIDENCE"):
+        owner().verify_browser_restart(report)
