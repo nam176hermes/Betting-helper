@@ -604,7 +604,10 @@ def test_inventory_writer_collapses_only_consistent_windows_posix_aliases(
         )
 
 
-@pytest.mark.parametrize("owner", ["BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"])
+@pytest.mark.parametrize(
+    "owner",
+    ["BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY", "DISPOSABLE_DESTRUCTION"],
+)
 def test_browser_owner_module_graph_is_explicit_closed_inventory(
     tmp_path: Path, owner: str
 ) -> None:
@@ -712,3 +715,74 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         module.write_bytes(original)
     finally:
         evidence_gate._RETAINED_ARTIFACTS.reset(token)
+
+
+def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collision() -> None:
+    from tools.run_full_repair_qualification import retained_artifact_declarations
+
+    names = {
+        "indexeddb-crash-child.js",
+        "repair-probe.js",
+        "src/canonical.js",
+        "src/canonicalize.js",
+        "src/errors.js",
+        "src/spool.js",
+    }
+
+    def row(scope: str, case: str, character: str) -> dict[str, object]:
+        modules = {name: character * 64 for name in names}
+        return {
+            "qualification_scope": scope,
+            "case_directory": case,
+            "module_hashes": modules,
+            "typescript_execution_binding": {"before": modules, "after": modules},
+        }
+
+    declarations = retained_artifact_declarations(
+        {
+            "owner_reports": {
+                "ack": row("BROWSER_LOOPBACK_ACK", "/recorded/ack", "a"),
+                "destruction": row(
+                    "DISPOSABLE_DESTRUCTION", "/recorded/destruction", "b"
+                ),
+            }
+        },
+        retained_boundaries=("/recorded",),
+        live_roots=(),
+    )
+    assert len(declarations) == 12
+    assert {path for path, _boundary, _digest in declarations} == {
+        f"/recorded/{owner}/test-extension/{name}"
+        for owner in ("ack", "destruction")
+        for name in names
+    }
+
+
+def test_malformed_supported_graph_owner_is_rejected() -> None:
+    from tools.run_full_repair_qualification import retained_artifact_declarations
+
+    with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+        retained_artifact_declarations(
+            {
+                "qualification_scope": "DISPOSABLE_DESTRUCTION",
+                "case_directory": "/recorded/destruction",
+                "module_hashes": {"src/spool.js": "a" * 64},
+                "typescript_execution_binding": {
+                    "before": {"src/spool.js": "a" * 64},
+                    "after": {"src/spool.js": "a" * 64},
+                },
+            },
+            retained_boundaries=("/recorded",),
+            live_roots=(),
+        )
+
+    assert retained_artifact_declarations(
+        {
+            "metadata": {
+                "qualification_scope": "UNRELATED_OWNER",
+                "typescript_execution_binding": {"build": "informational"},
+            }
+        },
+        retained_boundaries=("/recorded",),
+        live_roots=(),
+    ) == []

@@ -19,6 +19,11 @@ _BROWSER_MODULES = {
     "src/errors.js",
     "src/spool.js",
 }
+_GRAPH_OWNER_SCOPES = {
+    "BROWSER_LOOPBACK_ACK",
+    "INDEXEDDB_SPOOL_ONLY",
+    "DISPOSABLE_DESTRUCTION",
+}
 
 
 def _sha(data: bytes) -> str:
@@ -51,14 +56,12 @@ def _artifact_references(value: object) -> list[tuple[str, str]]:
 
     def visit(item: object) -> None:
         if isinstance(item, dict):
-            execution_binding = item.get("typescript_execution_binding")
-            if execution_binding is not None:
+            if item.get("qualification_scope") in _GRAPH_OWNER_SCOPES:
+                execution_binding = item.get("typescript_execution_binding")
                 modules = item.get("module_hashes")
                 case_directory = item.get("case_directory")
                 if (
-                    item.get("qualification_scope")
-                    not in {"BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"}
-                    or not isinstance(case_directory, str)
+                    not isinstance(case_directory, str)
                     or not isinstance(modules, dict)
                     or set(modules) != _BROWSER_MODULES
                     or any(not isinstance(value, str) for value in modules.values())
