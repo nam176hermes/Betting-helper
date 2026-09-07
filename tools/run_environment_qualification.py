@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 import sqlite3
 import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -242,6 +244,24 @@ def _verify_native_observation(
     *,
     wsl_entry: bool = False,
 ) -> None:
+    cim = row.get("cim")
+    if not isinstance(cim, dict) or set(cim) != {
+        "ProcessId",
+        "ParentProcessId",
+        "ExecutablePath",
+        "CommandLine",
+        "CreationDate",
+    }:
+        raise ValueError("E_ENV_NATIVE_OBSERVATION")
+    creation = cim["CreationDate"]
+    match = re.fullmatch(r"/Date\(([0-9]+)\)/", creation) if isinstance(creation, str) else None
+    if match is None:
+        raise ValueError("E_ENV_NATIVE_OBSERVATION")
+    try:
+        # Windows PowerShell ConvertTo-Json emits the observed UTC epoch milliseconds.
+        datetime.fromtimestamp(int(match[1]) / 1000, UTC)
+    except (ValueError, OverflowError, OSError) as error:
+        raise ValueError("E_ENV_NATIVE_OBSERVATION") from error
     command_lines = [subprocess.list2cmdline(command)]
     if wsl_entry:
         command_lines.append(subprocess.list2cmdline(["python.exe", *command[1:]]))

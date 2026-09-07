@@ -69,6 +69,30 @@ def test_native_pipe_restarts_actual_spool(native_report: dict[str, Any]) -> Non
     )
 
 
+@pytest.mark.parametrize("damage", ["missing", "null", "empty", "malformed", "overflow", "extra"])
+def test_native_creation_identity_is_required(native_report: dict[str, Any], damage: str) -> None:
+    import json
+
+    observed = copy.deepcopy(native_report["phases"][0]["node"])
+    command = observed["argv"]
+    parent = observed["cim"]["ParentProcessId"]
+    environment._verify_native_observation(observed, command, parent)
+    if damage == "missing":
+        del observed["cim"]["CreationDate"]
+    elif damage == "extra":
+        observed["cim"]["UnboundIdentity"] = "extra"
+    else:
+        observed["cim"]["CreationDate"] = {
+            "null": None,
+            "empty": "",
+            "malformed": "/Date(not-a-timestamp)/",
+            "overflow": "/Date(99999999999999999999999999999999999999)/",
+        }[damage]
+    observed["cim_raw"] = json.dumps(observed["cim"])
+    with pytest.raises(ValueError, match="E_ENV_NATIVE_OBSERVATION"):
+        environment._verify_native_observation(observed, command, parent)
+
+
 @pytest.mark.parametrize(
     "damage",
     [
