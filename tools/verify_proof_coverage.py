@@ -85,6 +85,16 @@ def verify_proof_coverage_matrix(
     *,
     artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, object]:
+    structural = evidence_root is None and stage is None and config is None and artifacts is None
+    if not structural and (
+        evidence_root is None
+        or stage not in {"CANDIDATE", "SEALED"}
+        or config is None
+        or config.schema_version != "full-verifier-controller/v2"
+        or (stage == "CANDIDATE" and artifacts is not None)
+        or (stage == "SEALED" and artifacts is None)
+    ):
+        raise ValueError("E_PROOF_COVERAGE")
     entries = matrix.get("entries")
     if not isinstance(entries, list) or len(entries) != 18:
         raise ValueError("E_PROOF_COVERAGE")

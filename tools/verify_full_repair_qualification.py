@@ -63,6 +63,7 @@ def _semantic_validation(aggregate: dict[str, Any], artifacts: RetainedArtifactI
         evidence=records,
         mutation_summary=mutations,
         mutation_evidence={"owner_reports": owners, "clock_report": clock},
+        artifacts=artifacts,
     )
     if (
         replay.get("result") != "PASS"
@@ -114,6 +115,15 @@ def verify_full_repair_qualification(
             raise ValueError("E_FULL_REPAIR_QUALIFICATION")
         raw = active_artifacts.read_bytes(recorded, recorded_boundary=boundary)
         aggregate = _object(raw)
+        from tools.run_full_repair_qualification import validate_inventory_closure
+
+        validate_inventory_closure(
+            manifest,
+            aggregate,
+            aggregate_locator=recorded,
+            aggregate_raw=raw,
+            live_roots=(Path(__file__).resolve().parents[1],),
+        )
         _semantic_validation(aggregate, active_artifacts)
     except (OSError, ValueError, KeyError, TypeError) as error:
         raise ValueError("E_FULL_REPAIR_QUALIFICATION") from error

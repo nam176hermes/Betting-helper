@@ -4,8 +4,9 @@ import copy
 import hashlib
 import importlib
 import json
+import shutil
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 from typing import Any
 
 import pytest
@@ -65,6 +66,7 @@ def test_checked_uses_explicit_retained_boundary_without_original_fallback(
 
 def test_environment_aggregate_dispatches_every_owner_and_keeps_power_hold(
     monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
 ) -> None:
     module = owner()
     seen: list[str] = []
@@ -92,34 +94,37 @@ def test_environment_aggregate_dispatches_every_owner_and_keeps_power_hold(
         "verify_native_commit_io",
         lambda _report, *, artifacts=None: seen.append("native_commit_io"),
     )
+    reports = {
+        "native": {"cases": []},
+        "filesystem": {"faults": [], "commit_io": {"records": []}},
+        "linux_browser": {"result": "PASS"},
+        "windows_browser": {
+            "restart_result": "PASS",
+            "result": "HOLD",
+            "observed_error": "NO_TARGET",
+        },
+        "native_ingestor": {"result": "PASS", "cases": []},
+        "native_commit_io": {"native_sql06": "PASS"},
+    }
+    terminal_files = []
+    for name, value in reports.items():
+        path = tmp_path / f"{name}.json"
+        path.write_text(json.dumps(value, sort_keys=True))
+        terminal_files.append(
+            {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        )
     report = {
         "result": "PARTIAL_HOLD",
         "binding": {"source": "current"},
-        "cases": [
-            {
-                "case_id": "PHYSICAL-POWER-LOSS",
-                "result": "HOLD",
-                "observed_error": "NOT_EXECUTED_NO_EXTERNAL_FACILITY",
-            }
-        ],
-        "reports": {
-            key: {}
-            for key in (
-                "native",
-                "filesystem",
-                "linux_browser",
-                "windows_browser",
-                "native_ingestor",
-                "native_commit_io",
-            )
-        },
+        "cases": module._environment_case_projection(reports),
+        "reports": reports,
         "scope": "SUPPLEMENTAL_ENVIRONMENT_ONLY",
         "production_authority": "NONE",
         "live_authority": "NONE",
         "money_authority": "NONE",
         "full111": "NOT_RERUN_AT_THIS_SOURCE",
         "security_review": "NOT_REVIEWED",
-        "terminal_files": [],
+        "terminal_files": terminal_files,
     }
     module.verify_environment_qualification(report)
     assert set(seen) == {
@@ -131,6 +136,94 @@ def test_environment_aggregate_dispatches_every_owner_and_keeps_power_hold(
         "native_commit_io",
     }
     report["result"] = "PASS"
+    with pytest.raises(ValueError, match="E_ENVIRONMENT_QUALIFICATION"):
+        module.verify_environment_qualification(report)
+
+
+def test_supplemental_evidence_replays_from_closed_copy_without_originals(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from tools.run_full_repair_qualification import (
+        collect_retained_sources,
+        write_closed_inventory,
+    )
+
+    module = owner()
+    monkeypatch.setattr(module, "capture_binding", lambda: {"source": "current"})
+    for name in (
+        "verify_native_storage",
+        "verify_filesystem_faults",
+        "verify_browser_restart",
+        "verify_windows_browser",
+    ):
+        monkeypatch.setattr(module, name, lambda _report, *, artifacts=None: None)
+    import tools.run_native_ingestor_qualification as native
+
+    monkeypatch.setattr(native, "verify_native_ingestor", lambda _report, *, artifacts=None: None)
+    monkeypatch.setattr(native, "verify_native_commit_io", lambda _report, *, artifacts=None: None)
+    workspace = tmp_path / "original"
+    workspace.mkdir()
+    reports = {
+        "native": {"cases": []},
+        "filesystem": {"faults": [], "commit_io": {"records": []}},
+        "linux_browser": {"result": "PASS"},
+        "windows_browser": {
+            "restart_result": "PASS",
+            "result": "HOLD",
+            "observed_error": "NO_TARGET",
+        },
+        "native_ingestor": {"result": "PASS", "cases": []},
+        "native_commit_io": {"native_sql06": "PASS"},
+    }
+    terminals = []
+    for name, value in reports.items():
+        path = workspace / f"{name}.json"
+        path.write_text(json.dumps(value, sort_keys=True))
+        terminals.append(
+            {"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        )
+    aggregate = workspace / "environment-aggregate.json"
+    report = {
+        "result": "PARTIAL_HOLD",
+        "binding": {"source": "current"},
+        "cases": module._environment_case_projection(reports),
+        "reports": reports,
+        "scope": "SUPPLEMENTAL_ENVIRONMENT_ONLY",
+        "production_authority": "NONE",
+        "live_authority": "NONE",
+        "money_authority": "NONE",
+        "full111": "NOT_RERUN_AT_THIS_SOURCE",
+        "security_review": "NOT_REVIEWED",
+        "terminal_files": terminals,
+    }
+    aggregate.write_text(json.dumps(report, sort_keys=True))
+    inventory = tmp_path / "evidence/inventory.json"
+    inventory.parent.mkdir()
+    sources = [
+        (aggregate, str(aggregate), str(workspace)),
+        *collect_retained_sources(
+            report, retained_boundaries=(workspace,), live_roots=(Path(__file__).parents[2],)
+        ),
+    ]
+    manifest = write_closed_inventory(sources, inventory)
+    qualification = SimpleNamespace(
+        environment_qualification_aggregate=aggregate,
+        environment_qualification_inventory=inventory,
+    )
+    config = SimpleNamespace(qualification_evidence=qualification, chrome_path=Path(__file__))
+    shutil.rmtree(workspace)
+
+    proof = module.verify_environment_qualification_evidence(aggregate, inventory, config)
+    assert proof["result"] == "PARTIAL_HOLD"
+    terminal_row = next(
+        row for row in manifest["files"] if row["recorded_locator"] == terminals[0]["path"]
+    )
+    copied = inventory.parent / "retained" / terminal_row["copied_relative_path"]
+    copied.write_bytes(b"changed")
+    with pytest.raises(ValueError, match="E_ENVIRONMENT_QUALIFICATION"):
+        module.verify_environment_qualification_evidence(aggregate, inventory, config)
+    report["result"] = "PARTIAL_HOLD"
+    report["cases"].append(dict(report["cases"][0]))
     with pytest.raises(ValueError, match="E_ENVIRONMENT_QUALIFICATION"):
         module.verify_environment_qualification(report)
 

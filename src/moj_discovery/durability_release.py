@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 
 def validate_full_durability_release(
@@ -10,12 +13,17 @@ def validate_full_durability_release(
     evidence: list[dict[str, Any]] | None = None,
     mutation_summary: dict[str, Any] | None = None,
     mutation_evidence: dict[str, Any] | None = None,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, object]:
     if evidence is None:
         raise ValueError("E_DURABILITY_EVIDENCE_REQUIRED")
     from tools.verify_repair_evidence import PACK, aggregate_repair_evidence, full_required_ids
 
-    qualification = aggregate_repair_evidence(full_required_ids(), evidence)
+    qualification = (
+        aggregate_repair_evidence(full_required_ids(), evidence)
+        if artifacts is None
+        else aggregate_repair_evidence(full_required_ids(), evidence, artifacts=artifacts)
+    )
     if qualification["legacy_full_qualification"] != "PASS":
         raise ValueError("E_DURABILITY_EVIDENCE_NOT_QUALIFIED")
     required = full_required_ids()
@@ -39,10 +47,12 @@ def validate_full_durability_release(
         ).encode()
     if canonical(controls) != canonical(evidence):
         raise ValueError("E_DURABILITY_MUTATION_CONTROL_MISMATCH")
-    verified = validate_full_mutation_reports(
-        PACK,
-        owner_reports,
-        clock_report,
+    verified = (
+        validate_full_mutation_reports(PACK, owner_reports, clock_report)
+        if artifacts is None
+        else validate_full_mutation_reports(
+            PACK, owner_reports, clock_report, artifacts=artifacts
+        )
     )
     if verified != {
         "required": 105,

@@ -295,7 +295,7 @@ def verify_destruction(
             expected_value = {**expected_value, "one_use": 1}
         descriptor = row["artifacts"].get("external-" + kind)
         if expected_value is None:
-            if descriptor is not None or (case / filename).exists():
+            if descriptor is not None or (artifacts is None and (case / filename).exists()):
                 raise ValueError("E_DESTRUCTION_EXTERNAL_ARTIFACT")
         elif (
             descriptor is None

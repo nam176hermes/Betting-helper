@@ -1126,6 +1126,16 @@ def _retained_json(path: object, artifacts: RetainedArtifactIO | None) -> Any:
     return json.loads(data)
 
 
+def _retained_sha(path: object, artifacts: RetainedArtifactIO | None) -> str:
+    recorded = str(path)
+    data = (
+        artifacts.read_bytes(recorded, recorded_boundary=artifacts.recorded_boundary(recorded))
+        if artifacts is not None
+        else Path(recorded).read_bytes()
+    )
+    return hashlib.sha256(data).hexdigest()
+
+
 def verify_gap_record(
     row: dict[str, Any],
     binding: dict[str, Any],
@@ -1176,7 +1186,7 @@ def verify_gap_record(
         "process_observation_artifact",
     ):
         descriptor = row[name]
-        if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
+        if _retained_sha(descriptor["path"], artifacts) != descriptor["sha256"]:
             raise ValueError("E_GAP_ARTIFACT")
     python = str(Path(sys.executable).absolute())
     _verify_proc_observation(process, row["process_observation_artifact"], row["command"])
@@ -1198,7 +1208,7 @@ def verify_gap_record(
     for reader in row["reader_runs"]:
         for descriptor_name in ("input", "output"):
             descriptor = reader[descriptor_name]
-            if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
+            if _retained_sha(descriptor["path"], artifacts) != descriptor["sha256"]:
                 raise ValueError("E_GAP_READER")
         output = _retained_json(reader["output"]["path"], artifacts)
         expected_state = row[f"{reader['phase']}_restart"]
@@ -1249,17 +1259,20 @@ def verify_gap_record(
     if _semantic_view(row["before_restart"], baseline, row["expected"], scenario) != row["actual"]:
         raise ValueError("E_GAP_COMPARISON")
     database_dir = Path(row["case_directory"]) / row["identity"]["run_id"]
-    persisted_after = (
-        read_gap_state(database_dir)
-        if (database_dir / "run.sqlite3").is_file()
-        else row["after_restart"]
-    )
+    if artifacts is None:
+        persisted_after = (
+            read_gap_state(database_dir)
+            if (database_dir / "run.sqlite3").is_file()
+            else row["after_restart"]
+        )
+    else:
+        persisted_after = row["after_restart"]
     if persisted_after != row["after_restart"] or row["recovery_validation"] != _validate_recovery(
         row["before_restart"], persisted_after, scenario
     ):
         raise ValueError("E_GAP_RECOVERY_PREDICATE")
     if (
-        _sha(Path(row["shim"]["path"])) != row["shim"]["binary_sha256"]
+        _retained_sha(row["shim"]["path"], artifacts) != row["shim"]["binary_sha256"]
         or _sha(SHIM_SOURCE) != row["shim"]["source_sha256"]
     ):
         raise ValueError("E_GAP_SHIM")
@@ -1313,7 +1326,7 @@ def verify_gap_mutation(
     if row["exit"] != 1 or row["command_exit"] != {"child": 1}:
         raise ValueError("E_GAP_MUTATION_INPUT")
     for descriptor in row["artifacts"]:
-        if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
+        if _retained_sha(descriptor["path"], artifacts) != descriptor["sha256"]:
             raise ValueError("E_GAP_MUTATION_ARTIFACT")
     _verify_proc_observation(
         row["process_observation"], row["process_observation_artifact"], row["command"]
@@ -1356,8 +1369,24 @@ def verify_gap_mutation(
         or "CONTENT_HASH_MISMATCH" not in stderr
     ):
         raise ValueError("E_GAP_MUTATION_INPUT")
-    state = read_gap_state(Path(row["case_directory"]) / row["identity"]["run_id"])
-    if state["run_id"] != row["identity"]["run_id"]:
+    database = row["database_artifact"]
+    database_path = Path(database["path"])
+    if artifacts is not None:
+        database_path = artifacts.physical_path(
+            database["path"],
+            recorded_boundary=artifacts.recorded_boundary(database["path"]),
+        )
+    import sqlite3
+    from contextlib import closing
+
+    try:
+        with closing(
+            sqlite3.connect(database_path.resolve().as_uri() + "?mode=ro", uri=True)
+        ) as connection:
+            run_ids = [row[0] for row in connection.execute("SELECT run_id FROM run_meta")]
+    except sqlite3.Error as error:
+        raise ValueError("E_GAP_MUTATION_INPUT") from error
+    if run_ids != [row["identity"]["run_id"]]:
         raise ValueError("E_GAP_MUTATION_INPUT")
 
 

@@ -38,6 +38,11 @@ def _canonical_recorded(value: object) -> str:
     return PurePosixPath(candidate).as_posix()
 
 
+def canonical_recorded_locator(value: object) -> str:
+    """Return the single supported POSIX identity for a recorded locator."""
+    return _canonical_recorded(value)
+
+
 def _canonical_relative(value: object) -> str:
     if not isinstance(value, str) or not value or "\\" in value:
         _fail()
@@ -226,4 +231,4 @@ class RetainedArtifactIO:
         return data
 
 
-__all__ = ["RetainedArtifactIO"]
+__all__ = ["RetainedArtifactIO", "canonical_recorded_locator"]

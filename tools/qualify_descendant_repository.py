@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -109,16 +110,42 @@ def _receipt_record(
     source_map, source_root, source_count = _normative_source_set(
         config.governed_source_pack, artifacts=artifacts
     )
+    from tools.run_environment_qualification import verify_environment_qualification_evidence
+    from tools.verify_full_repair_qualification import verify_full_repair_qualification
+
+    qualification = config.qualification_evidence
+    assert qualification is not None
+
+    def mapped(path: Path) -> Path:
+        if artifacts is None:
+            return path
+        recorded = str(path)
+        return artifacts.physical_path(
+            recorded, recorded_boundary=artifacts.recorded_boundary(recorded)
+        )
+
+    full_proof = verify_full_repair_qualification(
+        mapped(qualification.full_repair_aggregate),
+        mapped(qualification.full_repair_inventory),
+        config,
+        artifacts=artifacts,
+    )
     p03 = _read_evidence(config.qualification_evidence.p03_proof, artifacts)
-    environment_inventory = _read_evidence(
-        config.qualification_evidence.environment_qualification_inventory, artifacts
+    p04 = _read_evidence(config.qualification_evidence.p04_proof, artifacts)
+    environment = verify_environment_qualification_evidence(
+        qualification.environment_qualification_aggregate,
+        qualification.environment_qualification_inventory,
+        config,
+        artifacts=artifacts,
     )
     if (
-        p03.get("result") != "PASS"
-        or p03.get("controller_binding") != config.binding()
-        or p03.get("control_count") != 111
-        or p03.get("mutation_count") != 105
-        or p03.get("mutation_survivors") != 0
+        p03
+        != {
+            **full_proof,
+            "schema_version": "full-repair-qualification/v1",
+            "clock_proof_pending": True,
+        }
+        or p04 != full_proof
     ):
         _fail()
     candidate_inventory = candidate.get("inventory")
@@ -156,9 +183,9 @@ def _receipt_record(
             config.qualification_evidence.environment_qualification_aggregate,
             artifacts,
         ),
-        "environment_qualification_evidence_root_sha256": hashlib.sha256(
-            _canonical(environment_inventory)
-        ).hexdigest(),
+        "environment_qualification_evidence_root_sha256": environment[
+            "evidence_root_sha256"
+        ],
     }
 
 
@@ -186,16 +213,25 @@ def issue_descendant_qualification_receipt(
     _outside_protected(output, root, config)
     before = _receipt_record(root, config)
     output.parent.mkdir(parents=True, exist_ok=True)
+    owned_identity: tuple[int, int] | None = None
     try:
         with output.open("x", encoding="utf-8") as stream:
+            info = os.fstat(stream.fileno())
+            owned_identity = (info.st_dev, info.st_ino)
             stream.write(json.dumps(before, sort_keys=True, separators=(",", ":")) + "\n")
-        after = _receipt_record(root, config)
-        if before != after:
-            _fail()
+            stream.flush()
+            after = _receipt_record(root, config)
+            if before != after:
+                _fail()
         return before
     except Exception:
-        if output.is_file() and not output.is_symlink():
-            output.unlink()
+        if owned_identity is not None:
+            try:
+                info = output.lstat()
+                if not output.is_symlink() and (info.st_dev, info.st_ino) == owned_identity:
+                    output.unlink()
+            except FileNotFoundError:
+                pass
         raise
 
 

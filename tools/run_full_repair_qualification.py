@@ -9,6 +9,7 @@ import stat
 from pathlib import Path
 
 from tools.full_verifier_config import FullVerifierConfig, load_controller_config
+from tools.retained_artifact_io import canonical_recorded_locator
 
 
 def _sha(data: bytes) -> str:
@@ -24,14 +25,146 @@ def _write_closed_inventory(
     if config.qualification_evidence is None:
         raise ValueError("E_FULL_REPAIR_QUALIFICATION")
     recorded_aggregate = config.qualification_evidence.full_repair_aggregate
+    aggregate = json.loads(aggregate_path.read_text())
     sources = [
         (aggregate_path, str(recorded_aggregate), str(recorded_aggregate.parent)),
-        *[
-            (path, str(path.resolve()), str(campaign.resolve()))
-            for path in sorted(path for path in campaign.rglob("*") if path.is_file())
-        ],
+        *collect_retained_sources(
+            aggregate,
+            retained_boundaries=(campaign,),
+            live_roots=(Path(__file__).resolve().parents[1],),
+        ),
     ]
     return write_closed_inventory(sources, inventory_path)
+
+
+def _artifact_references(value: object) -> list[tuple[str, str]]:
+    references: list[tuple[str, str]] = []
+
+    def visit(item: object) -> None:
+        if isinstance(item, dict):
+            path = item.get("path")
+            digest = item.get("sha256")
+            if isinstance(path, str) and isinstance(digest, str):
+                references.append((path, digest))
+            elif isinstance(path, str) and isinstance(item.get("binary_sha256"), str):
+                references.append((path, item["binary_sha256"]))
+            for key, candidate in item.items():
+                if key.endswith("_path") and isinstance(candidate, str):
+                    paired = item.get(key.removesuffix("_path") + "_sha256")
+                    if isinstance(paired, str):
+                        references.append((candidate, paired))
+                visit(candidate)
+        elif isinstance(item, list):
+            for candidate in item:
+                visit(candidate)
+
+    visit(value)
+    return references
+
+
+def collect_retained_sources(
+    value: object,
+    *,
+    retained_boundaries: tuple[Path, ...],
+    live_roots: tuple[Path, ...],
+) -> list[tuple[Path, str, str]]:
+    """Select only recursively referenced artifacts and verify live exclusions."""
+    declarations = retained_artifact_declarations(
+        value, retained_boundaries=retained_boundaries, live_roots=live_roots
+    )
+    selected: list[tuple[Path, str, str]] = []
+    for locator, boundary, digest in declarations:
+        source = Path(locator)
+        try:
+            info = source.lstat()
+            data = source.read_bytes()
+        except OSError as error:
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION") from error
+        if (
+            source.is_symlink()
+            or not stat.S_ISREG(info.st_mode)
+            or info.st_nlink != 1
+            or hashlib.sha256(data).hexdigest() != digest
+        ):
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+        selected.append((source, locator, boundary))
+    return selected
+
+
+def retained_artifact_declarations(
+    value: object,
+    *,
+    retained_boundaries: tuple[Path | str, ...],
+    live_roots: tuple[Path, ...],
+) -> list[tuple[str, str, str]]:
+    """Derive the exact retained locator/boundary/hash set without opening it."""
+    retained = [
+        canonical_recorded_locator(str(path.resolve()) if isinstance(path, Path) else path)
+        for path in retained_boundaries
+    ]
+    live = [canonical_recorded_locator(str(path.resolve())) for path in live_roots]
+    selected: dict[str, tuple[str, str, str]] = {}
+    for raw_locator, digest in _artifact_references(value):
+        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+        locator = canonical_recorded_locator(raw_locator)
+        matching_retained = [root for root in retained if Path(locator).is_relative_to(root)]
+        matching_live = [root for root in live if Path(locator).is_relative_to(root)]
+        source = Path(locator)
+        if matching_retained:
+            boundary = max(matching_retained, key=len)
+        elif matching_live:
+            try:
+                if (
+                    not source.resolve(strict=True).is_file()
+                    or hashlib.sha256(source.read_bytes()).hexdigest() != digest
+                ):
+                    raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+            except OSError as error:
+                raise ValueError("E_FULL_REPAIR_QUALIFICATION") from error
+            continue
+        else:
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+        prior = selected.get(locator)
+        current = (locator, boundary, digest)
+        if prior is not None and prior != current:
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+        selected[locator] = current
+    return [row for _, row in sorted(selected.items())]
+
+
+def validate_inventory_closure(
+    manifest: object,
+    value: object,
+    *,
+    aggregate_locator: str,
+    aggregate_raw: bytes,
+    live_roots: tuple[Path, ...],
+) -> None:
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("files"), list):
+        raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+    boundaries = manifest.get("recorded_boundaries")
+    if not isinstance(boundaries, list):
+        raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+    declarations = retained_artifact_declarations(
+        value,
+        retained_boundaries=tuple(str(item) for item in boundaries),
+        live_roots=live_roots,
+    )
+    expected = {
+        canonical_recorded_locator(aggregate_locator): hashlib.sha256(aggregate_raw).hexdigest(),
+        **{locator: digest for locator, _boundary, digest in declarations},
+    }
+    rows = manifest["files"]
+    actual = {
+        canonical_recorded_locator(row["recorded_locator"]): row["sha256"]
+        for row in rows
+        if isinstance(row, dict)
+        and isinstance(row.get("recorded_locator"), str)
+        and isinstance(row.get("sha256"), str)
+    }
+    if len(actual) != len(rows) or actual != expected:
+        raise ValueError("E_FULL_REPAIR_QUALIFICATION")
 
 
 def write_closed_inventory(
@@ -40,26 +173,32 @@ def write_closed_inventory(
     closure = inventory_path.parent / "retained"
     closure.mkdir(parents=False, exist_ok=False)
     rows: list[dict[str, object]] = []
-    seen: set[str] = set()
+    seen: dict[str, tuple[str, bytes, Path]] = {}
     for source, recorded, boundary in sources:
+        canonical_recorded = canonical_recorded_locator(recorded)
+        canonical_boundary = canonical_recorded_locator(boundary)
         try:
             info = source.lstat()
         except OSError as error:
             raise ValueError("E_FULL_REPAIR_QUALIFICATION") from error
         if source.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
             raise ValueError("E_FULL_REPAIR_QUALIFICATION")
-        if recorded in seen:
-            continue
-        seen.add(recorded)
         data = source.read_bytes()
-        relative = f"files/{_sha(recorded.encode())}.bin"
+        prior = seen.get(canonical_recorded)
+        identity = (canonical_boundary, data, source.resolve())
+        if prior is not None:
+            if prior != identity:
+                raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+            continue
+        seen[canonical_recorded] = identity
+        relative = f"files/{_sha(canonical_recorded.encode())}.bin"
         target = closure / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
         rows.append(
             {
-                "recorded_locator": recorded,
-                "recorded_boundary": boundary,
+                "recorded_locator": canonical_recorded,
+                "recorded_boundary": canonical_boundary,
                 "copied_relative_path": relative,
                 "size_bytes": len(data),
                 "sha256": _sha(data),

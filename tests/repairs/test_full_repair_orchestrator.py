@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+import sys
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
@@ -368,11 +369,21 @@ def test_full_repair_closed_inventory_replays_without_original_evidence(
     aggregate = evidence / "aggregate.json"
     inventory = evidence / "inventory.json"
     aggregate.parent.mkdir()
-    aggregate.write_text('{"result":"PASS"}')
     campaign = evidence / "campaign"
     campaign.mkdir()
     artifact = campaign / "actual.json"
     artifact.write_text('{"observed":1}')
+    aggregate.write_text(
+        json.dumps(
+            {
+                "result": "PASS",
+                "artifact": {
+                    "path": str(artifact),
+                    "sha256": hashlib.sha256(artifact.read_bytes()).hexdigest(),
+                },
+            }
+        )
+    )
     qualification = QualificationEvidenceConfig(
         full_repair_aggregate=aggregate,
         full_repair_inventory=inventory,
@@ -403,8 +414,190 @@ def test_full_repair_closed_inventory_replays_without_original_evidence(
     )
     proof = verifier.verify_full_repair_qualification(aggregate_copy, inventory, config)
     assert proof["result"] == "PASS"
-    assert seen == [{"result": "PASS"}]
+    assert seen == [json.loads(aggregate_copy.read_text())]
+
+    original_manifest = inventory.read_bytes()
+    changed_manifest = json.loads(original_manifest)
+    extra = inventory.parent / "retained/files/extra.bin"
+    extra.write_bytes(b"undeclared")
+    changed_manifest["files"].append(
+        {
+            "recorded_locator": str(campaign / "undeclared.json"),
+            "recorded_boundary": str(campaign),
+            "copied_relative_path": "files/extra.bin",
+            "size_bytes": len(b"undeclared"),
+            "sha256": hashlib.sha256(b"undeclared").hexdigest(),
+        }
+    )
+    inventory.write_text(json.dumps(changed_manifest, sort_keys=True))
+    with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+        verifier.verify_full_repair_qualification(aggregate_copy, inventory, config)
+    inventory.write_bytes(original_manifest)
+    extra.unlink()
 
     aggregate_copy.write_text('{"result":"PASS","forged":true}')
     with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
         verifier.verify_full_repair_qualification(aggregate_copy, inventory, config)
+
+
+def test_release_revalidation_preserves_retained_artifact_context(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import tools.run_indexeddb_crash_matrix as matrix
+    import tools.verify_repair_evidence as repair
+    from moj_discovery.durability_release import validate_full_durability_release
+
+    required = repair.full_required_ids()
+    evidence = [{"case_id": case_id} for case_id in required]
+    sentinel = object()
+    calls: list[object] = []
+
+    def aggregate(_required: object, actual: object, *, artifacts: object = None) -> dict[str, str]:
+        assert actual == evidence
+        calls.append(artifacts)
+        return {"legacy_full_qualification": "PASS"}
+
+    def mutations(
+        _pack: object,
+        _owners: object,
+        _clock: object,
+        *,
+        artifacts: object = None,
+    ) -> dict[str, object]:
+        calls.append(artifacts)
+        return {"required": 105, "verified": 105, "survivors": 0, "complete": True}
+
+    monkeypatch.setattr(repair, "aggregate_repair_evidence", aggregate)
+    monkeypatch.setattr(matrix, "full_control_records", lambda *_args: evidence)
+    monkeypatch.setattr(matrix, "validate_full_mutation_reports", mutations)
+    result = validate_full_durability_release(
+        required,
+        required,
+        mutation_survivors=0,
+        evidence=evidence,
+        mutation_evidence={"owner_reports": {}, "clock_report": {}},
+        artifacts=sentinel,
+    )
+    assert result["result"] == "PASS"
+    assert calls == [sentinel, sentinel]
+
+
+def test_closed_inventory_comes_only_from_recursive_references(tmp_path: Path) -> None:
+    from tools.run_full_repair_qualification import collect_retained_sources
+
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    referenced = campaign / "observed.json"
+    unreferenced = campaign / "unreferenced.txt"
+    referenced.write_text("observed")
+    unreferenced.write_text("not evidence")
+    descriptor = {
+        "path": str(referenced),
+        "sha256": hashlib.sha256(referenced.read_bytes()).hexdigest(),
+    }
+    sources = collect_retained_sources(
+        {"records": [{"artifact": descriptor}]},
+        retained_boundaries=(campaign,),
+        live_roots=(ROOT,),
+    )
+    assert sources == [(referenced, str(referenced), str(campaign))]
+
+
+def test_closed_inventory_alias_reuse_is_consistent_and_conflicts_fail(
+    tmp_path: Path,
+) -> None:
+    from tools.run_full_repair_qualification import collect_retained_sources
+
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    artifact = campaign / "observed.json"
+    artifact.write_text("observed")
+    digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+    descriptor = {"path": str(artifact), "sha256": digest}
+    sources = collect_retained_sources(
+        {"first": descriptor, "second": dict(descriptor)},
+        retained_boundaries=(campaign,),
+        live_roots=(ROOT,),
+    )
+    assert sources == [(artifact, str(artifact), str(campaign))]
+    with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+        collect_retained_sources(
+            {"first": descriptor, "second": {**descriptor, "sha256": "0" * 64}},
+            retained_boundaries=(campaign,),
+            live_roots=(ROOT,),
+        )
+
+
+def test_closed_inventory_excludes_verified_live_prerequisite(tmp_path: Path) -> None:
+    from tools.run_full_repair_qualification import collect_retained_sources
+
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    source = ROOT / "tools/run_full_repair_qualification.py"
+    descriptor = {"path": str(source), "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    assert collect_retained_sources(
+        {"entrypoint": descriptor}, retained_boundaries=(campaign,), live_roots=(ROOT,)
+    ) == []
+
+    executable_link = tmp_path / "python"
+    executable_link.symlink_to(Path(sys.executable).resolve())
+    executable = {
+        "path": str(executable_link),
+        "sha256": hashlib.sha256(executable_link.read_bytes()).hexdigest(),
+    }
+    assert collect_retained_sources(
+        {"executable": executable},
+        retained_boundaries=(campaign,),
+        live_roots=(tmp_path,),
+    ) == []
+
+
+def test_inventory_writer_collapses_only_consistent_windows_posix_aliases(
+    tmp_path: Path,
+) -> None:
+    from tools.run_full_repair_qualification import write_closed_inventory
+
+    source = tmp_path / "source.json"
+    source.write_text("same")
+    inventory = tmp_path / "evidence/inventory.json"
+    inventory.parent.mkdir()
+    manifest = write_closed_inventory(
+        [
+            (
+                source,
+                r"C:\Users\thenam\Documents\run\same.json",
+                r"C:\Users\thenam\Documents\run",
+            ),
+            (
+                source,
+                "/mnt/c/Users/thenam/Documents/run/same.json",
+                "/mnt/c/Users/thenam/Documents/run",
+            ),
+        ],
+        inventory,
+    )
+    assert len(manifest["files"]) == 1
+    assert manifest["files"][0]["recorded_locator"] == (
+        "/mnt/c/Users/thenam/Documents/run/same.json"
+    )
+
+    other = tmp_path / "other.json"
+    other.write_text("different")
+    conflicting = tmp_path / "conflicting/inventory.json"
+    conflicting.parent.mkdir()
+    with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+        write_closed_inventory(
+            [
+                (
+                    source,
+                    r"C:\Users\thenam\Documents\run\same.json",
+                    r"C:\Users\thenam\Documents\run",
+                ),
+                (
+                    other,
+                    "/mnt/c/Users/thenam/Documents/run/same.json",
+                    "/mnt/c/Users/thenam/Documents/run",
+                ),
+            ],
+            conflicting,
+        )

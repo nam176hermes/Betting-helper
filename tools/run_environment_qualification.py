@@ -1235,6 +1235,60 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
     return report
 
 
+def _environment_case_projection(reports: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    native = reports["native"]
+    filesystem = reports["filesystem"]
+    linux_browser = reports["linux_browser"]
+    windows_browser = reports["windows_browser"]
+    native_ingestor = reports["native_ingestor"]
+    native_commit_io = reports["native_commit_io"]
+    return (
+        [
+            {"case_id": "NATIVE-WIN-STORE-" + row["phase"].upper(), "result": "PASS"}
+            for row in native["cases"]
+        ]
+        + [
+            {
+                "case_id": "SOFTWARE-FAULT-" + row["fault"].upper(),
+                "result": "PASS",
+                "observed_error": row["observed_error"],
+            }
+            for row in filesystem["faults"]
+        ]
+        + [
+            {"case_id": row["vector_id"], "result": row["result"]}
+            for row in filesystem["commit_io"]["records"]
+        ]
+        + [
+            {"case_id": "LINUX-CHROME-PROCESS-RESTART", "result": linux_browser["result"]},
+            {"case_id": "WINDOWS-CONTROLLER-JOB-TERMINATION", "result": "PASS"},
+            {
+                "case_id": "WINDOWS-CHROME-PROCESS-RESTART",
+                "result": windows_browser["restart_result"],
+            },
+            {
+                "case_id": "WINDOWS-CHROME-EXTENSION-TARGET",
+                "result": windows_browser["result"],
+                "observed_error": windows_browser["observed_error"],
+            },
+            {"case_id": "NATIVE-WINDOWS-INGESTOR", "result": native_ingestor["result"]},
+            {
+                "case_id": "NATIVE-WINDOWS-SQL06-COMMIT-IO",
+                "result": native_commit_io["native_sql06"],
+            },
+            {
+                "case_id": "PHYSICAL-POWER-LOSS",
+                "result": "HOLD",
+                "observed_error": "NOT_EXECUTED_NO_EXTERNAL_FACILITY",
+            },
+        ]
+        + [
+            {"case_id": row["case_id"], "result": native_ingestor["result"]}
+            for row in native_ingestor["cases"]
+        ]
+    )
+
+
 def verify_environment_qualification(
     report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
 ) -> None:
@@ -1271,26 +1325,107 @@ def verify_environment_qualification(
         verify_windows_browser(reports["windows_browser"], artifacts=artifacts)
         verify_native_ingestor(reports["native_ingestor"], artifacts=artifacts)
         verify_native_commit_io(reports["native_commit_io"], artifacts=artifacts)
-        if not any(
-            row
-            == {
-                "case_id": "PHYSICAL-POWER-LOSS",
-                "result": "HOLD",
-                "observed_error": "NOT_EXECUTED_NO_EXTERNAL_FACILITY",
-            }
-            for row in report["cases"]
+        if report["cases"] != _environment_case_projection(reports):
+            raise ValueError("case projection")
+        terminal_files = report["terminal_files"]
+        terminal_reports = [
+            reports[name]
+            for name in (
+                "native",
+                "filesystem",
+                "linux_browser",
+                "windows_browser",
+                "native_ingestor",
+                "native_commit_io",
+            )
+        ]
+        if (
+            not isinstance(terminal_files, list)
+            or len(terminal_files) != len(terminal_reports)
+            or len({item["path"] for item in terminal_files}) != len(terminal_files)
         ):
-            raise ValueError("physical power")
-        for descriptor in report["terminal_files"]:
+            raise ValueError("terminal projection")
+        for descriptor, expected in zip(terminal_files, terminal_reports, strict=True):
             boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
-            checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+            if json.loads(
+                checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+            ) != expected:
+                raise ValueError("terminal projection")
     except (KeyError, TypeError, ValueError, OSError) as error:
         raise ValueError("E_ENVIRONMENT_QUALIFICATION") from error
 
 
+def verify_environment_qualification_evidence(
+    aggregate_path: Path,
+    inventory_path: Path,
+    config: Any,
+    *,
+    artifacts: RetainedArtifactIO | None = None,
+) -> dict[str, object]:
+    from tools.retained_artifact_io import RetainedArtifactIO
+    from tools.run_full_repair_qualification import validate_inventory_closure
+
+    qualification = config.qualification_evidence
+    if (
+        qualification is None
+        or aggregate_path != qualification.environment_qualification_aggregate
+        and artifacts is None
+        or inventory_path != qualification.environment_qualification_inventory
+        and artifacts is None
+    ):
+        raise ValueError("E_ENVIRONMENT_QUALIFICATION")
+    try:
+        if artifacts is None:
+            manifest_raw = inventory_path.read_bytes()
+            manifest = json.loads(manifest_raw)
+            active = RetainedArtifactIO.from_manifest(manifest, inventory_path.parent / "retained")
+        else:
+            inventory_locator = str(qualification.environment_qualification_inventory)
+            manifest_raw = artifacts.read_bytes(
+                inventory_locator,
+                recorded_boundary=artifacts.recorded_boundary(inventory_locator),
+            )
+            manifest = json.loads(manifest_raw)
+            if not isinstance(manifest, dict) or not isinstance(manifest.get("files"), list):
+                raise ValueError("manifest")
+            for row in manifest["files"]:
+                data = artifacts.read_bytes(
+                    row["recorded_locator"], recorded_boundary=row["recorded_boundary"]
+                )
+                if (
+                    len(data) != row["size_bytes"]
+                    or hashlib.sha256(data).hexdigest() != row["sha256"]
+                ):
+                    raise ValueError("manifest")
+            active = artifacts
+        recorded = str(qualification.environment_qualification_aggregate)
+        raw = active.read_bytes(recorded, recorded_boundary=active.recorded_boundary(recorded))
+        report = json.loads(raw)
+        if not isinstance(report, dict):
+            raise ValueError("aggregate")
+        validate_inventory_closure(
+            manifest,
+            report,
+            aggregate_locator=recorded,
+            aggregate_raw=raw,
+            live_roots=(ROOT, NATIVE.parent.parent, config.chrome_path.parent),
+        )
+        verify_environment_qualification(report, artifacts=active)
+    except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError("E_ENVIRONMENT_QUALIFICATION") from error
+    return {
+        "result": "PARTIAL_HOLD",
+        "aggregate_sha256": hashlib.sha256(raw).hexdigest(),
+        "evidence_root_sha256": hashlib.sha256(manifest_raw).hexdigest(),
+    }
+
+
 def main() -> None:
     from tools.full_verifier_config import load_controller_config
-    from tools.run_full_repair_qualification import write_closed_inventory
+    from tools.run_full_repair_qualification import (
+        collect_retained_sources,
+        write_closed_inventory,
+    )
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True, type=Path)
@@ -1317,10 +1452,12 @@ def main() -> None:
             if isinstance(owned, str):
                 roots.add(Path(owned))
     sources = [
-        (path, str(path.resolve()), str(root.resolve()))
-        for root in sorted(roots)
-        for path in sorted(root.rglob("*"))
-        if path.is_file()
+        (args.aggregate, str(args.aggregate.resolve()), str(args.workspace.resolve())),
+        *collect_retained_sources(
+            report,
+            retained_boundaries=tuple(sorted(roots)),
+            live_roots=(ROOT, NATIVE.parent.parent, config.chrome_path.parent),
+        ),
     ]
     write_closed_inventory(sources, args.inventory)
     print(json.dumps(report, sort_keys=True))

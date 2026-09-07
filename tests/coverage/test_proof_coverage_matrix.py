@@ -18,3 +18,11 @@ def test_every_promised_control_has_mechanical_proof() -> None:
     changed["entries"][0]["test_file"] = ""
     with pytest.raises(ValueError, match="E_PROOF_COVERAGE"):
         verify_proof_coverage_matrix(changed)
+
+
+def test_current_stage_cannot_pass_without_complete_validation_inputs() -> None:
+    matrix = json.loads((PLAN / "docs/registries/proof-coverage-matrix.v1.json").read_text())
+    with pytest.raises(ValueError, match="E_PROOF_COVERAGE"):
+        verify_proof_coverage_matrix(matrix, stage="CANDIDATE")
+    with pytest.raises(ValueError, match="E_PROOF_COVERAGE"):
+        verify_proof_coverage_matrix(matrix, Path("/missing"), "CANDIDATE")

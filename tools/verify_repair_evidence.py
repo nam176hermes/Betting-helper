@@ -315,7 +315,23 @@ def _sqlite_file(row: dict[str, Any], path_value: object, digest: object, error:
         raise ValueError(error)
     path = Path(path_value)
     case = Path(row["case_directory"])
-    if not path.is_absolute() or not path.is_relative_to(case):
+    artifacts = _RETAINED_ARTIFACTS.get()
+    if artifacts is None:
+        try:
+            resolved_case = case.resolve(strict=True)
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or not path.resolve(strict=True).is_relative_to(resolved_case)
+            ):
+                raise ValueError(error)
+        except OSError as exc:
+            raise ValueError(error) from exc
+    elif (
+        not path.is_absolute()
+        or ".." in path.parts
+        or not path.is_relative_to(case)
+    ):
         raise ValueError(error)
     data = _read_retained(path)
     if hashlib.sha256(data).hexdigest() != digest:
@@ -548,7 +564,8 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
         raise ValueError("E_SQLITE_CHILD_PROVENANCE")
     if (
         shim["source_sha256"] != _sha(ROOT / "tools/sqlite_commit_crash_shim.c")
-        or _sha(Path(shim["path"])) != shim["binary_sha256"]
+        or hashlib.sha256(_read_retained(Path(shim["path"]))).hexdigest()
+        != shim["binary_sha256"]
     ):
         raise ValueError("E_SQLITE_SHIM")
     phase = PHASES["-".join(row["case_id"].split("-")[:2])]
@@ -596,7 +613,7 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
     ):
         raise ValueError("E_SQLITE_READER_OUTPUT")
     reader_states: dict[str, dict[str, Any]] = {}
-    used_paths: set[Path] = set()
+    used_paths: set[str] = set()
     for phase_name, reader_run in zip(("before", "after"), runs, strict=True):
         if not isinstance(reader_run, dict) or reader_run.get("exit") != 0:
             raise ValueError("E_SQLITE_READER_PROVENANCE")
@@ -632,12 +649,13 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
             reader_run.get("sha256"),
             "E_SQLITE_READER_OUTPUT",
         )
-        input_path = Path(inputs[phase_name]["path"]).resolve()
-        if output_path.resolve() in used_paths or input_path in used_paths:
+        output_locator = str(output_path)
+        input_locator = str(inputs[phase_name]["path"])
+        if output_locator in used_paths or input_locator in used_paths:
             raise ValueError("E_SQLITE_READER_OUTPUT")
-        used_paths.update({output_path.resolve(), input_path})
+        used_paths.update({output_locator, input_locator})
         try:
-            envelope = json.loads(output_path.read_text())
+            envelope = json.loads(_read_retained(output_path))
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise ValueError("E_SQLITE_READER_OUTPUT") from exc
         if (
@@ -679,7 +697,7 @@ def _verify_sqlite(row: dict[str, Any], current: dict[str, Any]) -> None:
             )
             if artifact_name == "launch":
                 try:
-                    launch = json.loads(artifact_path.read_text())
+                    launch = json.loads(_read_retained(artifact_path))
                 except (OSError, UnicodeError, json.JSONDecodeError) as exc:
                     raise ValueError("E_SQLITE_RECOVERY_PROVENANCE") from exc
                 if launch != {
