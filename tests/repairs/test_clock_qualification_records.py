@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -210,10 +211,11 @@ def test_imported_coherence_javascript_is_bound_and_damage_fails_evidence(
 ) -> None:
     result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=tmp_path)
     row = next(item for item in result["records"] if item["case_id"] == "RELEASE-POS-01")
-    executable = ROOT / "extension/.test-build/src/contracts/clock-coherence.js"
-    key = "extension/.test-build/src/contracts/clock-coherence.js"
-    assert key in row["evidence_binding"]["source_sha256"]
-    assert str(executable.resolve()) in row["code"]["sha256"]
+    key = "contracts/clock-coherence.js"
+    descriptor = row["typescript_executable_artifacts"][key]
+    executable = Path(descriptor["path"])
+    assert executable.resolve().is_relative_to(tmp_path.resolve())
+    assert descriptor["sha256"] == hashlib.sha256(executable.read_bytes()).hexdigest()
     original = executable.read_bytes()
     try:
         if damage == "tamper":
@@ -222,8 +224,9 @@ def test_imported_coherence_javascript_is_bound_and_damage_fails_evidence(
             executable.unlink()
         checked = evidence_gate.aggregate_repair_evidence([row["case_id"]], [row])
         assert checked["result"] == "FAIL"
-        assert any("E_REPAIR_STALE_BINDING" in error["error"]
-                   or "E_REPAIR_SOURCE" in error["error"] for error in checked["errors"])
+        assert checked["errors"] == [
+            {"case_id": row["case_id"], "error": "E_REPAIR_ARTIFACT"}
+        ]
     finally:
         executable.write_bytes(original)
 

@@ -23,7 +23,7 @@ def test_portable_profile_runs_repo_local_checks_from_another_cwd(tmp_path: Path
         check=False,
     )
 
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 0, completed.stdout + completed.stderr
     report = json.loads(completed.stdout)
     assert report["profile"] == "portable"
     assert report["status"] == "PASS"
@@ -97,25 +97,82 @@ def test_bootstrap_receipt_requires_actual_git_head_tree_and_clean_state(
     pack = authoring / "pack"
     pack.mkdir()
     receipt_path = tmp_path / "receipt.json"
+    accepted_ancestor = _git(authoring, "rev-parse", "HEAD")
     receipt = {
-        "schema_version": "boot0-authoring-repository-receipt/v2",
+        "schema_version": "current-authoring-repository-receipt/v1",
+        "accepted_authoring_ancestor": accepted_ancestor,
         "root": str(authoring),
-        "head": _git(authoring, "rev-parse", "HEAD"),
+        "head": accepted_ancestor,
         "tree": _git(authoring, "rev-parse", "HEAD^{tree}"),
         "status": "",
     }
     receipt_path.write_text(json.dumps(receipt))
-    verify_local._validate_bootstrap_receipt(receipt_path, pack)
+    verify_local._validate_bootstrap_receipt(receipt_path, pack, accepted_ancestor)
+
+    receipt_path.write_text(
+        json.dumps({**receipt, "schema_version": "boot0-authoring-repository-receipt/v2"})
+    )
+    with pytest.raises(ValueError, match="receipt content mismatch"):
+        verify_local._validate_bootstrap_receipt(receipt_path, pack, accepted_ancestor)
 
     for field in ("head", "tree"):
         receipt_path.write_text(json.dumps({**receipt, field: "0" * 40}))
         with pytest.raises(ValueError, match="receipt content mismatch"):
-            verify_local._validate_bootstrap_receipt(receipt_path, pack)
+            verify_local._validate_bootstrap_receipt(receipt_path, pack, accepted_ancestor)
 
     receipt_path.write_text(json.dumps(receipt))
     (authoring / "dirty.txt").write_text("dirty\n")
     with pytest.raises(ValueError, match="receipt content mismatch"):
-        verify_local._validate_bootstrap_receipt(receipt_path, pack)
+        verify_local._validate_bootstrap_receipt(receipt_path, pack, accepted_ancestor)
+
+
+def test_portable_uses_extended_budget_only_for_implemented_repairs() -> None:
+    assert verify_local._portable_timeout("implemented_repair_tests") == 900
+    assert verify_local._portable_timeout("compile_all_tests") == 300
+
+
+def test_portable_timeout_retains_partial_output(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(
+        verify_local, "_portable_commands", lambda: (("implemented_repair_tests", ["probe"]),)
+    )
+
+    def timeout(*_args: object, **_kwargs: object) -> object:
+        raise subprocess.TimeoutExpired(
+            cmd=["probe"], timeout=900, output=b"partial stdout", stderr=b"partial stderr"
+        )
+
+    monkeypatch.setattr(verify_local.subprocess, "run", timeout)
+    assert verify_local._run_portable() == 1
+    row = json.loads(capsys.readouterr().out)["results"][0]
+    assert row["stdout"] == "partial stdout"
+    assert "partial stderr" in row["stderr"]
+    assert "TimeoutExpired" in row["stderr"]
+
+
+def test_portable_environment_rejects_pytest_and_python_injection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("PYTEST_ADDOPTS", "--collect-only")
+    monkeypatch.setenv("PYTEST_PLUGINS", "attacker")
+    monkeypatch.setenv("PYTHONPATH", str(tmp_path / "attacker"))
+    monkeypatch.setattr(
+        verify_local, "_portable_commands", lambda: (("registry_self_check", ["probe"]),)
+    )
+    seen: list[dict[str, str]] = []
+
+    def complete(*_args: object, **kwargs: object) -> object:
+        seen.append(kwargs["env"])  # type: ignore[arg-type]
+        return subprocess.CompletedProcess(["probe"], 0, "ok", "")
+
+    monkeypatch.setattr(verify_local.subprocess, "run", complete)
+    assert verify_local._run_portable() == 0
+    assert len(seen) == 1
+    assert "PYTEST_ADDOPTS" not in seen[0]
+    assert "PYTEST_PLUGINS" not in seen[0]
+    assert "PYTHONPATH" not in seen[0]
+    assert seen[0]["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] == "1"
 
 
 def test_empty_external_test_and_cache_directories_do_not_pass(tmp_path: Path) -> None:

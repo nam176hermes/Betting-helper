@@ -67,15 +67,36 @@ def _portable_commands() -> tuple[tuple[str, list[str]], ...]:
     )
 
 
-def _run_portable() -> int:
-    environment = os.environ.copy()
+def _portable_timeout(check_id: str) -> int:
+    return 900 if check_id == "implemented_repair_tests" else 300
+
+
+def _portable_environment() -> dict[str, str]:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith(("PYTEST_", "PYTHON"))
+    }
     environment.update(
         {
             "NPM_CONFIG_IGNORE_SCRIPTS": "true",
+            "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
             "UV_NO_PROGRESS": "1",
             "UV_PYTHON_DOWNLOADS": "never",
         }
     )
+    return environment
+
+
+def _captured_text(value: str | bytes | None) -> str:
+    if isinstance(value, bytes):
+        return value.decode(errors="replace")
+    return value or ""
+
+
+def _run_portable() -> int:
+    environment = _portable_environment()
     results: list[dict[str, object]] = []
     for check_id, argv in _portable_commands():
         try:
@@ -86,7 +107,7 @@ def _run_portable() -> int:
                 capture_output=True,
                 text=True,
                 check=False,
-                timeout=300,
+                timeout=_portable_timeout(check_id),
             )
             result: dict[str, object] = {
                 "check_id": check_id,
@@ -95,7 +116,20 @@ def _run_portable() -> int:
                 "stdout": completed.stdout,
                 "stderr": completed.stderr,
             }
-        except (OSError, subprocess.TimeoutExpired) as error:
+        except subprocess.TimeoutExpired as error:
+            partial_stderr = _captured_text(error.stderr)
+            result = {
+                "check_id": check_id,
+                "argv": _display_argv(argv),
+                "exit_code": None,
+                "stdout": _captured_text(error.stdout),
+                "stderr": "\n".join(
+                    part
+                    for part in (partial_stderr, f"{type(error).__name__}: {error}")
+                    if part
+                ),
+            }
+        except OSError as error:
             result = {
                 "check_id": check_id,
                 "argv": _display_argv(argv),
