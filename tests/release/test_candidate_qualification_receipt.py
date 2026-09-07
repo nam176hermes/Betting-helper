@@ -3,6 +3,7 @@ import json
 import shutil
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -82,6 +83,14 @@ def test_receipt_rejects_skipped_command_live_evidence_or_production_authority(
     with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
         build_candidate_qualification_receipt(Path.cwd(), evidence, tmp_path / "bad.json", config)
 
+    forged = _evidence()
+    forged["generated_outputs"][0]["sha256"] = "f" * 64  # type: ignore[index]
+    evidence.write_text(json.dumps(forged, sort_keys=True, separators=(",", ":")))
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        build_candidate_qualification_receipt(
+            Path.cwd(), evidence, tmp_path / "forged-generated.json", config
+        )
+
 
 def test_candidate_inventory_is_exact_clean_git_tree_not_ignored_workspace(
     tmp_path: Path,
@@ -131,3 +140,27 @@ def test_candidate_inventory_is_exact_clean_git_tree_not_ignored_workspace(
         __import__(
             "tools.build_candidate_qualification_receipt", fromlist=["_inventory"]
         )._inventory(source)
+
+
+def test_proof_coverage_rejects_forged_empty_rows(tmp_path: Path) -> None:
+    original = load_controller_config(CONFIG)
+    proof_path = tmp_path / "proof.json"
+    config = replace(
+        original,
+        evidence_root=tmp_path,
+        proof_coverage_evidence=proof_path,
+    )
+    proof_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "proof-coverage-result/v2",
+                "result": "PASS",
+                "production_authority": "NONE",
+                "control_count": 18,
+                "controller_binding": config.binding(),
+                "evidence": [{}] * 18,
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder._validate_proof_coverage(config)

@@ -2922,7 +2922,9 @@
         "--root",
         "/home/thenam176/betting-helper/authoring-controller-config-worktree",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "--accepted-ancestor",
+        "5249e84b57b7bc4d30abc24f41ead64174ab7549"
       ],
       "purpose": "Issue a receipt for the existing clean descendant authoring repository",
       "expected_exit": 0,
@@ -2943,6 +2945,7 @@
         "--frozen",
         "--offline",
         "python",
+        "-I",
         "-m",
         "pytest",
         "-q",

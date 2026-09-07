@@ -14,6 +14,7 @@ from typing import Any, NoReturn, cast
 @dataclass(frozen=True)
 class FullVerifierConfig:
     production_authority: str
+    accepted_authoring_ancestor: str
     current_checkout_root: Path
     governed_source_pack: Path
     evidence_root: Path
@@ -37,6 +38,7 @@ class FullVerifierConfig:
         return {
             "schema_version": "full-verifier-controller-binding/v1",
             "config_sha256": self.source_sha256,
+            "accepted_authoring_ancestor": self.accepted_authoring_ancestor,
             "current_checkout_root": str(self.current_checkout_root),
             "governed_source_pack": str(self.governed_source_pack),
             "evidence_root": str(self.evidence_root),
@@ -89,6 +91,7 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
         != {
             "schema_version",
             "production_authority",
+            "accepted_authoring_ancestor",
             "current_checkout_root",
             "governed_source_pack",
             "evidence_root",
@@ -102,6 +105,11 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
         }
         or value.get("schema_version") != "full-verifier-controller/v1"
         or value.get("production_authority") != "NONE"
+        or not isinstance(value.get("accepted_authoring_ancestor"), str)
+        or re.fullmatch(
+            r"[0-9a-f]{40}", cast(str, value.get("accepted_authoring_ancestor"))
+        )
+        is None
         or not isinstance(value.get("external_authoring_source_sha256"), str)
         or re.fullmatch(r"[0-9a-f]{64}", cast(str, value.get("external_authoring_source_sha256")))
         is None
@@ -161,6 +169,7 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
         raise ValueError("E_CONTROLLER_CONFIG") from error
     return FullVerifierConfig(
         production_authority="NONE",
+        accepted_authoring_ancestor=cast(str, values["accepted_authoring_ancestor"]),
         current_checkout_root=checkout_root,
         governed_source_pack=source_pack,
         evidence_root=evidence_root,

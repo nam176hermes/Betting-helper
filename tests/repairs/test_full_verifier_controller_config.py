@@ -141,6 +141,19 @@ def test_external_authoring_source_rejects_unbound_conftest(tmp_path: Path) -> N
         )
 
 
+def test_external_authoring_environment_drops_python_and_pytest_injection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = load_controller_config(SOURCE_CONFIG)
+    monkeypatch.setenv("PYTEST_ADDOPTS", "--collect-only")
+    monkeypatch.setenv("PYTHONPATH", str(tmp_path / "attacker"))
+    environment = verify_local._external_authoring_environment(config)
+    assert "PYTEST_ADDOPTS" not in environment
+    assert "PYTHONPATH" not in environment
+    python_index = config.external_authoring_argv.index("python")
+    assert config.external_authoring_argv[python_index + 1] == "-I"
+
+
 def test_external_authoring_suite_is_executed_with_declared_argv_and_cwd(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

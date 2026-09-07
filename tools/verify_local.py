@@ -181,12 +181,23 @@ def _git_output(root: Path, *args: str) -> str:
     return completed.stdout.strip()
 
 
-def _validate_bootstrap_receipt(receipt_path: Path, pack: Path) -> None:
+def _validate_bootstrap_receipt(
+    receipt_path: Path, pack: Path, accepted_ancestor: str
+) -> None:
     receipt = _load_object(receipt_path)
     authoring_root = pack.resolve(strict=True).parent
     if (
-        set(receipt) != {"schema_version", "root", "head", "tree", "status"}
-        or receipt.get("schema_version") != "boot0-authoring-repository-receipt/v2"
+        set(receipt)
+        != {
+            "schema_version",
+            "accepted_authoring_ancestor",
+            "root",
+            "head",
+            "tree",
+            "status",
+        }
+        or receipt.get("schema_version") != "current-authoring-repository-receipt/v1"
+        or receipt.get("accepted_authoring_ancestor") != accepted_ancestor
         or receipt.get("root") != str(authoring_root)
         or receipt.get("head") != _git_output(authoring_root, "rev-parse", "HEAD")
         or receipt.get("tree") != _git_output(authoring_root, "rev-parse", "HEAD^{tree}")
@@ -194,6 +205,13 @@ def _validate_bootstrap_receipt(receipt_path: Path, pack: Path) -> None:
         or _git_output(authoring_root, "status", "--porcelain", "--untracked-files=all")
     ):
         raise ValueError("receipt content mismatch")
+    _git_output(
+        authoring_root,
+        "merge-base",
+        "--is-ancestor",
+        accepted_ancestor,
+        cast(str, receipt["head"]),
+    )
 
 
 def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) -> str:
@@ -252,8 +270,7 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
 
 
 def _external_authoring_environment(config: FullVerifierConfig) -> dict[str, str]:
-    environment = os.environ.copy()
-    environment.update(run_command_registry.execution_environment(config))
+    environment = run_command_registry.execution_environment(config)
     environment.update({"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1"})
     return environment
 
@@ -380,7 +397,11 @@ def _full_prerequisites(config: FullVerifierConfig) -> list[dict[str, object]]:
             try:
                 if pack["status"] != "PASS":
                     raise ValueError("receipt content mismatch")
-                _validate_bootstrap_receipt(bootstrap_path, Path(cast(str, pack["path"])))
+                _validate_bootstrap_receipt(
+                    bootstrap_path,
+                    Path(cast(str, pack["path"])),
+                    config.accepted_authoring_ancestor,
+                )
             except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError) as error:
                 bootstrap.update(status="INVALID", detail=str(error))
 

@@ -17,6 +17,7 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 
 from tools import run_command_registry  # noqa: E402
 from tools.full_verifier_config import FullVerifierConfig, load_controller_config  # noqa: E402
+from tools.verify_proof_coverage import verify_proof_coverage_matrix  # noqa: E402
 
 
 def _canonical(value: object) -> bytes:
@@ -132,7 +133,11 @@ def _validate_command_evidence(
         raise ValueError("E_CANDIDATE_RECEIPT") from error
     expected["schema_version"] = "candidate-command-results/v3"
     expected["external_authoring_result"] = evidence["external_authoring_result"]
-    if evidence != expected:
+    if (
+        evidence != expected
+        or evidence.get("generated_outputs")
+        != run_command_registry.collect_generated_outputs(source)
+    ):
         raise ValueError("E_CANDIDATE_RECEIPT")
 
 
@@ -148,6 +153,19 @@ def _validate_proof_coverage(config: FullVerifierConfig) -> dict[str, object]:
         or not isinstance(evidence, list)
         or len(evidence) != 18
     ):
+        raise ValueError("E_CANDIDATE_RECEIPT")
+    try:
+        source = (
+            config.governed_source_pack
+            / "docs/registries/proof-coverage-matrix.v1.json"
+        )
+        matrix = _read_evidence(source)
+        expected = verify_proof_coverage_matrix(
+            matrix, config.evidence_root, "CANDIDATE", config
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        raise ValueError("E_CANDIDATE_RECEIPT") from error
+    if proof != expected or not source.is_file():
         raise ValueError("E_CANDIDATE_RECEIPT")
     return proof
 
