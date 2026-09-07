@@ -253,8 +253,98 @@ def execution_environment(config: FullVerifierConfig) -> dict[str, str]:
         **EXPECTED_EXECUTION_ENVIRONMENT,
         "BH_CHROME_BINARY": str(config.chrome_path),
         "UV_CACHE_DIR": str(config.uv_cache),
+        "UV_OFFLINE": "1",
         "npm_config_store_dir": str(config.pnpm_store),
+        "npm_config_offline": "true",
     }
+
+
+def validate_external_authoring_result(
+    result: object, config: FullVerifierConfig
+) -> dict[str, object]:
+    required = {
+        "argv",
+        "cwd",
+        "exit_code",
+        "passed",
+        "stdout_sha256",
+        "stdout_size_bytes",
+        "stderr_sha256",
+        "stderr_size_bytes",
+    }
+    if (
+        not isinstance(result, dict)
+        or set(result) != required
+        or result.get("argv") != list(config.external_authoring_argv)
+        or result.get("cwd") != str(config.external_authoring_cwd)
+        or result.get("exit_code") != 0
+        or result.get("passed") is not True
+    ):
+        _fail("EXTERNAL_AUTHORING")
+    for prefix in ("stdout", "stderr"):
+        digest = result.get(f"{prefix}_sha256")
+        size = result.get(f"{prefix}_size_bytes")
+        if (
+            not isinstance(digest, str)
+            or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+            or not isinstance(size, str)
+            or re.fullmatch(r"0|[1-9][0-9]*", size) is None
+        ):
+            _fail("EXTERNAL_AUTHORING")
+    return cast(dict[str, object], result)
+
+
+def _declared_compiler_outputs(root: Path) -> set[str]:
+    registry = json.loads(
+        (
+            root
+            / "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json"
+        ).read_text()
+    )
+    entries = registry.get("entries")
+    if not isinstance(entries, list):
+        _fail("GENERATED_OUTPUTS")
+    prefixes = ("runtime/extension/.test-build/", "runtime/extension/dist/")
+    outputs = {
+        cast(str, item["path"]).removeprefix("runtime/")
+        for item in entries
+        if isinstance(item, dict)
+        and item.get("classification") == "GENERATED_OUTPUT"
+        and isinstance(item.get("path"), str)
+        and cast(str, item["path"]).startswith(prefixes)
+    }
+    if not outputs:
+        _fail("GENERATED_OUTPUTS")
+    return outputs
+
+
+def collect_generated_outputs(root: Path) -> list[dict[str, str]]:
+    declared = _declared_compiler_outputs(root)
+    actual: set[str] = set()
+    for subtree in (root / "extension/.test-build", root / "extension/dist"):
+        if not subtree.exists():
+            continue
+        for path in subtree.rglob("*"):
+            if path.is_file():
+                actual.add(path.relative_to(root).as_posix())
+    if actual != declared:
+        _fail("GENERATED_OUTPUTS")
+    rows: list[dict[str, str]] = []
+    for relative in sorted(actual, key=str.encode):
+        path = root / relative
+        info = path.lstat()
+        if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            _fail("GENERATED_OUTPUTS")
+        contents = path.read_bytes()
+        rows.append(
+            {
+                "path": relative,
+                "sha256": hashlib.sha256(contents).hexdigest(),
+                "size_bytes": str(len(contents)),
+                "mode": "100755" if info.st_mode & 0o111 else "100644",
+            }
+        )
+    return rows
 
 
 def expand_invocations(
@@ -266,7 +356,10 @@ def expand_invocations(
 
 
 def build_candidate_command_results(
-    registry: dict[str, object], results: object, config: FullVerifierConfig | None = None
+    registry: dict[str, object],
+    results: object,
+    config: FullVerifierConfig | None = None,
+    generated_outputs: object = None,
 ) -> dict[str, object]:
     expected = (
         candidate_commands(registry)
@@ -319,6 +412,29 @@ def build_candidate_command_results(
     }
     if config is not None:
         report["controller_binding"] = config.binding()
+        if generated_outputs is None:
+            generated_outputs = collect_generated_outputs(config.current_checkout_root)
+        if not isinstance(generated_outputs, list):
+            _fail("GENERATED_OUTPUTS")
+        expected_paths = _declared_compiler_outputs(config.current_checkout_root)
+        required_output = {"path", "sha256", "size_bytes", "mode"}
+        if (
+            [item.get("path") for item in generated_outputs if isinstance(item, dict)]
+            != sorted(expected_paths, key=str.encode)
+            or any(
+                not isinstance(item, dict)
+                or set(item) != required_output
+                or not isinstance(item.get("path"), str)
+                or not isinstance(item.get("sha256"), str)
+                or re.fullmatch(r"[0-9a-f]{64}", cast(str, item.get("sha256"))) is None
+                or not isinstance(item.get("size_bytes"), str)
+                or re.fullmatch(r"0|[1-9][0-9]*", cast(str, item.get("size_bytes"))) is None
+                or item.get("mode") not in {"100644", "100755"}
+                for item in generated_outputs
+            )
+        ):
+            _fail("GENERATED_OUTPUTS")
+        report["generated_outputs"] = generated_outputs
     return report
 
 
@@ -425,7 +541,7 @@ def collect_candidate_file_tree(root: Path, *, allow_local_git: bool = False) ->
     return {"entries": first, "schema_version": "repo0-independent-file-tree/v1"}
 
 
-def _git_source_identity(root: Path) -> dict[str, str]:
+def _git_source_identity(root: Path) -> dict[str, object]:
     git = shutil.which("git")
     if git is None:
         _fail("LOCAL_GIT")
@@ -442,13 +558,25 @@ def _git_source_identity(root: Path) -> dict[str, str]:
             _fail("LOCAL_GIT")
         return completed.stdout.strip()
 
-    if read("rev-parse", "--show-toplevel") != str(root.resolve()) or read(
-        "status", "--porcelain", "--untracked-files=all"
-    ):
+    if read("rev-parse", "--show-toplevel") != str(root.resolve()):
+        _fail("LOCAL_GIT")
+    allowed = _declared_compiler_outputs(root)
+    changed = {
+        item
+        for command in (
+            ("diff", "--name-only"),
+            ("diff", "--cached", "--name-only"),
+            ("ls-files", "--others", "--exclude-standard"),
+        )
+        for item in read(*command).splitlines()
+        if item
+    }
+    if not changed.issubset(allowed):
         _fail("LOCAL_GIT")
     return {
         "head": read("rev-parse", "HEAD"),
         "tree": read("rev-parse", "HEAD^{tree}"),
+        "source_diff": read("diff", "--binary", "--", *sorted(set(changed) - allowed)),
     }
 
 
@@ -491,7 +619,12 @@ def run_registry(
         != before
     ):
         raise RuntimeError("E_COMMAND_REGISTRY:DRIFT")
-    return build_candidate_command_results(registry, results, config)
+    return build_candidate_command_results(
+        registry,
+        results,
+        config,
+        collect_generated_outputs(source_root) if config is not None else None,
+    )
 
 
 def main() -> int:

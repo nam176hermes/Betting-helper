@@ -79,3 +79,20 @@ def test_configured_candidate_uses_clean_git_identity_and_effective_commands(
     assert len(seen) == 45
     assert {Path(cast(str, row["cwd"])) for row in seen} == {Path.cwd()}
     assert report["controller_binding"] == config.binding()
+
+
+def test_generated_output_inventory_is_closed_and_binds_all_actual_files(
+    tmp_path: Path,
+) -> None:
+    rows = registry_runner.collect_generated_outputs(Path.cwd())
+    assert len(rows) == 78
+    assert [row["path"] for row in rows] == sorted(
+        (row["path"] for row in rows), key=str.encode
+    )
+    extra = Path("extension/.test-build/unowned-controller-output.js")
+    extra.write_text("export {};\n")
+    try:
+        with pytest.raises(ValueError, match="E_COMMAND_REGISTRY:GENERATED_OUTPUTS"):
+            registry_runner.collect_generated_outputs(Path.cwd())
+    finally:
+        extra.unlink()

@@ -38,12 +38,26 @@ def _git(root: Path, *args: str) -> bytes:
     return completed.stdout
 
 
-def _inventory(root: Path) -> dict[str, object]:
+def _inventory(root: Path, generated_outputs: object = None) -> dict[str, object]:
     if root.is_symlink() or not root.is_dir():
         raise ValueError("E_CANDIDATE_RECEIPT")
     if _git(root, "rev-parse", "--show-toplevel").decode().strip() != str(root.resolve()):
         raise ValueError("E_CANDIDATE_RECEIPT")
-    if _git(root, "status", "--porcelain", "--untracked-files=all"):
+    ownership = root / "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json"
+    declared_generated = (
+        run_command_registry._declared_compiler_outputs(root) if ownership.is_file() else set()
+    )
+    changed = {
+        item.decode()
+        for command in (
+            ("diff", "--name-only", "-z"),
+            ("diff", "--cached", "--name-only", "-z"),
+            ("ls-files", "--others", "--exclude-standard", "-z"),
+        )
+        for item in _git(root, *command).split(b"\0")
+        if item
+    }
+    if not changed.issubset(declared_generated):
         raise ValueError("E_CANDIDATE_RECEIPT")
     head = _git(root, "rev-parse", "HEAD").decode().strip()
     tree = _git(root, "rev-parse", "HEAD^{tree}").decode().strip()
@@ -60,6 +74,8 @@ def _inventory(root: Path) -> dict[str, object]:
             relative = encoded_path.decode("utf-8")
         except (UnicodeError, ValueError) as error:
             raise ValueError("E_CANDIDATE_RECEIPT") from error
+        if relative in declared_generated:
+            continue
         if kind != "blob" or mode not in {"100644", "100755"}:
             raise ValueError("E_CANDIDATE_RECEIPT")
         contents = (root / relative).read_bytes()
@@ -79,7 +95,11 @@ def _inventory(root: Path) -> dict[str, object]:
                 "mode": mode,
             }
         )
-    return {"head": head, "tree": tree, "entries": entries}
+    inventory: dict[str, object] = {"head": head, "tree": tree, "entries": entries}
+    if declared_generated:
+        inventory["source_entries"] = inventory.pop("entries")
+        inventory["generated_outputs"] = generated_outputs
+    return inventory
 
 
 def _read_evidence(path: Path) -> dict[str, object]:
@@ -92,6 +112,50 @@ def _read_evidence(path: Path) -> dict[str, object]:
     return cast(dict[str, object], value)
 
 
+def _validate_command_evidence(
+    source: Path, evidence: dict[str, object], config: FullVerifierConfig
+) -> None:
+    if evidence.get("schema_version") != "candidate-command-results/v3":
+        raise ValueError("E_CANDIDATE_RECEIPT")
+    try:
+        run_command_registry.validate_external_authoring_result(
+            evidence.get("external_authoring_result"), config
+        )
+        registry = run_command_registry.validate_registry(source / "task-command-registry.json")
+        expected = run_command_registry.build_candidate_command_results(
+            registry,
+            evidence.get("results"),
+            config,
+            evidence.get("generated_outputs"),
+        )
+    except ValueError as error:
+        raise ValueError("E_CANDIDATE_RECEIPT") from error
+    expected["schema_version"] = "candidate-command-results/v3"
+    expected["external_authoring_result"] = evidence["external_authoring_result"]
+    if evidence != expected:
+        raise ValueError("E_CANDIDATE_RECEIPT")
+
+
+def _validate_proof_coverage(config: FullVerifierConfig) -> dict[str, object]:
+    proof = _read_evidence(config.proof_coverage_evidence)
+    evidence = proof.get("evidence")
+    if (
+        proof.get("schema_version") != "proof-coverage-result/v2"
+        or proof.get("result") != "PASS"
+        or proof.get("production_authority") != "NONE"
+        or proof.get("control_count") != 18
+        or proof.get("controller_binding") != config.binding()
+        or not isinstance(evidence, list)
+        or len(evidence) != 18
+    ):
+        raise ValueError("E_CANDIDATE_RECEIPT")
+    return proof
+
+
+def _proof_coverage_sha256(config: FullVerifierConfig) -> str:
+    return hashlib.sha256(config.proof_coverage_evidence.read_bytes()).hexdigest()
+
+
 def validate_candidate_qualification_receipt(
     source: Path,
     command_evidence: Path,
@@ -99,16 +163,11 @@ def validate_candidate_qualification_receipt(
     config: FullVerifierConfig | None = None,
 ) -> None:
     evidence = _read_evidence(command_evidence)
-    registry = run_command_registry.validate_registry(source / "task-command-registry.json")
-    try:
-        expected_evidence = run_command_registry.build_candidate_command_results(
-            registry, evidence.get("results"), config
-        )
-    except ValueError as error:
-        raise ValueError("E_CANDIDATE_RECEIPT") from error
-    if evidence != expected_evidence:
+    if config is None:
         raise ValueError("E_CANDIDATE_RECEIPT")
-    inventory = _inventory(source)
+    _validate_command_evidence(source, evidence, config)
+    _validate_proof_coverage(config)
+    inventory = _inventory(source, evidence.get("generated_outputs"))
     required = {
         "schema_version",
         "production_authority",
@@ -117,6 +176,7 @@ def validate_candidate_qualification_receipt(
         "command_ids",
         "inventory",
         "controller_binding",
+        "proof_coverage_sha256",
     }
     if (
         set(receipt) != required
@@ -133,6 +193,8 @@ def validate_candidate_qualification_receipt(
         or receipt.get("inventory") != inventory
         or config is None
         or receipt.get("controller_binding") != config.binding()
+        or receipt.get("proof_coverage_sha256")
+        != _proof_coverage_sha256(config)
     ):
         raise ValueError("E_CANDIDATE_RECEIPT")
 
@@ -144,15 +206,8 @@ def build_candidate_qualification_receipt(
     config: FullVerifierConfig,
 ) -> dict[str, object]:
     evidence = _read_evidence(command_evidence)
-    registry = run_command_registry.validate_registry(source / "task-command-registry.json")
-    try:
-        expected = run_command_registry.build_candidate_command_results(
-            registry, evidence.get("results"), config
-        )
-    except ValueError as error:
-        raise ValueError("E_CANDIDATE_RECEIPT") from error
-    if evidence != expected:
-        raise ValueError("E_CANDIDATE_RECEIPT")
+    _validate_command_evidence(source, evidence, config)
+    _validate_proof_coverage(config)
     results = cast(list[dict[str, object]], evidence["results"])
     record: dict[str, object] = {
         "schema_version": "candidate-qualification-receipt/v2",
@@ -162,8 +217,9 @@ def build_candidate_qualification_receipt(
         ).hexdigest(),
         "command_evidence_sha256": hashlib.sha256(command_evidence.read_bytes()).hexdigest(),
         "command_ids": [item["command_id"] for item in results],
-        "inventory": _inventory(source),
+        "inventory": _inventory(source, evidence.get("generated_outputs")),
         "controller_binding": config.binding(),
+        "proof_coverage_sha256": _proof_coverage_sha256(config),
     }
     validate_candidate_qualification_receipt(source, command_evidence, record, config)
     output.parent.mkdir(parents=True, exist_ok=True)

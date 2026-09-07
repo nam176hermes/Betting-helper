@@ -20,7 +20,6 @@ sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from tools import run_command_registry  # noqa: E402
 from tools.build_candidate_qualification_receipt import (  # noqa: E402
-    build_candidate_qualification_receipt,
     validate_candidate_qualification_receipt,
 )
 from tools.full_verifier_config import FullVerifierConfig, load_controller_config  # noqa: E402
@@ -214,6 +213,14 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
     if not expected:
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
     authoring_root = root.parent
+    actual_paths = {
+        path.relative_to(authoring_root).as_posix()
+        for directory in (authoring_root / "authoring-tests", authoring_root / "authoring-tools")
+        for path in directory.rglob("*.py")
+        if path.is_file()
+    }
+    if actual_paths != expected:
+        raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
     rows: list[tuple[str, int, str]] = []
     for name in sorted(expected, key=lambda item: item.encode()):
         path = authoring_root / name
@@ -238,10 +245,42 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
         contents = source.encode()
         rows.append((name, len(contents), hashlib.sha256(contents).hexdigest()))
     payload = "".join(f"{name}\0{size}\0{digest}\n" for name, size, digest in rows).encode()
-    actual = hashlib.sha256(payload).hexdigest()
-    if expected_sha256 is not None and actual != expected_sha256:
+    digest = hashlib.sha256(payload).hexdigest()
+    if expected_sha256 is not None and digest != expected_sha256:
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
-    return actual
+    return digest
+
+
+def _external_authoring_environment(config: FullVerifierConfig) -> dict[str, str]:
+    environment = os.environ.copy()
+    environment.update(run_command_registry.execution_environment(config))
+    environment.update({"PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1", "PYTHONDONTWRITEBYTECODE": "1"})
+    return environment
+
+
+def _execute_external_authoring_suite(config: FullVerifierConfig) -> dict[str, object]:
+    completed = subprocess.run(  # noqa: S603 - exact argv is source-owned configuration.
+        list(config.external_authoring_argv),
+        cwd=config.external_authoring_cwd,
+        env=_external_authoring_environment(config),
+        capture_output=True,
+        check=False,
+    )
+    stdout = completed.stdout
+    stderr = completed.stderr
+    record: dict[str, object] = {
+        "argv": list(config.external_authoring_argv),
+        "cwd": str(config.external_authoring_cwd),
+        "exit_code": completed.returncode,
+        "passed": completed.returncode == 0,
+        "stdout_sha256": hashlib.sha256(stdout).hexdigest(),
+        "stdout_size_bytes": str(len(stdout)),
+        "stderr_sha256": hashlib.sha256(stderr).hexdigest(),
+        "stderr_size_bytes": str(len(stderr)),
+    }
+    if completed.returncode == 0:
+        run_command_registry.validate_external_authoring_result(record, config)
+    return record
 
 
 def _nonempty_directory(path: Path) -> bool:
@@ -272,9 +311,8 @@ def _validate_cache(root: Path, kind: str) -> None:
 
 def _controller_binding(config: FullVerifierConfig) -> dict[str, object]:
     try:
-        commands = run_command_registry.effective_candidate_commands(
-            run_command_registry.validate_registry(), config
-        )
+        registry = run_command_registry.validate_registry()
+        commands = run_command_registry.effective_candidate_commands(registry, config)
         environment = run_command_registry.execution_environment(config)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         return {
@@ -284,11 +322,24 @@ def _controller_binding(config: FullVerifierConfig) -> dict[str, object]:
             "code": "CONTROLLER_CONFIG_UNBOUND",
             "detail": str(error),
         }
+    external = next(
+        (
+            item
+            for item in cast(list[dict[str, object]], registry["commands"])
+            if item["command_id"] == "VERIFY_EXTERNAL_AUTHORING_SOURCES"
+        ),
+        None,
+    )
     if (
         {Path(cast(str, command["cwd"])) for command in commands} != {config.current_checkout_root}
+        or external is None
+        or external.get("cwd") != str(config.external_authoring_cwd)
+        or external.get("argv") != list(config.external_authoring_argv)
         or environment.get("UV_CACHE_DIR") != str(config.uv_cache)
         or environment.get("npm_config_store_dir") != str(config.pnpm_store)
         or environment.get("BH_CHROME_BINARY") != str(config.chrome_path)
+        or environment.get("UV_OFFLINE") != "1"
+        or environment.get("npm_config_offline") != "true"
     ):
         return {
             "prerequisite_id": "controller_configuration_binding",
@@ -374,32 +425,57 @@ def _full_prerequisites(config: FullVerifierConfig) -> list[dict[str, object]]:
 
 def _delegate_controller(config: FullVerifierConfig) -> int:
     config.evidence_root.mkdir(parents=True, exist_ok=True)
-    completed = subprocess.run(  # noqa: S603 - fixed authoritative controller argv.
-        [
-            sys.executable,
-            str(REPOSITORY_ROOT / "tools/run_command_registry.py"),
-            "--mode",
-            "candidate-qualification",
-            "--registry",
-            "task-command-registry.json",
-            "--config",
-            str(config.source_path),
-            "--output",
-            str(config.candidate_command_evidence),
-        ],
-        cwd=REPOSITORY_ROOT,
-        check=False,
-    )
-    if completed.returncode != 0:
-        return completed.returncode
-    try:
-        build_candidate_qualification_receipt(
-            REPOSITORY_ROOT,
-            config.candidate_command_evidence,
-            config.candidate_qualification_receipt,
-            config,
+    external_result = _execute_external_authoring_suite(config)
+    if external_result["passed"] is not True:
+        return 1
+    registry = run_command_registry.validate_registry()
+
+    def execute(command_id: str) -> dict[str, object]:
+        command = next(
+            (
+                item
+                for item in cast(list[dict[str, object]], registry["commands"])
+                if item["command_id"] == command_id
+            ),
+            None,
         )
-    except (OSError, ValueError, json.JSONDecodeError):
+        if command is None or Path(cast(str, command["cwd"])) != REPOSITORY_ROOT:
+            raise ValueError("E_CONTROLLER_DAG")
+        result = run_command_registry.evaluate_invocation(
+            command,
+            environment=run_command_registry.execution_environment(config),
+            working_directory=REPOSITORY_ROOT,
+        )
+        if result.get("passed") is not True:
+            raise RuntimeError(f"E_CONTROLLER_DAG:{command_id}")
+        return result
+
+    try:
+        execute("VERIFY_V636_P07_T01")
+        command_evidence = _load_object(config.candidate_command_evidence)
+        command_evidence["schema_version"] = "candidate-command-results/v3"
+        command_evidence["external_authoring_result"] = external_result
+        config.candidate_command_evidence.write_text(
+            json.dumps(command_evidence, sort_keys=True, separators=(",", ":")) + "\n"
+        )
+        execute("VERIFY_V636_P07_T02")
+        issuance = execute("VERIFY_V636_P07_T03")
+        config.candidate_issuance_evidence.write_text(
+            json.dumps(
+                {
+                    "schema_version": "candidate-issuance-result/v1",
+                    "result": "PASS",
+                    "production_authority": "NONE",
+                    "controller_binding": config.binding(),
+                    "command": issuance,
+                    "proof_coverage_sha256": _sha256_file(config.proof_coverage_evidence),
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            + "\n"
+        )
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError):
         return 1
     return 0
 

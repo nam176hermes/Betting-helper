@@ -15,6 +15,8 @@ from tempfile import TemporaryDirectory
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 
+from tools.full_verifier_config import FullVerifierConfig, load_controller_config  # noqa: E402
+
 
 _REQUIRED = {
     "requirement_id",
@@ -31,7 +33,10 @@ _REQUIRED = {
 
 
 def verify_proof_coverage_matrix(
-    matrix: dict[str, object], evidence_root: Path | None = None, stage: str | None = None
+    matrix: dict[str, object],
+    evidence_root: Path | None = None,
+    stage: str | None = None,
+    config: FullVerifierConfig | None = None,
 ) -> dict[str, object]:
     entries = matrix.get("entries")
     if not isinstance(entries, list) or len(entries) != 18:
@@ -63,6 +68,7 @@ def verify_proof_coverage_matrix(
     if evidence_root is not None:
         if stage not in {"CANDIDATE", "SEALED"}:
             raise ValueError("E_PROOF_COVERAGE")
+        verified: list[dict[str, str]] = []
         for entry in entries:
             if entry["stage"] != "CANDIDATE" or (stage == "CANDIDATE" and entry["stage"] != stage):
                 continue
@@ -83,9 +89,28 @@ def verify_proof_coverage_matrix(
                 evidence = json.loads(path.read_text())
             except (OSError, json.JSONDecodeError) as error:
                 raise ValueError("E_PROOF_COVERAGE") from error
-            if not isinstance(evidence, dict) or evidence.get("result") != "PASS":
+            if (
+                not isinstance(evidence, dict)
+                or evidence.get("result") != "PASS"
+                or (config is not None and evidence.get("controller_binding") != config.binding())
+            ):
                 raise ValueError("E_PROOF_COVERAGE")
-    return {"result": "PASS", "control_count": len(entries)}
+            verified.append(
+                {
+                    "requirement_id": str(entry["requirement_id"]),
+                    "path": str(path),
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                }
+            )
+    result: dict[str, object] = {"result": "PASS", "control_count": len(entries)}
+    if config is not None:
+        result.update(
+            schema_version="proof-coverage-result/v2",
+            production_authority="NONE",
+            controller_binding=config.binding(),
+            evidence=verified,
+        )
+    return result
 
 
 def _verify_sealed_inputs(
@@ -138,9 +163,14 @@ def main() -> None:
     parser.add_argument("--attestation", type=Path)
     parser.add_argument("--zip", dest="zip_path", type=Path)
     parser.add_argument("--sidecar", type=Path)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    config = load_controller_config(args.config) if args.config else None
+    if args.stage == "CANDIDATE" and (config is None or args.output is None):
+        raise ValueError("E_PROOF_COVERAGE")
     result = verify_proof_coverage_matrix(
-        json.loads(args.matrix.read_text()), args.evidence_root, args.stage
+        json.loads(args.matrix.read_text()), args.evidence_root, args.stage, config
     )
     seal_inputs = (args.attestation, args.zip_path, args.sidecar)
     if args.stage == "SEALED":
@@ -149,6 +179,11 @@ def main() -> None:
         _verify_sealed_inputs(args.matrix, args.attestation, args.zip_path, args.sidecar)
     elif any(value is not None for value in seal_inputs):
         raise ValueError("E_PROOF_COVERAGE")
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        with args.output.open("x", encoding="utf-8") as stream:
+            json.dump(result, stream, sort_keys=True, separators=(",", ":"))
+            stream.write("\n")
     print(json.dumps(result, sort_keys=True))
 
 

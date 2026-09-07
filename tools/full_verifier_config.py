@@ -19,12 +19,16 @@ class FullVerifierConfig:
     evidence_root: Path
     external_authoring_tests: Path
     external_authoring_source_sha256: str
+    external_authoring_cwd: Path
+    external_authoring_argv: tuple[str, ...]
     uv_cache: Path
     pnpm_store: Path
     chrome_path: Path
     chrome_sha256: str
     authoring_repository_receipt: Path
     candidate_command_evidence: Path
+    proof_coverage_evidence: Path
+    candidate_issuance_evidence: Path
     candidate_qualification_receipt: Path
     source_path: Path
     source_sha256: str
@@ -38,12 +42,18 @@ class FullVerifierConfig:
             "evidence_root": str(self.evidence_root),
             "external_authoring_tests": str(self.external_authoring_tests),
             "external_authoring_source_sha256": self.external_authoring_source_sha256,
+            "external_authoring_command": {
+                "cwd": str(self.external_authoring_cwd),
+                "argv": list(self.external_authoring_argv),
+            },
             "uv_cache": str(self.uv_cache),
             "pnpm_store": str(self.pnpm_store),
             "chrome": {"path": str(self.chrome_path), "sha256": self.chrome_sha256},
             "receipts": {
                 "authoring_repository": str(self.authoring_repository_receipt),
                 "candidate_command_evidence": str(self.candidate_command_evidence),
+                "proof_coverage_evidence": str(self.proof_coverage_evidence),
+                "candidate_issuance_evidence": str(self.candidate_issuance_evidence),
                 "candidate_qualification": str(self.candidate_qualification_receipt),
             },
         }
@@ -84,6 +94,7 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
             "evidence_root",
             "external_authoring_tests",
             "external_authoring_source_sha256",
+            "external_authoring_command",
             "uv_cache",
             "pnpm_store",
             "chrome",
@@ -98,16 +109,24 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
         _fail()
     chrome = value.get("chrome")
     receipts = value.get("receipts")
+    external_command = value.get("external_authoring_command")
     if (
         not isinstance(chrome, dict)
         or set(chrome) != {"path", "sha256"}
         or not isinstance(chrome.get("sha256"), str)
         or re.fullmatch(r"[0-9a-f]{64}", cast(str, chrome["sha256"])) is None
         or not isinstance(receipts, dict)
+        or not isinstance(external_command, dict)
+        or set(external_command) != {"cwd", "argv"}
+        or not isinstance(external_command.get("argv"), list)
+        or not external_command["argv"]
+        or any(not isinstance(item, str) or not item for item in external_command["argv"])
         or set(receipts)
         != {
             "authoring_repository",
             "candidate_command_evidence",
+            "proof_coverage_evidence",
+            "candidate_issuance_evidence",
             "candidate_qualification",
         }
     ):
@@ -118,12 +137,19 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
     checkout_root = _absolute(values["current_checkout_root"])
     source_pack = _absolute(values["governed_source_pack"])
     external_tests = _absolute(values["external_authoring_tests"])
+    external_cwd = _absolute(external_command["cwd"])
+    protected = (checkout_root, source_pack, external_tests.parent)
+    paths_to_protect = (evidence_root, *receipt_paths.values())
     if (
         len(set(receipt_paths.values())) != len(receipt_paths)
         or any(not item.is_relative_to(evidence_root) for item in receipt_paths.values())
         or any(
-            evidence_root == protected or evidence_root.is_relative_to(protected)
-            for protected in (checkout_root, source_pack, external_tests.parent)
+            candidate.resolve(strict=False) != candidate
+            or candidate == boundary
+            or candidate.is_relative_to(boundary)
+            or boundary.is_relative_to(candidate)
+            for candidate in paths_to_protect
+            for boundary in protected
         )
     ):
         _fail()
@@ -140,12 +166,16 @@ def load_controller_config(path: Path) -> FullVerifierConfig:
         evidence_root=evidence_root,
         external_authoring_tests=external_tests,
         external_authoring_source_sha256=cast(str, values["external_authoring_source_sha256"]),
+        external_authoring_cwd=external_cwd,
+        external_authoring_argv=tuple(cast(list[str], external_command["argv"])),
         uv_cache=_absolute(values["uv_cache"]),
         pnpm_store=_absolute(values["pnpm_store"]),
         chrome_path=_absolute(chrome["path"]),
         chrome_sha256=cast(str, chrome["sha256"]),
         authoring_repository_receipt=receipt_paths["authoring_repository"],
         candidate_command_evidence=receipt_paths["candidate_command_evidence"],
+        proof_coverage_evidence=receipt_paths["proof_coverage_evidence"],
+        candidate_issuance_evidence=receipt_paths["candidate_issuance_evidence"],
         candidate_qualification_receipt=receipt_paths["candidate_qualification"],
         source_path=canonical_path,
         source_sha256=hashlib.sha256(raw).hexdigest(),

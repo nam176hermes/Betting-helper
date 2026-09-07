@@ -4244,6 +4244,13 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_full_verifier_controller_config.py",
+        "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tools/apply_full_verifier_followup.py",
+        "authoring-tools/issue_current_authoring_repository_receipt.py",
+        "pack/docs/configs/full-verifier-controller.v1.json",
         "pack/docs/receipts/migration-final-receipt.v1.json",
         "runtime/review-config/review-a.v1.json",
         "runtime/review-config/review-aggregation.v1.json",
@@ -4252,6 +4259,13 @@
         "runtime/task-command-registry.json"
       ],
       "exact_files": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_full_verifier_controller_config.py",
+        "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tools/apply_full_verifier_followup.py",
+        "authoring-tools/issue_current_authoring_repository_receipt.py",
+        "pack/docs/configs/full-verifier-controller.v1.json",
         "runtime/review-config/review-a.v1.json",
         "runtime/review-config/review-aggregation.v1.json",
         "runtime/review-config/review-authority.v1.json",
@@ -4265,9 +4279,10 @@
         "pack/docs/schemas/migration-receipt.schema.json#/$defs/FinalMigrationReceipt"
       ],
       "exact_command_ids": [
-        "V636_MIG0_T08_SYNC",
-        "V636_MIG0_T08_CHECK",
+        "ISSUE_CURRENT_AUTHORING_REPOSITORY_RECEIPT",
         "V636_MIG0_T08_BINDINGS",
+        "V636_MIG0_T08_CHECK",
+        "V636_MIG0_T08_SYNC",
         "VERIFY_FINAL_MIGRATION"
       ],
       "tests_first": [],
@@ -4571,7 +4586,9 @@
       "inputs": [
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json"
+      ],
       "exact_files": [
         "runtime/tools/run_command_registry.py",
         "runtime/tests/release/test_candidate_command_registry.py"
@@ -4582,6 +4599,7 @@
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
+        "VERIFY_EXTERNAL_AUTHORING_SOURCES",
         "VERIFY_V636_P07_T01"
       ],
       "tests_first": [
@@ -4610,7 +4628,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4645,7 +4663,9 @@
       "inputs": [
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json"
+      ],
       "exact_files": [
         "runtime/tests/release/test_full_proof_coverage.py"
       ],
@@ -4684,7 +4704,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4723,7 +4743,10 @@
       "inputs": [
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
+      ],
       "exact_files": [
         "runtime/tools/build_candidate_qualification_receipt.py",
         "runtime/tests/release/test_candidate_qualification_receipt.py"
@@ -4762,7 +4785,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P07-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",

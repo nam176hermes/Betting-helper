@@ -60,6 +60,65 @@
       "consumers": []
     },
     {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T03",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T02",
+        "V636-P07-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T02",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T03",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": []
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01"
+      ]
+    },
+    {
       "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
@@ -1138,6 +1197,18 @@
       ]
     },
     {
+      "path": "authoring-tests/test_current_authoring_receipt.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
+    },
+    {
       "path": "authoring-tests/test_declaration_gate.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P00-T05",
@@ -1147,6 +1218,30 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P00-T05"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_full_verifier_controller_config.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_full_verifier_followup_amendment.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -1234,6 +1329,18 @@
       ]
     },
     {
+      "path": "authoring-tools/apply_full_verifier_followup.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
+    },
+    {
       "path": "authoring-tools/build_task_command_registry.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-MIG0-T05",
@@ -1269,6 +1376,18 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P00-T01"
+      ]
+    },
+    {
+      "path": "authoring-tools/issue_current_authoring_repository_receipt.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -1742,6 +1861,18 @@
       },
       "qualification_owner": null,
       "consumers": []
+    },
+    {
+      "path": "pack/docs/configs/full-verifier-controller.v1.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
     },
     {
       "path": "pack/docs/configs/review-a.v1.json",
@@ -5702,6 +5833,20 @@
       "consumers": []
     },
     {
+      "path": "runtime/extension/.test-build/src/contracts/clock-coherence.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T07",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/contracts/clock-coherence.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": []
+    },
+    {
       "path": "runtime/extension/.test-build/src/contracts/clock-vectors.js",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-MIG0-T07",
@@ -6024,6 +6169,20 @@
       ]
     },
     {
+      "path": "runtime/extension/.test-build/test-harness/repair-probe.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T07",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test-harness/repair-probe.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": []
+    },
+    {
       "path": "runtime/extension/.test-build/test-red/canonical-hash.red.test.js",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P04-T03",
@@ -6255,6 +6414,34 @@
       "materialization_required": false,
       "source": {
         "path": "runtime/extension/test/exactness/task-symbols.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": []
+    },
+    {
+      "path": "runtime/extension/.test-build/test/repairs/clock-raw-input.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T07",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/repairs/clock-raw-input.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": []
+    },
+    {
+      "path": "runtime/extension/.test-build/test/repairs/spool-persistence.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T07",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/repairs/spool-persistence.test.ts"
       },
       "qualification_owner": "V636-P05-T09",
       "consumers": []

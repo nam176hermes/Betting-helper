@@ -43,7 +43,19 @@ def _evidence() -> dict[str, object]:
                 "stderr_size_bytes": "0",
             }
         )
-    return run_command_registry.build_candidate_command_results(registry, rows, config)
+    evidence = run_command_registry.build_candidate_command_results(registry, rows, config)
+    evidence["schema_version"] = "candidate-command-results/v3"
+    evidence["external_authoring_result"] = {
+        "argv": list(config.external_authoring_argv),
+        "cwd": str(config.external_authoring_cwd),
+        "exit_code": 0,
+        "passed": True,
+        "stdout_sha256": hashlib.sha256(b"").hexdigest(),
+        "stdout_size_bytes": "0",
+        "stderr_sha256": hashlib.sha256(b"").hexdigest(),
+        "stderr_size_bytes": "0",
+    }
+    return evidence
 
 
 def test_receipt_rejects_skipped_command_live_evidence_or_production_authority(
@@ -55,7 +67,9 @@ def test_receipt_rejects_skipped_command_live_evidence_or_production_authority(
 
     config = load_controller_config(CONFIG)
     inventory = {"head": "1" * 40, "tree": "2" * 40, "entries": []}
-    monkeypatch.setattr(receipt_builder, "_inventory", lambda _source: inventory)
+    monkeypatch.setattr(receipt_builder, "_inventory", lambda *_args: inventory)
+    monkeypatch.setattr(receipt_builder, "_validate_proof_coverage", lambda _config: {})
+    monkeypatch.setattr(receipt_builder, "_proof_coverage_sha256", lambda _config: "3" * 64)
     receipt = build_candidate_qualification_receipt(
         Path.cwd(), evidence, tmp_path / "receipt.json", config
     )
