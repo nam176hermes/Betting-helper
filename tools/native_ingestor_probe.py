@@ -17,6 +17,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 PREPARATION_SHA256 = "9c28ee8811c2bce507717958606257d6ee3a74cabb723f264b7a761e68ade2c1"
 PHASES = ("NATIVE-INGEST-OUTBOX-PRECOMMIT", "NATIVE-INGEST-COMMITTED-PRE-OWNER-ACK")
+COMMIT_PHASE = "NATIVE-WINDOWS-SQL06-COMMIT-IO"
 MODULES = {
     "jsonschema": "jsonschema",
     "jsonschema-specifications": "jsonschema_specifications",
@@ -70,6 +71,8 @@ def component(mode: str, config: dict[str, Any]) -> None:
     required = {"root", "dependency_root", "run_dir", "identity"}
     if mode in {"setup", "write", "replay", "replay-again"}:
         required.add("delivery")
+    if mode == "write" and config.get("identity", {}).get("case_id") == COMMIT_PHASE:
+        required.add("commit_io")
     if set(config) != required or set(config["identity"]) != {"run_id", "case_id", "checkpoint_id"}:
         raise ValueError("E_NATIVE_INGESTOR_INPUT")
     identity = config["identity"]
@@ -77,7 +80,7 @@ def component(mode: str, config: dict[str, Any]) -> None:
     if (
         Path(config["root"]) != ROOT
         or run_dir.name != identity["run_id"]
-        or identity["case_id"] not in PHASES
+        or identity["case_id"] not in (*PHASES, COMMIT_PHASE)
         or identity["checkpoint_id"] != identity["case_id"]
     ):
         raise ValueError("E_NATIVE_INGESTOR_IDENTITY")
@@ -105,21 +108,41 @@ def component(mode: str, config: dict[str, Any]) -> None:
         store = RunStore(run_dir / "run.sqlite3")
     if mode == "write":
 
+        def snapshot(connection: Any) -> dict[str, Any]:
+            return {
+                "identity": {**identity, "pid": os.getpid()},
+                "in_transaction": connection.in_transaction,
+                "tables": read_journal(connection),
+                "ingest_ack": ack,
+                "owner_ack_published": False,
+                "loaded_dependencies": loaded,
+            }
+
         def pause(connection: Any) -> None:
-            save(
-                case / "checkpoint.json",
-                {
-                    "identity": {**identity, "pid": os.getpid()},
-                    "in_transaction": connection.in_transaction,
-                    "tables": read_journal(connection),
-                    "ingest_ack": ack,
-                    "owner_ack_published": False,
-                    "loaded_dependencies": loaded,
-                },
-            )
+            save(case / "checkpoint.json", snapshot(connection))
             while True:
                 time.sleep(1)
 
+        if identity["case_id"] == COMMIT_PHASE:
+            from tools.native_sqlite_commit_io import CommitIoHook
+
+            hook = CommitIoHook(store.db_path, case, config["commit_io"])
+
+            class IoStore(RunStore):
+                def connect(self) -> Any:
+                    connection = super().connect()
+
+                    def trace(statement: str) -> None:
+                        if statement == "COMMIT":
+                            connection.set_trace_callback(None)
+                            hook.arm(connection, snapshot(connection))
+
+                    connection.set_trace_callback(trace)
+                    return connection
+
+            ack = Ingestor(IoStore(store.db_path)).apply(config["delivery"])
+            with closing(store.connect()) as connection:
+                hook.fallback(snapshot(connection))
         if identity["case_id"] == PHASES[0]:
             store = CheckpointStore(store.db_path, "after_outbox_insert", pause)
         ack = Ingestor(store).apply(config["delivery"])
@@ -149,12 +172,15 @@ def component(mode: str, config: dict[str, Any]) -> None:
 def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
     from tools.native_environment_probe import observe, observe_handle, save, sha
 
-    if set(config) != {"workspace", "root", "dependency_root", "delivery"}:
+    extra = {"commit_io"} if "commit_io" in config else set()
+    if set(config) != {"workspace", "root", "dependency_root", "delivery"} | extra:
         raise ValueError("E_NATIVE_INGESTOR_INPUT")
+    if extra and config["commit_io"] not in {"armed", "bypass", "unarmed", "postcommit"}:
+        raise ValueError("E_NATIVE_COMMIT_IO_MODE")
     dependency_payload(Path(config["dependency_root"]))
     workspace = Path(config["workspace"])
     cases = []
-    for phase in PHASES:
+    for phase in (COMMIT_PHASE,) if extra else PHASES:
         case = workspace / phase
         case.mkdir()
         identity = {
@@ -180,6 +206,7 @@ def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
             inputs: dict[str, Any] = inputs,
             identity: dict[str, Any] = identity,
             processes: list[dict[str, Any]] = processes,
+            phase: str = phase,
         ) -> tuple[Any, dict[str, Any]]:
             cfg = {
                 **base,
@@ -189,6 +216,8 @@ def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
                     else {}
                 ),
             }
+            if phase == COMMIT_PHASE and mode == "write":
+                cfg["commit_io"] = config["commit_io"]
             input_file = case / f"{mode}.input.json"
             inputs[mode] = {"value": cfg, "artifact": save(input_file, cfg)}
             command = [
@@ -257,6 +286,11 @@ def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
             observed = observe(writer)
             if checkpoint["identity"] != {**identity, "pid": writer.pid}:
                 raise ValueError("E_NATIVE_INGESTOR_CHECKPOINT")
+            journal = None
+            if extra and checkpoint["commit_io"]["handle"]:
+                from tools.native_sqlite_commit_io import duplicate_journal
+
+                journal = duplicate_journal(writer, checkpoint["commit_io"]["handle"])
             writer.kill()
             code = writer.wait(timeout=10)
             if code != 1:
@@ -273,6 +307,17 @@ def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
         cases.append(
             {
                 "case_id": phase,
+                **(
+                    {
+                        "journal_observation": journal,
+                        "commit_io_events": {
+                            "path": str(case / "commit-io-events.json"),
+                            "sha256": sha(case / "commit-io-events.json"),
+                        },
+                    }
+                    if extra
+                    else {}
+                ),
                 "inputs": inputs,
                 "processes": processes,
                 "before": before["state"],

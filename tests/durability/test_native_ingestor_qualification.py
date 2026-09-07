@@ -87,6 +87,12 @@ def test_environment_aggregate_consumes_verified_native_ingestor(
         "Aggregate still disconnected from executed native Ingestor"
     )
     assert aggregate["reports"]["native_ingestor"] == report
+    assert (
+        next(
+            row for row in aggregate["cases"] if row["case_id"] == "NATIVE-WINDOWS-SQL06-COMMIT-IO"
+        )["result"]
+        == "PASS"
+    )
     assert {row["case_id"] for row in report["cases"]} <= {
         row["case_id"] for row in aggregate["cases"]
     }

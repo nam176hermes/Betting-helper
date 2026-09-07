@@ -1,4 +1,4 @@
-"""Supplemental native Ingestor boundaries; no native SQL-06 or physical loss proof."""
+"""Supplemental native Ingestor/COMMIT-I/O boundaries; no physical loss proof."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from tools.native_ingestor_probe import PHASES, dependency_payload
+from tools.native_ingestor_probe import COMMIT_PHASE, PHASES, dependency_payload
 from tools.run_environment_qualification import (
     NATIVE,
     WINDOWS_PARENT,
@@ -97,7 +97,7 @@ def verify_loaded_dependencies(value: dict[str, Any], dependency: dict[str, Any]
         raise ValueError("E_NATIVE_DEPENDENCY_IMPORT")
 
 
-def run_native_ingestor(workspace: Path) -> dict[str, Any]:
+def _execute_native_ingestor(workspace: Path, *, commit_io: str | None = None) -> dict[str, Any]:
     workspace.mkdir(parents=True, exist_ok=True)
     dependency = dependency_binding()
     owned = WINDOWS_PARENT / ("native-ingestor-" + str(uuid4()))
@@ -109,6 +109,8 @@ def run_native_ingestor(workspace: Path) -> dict[str, Any]:
         "dependency_root": winpath(DEPENDENCIES),
         "delivery": delivery,
     }
+    if commit_io is not None:
+        config["commit_io"] = commit_io
     input_path = workspace / "owner-input.json"
     save(input_path, config)
     command = [str(NATIVE), "-I", "-B", winpath(SCRIPT), "owner", winpath(input_path)]
@@ -128,27 +130,53 @@ def run_native_ingestor(workspace: Path) -> dict[str, Any]:
         "exit": process.returncode,
         "stdout": artifact(workspace / "owner.stdout"),
         "stderr": artifact(workspace / "owner.stderr"),
-        "scope": "NATIVE_INGESTOR_TEST_OWNER_BOUNDARIES_ONLY",
-        "native_sql06": "HOLD_UNSUPPORTED",
+        "scope": "NATIVE_SQLITE_COMMIT_IO_ONLY"
+        if commit_io is not None
+        else "NATIVE_INGESTOR_TEST_OWNER_BOUNDARIES_ONLY",
+        "native_sql06": "PASS" if commit_io is not None else "HOLD_UNSUPPORTED",
         "physical_power_loss": "HOLD_NOT_EXECUTED",
         "tcp_ack_publication": "NOT_EXECUTED",
         "production_authority": "NONE",
     }
-    verify_native_ingestor(report)
+    try:
+        verify_native_ingestor(report)
+    except ValueError:
+        save(workspace / "native-ingestor-candidate.json", {**report, "result": "UNVERIFIED"})
+        raise
     save(workspace / "native-ingestor-terminal.json", report)
     return report
 
 
+def run_native_ingestor(workspace: Path) -> dict[str, Any]:
+    return _execute_native_ingestor(workspace)
+
+
+def run_native_commit_io(workspace: Path, *, mode: str = "armed") -> dict[str, Any]:
+    return _execute_native_ingestor(workspace, commit_io=mode)
+
+
+def verify_native_commit_io(report: dict[str, Any]) -> None:
+    verify_native_ingestor(report)
+    if report["native_sql06"] != "PASS" or report["scope"] != "NATIVE_SQLITE_COMMIT_IO_ONLY":
+        raise ValueError("E_NATIVE_COMMIT_IO_CALLBACK")
+
+
 def verify_native_ingestor(report: dict[str, Any]) -> None:
     try:
+        io = "commit_io" in report["config"]
         if (
             report["result"] != "PASS"
             or report["binding"] != capture_binding()
             or report["dependency"] != dependency_binding()
             or report["exit"] != 0
             or checked(report["stderr"])
-            or report["scope"] != "NATIVE_INGESTOR_TEST_OWNER_BOUNDARIES_ONLY"
-            or report["native_sql06"] != "HOLD_UNSUPPORTED"
+            or report["scope"]
+            != (
+                "NATIVE_SQLITE_COMMIT_IO_ONLY"
+                if io
+                else "NATIVE_INGESTOR_TEST_OWNER_BOUNDARIES_ONLY"
+            )
+            or report["native_sql06"] != ("PASS" if io else "HOLD_UNSUPPORTED")
             or report["physical_power_loss"] != "HOLD_NOT_EXECUTED"
             or report["tcp_ack_publication"] != "NOT_EXECUTED"
             or report["production_authority"] != "NONE"
@@ -182,8 +210,10 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
             "root",
             "dependency_root",
             "delivery",
-        }:
+        } | ({"commit_io"} if io else set()):
             raise ValueError("input")
+        if io and cfg["commit_io"] not in {"armed", "bypass", "unarmed", "postcommit"}:
+            raise ValueError("E_NATIVE_COMMIT_IO_MODE")
         from moj_discovery.canonical import verify_canonical_content_hash
         from moj_discovery.schema_registry import validate_artifact
         from moj_discovery.store import VENDOR
@@ -222,11 +252,13 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
             report["controller"]["cim"]["ParentProcessId"],
             wsl_entry=True,
         )
-        if [row["case_id"] for row in report["cases"]] != list(PHASES):
+        phases = (COMMIT_PHASE,) if io else PHASES
+        if [row["case_id"] for row in report["cases"]] != list(phases):
             raise ValueError("case set")
         identities = {report["controller"]["pid"]}
         for ordinal, row in enumerate(report["cases"]):
-            phase = PHASES[ordinal]
+            phase = phases[ordinal]
+            committed_after = ordinal if not io else int(cfg["commit_io"] != "armed")
             case = owned / phase
             identity = {"run_id": run_id, "case_id": phase, "checkpoint_id": phase}
             base = {
@@ -246,6 +278,8 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                         else {}
                     ),
                 }
+                if io and mode == "write":
+                    value["commit_io"] = cfg["commit_io"]
                 item = row["inputs"][mode]
                 if (
                     item["value"] != value
@@ -294,8 +328,9 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                     "owner_ack_published",
                     "loaded_dependencies",
                 }
+                | ({"commit_io"} if io else set())
                 or checkpoint["identity"] != {**identity, "pid": row["writer"]["pid"]}
-                or checkpoint["in_transaction"] != (ordinal == 0)
+                or checkpoint["in_transaction"] != (committed_after == 0)
                 or checkpoint["owner_ack_published"] is not False
             ):
                 raise ValueError("checkpoint")
@@ -335,7 +370,11 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                     raise ValueError("reader success")
                 verify_loaded_dependencies(value["loaded_dependencies"], report["dependency"])
                 committed = (
-                    0 if name == "before" else ordinal if name in {"reopened", "after"} else 1
+                    0
+                    if name == "before"
+                    else committed_after
+                    if name in {"reopened", "after"}
+                    else 1
                 )
                 _validate_sqlite_state(row[name], {"observation": delivery}, committed)
                 expected_ack = (
@@ -350,15 +389,19 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
             )
             if (
                 checkpoint["ingest_ack"]
-                != (None if ordinal == 0 else row["after"]["tables"]["ack_outbox"][0])
+                != (None if committed_after == 0 else row["after"]["tables"]["ack_outbox"][0])
                 or row["after"] != row["reopened"]
                 or row["replayed"] != row["replayed_again"]
                 or row["replayed_again"] != row["final"]
-                or (ordinal == 0 and row["after"] != row["before"])
-                or (ordinal == 1 and row["after"] != row["replayed"])
+                or (committed_after == 0 and row["after"] != row["before"])
+                or (committed_after == 1 and row["after"] != row["replayed"])
             ):
                 raise ValueError("atomic/replay state")
-        if len(identities) != 15:
+        if len(identities) != 1 + 7 * len(phases):
             raise ValueError("independent process identity")
+        if io:
+            from tools.native_sqlite_commit_io import verify_commit_callback
+
+            verify_commit_callback(report["cases"][0], owned / COMMIT_PHASE, cfg["commit_io"])
     except (ValueError, KeyError, TypeError, OSError) as error:
         raise ValueError("E_NATIVE_INGESTOR_EVIDENCE") from error

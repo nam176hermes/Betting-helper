@@ -1050,7 +1050,12 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
 
 def run_environment_qualification(workspace: Path) -> dict[str, Any]:
     """Keep every environment result separate from the historical full111 gate."""
-    from tools.run_native_ingestor_qualification import run_native_ingestor, verify_native_ingestor
+    from tools.run_native_ingestor_qualification import (
+        run_native_commit_io,
+        run_native_ingestor,
+        verify_native_commit_io,
+        verify_native_ingestor,
+    )
 
     workspace.mkdir(parents=True, exist_ok=False)
     native = run_native_storage(workspace / "native")
@@ -1059,6 +1064,8 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
     windows_browser = run_windows_browser(workspace / "windows-browser")
     native_ingestor = run_native_ingestor(workspace / "native-ingestor")
     verify_native_ingestor(native_ingestor)
+    native_commit_io = run_native_commit_io(workspace / "native-commit-io")
+    verify_native_commit_io(native_commit_io)
     cases = (
         [
             {"case_id": "NATIVE-WIN-STORE-" + row["phase"].upper(), "result": "PASS"}
@@ -1094,8 +1101,7 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
             },
             {
                 "case_id": "NATIVE-WINDOWS-SQL06-COMMIT-IO",
-                "result": "HOLD",
-                "observed_error": native_ingestor["native_sql06"],
+                "result": native_commit_io["native_sql06"],
             },
             {
                 "case_id": "PHYSICAL-POWER-LOSS",
@@ -1114,6 +1120,7 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
             "linux_browser": linux_browser,
             "windows_browser": windows_browser,
             "native_ingestor": native_ingestor,
+            "native_commit_io": native_commit_io,
         },
         "scope": "SUPPLEMENTAL_ENVIRONMENT_ONLY",
         "production_authority": "NONE",
@@ -1130,6 +1137,7 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
             ("linux-browser", "browser-terminal.json"),
             ("windows-browser", "windows-browser-terminal.json"),
             ("native-ingestor", "native-ingestor-terminal.json"),
+            ("native-commit-io", "native-ingestor-terminal.json"),
         ]
     ]
     cases.extend(
