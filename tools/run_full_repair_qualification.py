@@ -11,6 +11,15 @@ from pathlib import Path
 from tools.full_verifier_config import FullVerifierConfig, load_controller_config
 from tools.retained_artifact_io import canonical_recorded_locator
 
+_BROWSER_MODULES = {
+    "indexeddb-crash-child.js",
+    "repair-probe.js",
+    "src/canonical.js",
+    "src/canonicalize.js",
+    "src/errors.js",
+    "src/spool.js",
+}
+
 
 def _sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
@@ -42,6 +51,25 @@ def _artifact_references(value: object) -> list[tuple[str, str]]:
 
     def visit(item: object) -> None:
         if isinstance(item, dict):
+            execution_binding = item.get("typescript_execution_binding")
+            if execution_binding is not None:
+                modules = item.get("module_hashes")
+                case_directory = item.get("case_directory")
+                if (
+                    item.get("qualification_scope")
+                    not in {"BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"}
+                    or not isinstance(case_directory, str)
+                    or not isinstance(modules, dict)
+                    or set(modules) != _BROWSER_MODULES
+                    or any(not isinstance(value, str) for value in modules.values())
+                    or execution_binding != {"before": modules, "after": modules}
+                ):
+                    raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+                extension = canonical_recorded_locator(case_directory) + "/test-extension"
+                references.extend(
+                    (extension + "/" + name, digest)
+                    for name, digest in sorted(modules.items())
+                )
             path = item.get("path")
             digest = item.get("sha256")
             if isinstance(path, str) and isinstance(digest, str):

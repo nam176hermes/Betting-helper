@@ -161,7 +161,6 @@ def _validate_proof_coverage(
         or proof.get("control_count") != 18
         or proof.get("controller_binding") != config.binding()
         or not isinstance(evidence, list)
-        or len(evidence) != 18
     ):
         raise ValueError("E_CANDIDATE_RECEIPT")
     try:

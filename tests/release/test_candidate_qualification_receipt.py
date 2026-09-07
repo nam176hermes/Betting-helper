@@ -12,6 +12,8 @@ from tools import build_candidate_qualification_receipt as receipt_builder
 from tools import run_command_registry
 from tools.build_candidate_qualification_receipt import build_candidate_qualification_receipt
 from tools.full_verifier_config import load_controller_config
+from tools.retained_artifact_io import RetainedArtifactIO
+from tools.run_full_repair_qualification import write_closed_inventory
 
 CONFIG = Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json")
 
@@ -164,3 +166,113 @@ def test_proof_coverage_rejects_forged_empty_rows(tmp_path: Path) -> None:
     )
     with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
         receipt_builder._validate_proof_coverage(config)
+
+
+def test_recorded_candidate_proof_replays_from_sanctioned_sealed_map(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    source_config = Path(
+        "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack/"
+        "docs/configs/full-verifier-controller.v2.json"
+    )
+    original = load_controller_config(source_config)
+    recorded_pack = Path("/recorded/authoring/pack")
+    recorded_evidence = Path("/recorded/evidence")
+    config = replace(
+        original,
+        governed_source_pack=recorded_pack,
+        evidence_root=recorded_evidence,
+        proof_coverage_evidence=recorded_evidence / "proof.json",
+    )
+    matrix_source = (
+        source_config.parents[1]
+        / "registries/proof-coverage-matrix.v1.json"
+    )
+    matrix = json.loads(matrix_source.read_text())
+    candidate_entries = [
+        row for row in matrix["entries"] if row["stage"] == "CANDIDATE"
+    ]
+    fixture = tmp_path / "original"
+    fixture.mkdir()
+    sources: list[tuple[Path, str, str]] = []
+    matrix_copy = fixture / "matrix.json"
+    matrix_copy.write_bytes(matrix_source.read_bytes())
+    matrix_locator = recorded_pack / "docs/registries/proof-coverage-matrix.v1.json"
+    sources.append((matrix_copy, str(matrix_locator), str(recorded_pack)))
+    evidence_rows: list[dict[str, str]] = []
+    artifact_copies: dict[str, Path] = {}
+    for ordinal, entry in enumerate(candidate_entries):
+        locator = str(entry["evidence_artifact"])
+        source = artifact_copies.get(locator)
+        if source is None:
+            source = fixture / f"evidence-{ordinal}.json"
+            source.write_text(
+                json.dumps(
+                    {"result": "PASS", "controller_binding": config.binding()},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            artifact_copies[locator] = source
+            sources.append(
+                (source, locator, "/home/thenam176/betting-helper")
+            )
+        evidence_rows.append(
+            {
+                "requirement_id": str(entry["requirement_id"]),
+                "path": locator,
+                "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            }
+        )
+    proof = {
+        "result": "PASS",
+        "control_count": 18,
+        "schema_version": "proof-coverage-result/v2",
+        "production_authority": "NONE",
+        "controller_binding": config.binding(),
+        "evidence": evidence_rows,
+    }
+    proof_copy = fixture / "proof.json"
+    proof_copy.write_text(json.dumps(proof, sort_keys=True, separators=(",", ":")))
+    sources.append(
+        (proof_copy, str(config.proof_coverage_evidence), str(recorded_evidence))
+    )
+    sealed = tmp_path / "sealed"
+    sealed.mkdir()
+    inventory = sealed / "inventory.json"
+    manifest = write_closed_inventory(sources, inventory)
+    artifacts = RetainedArtifactIO.from_manifest(manifest, sealed / "retained")
+    invalid_artifacts: list[RetainedArtifactIO] = []
+    for name, changed_rows in (
+        ("omitted", evidence_rows[:-1]),
+        ("duplicate", [*evidence_rows[:-1], evidence_rows[0]]),
+    ):
+        changed = {**proof, "evidence": changed_rows}
+        changed_copy = fixture / f"proof-{name}.json"
+        changed_copy.write_text(json.dumps(changed, sort_keys=True, separators=(",", ":")))
+        changed_sealed = tmp_path / f"sealed-{name}"
+        changed_sealed.mkdir()
+        changed_inventory = changed_sealed / "inventory.json"
+        changed_manifest = write_closed_inventory(
+            [
+                *sources[:-1],
+                (
+                    changed_copy,
+                    str(config.proof_coverage_evidence),
+                    str(recorded_evidence),
+                ),
+            ],
+            changed_inventory,
+        )
+        invalid_artifacts.append(
+            RetainedArtifactIO.from_manifest(changed_manifest, changed_sealed / "retained")
+        )
+    shutil.rmtree(fixture)
+
+    monkeypatch.setattr(
+        "tools.verify_proof_coverage._verify_full_repair_proof", lambda *_args: None
+    )
+    assert receipt_builder._validate_proof_coverage(config, artifacts) == proof
+    for changed_artifacts in invalid_artifacts:
+        with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+            receipt_builder._validate_proof_coverage(config, changed_artifacts)

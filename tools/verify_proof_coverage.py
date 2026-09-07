@@ -91,7 +91,6 @@ def verify_proof_coverage_matrix(
         or stage not in {"CANDIDATE", "SEALED"}
         or config is None
         or config.schema_version != "full-verifier-controller/v2"
-        or (stage == "CANDIDATE" and artifacts is not None)
         or (stage == "SEALED" and artifacts is None)
     ):
         raise ValueError("E_PROOF_COVERAGE")

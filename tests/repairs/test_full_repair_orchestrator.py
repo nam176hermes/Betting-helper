@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+import subprocess
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -601,3 +602,113 @@ def test_inventory_writer_collapses_only_consistent_windows_posix_aliases(
             ],
             conflicting,
         )
+
+
+@pytest.mark.parametrize("owner", ["BROWSER_LOOPBACK_ACK", "INDEXEDDB_SPOOL_ONLY"])
+def test_browser_owner_module_graph_is_explicit_closed_inventory(
+    tmp_path: Path, owner: str
+) -> None:
+    from tools.retained_artifact_io import RetainedArtifactIO
+    from tools.run_full_repair_qualification import (
+        collect_retained_sources,
+        write_closed_inventory,
+    )
+
+    case = tmp_path / "original" / owner.lower()
+    extension = case / "test-extension"
+    (extension / "src").mkdir(parents=True)
+    compiled = tmp_path / "compiled"
+    subprocess.run(  # noqa: S603 -- content-bound local compiler and fixed argv.
+        [
+            str(evidence_gate._resolved_node_executable()),
+            str(ROOT / "extension/node_modules/typescript/lib/tsc.js"),
+            "-p",
+            "tsconfig.test.json",
+            "--outDir",
+            str(compiled),
+        ],
+        cwd=ROOT / "extension",
+        check=True,
+        capture_output=True,
+        timeout=120,
+    )
+    copies = {
+        "indexeddb-crash-child.js": compiled / "test-harness/indexeddb-crash-child.js",
+        "repair-probe.js": compiled / "test-harness/repair-probe.js",
+        "src/errors.js": compiled / "src/errors.js",
+        "src/spool.js": compiled / "src/spool.js",
+    }
+    for name, source in copies.items():
+        target = extension / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    canonical = (compiled / "src/canonical.js").read_text().replace(
+        'from "canonicalize"', 'from "./canonicalize.js"'
+    )
+    (extension / "src/canonical.js").write_text(canonical)
+    shutil.copy2(
+        ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js",
+        extension / "src/canonicalize.js",
+    )
+    names = {
+        "indexeddb-crash-child.js",
+        "repair-probe.js",
+        "src/canonical.js",
+        "src/canonicalize.js",
+        "src/errors.js",
+        "src/spool.js",
+    }
+    modules = {
+        name: hashlib.sha256((extension / name).read_bytes()).hexdigest()
+        for name in names
+    }
+    binding = {"before": modules, "after": modules}
+    binding_path = case / "typescript-execution-binding.json"
+    binding_path.write_text(json.dumps(binding, sort_keys=True, separators=(",", ":")))
+    row = {
+        "qualification_scope": owner,
+        "case_directory": str(case),
+        "identity": {"module_sha256": modules["src/spool.js"]},
+        "module_hashes": modules,
+        "typescript_execution_binding": binding,
+        "typescript_execution_binding_artifact": {
+            "path": str(binding_path),
+            "sha256": hashlib.sha256(binding_path.read_bytes()).hexdigest(),
+        },
+    }
+    sources = collect_retained_sources(
+        row, retained_boundaries=(case,), live_roots=(ROOT,)
+    )
+    sealed = tmp_path / "sealed"
+    sealed.mkdir()
+    inventory_path = sealed / "inventory.json"
+    manifest = write_closed_inventory(sources, inventory_path)
+    artifacts = RetainedArtifactIO.from_manifest(manifest, sealed / "retained")
+    expected_locators = {str(extension / name) for name in names} | {str(binding_path)}
+    assert {item["recorded_locator"] for item in manifest["files"]} == expected_locators
+    shutil.rmtree(tmp_path / "original")
+
+    token = evidence_gate._RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        evidence_gate._verify_retained_typescript_graph(
+            row, evidence_gate.capture_binding(), "E_TEST_GRAPH"
+        )
+        module = artifacts.physical_path(
+            str(extension / "src/spool.js"), recorded_boundary=str(case)
+        )
+        original = module.read_bytes()
+        held = module.with_suffix(".held")
+        module.rename(held)
+        with pytest.raises(ValueError, match="E_TEST_GRAPH|E_RETAINED_ARTIFACT"):
+            evidence_gate._verify_retained_typescript_graph(
+                row, evidence_gate.capture_binding(), "E_TEST_GRAPH"
+            )
+        held.rename(module)
+        module.write_bytes(original + b"\n// tampered")
+        with pytest.raises(ValueError, match="E_TEST_GRAPH|E_RETAINED_ARTIFACT"):
+            evidence_gate._verify_retained_typescript_graph(
+                row, evidence_gate.capture_binding(), "E_TEST_GRAPH"
+            )
+        module.write_bytes(original)
+    finally:
+        evidence_gate._RETAINED_ARTIFACTS.reset(token)
