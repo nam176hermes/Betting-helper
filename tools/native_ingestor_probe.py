@@ -282,6 +282,41 @@ def owner(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
             deadline = time.monotonic() + 20
             while not ready.is_file() and writer.poll() is None and time.monotonic() < deadline:
                 time.sleep(0.02)
+            code = writer.poll()
+            if code is not None or not ready.is_file():
+                diagnostic = (
+                    "E_NATIVE_INGESTOR_CHECKPOINT_TIMEOUT"
+                    if code is None
+                    else "E_NATIVE_INGESTOR_WRITER_EXIT"
+                    if code
+                    else "E_NATIVE_INGESTOR_CHECKPOINT_MISSING"
+                )
+                if code is None:
+                    writer.kill()
+                    code = writer.wait(timeout=10)
+                stderr = case / "write.stderr"
+                lines = stderr.read_text(errors="replace").splitlines()
+                allowed = {
+                    "ValueError: HOLD_NATIVE_COMMIT_IO_" + suffix
+                    for suffix in ("DLL", "LOADED_DLL", "VFS", "SYSCALL", "INSTALL")
+                }
+                if code and lines and lines[-1] in allowed:
+                    diagnostic = lines[-1].removeprefix("ValueError: ")
+                failure = save(
+                    case / "writer-failure.json",
+                    {
+                        "diagnostic": diagnostic,
+                        "exit": code,
+                        "writer": initial,
+                        "checkpoint_present": ready.is_file(),
+                        "stdout": {
+                            "path": str(case / "write.stdout"),
+                            "sha256": sha(case / "write.stdout"),
+                        },
+                        "stderr": {"path": str(stderr), "sha256": sha(stderr)},
+                    },
+                )
+                raise ValueError(diagnostic + ":" + json.dumps(failure, sort_keys=True))
             checkpoint = json.loads(ready.read_text())
             observed = observe(writer)
             if checkpoint["identity"] != {**identity, "pid": writer.pid}:

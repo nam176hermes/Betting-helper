@@ -12,6 +12,86 @@ from tools import run_native_ingestor_qualification as owner
 from tools.run_environment_qualification import localpath
 
 
+@pytest.mark.parametrize(
+    "diagnostic",
+    [
+        "HOLD_NATIVE_COMMIT_IO_DLL",
+        "HOLD_NATIVE_COMMIT_IO_LOADED_DLL",
+        "HOLD_NATIVE_COMMIT_IO_VFS",
+        "HOLD_NATIVE_COMMIT_IO_SYSCALL",
+        "HOLD_NATIVE_COMMIT_IO_INSTALL",
+        "HOLD_NATIVE_COMMIT_IO_UNKNOWN",
+        "E_UNRELATED_WRITER_FAILURE",
+        "",
+    ],
+)
+def test_writer_failure_preserves_diagnostic_before_checkpoint_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, diagnostic: str
+) -> None:
+    import hashlib
+    import json
+    import subprocess
+    import sys
+
+    from tools import native_environment_probe, native_ingestor_probe
+
+    # Real child exit/output tests only the owner boundary, not native store qualification.
+    child_source = """
+import json, os, sys, time
+from pathlib import Path
+mode, source, diagnostic = sys.argv[1:]
+cfg = json.loads(Path(source).read_text())
+case = Path(source).parent
+started = {'pid': os.getpid(), 'identity': cfg['identity']}
+(case / (mode + '.started.json')).write_text(json.dumps(started))
+while not (case / (mode + '.start')).is_file():
+    time.sleep(0.01)
+if mode == 'setup':
+    print(json.dumps({'pid': os.getpid(), 'identity': cfg['identity'], 'state': {}}))
+elif diagnostic:
+    raise ValueError(diagnostic)
+"""
+    popen = subprocess.Popen
+
+    def launch(command: list[str], **kwargs: Any) -> Any:
+        return popen([sys.executable, "-c", child_source, *command[-2:], diagnostic], **kwargs)
+
+    monkeypatch.setattr(subprocess, "Popen", launch)
+    monkeypatch.setattr(native_ingestor_probe, "dependency_payload", lambda _: {})
+    monkeypatch.setattr(native_environment_probe, "observe", lambda child: {"pid": child.pid})
+    config = {
+        "workspace": str(tmp_path),
+        "root": str(native_ingestor_probe.ROOT),
+        "dependency_root": str(tmp_path / "unused-dependency"),
+        "delivery": {"discovery_run_id": "boundary-test"},
+        "commit_io": "armed",
+    }
+    expected = (
+        diagnostic
+        if diagnostic
+        in {
+            "HOLD_NATIVE_COMMIT_IO_" + suffix
+            for suffix in ("DLL", "LOADED_DLL", "VFS", "SYSCALL", "INSTALL")
+        }
+        else "E_NATIVE_INGESTOR_WRITER_EXIT"
+        if diagnostic
+        else "E_NATIVE_INGESTOR_CHECKPOINT_MISSING"
+    )
+    with pytest.raises(ValueError, match=expected) as error:
+        native_ingestor_probe.owner(config, tmp_path / "unused-owner-input.json")
+    assert "FileNotFoundError" not in str(error.value)
+    case = tmp_path / native_ingestor_probe.COMMIT_PHASE
+    failure = json.loads((case / "writer-failure.json").read_text())
+    assert failure["diagnostic"] == expected
+    assert failure["exit"] == (1 if diagnostic else 0)
+    assert failure["checkpoint_present"] is False
+    for name in ("stdout", "stderr"):
+        raw = Path(failure[name]["path"]).read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == failure[name]["sha256"]
+    assert diagnostic in Path(failure["stderr"]["path"]).read_text()
+    assert str(case / "writer-failure.json") in str(error.value)
+
+
 def test_native_commit_io_owner_exists() -> None:
     assert callable(getattr(owner, "run_native_commit_io", None)), (
         "Native COMMIT I/O is unimplemented"
