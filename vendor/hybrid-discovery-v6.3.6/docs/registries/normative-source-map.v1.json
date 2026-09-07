@@ -247,6 +247,10 @@
   ],
   "plan_entries": [
     {
+      "plan_source": "docs/configs/full-verifier-controller.v1.json",
+      "vendor_relative": "docs/configs/full-verifier-controller.v1.json"
+    },
+    {
       "plan_source": "docs/configs/review-a.v1.json",
       "vendor_relative": "docs/configs/review-a.v1.json"
     },

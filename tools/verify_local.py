@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 from collections.abc import Sequence
@@ -19,8 +20,10 @@ sys.path.insert(0, str(REPOSITORY_ROOT))
 
 from tools import run_command_registry  # noqa: E402
 from tools.build_candidate_qualification_receipt import (  # noqa: E402
+    build_candidate_qualification_receipt,
     validate_candidate_qualification_receipt,
 )
+from tools.full_verifier_config import FullVerifierConfig, load_controller_config  # noqa: E402
 from tools.sync_pack_assets import sync_pack_assets  # noqa: E402
 
 REPAIR_TESTS = (
@@ -138,6 +141,24 @@ def _configured_path(identifier: str, path: Path | None, *, directory: bool) -> 
     return {**record, "status": "PASS" if valid else "INVALID"}
 
 
+def _configured_output_directory(identifier: str, path: Path) -> dict[str, object]:
+    record: dict[str, object] = {"prerequisite_id": identifier, "path": str(path)}
+    if not path.is_absolute() or path.is_symlink():
+        return {**record, "status": "INVALID"}
+    if path.exists():
+        return {**record, "status": "PASS" if path.is_dir() else "INVALID"}
+    try:
+        parent = path.parent.resolve(strict=True)
+    except OSError as error:
+        return {**record, "status": "MISSING", "detail": str(error)}
+    return {**record, "status": "PASS" if parent.is_dir() else "INVALID"}
+
+
+def _sha256_file(path: Path) -> str:
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
 def _load_object(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text())
     if not isinstance(value, dict):
@@ -176,36 +197,51 @@ def _validate_bootstrap_receipt(receipt_path: Path, pack: Path) -> None:
         raise ValueError("receipt content mismatch")
 
 
-def _validate_authoring_tests(root: Path) -> None:
+def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) -> str:
     delivery = _load_object(
-        REPOSITORY_ROOT
-        / "vendor/hybrid-discovery-v6.3.6/docs/registries/delivery-map.v1.json"
+        REPOSITORY_ROOT / "vendor/hybrid-discovery-v6.3.6/docs/registries/delivery-map.v1.json"
     )
     exports = delivery.get("authoring_source_exports")
     if not isinstance(exports, list):
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
     expected = {
-        Path(cast(str, item["source"])).name
+        cast(str, item["source"])
         for item in exports
         if isinstance(item, dict)
         and isinstance(item.get("source"), str)
-        and cast(str, item["source"]).startswith("authoring-tests/")
+        and cast(str, item["source"]).startswith(("authoring-tests/", "authoring-tools/"))
     }
     if not expected:
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
-    for name in expected:
-        path = root / name
+    authoring_root = root.parent
+    rows: list[tuple[str, int, str]] = []
+    for name in sorted(expected, key=lambda item: item.encode()):
+        path = authoring_root / name
         try:
+            info = path.lstat()
             source = path.read_text()
-            tree = ast.parse(source)
-        except (OSError, UnicodeError, SyntaxError) as error:
+        except (OSError, UnicodeError) as error:
             raise ValueError("E_EXTERNAL_AUTHORING_TESTS") from error
-        if path.is_symlink() or not source or not any(
-            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name.startswith("test_")
-            for node in ast.walk(tree)
-        ):
+        if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not source:
             raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+        if name.startswith("authoring-tests/"):
+            try:
+                tree = ast.parse(source)
+            except SyntaxError as error:
+                raise ValueError("E_EXTERNAL_AUTHORING_TESTS") from error
+            if not any(
+                isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name.startswith("test_")
+                for node in ast.walk(tree)
+            ):
+                raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+        contents = source.encode()
+        rows.append((name, len(contents), hashlib.sha256(contents).hexdigest()))
+    payload = "".join(f"{name}\0{size}\0{digest}\n" for name, size, digest in rows).encode()
+    actual = hashlib.sha256(payload).hexdigest()
+    if expected_sha256 is not None and actual != expected_sha256:
+        raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+    return actual
 
 
 def _nonempty_directory(path: Path) -> bool:
@@ -215,10 +251,14 @@ def _nonempty_directory(path: Path) -> bool:
 def _validate_cache(root: Path, kind: str) -> None:
     if kind == "uv":
         tag = root / "CACHEDIR.TAG"
-        valid = tag.is_file() and bool(tag.read_bytes()) and any(
-            child.name.startswith(("archive-v", "wheels-v", "simple-v", "sdists-v"))
-            and _nonempty_directory(child)
-            for child in root.iterdir()
+        valid = (
+            tag.is_file()
+            and bool(tag.read_bytes())
+            and any(
+                child.name.startswith(("archive-v", "wheels-v", "simple-v", "sdists-v"))
+                and _nonempty_directory(child)
+                for child in root.iterdir()
+            )
         )
         code = "E_UV_CACHE"
     elif kind == "pnpm":
@@ -230,70 +270,58 @@ def _validate_cache(root: Path, kind: str) -> None:
         raise ValueError(code)
 
 
-def _controller_binding(args: argparse.Namespace) -> dict[str, object]:
-    commands = run_command_registry.candidate_commands(run_command_registry.validate_registry())
-    values = [
-        cast(str, value)
-        for command in commands
-        for value in [command["cwd"], *cast(list[str], command["argv"])]
-    ]
-    root = str(REPOSITORY_ROOT)
-    configured = {
-        name: path
-        for name, path in {
-            "pack": args.pack,
-            "evidence_root": args.evidence_root,
-            "authoring_tests": args.authoring_tests,
-            "uv_cache": args.uv_cache,
-            "pnpm_store": args.pnpm_store,
-            "chrome": args.chrome,
-        }.items()
-        if path is not None
-    }
-    unbound = []
-    if {cast(str, command["cwd"]) for command in commands} != {root}:
-        unbound.append("checkout_root")
-    for name, path in configured.items():
-        resolved = str(path.resolve())
-        if not any(value == resolved or value.startswith(f"{resolved}/") for value in values):
-            unbound.append(name)
-    if unbound:
+def _controller_binding(config: FullVerifierConfig) -> dict[str, object]:
+    try:
+        commands = run_command_registry.effective_candidate_commands(
+            run_command_registry.validate_registry(), config
+        )
+        environment = run_command_registry.execution_environment(config)
+    except (OSError, ValueError, json.JSONDecodeError) as error:
         return {
             "prerequisite_id": "controller_configuration_binding",
-            "path": None,
+            "path": str(config.source_path),
             "status": "HOLD",
             "code": "CONTROLLER_CONFIG_UNBOUND",
-            "detail": sorted(unbound),
+            "detail": str(error),
+        }
+    if (
+        {Path(cast(str, command["cwd"])) for command in commands} != {config.current_checkout_root}
+        or environment.get("UV_CACHE_DIR") != str(config.uv_cache)
+        or environment.get("npm_config_store_dir") != str(config.pnpm_store)
+        or environment.get("BH_CHROME_BINARY") != str(config.chrome_path)
+    ):
+        return {
+            "prerequisite_id": "controller_configuration_binding",
+            "path": str(config.source_path),
+            "status": "HOLD",
+            "code": "CONTROLLER_CONFIG_UNBOUND",
         }
     return {
         "prerequisite_id": "controller_configuration_binding",
-        "path": None,
+        "path": str(config.source_path),
         "status": "PASS",
     }
 
 
-def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
-    pack = _configured_path("governed_source_pack", args.pack, directory=True)
+def _full_prerequisites(config: FullVerifierConfig) -> list[dict[str, object]]:
+    source_config = _configured_path(
+        "source_owned_controller_config", config.source_path, directory=False
+    )
+    pack = _configured_path("governed_source_pack", config.governed_source_pack, directory=True)
     if pack["status"] == "PASS":
         try:
             sync_pack_assets(Path(cast(str, pack["path"])), REPOSITORY_ROOT, check=True)
         except (OSError, ValueError, json.JSONDecodeError) as error:
             pack.update(status="INVALID", detail=str(error))
 
-    evidence = _configured_path("evidence_root", args.evidence_root, directory=True)
+    evidence = _configured_output_directory("evidence_root", config.evidence_root)
     bootstrap: dict[str, object] = {
         "prerequisite_id": "authoring_repository_receipt",
         "path": None,
         "status": "MISSING_CONFIGURATION",
     }
-    candidate: dict[str, object] = {
-        "prerequisite_id": "candidate_qualification_receipt",
-        "path": None,
-        "status": "MISSING_CONFIGURATION",
-    }
     if evidence["status"] == "PASS":
-        evidence_root = Path(cast(str, evidence["path"]))
-        bootstrap_path = evidence_root / "bootstrap/authoring-repository-receipt.json"
+        bootstrap_path = config.authoring_repository_receipt
         bootstrap = _configured_path(
             "authoring_repository_receipt", bootstrap_path, directory=False
         )
@@ -301,34 +329,21 @@ def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
             try:
                 if pack["status"] != "PASS":
                     raise ValueError("receipt content mismatch")
-                _validate_bootstrap_receipt(
-                    bootstrap_path, Path(cast(str, pack["path"]))
-                )
+                _validate_bootstrap_receipt(bootstrap_path, Path(cast(str, pack["path"])))
             except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError) as error:
                 bootstrap.update(status="INVALID", detail=str(error))
 
-        candidate_path = evidence_root / "CANDIDATE_QUALIFICATION.json"
-        candidate = _configured_path(
-            "candidate_qualification_receipt", candidate_path, directory=False
-        )
-        if candidate["status"] == "PASS":
-            try:
-                validate_candidate_qualification_receipt(
-                    REPOSITORY_ROOT,
-                    evidence_root / "V636-P07-T01.json",
-                    _load_object(candidate_path),
-                )
-            except (OSError, ValueError, json.JSONDecodeError) as error:
-                candidate.update(status="INVALID", detail=str(error))
-
-    uv_cache = _configured_path("uv_cache", args.uv_cache, directory=True)
-    pnpm_store = _configured_path("pnpm_store", args.pnpm_store, directory=True)
+    uv_cache = _configured_path("uv_cache", config.uv_cache, directory=True)
+    pnpm_store = _configured_path("pnpm_store", config.pnpm_store, directory=True)
     authoring_tests = _configured_path(
-        "external_authoring_tests", args.authoring_tests, directory=True
+        "external_authoring_tests", config.external_authoring_tests, directory=True
     )
     if authoring_tests["status"] == "PASS":
         try:
-            _validate_authoring_tests(Path(cast(str, authoring_tests["path"])))
+            _validate_authoring_tests(
+                Path(cast(str, authoring_tests["path"])),
+                config.external_authoring_source_sha256,
+            )
         except (OSError, ValueError) as error:
             authoring_tests.update(status="INVALID", detail=str(error))
     for record, kind in ((uv_cache, "uv"), (pnpm_store, "pnpm")):
@@ -337,31 +352,28 @@ def _full_prerequisites(args: argparse.Namespace) -> list[dict[str, object]]:
                 _validate_cache(Path(cast(str, record["path"])), kind)
             except (OSError, ValueError) as error:
                 record.update(status="INVALID", detail=str(error))
-    chrome = _configured_path("chrome_binary", args.chrome, directory=False)
+    chrome = _configured_path("chrome_binary", config.chrome_path, directory=False)
     if chrome["status"] == "PASS":
         chrome_path = Path(cast(str, chrome["path"]))
-        if args.chrome_sha256 is None:
-            chrome.update(status="MISSING_CONFIGURATION", detail="--chrome-sha256 is required")
-        else:
-            with chrome_path.open("rb") as stream:
-                digest = hashlib.file_digest(stream, "sha256").hexdigest()
-            if not os.access(chrome_path, os.X_OK) or digest != args.chrome_sha256:
-                chrome.update(status="INVALID", detail="executable bit or SHA-256 mismatch")
+        digest = _sha256_file(chrome_path)
+        if not os.access(chrome_path, os.X_OK) or digest != config.chrome_sha256:
+            chrome.update(status="INVALID", detail="executable bit or SHA-256 mismatch")
 
     return [
+        source_config,
         pack,
         evidence,
         bootstrap,
-        candidate,
         authoring_tests,
         uv_cache,
         pnpm_store,
         chrome,
-        _controller_binding(args),
+        _controller_binding(config),
     ]
 
 
-def _delegate_controller() -> int:
+def _delegate_controller(config: FullVerifierConfig) -> int:
+    config.evidence_root.mkdir(parents=True, exist_ok=True)
     completed = subprocess.run(  # noqa: S603 - fixed authoritative controller argv.
         [
             sys.executable,
@@ -370,15 +382,50 @@ def _delegate_controller() -> int:
             "candidate-qualification",
             "--registry",
             "task-command-registry.json",
+            "--config",
+            str(config.source_path),
+            "--output",
+            str(config.candidate_command_evidence),
         ],
         cwd=REPOSITORY_ROOT,
         check=False,
     )
-    return completed.returncode
+    if completed.returncode != 0:
+        return completed.returncode
+    try:
+        build_candidate_qualification_receipt(
+            REPOSITORY_ROOT,
+            config.candidate_command_evidence,
+            config.candidate_qualification_receipt,
+            config,
+        )
+    except (OSError, ValueError, json.JSONDecodeError):
+        return 1
+    return 0
 
 
-def _run_full(args: argparse.Namespace) -> int:
-    prerequisites = _full_prerequisites(args)
+def _validate_candidate_postcondition(config: FullVerifierConfig) -> None:
+    validate_candidate_qualification_receipt(
+        REPOSITORY_ROOT,
+        config.candidate_command_evidence,
+        _load_object(config.candidate_qualification_receipt),
+        config,
+    )
+
+
+def _run_full(config: FullVerifierConfig | None) -> int:
+    prerequisites: list[dict[str, object]]
+    if config is None:
+        prerequisites = [
+            {
+                "prerequisite_id": "source_owned_controller_config",
+                "path": None,
+                "status": "MISSING_CONFIGURATION",
+                "code": "CONTROLLER_CONFIG_UNBOUND",
+            }
+        ]
+    else:
+        prerequisites = _full_prerequisites(config)
     ready = all(item["status"] == "PASS" for item in prerequisites)
     hold_codes = sorted(
         cast(str, item["code"]) for item in prerequisites if isinstance(item.get("code"), str)
@@ -400,12 +447,21 @@ def _run_full(args: argparse.Namespace) -> int:
     )
     if not ready:
         return 2
-    return _delegate_controller()
+    assert config is not None
+    result = _delegate_controller(config)
+    if result != 0:
+        return result
+    try:
+        _validate_candidate_postcondition(config)
+    except (OSError, ValueError, json.JSONDecodeError):
+        return 1
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--profile", choices=("portable", "full"), required=True)
+    parser.add_argument("--config", type=Path)
     parser.add_argument("--pack", type=Path)
     parser.add_argument("--evidence-root", type=Path)
     parser.add_argument("--authoring-tests", type=Path)
@@ -414,7 +470,28 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--chrome", type=Path)
     parser.add_argument("--chrome-sha256")
     args = parser.parse_args(argv)
-    return _run_portable() if args.profile == "portable" else _run_full(args)
+    if args.profile == "portable":
+        return _run_portable()
+    if any(
+        value is not None
+        for value in (
+            args.pack,
+            args.evidence_root,
+            args.authoring_tests,
+            args.uv_cache,
+            args.pnpm_store,
+            args.chrome,
+            args.chrome_sha256,
+        )
+    ):
+        return _run_full(None)
+    if args.config is None:
+        return _run_full(None)
+    try:
+        config = load_controller_config(args.config)
+    except ValueError:
+        return _run_full(None)
+    return _run_full(config)
 
 
 if __name__ == "__main__":

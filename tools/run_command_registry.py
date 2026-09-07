@@ -1,4 +1,5 @@
 """Run only the explicit v6.3.6 candidate-verification command allowlist."""
+
 # ruff: noqa: S108
 from __future__ import annotations
 
@@ -7,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import stat
 import subprocess
 import sys
@@ -20,6 +22,7 @@ sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]  # noqa: E402
 
 from moj_discovery.canonical import parse_strict_json  # noqa: E402
+from tools.full_verifier_config import FullVerifierConfig, load_controller_config  # noqa: E402
 
 VENDOR_ROOT = RUNTIME_ROOT / "vendor/hybrid-discovery-v6.3.6"
 SCHEMA_PATH = VENDOR_ROOT / "docs/schemas/command-registry.schema.json"
@@ -28,8 +31,15 @@ SHELLS = {"bash", "cmd", "powershell", "pwsh", "sh", "zsh"}
 PLACEHOLDER = re.compile(r"(?:\bFIXME\b|\bPLACEHOLDER\b|\bTBD\b|\.\.\.|<[^>]+>|\$\{|\$\(|`)")
 GLOBS = re.compile(r"[*?\[]")
 EXCLUDED_DIRECTORY_COMPONENTS = {
-    ".coverage", ".local", ".mypy_cache", ".pytest_cache", ".ruff_cache",
-    ".superpowers", ".venv", "__pycache__", "node_modules",
+    ".coverage",
+    ".local",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".superpowers",
+    ".venv",
+    "__pycache__",
+    "node_modules",
 }
 EXCLUDED_EXACT_SUBTREES = {"extension/.test-build", "extension/dist"}
 EXCLUDED_FILE_SUFFIXES = {".pyc", ".pyd", ".pyo"}
@@ -63,6 +73,10 @@ EXPECTED_EXECUTION_ENVIRONMENT = {
     "UV_NO_PROGRESS": "1",
     "UV_PYTHON_DOWNLOADS": "never",
 }
+LEGACY_AUTHORING_RUNTIME = (
+    "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime"
+)
+LEGACY_AUTHORING_PACK = "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack"
 
 
 def _fail(code: str) -> NoReturn:
@@ -84,9 +98,7 @@ def _schema_validator() -> Draft202012Validator:
     definitions = schema.get("$defs")
     if not isinstance(definitions, dict):
         _fail("SCHEMA")
-    return Draft202012Validator(
-        {"$ref": "#/$defs/CommandRegistry", "$defs": definitions}
-    )
+    return Draft202012Validator({"$ref": "#/$defs/CommandRegistry", "$defs": definitions})
 
 
 def _validate_argv(argv: object, *, inline_source: bool) -> None:
@@ -100,16 +112,14 @@ def _validate_argv(argv: object, *, inline_source: bool) -> None:
     if values[0] in SHELLS:
         _fail("SHELL")
     if not inline_source and (
-        "-k" in values
-        or any(PLACEHOLDER.search(item) or GLOBS.search(item) for item in values)
+        "-k" in values or any(PLACEHOLDER.search(item) or GLOBS.search(item) for item in values)
     ):
         _fail("NON_CONCRETE")
 
 
 def _require_vendored_bytes(path: Path, raw: bytes) -> None:
     expected = (
-        path.parent
-        / "vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json"
+        path.parent / "vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json"
     )
     if path.resolve() == (RUNTIME_ROOT / "task-command-registry.json").resolve():
         expected = VENDOR_ROOT / "docs/registries/task-command-registry.v1.json"
@@ -150,9 +160,7 @@ def validate_registry(
             or command.get("provider_access") != "DENY"
         ):
             _fail("AUTHORITY")
-        _validate_argv(
-            command.get("argv"), inline_source=identifier == "BOOT0_EXTRACT_PLAN"
-        )
+        _validate_argv(command.get("argv"), inline_source=identifier == "BOOT0_EXTRACT_PLAN")
     if next(_schema_validator().iter_errors(registry), None) is not None:
         _fail("SHAPE")
     _require_vendored_bytes(path, raw)
@@ -166,9 +174,14 @@ def candidate_commands(registry: dict[str, object]) -> list[dict[str, object]]:
     if (
         set(topology)
         != {
-            "schema_version", "candidate_command_ids", "excluded_kinds",
-            "required_groups", "group_sources", "harness_compile_command",
-            "all_test_compile_command", "source_freeze_task",
+            "schema_version",
+            "candidate_command_ids",
+            "excluded_kinds",
+            "required_groups",
+            "group_sources",
+            "harness_compile_command",
+            "all_test_compile_command",
+            "source_freeze_task",
         }
         or topology.get("schema_version") != "verification-topology/v1"
         or not isinstance(required, list)
@@ -189,14 +202,59 @@ def candidate_commands(registry: dict[str, object]) -> list[dict[str, object]]:
         for item in commands
         if isinstance(item, dict)
     }
-    if len(by_id) != len(commands) or any(
-        identifier not in by_id for identifier in required_ids
-    ):
+    if len(by_id) != len(commands) or any(identifier not in by_id for identifier in required_ids):
         _fail("TOPOLOGY")
     selected = [by_id[identifier] for identifier in required_ids]
     if any(command.get("kind") in excluded_kinds for command in selected):
         _fail("TOPOLOGY")
     return selected
+
+
+def effective_candidate_commands(
+    registry: dict[str, object], config: FullVerifierConfig
+) -> list[dict[str, object]]:
+    if config.current_checkout_root.resolve() != RUNTIME_ROOT.resolve():
+        _fail("CONFIG_ROOT")
+    effective: list[dict[str, object]] = []
+    replacements = (
+        (LEGACY_AUTHORING_RUNTIME, str(config.current_checkout_root)),
+        (LEGACY_AUTHORING_PACK, str(config.governed_source_pack)),
+    )
+
+    def rebind(value: str) -> str:
+        for old, new in replacements:
+            if value == old:
+                return new
+            if value.startswith(f"{old}/"):
+                return new + value[len(old) :]
+        return value
+
+    for source in candidate_commands(registry):
+        command = dict(source)
+        cwd = cast(str, command["cwd"])
+        argv = cast(list[str], command["argv"])
+        command["cwd"] = rebind(cwd)
+        command["argv"] = [rebind(item) for item in argv]
+        effective.append(command)
+    if {cast(str, command["cwd"]) for command in effective} != {str(config.current_checkout_root)}:
+        _fail("CONFIG_ROOT")
+    if any(
+        value == old or value.startswith(f"{old}/")
+        for command in effective
+        for value in [cast(str, command["cwd"]), *cast(list[str], command["argv"])]
+        for old, _new in replacements
+    ):
+        _fail("CONFIG_ROOT")
+    return effective
+
+
+def execution_environment(config: FullVerifierConfig) -> dict[str, str]:
+    return {
+        **EXPECTED_EXECUTION_ENVIRONMENT,
+        "BH_CHROME_BINARY": str(config.chrome_path),
+        "UV_CACHE_DIR": str(config.uv_cache),
+        "npm_config_store_dir": str(config.pnpm_store),
+    }
 
 
 def expand_invocations(
@@ -208,14 +266,26 @@ def expand_invocations(
 
 
 def build_candidate_command_results(
-    registry: dict[str, object], results: object
+    registry: dict[str, object], results: object, config: FullVerifierConfig | None = None
 ) -> dict[str, object]:
-    expected = candidate_commands(registry)
+    expected = (
+        candidate_commands(registry)
+        if config is None
+        else effective_candidate_commands(registry, config)
+    )
     if not isinstance(results, list) or len(results) != len(expected):
         _fail("RESULTS")
     required = {
-        "argv", "command_id", "cwd", "expected_exit", "exit_code", "passed",
-        "stderr_sha256", "stderr_size_bytes", "stdout_sha256", "stdout_size_bytes",
+        "argv",
+        "command_id",
+        "cwd",
+        "expected_exit",
+        "exit_code",
+        "passed",
+        "stderr_sha256",
+        "stderr_size_bytes",
+        "stdout_sha256",
+        "stdout_size_bytes",
     }
     for command, result in zip(expected, results, strict=True):
         if not isinstance(result, dict) or set(result) != required:
@@ -240,11 +310,16 @@ def build_candidate_command_results(
             for key in ("stdout_size_bytes", "stderr_size_bytes")
         ):
             _fail("RESULTS")
-    return {
-        "schema_version": "candidate-command-results/v1",
+    report: dict[str, object] = {
+        "schema_version": (
+            "candidate-command-results/v1" if config is None else "candidate-command-results/v2"
+        ),
         "production_authority": "NONE",
         "results": results,
     }
+    if config is not None:
+        report["controller_binding"] = config.binding()
+    return report
 
 
 def evaluate_invocation(
@@ -292,11 +367,7 @@ def _excluded(relative: Path, *, directory: bool) -> bool:
 
 
 def _candidate_pass(root: Path, *, allow_local_git: bool = False) -> list[dict[str, object]]:
-    if (
-        root.is_symlink()
-        or not root.is_dir()
-        or (not allow_local_git and (root / ".git").exists())
-    ):
+    if root.is_symlink() or not root.is_dir() or (not allow_local_git and (root / ".git").exists()):
         raise ValueError("E_REPO0_FILE_TREE_ENTRY")
     entries: list[dict[str, object]] = []
     for directory, names, files in os.walk(root, followlinks=False):
@@ -305,9 +376,7 @@ def _candidate_pass(root: Path, *, allow_local_git: bool = False) -> list[dict[s
         names[:] = [
             name
             for name in names
-            if (
-                allow_local_git and relative_directory == Path(".") and name == ".git"
-            )
+            if (allow_local_git and relative_directory == Path(".") and name == ".git")
             or not _excluded(relative_directory / name, directory=True)
         ]
         for name in sorted(files, key=lambda item: item.encode()):
@@ -356,16 +425,57 @@ def collect_candidate_file_tree(root: Path, *, allow_local_git: bool = False) ->
     return {"entries": first, "schema_version": "repo0-independent-file-tree/v1"}
 
 
-def run_registry(registry_path: Path) -> dict[str, object]:
+def _git_source_identity(root: Path) -> dict[str, str]:
+    git = shutil.which("git")
+    if git is None:
+        _fail("LOCAL_GIT")
+
+    def read(*args: str) -> str:
+        completed = subprocess.run(  # noqa: S603 - fixed read-only Git operation.
+            [git, "-C", str(root), *args],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        if completed.returncode != 0:
+            _fail("LOCAL_GIT")
+        return completed.stdout.strip()
+
+    if read("rev-parse", "--show-toplevel") != str(root.resolve()) or read(
+        "status", "--porcelain", "--untracked-files=all"
+    ):
+        _fail("LOCAL_GIT")
+    return {
+        "head": read("rev-parse", "HEAD"),
+        "tree": read("rev-parse", "HEAD^{tree}"),
+    }
+
+
+def run_registry(
+    registry_path: Path, config: FullVerifierConfig | None = None
+) -> dict[str, object]:
     registry = validate_registry(registry_path)
     initial_hash = hashlib.sha256(registry_path.read_bytes()).hexdigest()
     source_root = registry_path.resolve().parent
-    before = collect_candidate_file_tree(source_root)
+    before: dict[str, object] | dict[str, str] = (
+        collect_candidate_file_tree(source_root)
+        if config is None
+        else _git_source_identity(source_root)
+    )
     results: list[dict[str, object]] = []
-    for command in candidate_commands(registry):
+    commands = (
+        candidate_commands(registry)
+        if config is None
+        else effective_candidate_commands(registry, config)
+    )
+    environment = (
+        EXPECTED_EXECUTION_ENVIRONMENT if config is None else execution_environment(config)
+    )
+    for command in commands:
         result = evaluate_invocation(
             command,
-            environment=EXPECTED_EXECUTION_ENVIRONMENT,
+            environment=environment,
             working_directory=Path(cast(str, command["cwd"])),
         )
         results.append(result)
@@ -373,10 +483,15 @@ def run_registry(registry_path: Path) -> dict[str, object]:
             raise RuntimeError(f"E_COMMAND_REGISTRY:{command['command_id']}")
     if (
         hashlib.sha256(registry_path.read_bytes()).hexdigest() != initial_hash
-        or collect_candidate_file_tree(source_root) != before
+        or (
+            collect_candidate_file_tree(source_root)
+            if config is None
+            else _git_source_identity(source_root)
+        )
+        != before
     ):
         raise RuntimeError("E_COMMAND_REGISTRY:DRIFT")
-    return build_candidate_command_results(registry, results)
+    return build_candidate_command_results(registry, results, config)
 
 
 def main() -> int:
@@ -384,6 +499,8 @@ def main() -> int:
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--mode", choices=("candidate-qualification",))
     parser.add_argument("--registry", type=Path)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if args.self_check == bool(args.mode):
         parser.error("provide exactly one of --self-check or --mode candidate-qualification")
@@ -392,11 +509,13 @@ def main() -> int:
     else:
         if args.registry is None or args.registry != Path("task-command-registry.json"):
             parser.error("candidate qualification requires --registry task-command-registry.json")
-        print(
-            json.dumps(
-                run_registry(RUNTIME_ROOT / "task-command-registry.json"), sort_keys=True
-            )
-        )
+        if args.config is None or args.output is None:
+            parser.error("candidate qualification requires --config and --output")
+        config = load_controller_config(args.config)
+        report = run_registry(RUNTIME_ROOT / "task-command-registry.json", config)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n")
+        print(json.dumps(report, sort_keys=True))
     return 0
 
 

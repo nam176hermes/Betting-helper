@@ -1,0 +1,20 @@
+{
+  "schema_version": "full-verifier-controller/v1",
+  "production_authority": "NONE",
+  "current_checkout_root": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+  "governed_source_pack": "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack",
+  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller",
+  "external_authoring_tests": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/authoring-tests",
+  "external_authoring_source_sha256": "b42ddbee15b2b187ac38695d10ad5f5910a914423500152c4f90cdd4ba6a1c72",
+  "uv_cache": "/home/thenam176/.cache/uv",
+  "pnpm_store": "/home/thenam176/.local/share/pnpm/store/v10",
+  "chrome": {
+    "path": "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
+    "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
+  },
+  "receipts": {
+    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
+  }
+}

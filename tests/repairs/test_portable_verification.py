@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import json
 import shutil
 import subprocess
@@ -57,14 +56,8 @@ def test_full_profile_holds_without_guessing_external_prerequisites(tmp_path: Pa
     assert report["profile"] == "full"
     assert report["status"] == "HOLD"
     assert report["authoritative_controller"] == "NOT_EXECUTED"
-    configured = [
-        item
-        for item in report["prerequisites"]
-        if item["prerequisite_id"] != "controller_configuration_binding"
-    ]
-    assert {item["status"] for item in configured} == {
-        "MISSING_CONFIGURATION"
-    }
+    configured = report["prerequisites"]
+    assert {item["status"] for item in configured} == {"MISSING_CONFIGURATION"}
     assert all(item["path"] is None for item in configured)
     assert report["hold_codes"] == ["CONTROLLER_CONFIG_UNBOUND"]
 
@@ -139,27 +132,14 @@ def test_empty_external_test_and_cache_directories_do_not_pass(tmp_path: Path) -
 def test_unbound_controller_configuration_never_delegates(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    args = argparse.Namespace(
-        pack=ROOT / "vendor/hybrid-discovery-v6.3.6",
-        evidence_root=ROOT / ".local/evidence",
-        authoring_tests=ROOT / "tests",
-        uv_cache=ROOT / ".local/uv-cache",
-        pnpm_store=ROOT / ".local/pnpm-store",
-        chrome=ROOT / "recorded-chrome",
-    )
-    binding = verify_local._controller_binding(args)
-    assert binding["status"] == "HOLD"
-    assert binding["code"] == "CONTROLLER_CONFIG_UNBOUND"
-
     delegated = False
 
-    def delegate() -> int:
+    def delegate(_config: object) -> int:
         nonlocal delegated
         delegated = True
         return 0
 
-    monkeypatch.setattr(verify_local, "_full_prerequisites", lambda _args: [binding])
     monkeypatch.setattr(verify_local, "_delegate_controller", delegate)
-    assert verify_local._run_full(args) == 2
+    assert verify_local._run_full(None) == 2
     assert delegated is False
     assert json.loads(capsys.readouterr().out)["authoritative_controller"] == "NOT_EXECUTED"

@@ -1,7 +1,7 @@
 {
   "schema_version": "schema-lock/v1",
   "vendor_path": "vendor/hybrid-discovery-v6.3.6",
-  "vendor_tree_sha256": "cbdf7e7e295f17a52bef547bd72c02a71565fa94459ec152de5bb7e516233c25",
+  "vendor_tree_sha256": "695d970a4478d38210dcf7e208f9b4a3ee4ba74a69cdeb3cf126702c0121b33b",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -12,6 +12,11 @@
       "path": "cdp/js_protocol.json",
       "size_bytes": 181783,
       "sha256": "cf124bf143bf361a7900bcfeea3926c1cfcc1da36d83756c228c43d84321539a"
+    },
+    {
+      "path": "docs/configs/full-verifier-controller.v1.json",
+      "size_bytes": 1365,
+      "sha256": "ad9bbbf69421754597651a2f11963d6955a43546dcecc66e8a4e253188fd081b"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -90,8 +95,8 @@
     },
     {
       "path": "docs/contracts/07-command-and-config-lifecycle.md",
-      "size_bytes": 5829,
-      "sha256": "510c0c921e4c4717ccdc743304c7ca4775ed64753f4cbba40dfd572ba2dd7132"
+      "size_bytes": 6617,
+      "sha256": "ec57fc0b97cfaf44f8dfc2ce21deada26de9ceda61940c37f867a14e2c32fce4"
     },
     {
       "path": "docs/contracts/08-execution-and-ownership.md",
@@ -215,8 +220,8 @@
     },
     {
       "path": "docs/registries/normative-source-map.v1.json",
-      "size_bytes": 24168,
-      "sha256": "838c58316e6877a881238cc92a5c02625faa086d25bf5f8f0ae64d56a19f6544"
+      "size_bytes": 24324,
+      "sha256": "1501f4757764553c194a107d0c0e8e1b1b2f5db35b19a84e381e469be01ec5b2"
     },
     {
       "path": "docs/registries/path-registry.v1.json",
