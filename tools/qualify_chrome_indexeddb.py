@@ -1,4 +1,5 @@
 """Qualify real extension-origin IndexedDB durability in an isolated Chrome."""
+
 from __future__ import annotations
 
 import argparse
@@ -8,16 +9,19 @@ import json
 import os
 import platform
 import shutil
+import signal
 from pathlib import Path
 from secrets import token_hex
-from signal import SIGKILL
 from subprocess import DEVNULL, Popen, run
 from time import monotonic, sleep
-from typing import cast
+from typing import Any, cast
 from urllib.request import urlopen
 from uuid import uuid4
 
-_CDP = r'''
+# Native Windows imports only the transport helpers; POSIX termination stays opt-in.
+SIGKILL = getattr(signal, "SIGKILL", 9)
+
+_CDP = r"""
 const socket = new WebSocket(process.argv[1]);
 const expression = process.argv[2];
 let nextId = 1;
@@ -47,7 +51,7 @@ const call = (method, params) => new Promise(resolve => {
   }
   process.stdout.write(JSON.stringify(response.result.result.value));
 })().catch(error => { console.error(String(error)); process.exit(1); });
-'''
+"""
 
 
 class QualificationRejected(RuntimeError):
@@ -88,6 +92,8 @@ def _reject_unless(condition: bool, code: str) -> None:
 def validate_qualification_evidence(evidence: dict[str, object]) -> None:
     """Reject identity drift, non-extension execution, or graceful-only shutdown."""
     _reject_unless(evidence.get("result") == "PASS", "E_QUALIFICATION_NOT_PASS")
+    if evidence.get("transport") == "pipe":
+        _verify_hosted_pipe(evidence)
     browser = _dict(evidence.get("browser"), "E_BROWSER_EVIDENCE")
     expected_executable = browser.get("expected_executable")
     _reject_unless(
@@ -195,12 +201,16 @@ def _browser_process_observation(process: Popen[bytes]) -> dict[str, object]:
     """Observe the owned live process, retaining raw proc data for later parsing."""
     if process.poll() is not None:
         raise QualificationRejected("E_BROWSER_PROCESS_EXITED")
-    executable = _process_executable(process)
-    proc = Path(f"/proc/{process.pid}")
+    return _pid_process_observation(process.pid)
+
+
+def _pid_process_observation(pid: int) -> dict[str, object]:
+    executable = Path(f"/proc/{pid}/exe").resolve(strict=True)
+    proc = Path(f"/proc/{pid}")
     cmdline = (proc / "cmdline").read_bytes()
     return {
-        "pid": process.pid,
-        "pgid": os.getpgid(process.pid),
+        "pid": pid,
+        "pgid": os.getpgid(pid),
         "executable": str(executable),
         "sha256": _sha256(executable),
         "argv": cmdline.rstrip(b"\0").decode().split("\0"),
@@ -239,6 +249,133 @@ def _browser_command(
         f"--load-extension={extension.resolve()}",
         extension_url,
     ]
+
+
+def _pipe_browser_command(command: Path, profile: Path) -> list[str]:
+    """Explicit opt-in; established CfT owner launch defaults remain unchanged."""
+    legacy = _browser_command(command, profile, profile, "about:blank", 0)
+    return [
+        arg
+        for arg in legacy
+        if not arg.startswith(
+            (
+                "--remote-debugging-address=",
+                "--remote-debugging-port=",
+                "--disable-extensions-except=",
+                "--load-extension=",
+            )
+        )
+    ][:-1] + ["--remote-debugging-pipe", "--enable-unsafe-extension-debugging", "about:blank"]
+
+
+def _pipe_node_environment() -> dict[str, str]:
+    """Do not let inherited Node preloads replace the hash-bound pipe program."""
+    return {
+        key: value
+        for key, value in os.environ.items()
+        if key.upper() not in {"NODE_OPTIONS", "NODE_PATH"}
+    }
+
+
+def _pipe_work(profile_id: str, phase: str, worker_id: str, request: object) -> dict[str, object]:
+    arguments = (
+        f"{json.dumps(profile_id)},{json.dumps(profile_id)}"
+        if phase == "before"
+        else json.dumps(profile_id)
+    )
+    method = "writeSentinel" if phase == "before" else "readSentinel"
+    return {
+        "worker_id": worker_id,
+        "request": request,
+        "sentinel_expression": f"globalThis.repairProbe.{method}({arguments})",
+        "worker_expression": (
+            f"globalThis.repairProbe.startWorker({json.dumps(worker_id)},"
+            f"{json.dumps(request, sort_keys=True)})"
+            if request is not None
+            else None
+        ),
+    }
+
+
+def _verify_pipe_transcript(
+    content: bytes,
+    config: dict[str, object],
+    work: dict[str, object],
+    result: dict[str, object],
+) -> None:
+    """Require exact critical requests and their real, unique successful replies."""
+    requests: list[dict[str, object]] = []
+    replies: dict[int, dict[str, object]] = {}
+    for line in content.splitlines():
+        row = json.loads(line)
+        if row["direction"] == "send":
+            request = row["request"]
+            if request["id"] != len(requests) + 1:
+                raise ValueError("E_PIPE_TRANSCRIPT_SEQUENCE")
+            requests.append(request)
+        elif row["direction"] == "receive":
+            response = json.loads(row["raw"])
+            if "id" in response:
+                identity = response["id"]
+                if identity in replies or not 1 <= identity <= len(requests) or "error" in response:
+                    raise ValueError("E_PIPE_TRANSCRIPT_RESPONSE")
+                replies[identity] = response["result"]
+        else:
+            raise ValueError("E_PIPE_TRANSCRIPT_DIRECTION")
+    if set(replies) != set(range(1, len(requests) + 1)) or len(requests) < 6:
+        raise ValueError("E_PIPE_TRANSCRIPT_MISSING")
+    prefix = [
+        ("Browser.getVersion", {}),
+        ("Extensions.loadUnpacked", {"path": config["extension"]}),
+        ("Target.createTarget", {"url": str(config["origin"]) + "/repair-probe.html"}),
+        ("Target.attachToTarget", {"targetId": replies[3]["targetId"], "flatten": True}),
+    ]
+    for request, (method, params) in zip(requests[:4], prefix, strict=True):
+        if request != {"id": request["id"], "method": method, "params": params}:
+            raise ValueError("E_PIPE_TRANSCRIPT_REQUEST")
+    if replies[1] != result["version"] or replies[2] != result["loaded"]:
+        raise ValueError("E_PIPE_TRANSCRIPT_IDENTITY")
+    loaded = _dict(result["loaded"], "E_PIPE_LOAD")
+    if loaded != {"id": str(config["origin"]).split("://")[1]}:
+        raise ValueError("E_PIPE_EXTENSION_ID")
+    document_expression = (
+        "({origin:location.origin,protocol:location.protocol,"
+        "probe:Boolean(globalThis.repairProbe),extensionId:globalThis.chrome?.runtime?.id??null})"
+    )
+    tail = [(work["sentinel_expression"], result["sentinel"])]
+    if work["worker_expression"] is not None:
+        tail.append((work["worker_expression"], result["worker"]))
+    document_count = len(requests) - 4 - len(tail)
+    if document_count < 1 or document_count > 100:
+        raise ValueError("E_PIPE_DOCUMENT_WAIT")
+    for index, request in enumerate(requests[4:], 4):
+        expression = (
+            document_expression
+            if index < 4 + document_count
+            else tail[index - 4 - document_count][0]
+        )
+        if request != {
+            "id": index + 1,
+            "method": "Runtime.evaluate",
+            "sessionId": replies[4]["sessionId"],
+            "params": {"expression": expression, "awaitPromise": True, "returnByValue": True},
+        }:
+            raise ValueError("E_PIPE_EXPRESSION")
+        response = replies[index + 1]
+        if "exceptionDetails" in response:
+            raise ValueError("E_PIPE_EVALUATE")
+        value = _dict(response["result"], "E_PIPE_VALUE")["value"]
+        if index >= 4 + document_count and value != tail[index - 4 - document_count][1]:
+            raise ValueError("E_PIPE_VALUE")
+        if index == 3 + document_count and value != result["document"]:
+            raise ValueError("E_PIPE_DOCUMENT")
+    if result["document"] != {
+        "origin": config["origin"],
+        "protocol": "chrome-extension:",
+        "extensionId": loaded["id"],
+        "probe": True,
+    }:
+        raise ValueError("E_PIPE_ORIGIN")
 
 
 def _wait_for_target(process: Popen[bytes], port: int, url: str) -> str:
@@ -362,10 +499,13 @@ def _prepare_test_extension(repository_root: Path, workspace: Path) -> tuple[Pat
     (extension / "src/canonical.js").write_text(
         canonical.replace('from "canonicalize"', 'from "./canonicalize.js"')
     )
-    shutil.copy2(source_root / "node_modules/canonicalize/lib/canonicalize.js",
-                 extension / "src/canonicalize.js")
-    shutil.copy2(build_root / "test-harness/indexeddb-crash-child.js",
-                 extension / "indexeddb-crash-child.js")
+    shutil.copy2(
+        source_root / "node_modules/canonicalize/lib/canonicalize.js",
+        extension / "src/canonicalize.js",
+    )
+    shutil.copy2(
+        build_root / "test-harness/indexeddb-crash-child.js", extension / "indexeddb-crash-child.js"
+    )
     manifest = cast(dict[str, object], json.loads((extension / "manifest.json").read_text()))
     key = manifest.get("key")
     if not isinstance(key, str):
@@ -382,8 +522,13 @@ def qualify_chrome_indexeddb_environment(
     *,
     browser_binary: Path | None = None,
     repository_root: Path | None = None,
+    transport: str = "legacy",
 ) -> dict[str, object]:
     """Commit a random sentinel, SIGKILL owned Chrome, and read it after restart."""
+    if transport == "pipe":
+        return _qualify_hosted_pipe(workspace, browser_binary, repository_root)
+    if transport != "legacy":
+        raise QualificationRejected("E_BROWSER_TRANSPORT")
     workspace.mkdir(parents=True, exist_ok=True)
     repository_root = repository_root or Path(__file__).parents[1]
     if browser_binary is None:
@@ -538,11 +683,363 @@ def qualify_chrome_indexeddb_environment(
                 process.wait(timeout=10)
 
 
+def _qualify_hosted_pipe(
+    workspace: Path,
+    browser_binary: Path | None,
+    repository_root: Path | None,
+) -> dict[str, object]:
+    from tools.verify_repair_evidence import capture_binding
+
+    if browser_binary is None or not browser_binary.is_file():
+        return {
+            "result": "BLOCKED_ENVIRONMENT",
+            "blocker_code": "E_BROWSER_UNAVAILABLE",
+            "blocker_detail": str(browser_binary),
+            "attempted_real_browser": False,
+        }
+    root = repository_root or Path(__file__).resolve().parents[1]
+    workspace.mkdir(parents=True, exist_ok=True)
+    profile = workspace / "chrome-profile"
+    if profile.exists():
+        raise QualificationRejected("E_PROFILE_NOT_FRESH")
+    profile.mkdir()
+    profile_id = "bh-pipe-" + str(uuid4())
+    (profile / "BH_R04_PROFILE_ID").write_text(profile_id)
+    extension, extension_id, module_hash = _prepare_test_extension(root, workspace)
+    script = workspace / "chrome_pipe.cjs"
+    shutil.copy2(root / "tools/chrome_pipe.cjs", script)
+    node = shutil.which("node")
+    if node is None:
+        raise _EnvironmentBlocked("E_NODE_UNAVAILABLE", "node")
+    node = run(  # noqa: S603 -- resolved installed Node, preload environment removed.
+        [node, "-p", "process.execPath"],
+        env=_pipe_node_environment(),
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=10,
+    ).stdout.strip()
+    command = _pipe_browser_command(browser_binary, profile)
+    origin = "chrome-extension://" + extension_id
+    phases = []
+    for phase in ("before", "after"):
+        case = workspace / phase
+        case.mkdir()
+        config = {
+            "command": command,
+            "workspace": str(case.resolve()),
+            "extension": str(extension.resolve()),
+            "origin": origin,
+        }
+        input_path = case / "input.json"
+        input_path.write_text(json.dumps(config))
+        invocation = [node, str(script.resolve()), str(input_path.resolve())]
+        with (case / "node.stdout").open("wb") as out, (case / "node.stderr").open("wb") as err:
+            owner = Popen(  # noqa: S603 -- fixed retained pipe owner, closed preload environment.
+                invocation,
+                stdout=out,
+                stderr=err,
+                start_new_session=True,
+                env=_pipe_node_environment(),
+            )
+        try:
+            deadline = monotonic() + 20
+            while not (case / "pipe-ready.json").is_file():
+                if owner.poll() is not None or monotonic() > deadline:
+                    raise QualificationRejected("E_PIPE_OWNER_READY")
+                sleep(0.02)
+            ready = json.loads((case / "pipe-ready.json").read_text())
+            owner_record = _browser_process_observation(owner)
+            browser_record = _pid_process_observation(ready["pid"])
+            if ready["node_pid"] != owner.pid or browser_record["pgid"] != owner.pid:
+                raise QualificationRejected("E_PIPE_OWNER_IDENTITY")
+            work = _pipe_work(profile_id, phase, "", None)
+            (case / "start.json").write_text(json.dumps(work))
+            deadline = monotonic() + 30
+            while not (case / "pipe-result.json").is_file():
+                if (case / "pipe-error.json").is_file():
+                    raise QualificationRejected((case / "pipe-error.json").read_text())
+                if owner.poll() is not None or monotonic() > deadline:
+                    raise QualificationRejected("E_PIPE_OWNER_RESULT")
+                sleep(0.02)
+            result = json.loads((case / "pipe-result.json").read_text())
+        finally:
+            termination = _kill_owned_process_group(owner)
+        phases.append(
+            {
+                "phase": phase,
+                "config": config,
+                "work": work,
+                "result": result,
+                "owner": owner_record,
+                "browser": browser_record,
+                "invocation": invocation,
+                "termination": termination,
+                "artifacts": {
+                    name: {"path": str((case / name).resolve()), "sha256": _sha256(case / name)}
+                    for name in (
+                        "input.json",
+                        "start.json",
+                        "pipe-result.json",
+                        "pipe.ndjson",
+                        "node.stdout",
+                        "node.stderr",
+                        "chrome.stdout",
+                        "chrome.stderr",
+                    )
+                },
+            }
+        )
+    first, second = [row["result"]["sentinel"] for row in phases]
+    executable = str(_canonical_browser_executable(browser_binary))
+    evidence: dict[str, Any] = {
+        "result": "PASS",
+        "transport": "pipe",
+        "attempted_real_browser": True,
+        "binding": capture_binding(),
+        "workspace": str(workspace.resolve()),
+        "pipe_phases": phases,
+        "script_sha256": _sha256(script),
+        "browser": {
+            "expected_executable": executable,
+            "sha256": _sha256(Path(executable)),
+            "version": phases[0]["result"]["version"]["product"],
+            "first_process_executable": phases[0]["browser"]["executable"],
+            "second_process_executable": phases[1]["browser"]["executable"],
+            "first_process_sha256": phases[0]["browser"]["sha256"],
+            "second_process_sha256": phases[1]["browser"]["sha256"],
+        },
+        "profile": {
+            "path": str(profile),
+            "expected_id": profile_id,
+            "first_id": profile_id,
+            "second_id": (profile / "BH_R04_PROFILE_ID").read_text(),
+            "fresh": True,
+        },
+        "extension": {
+            "expected_id": extension_id,
+            "first_id": first["extensionId"],
+            "second_id": second["extensionId"],
+            "first_protocol": first["protocol"],
+            "second_protocol": second["protocol"],
+            "first_origin": first["origin"],
+            "second_origin": second["origin"],
+            "load_requested": True,
+        },
+        "module": {
+            "expected_sha256": module_hash,
+            "first_sha256": first["moduleSha256"],
+            "second_sha256": second["moduleSha256"],
+            "first_url": first["moduleUrl"],
+            "second_url": second["moduleUrl"],
+        },
+        "sentinel": {
+            "expected": profile_id,
+            "committed": first["sentinel"],
+            "durable": second["sentinel"],
+            "profile_id": second["profileId"],
+        },
+        "termination": phases[0]["termination"],
+    }
+    validate_qualification_evidence(evidence)
+    return evidence
+
+
+def _verify_hosted_pipe(evidence: dict[str, Any]) -> None:
+    from tools.verify_repair_evidence import (
+        _compiled_browser_module_hashes,
+        _typescript_compile_binding,
+        capture_binding,
+    )
+
+    try:
+        current = capture_binding()
+        workspace = Path(evidence["workspace"])
+        profile = workspace / "chrome-profile"
+        extension = workspace / "test-extension"
+        root = Path(__file__).resolve().parents[1]
+        if (
+            evidence["binding"] != current
+            or _sha256(workspace / "chrome_pipe.cjs") != evidence["script_sha256"]
+            or (workspace / "chrome_pipe.cjs").read_bytes()
+            != (root / "tools/chrome_pipe.cjs").read_bytes()
+        ):
+            raise ValueError("binding")
+        for name, source in (
+            ("manifest.json", "repair-manifest.json"),
+            ("repair-probe.html", "repair-probe.html"),
+        ):
+            if (extension / name).read_bytes() != (
+                root / "extension/test-harness" / source
+            ).read_bytes():
+                raise ValueError("asset")
+        modules = {
+            str(path.relative_to(extension)): _sha256(path) for path in extension.rglob("*.js")
+        }
+        if modules != _compiled_browser_module_hashes(_typescript_compile_binding(current)):
+            raise ValueError("modules")
+        profile_id = evidence["profile"]["expected_id"]
+        if (profile / "BH_R04_PROFILE_ID").read_text() != profile_id:
+            raise ValueError("profile")
+        origin = "chrome-extension://" + _extension_id(
+            json.loads((extension / "manifest.json").read_text())["key"]
+        )
+        pids = []
+        for phase, row in zip(("before", "after"), evidence["pipe_phases"], strict=True):
+            case = workspace / phase
+            config: dict[str, Any] = {
+                "command": _pipe_browser_command(
+                    Path(evidence["browser"]["expected_executable"]), profile
+                ),
+                "workspace": str(case.resolve()),
+                "extension": str(extension.resolve()),
+                "origin": origin,
+            }
+            work = _pipe_work(profile_id, phase, "", None)
+            if row["phase"] != phase or row["config"] != config or row["work"] != work:
+                raise ValueError("input")
+            contents = {}
+            for name, descriptor in row["artifacts"].items():
+                path = case / name
+                if descriptor["path"] != str(path.resolve()) or descriptor["sha256"] != _sha256(
+                    path
+                ):
+                    raise ValueError("artifact")
+                contents[name] = path.read_bytes()
+            if set(contents) != {
+                "input.json",
+                "start.json",
+                "pipe-result.json",
+                "pipe.ndjson",
+                "node.stdout",
+                "node.stderr",
+                "chrome.stdout",
+                "chrome.stderr",
+            }:
+                raise ValueError("artifact set")
+            if (
+                json.loads(contents["input.json"]) != config
+                or json.loads(contents["start.json"]) != work
+                or json.loads(contents["pipe-result.json"]) != row["result"]
+                or any(contents[name] for name in ("node.stdout", "node.stderr", "chrome.stdout"))
+            ):
+                raise ValueError("output")
+            owner, browser = row["owner"], row["browser"]
+            if (
+                owner["pid"] == browser["pid"]
+                or owner["pid"] != owner["pgid"]
+                or browser["pgid"] != owner["pid"]
+            ):
+                raise ValueError("group")
+            for process, command in ((owner, row["invocation"]), (browser, config["command"])):
+                raw = bytes.fromhex(process["proc_cmdline_hex"]).rstrip(b"\0").decode().split("\0")
+                fields = process["proc_stat"][process["proc_stat"].rindex(")") + 2 :].split()
+                headless = [
+                    " ".join(
+                        [
+                            *command[:-1],
+                            "--noerrdialogs",
+                            "--ozone-platform=headless",
+                            "--ozone-override-screen-size=800,600",
+                            "--use-angle=swiftshader-webgl",
+                            command[-1],
+                        ]
+                    )
+                ]
+                allowed = (command, headless) if process is browser else (command,)
+                if (
+                    process["pid"] in pids
+                    or not process["proc_stat"].startswith(str(process["pid"]) + " ")
+                    or int(fields[2]) != owner["pid"]
+                    or raw != process["argv"]
+                    or raw not in allowed
+                    or process["sha256"] != _sha256(Path(process["executable"]))
+                    or Path(process["executable"]) != Path(command[0]).resolve()
+                ):
+                    raise ValueError("process")
+                pids.append(process["pid"])
+            if (
+                int(browser["proc_stat"][browser["proc_stat"].rindex(")") + 2 :].split()[1])
+                != owner["pid"]
+            ):
+                raise ValueError("parent")
+            if row["invocation"][1:] != [
+                str((workspace / "chrome_pipe.cjs").resolve()),
+                str((case / "input.json").resolve()),
+            ]:
+                raise ValueError("owner command")
+            result = row["result"]
+            if result["pid"] != browser["pid"] or result["node_pid"] != owner["pid"]:
+                raise ValueError("result identity")
+            _verify_pipe_transcript(contents["pipe.ndjson"], config, work, result)
+            if (
+                result["sentinel"]["sentinel"] != profile_id
+                or result["sentinel"]["profileId"] != profile_id
+                or result["sentinel"]["origin"] != origin
+                or result["sentinel"]["moduleSha256"] != modules["src/spool.js"]
+                or row["termination"]
+                != {
+                    "method": "SIGKILL_PROCESS_GROUP",
+                    "signal": 9,
+                    "returncode": -9,
+                    "graceful": False,
+                    "owned_process_group": True,
+                }
+            ):
+                raise ValueError("restart")
+        first, second = [row["result"]["sentinel"] for row in evidence["pipe_phases"]]
+        if (
+            evidence["sentinel"]
+            != {
+                "expected": profile_id,
+                "committed": first["sentinel"],
+                "durable": second["sentinel"],
+                "profile_id": second["profileId"],
+            }
+            or evidence["termination"] != evidence["pipe_phases"][0]["termination"]
+        ):
+            raise ValueError("summary")
+        if evidence["module"] != {
+            "expected_sha256": modules["src/spool.js"],
+            "first_sha256": first["moduleSha256"],
+            "second_sha256": second["moduleSha256"],
+            "first_url": first["moduleUrl"],
+            "second_url": second["moduleUrl"],
+        }:
+            raise ValueError("module summary")
+        expected_extension = origin.split("://")[1]
+        if evidence["extension"] != {
+            "expected_id": expected_extension,
+            "first_id": first["extensionId"],
+            "second_id": second["extensionId"],
+            "first_protocol": first["protocol"],
+            "second_protocol": second["protocol"],
+            "first_origin": first["origin"],
+            "second_origin": second["origin"],
+            "load_requested": True,
+        }:
+            raise ValueError("extension summary")
+        for name, row in zip(("first", "second"), evidence["pipe_phases"], strict=True):
+            if (
+                evidence["browser"][name + "_process_executable"] != row["browser"]["executable"]
+                or evidence["browser"][name + "_process_sha256"] != row["browser"]["sha256"]
+            ):
+                raise ValueError("browser summary")
+        if (
+            evidence["browser"]["version"]
+            != evidence["pipe_phases"][0]["result"]["version"]["product"]
+        ):
+            raise ValueError("version summary")
+    except (KeyError, ValueError, TypeError, OSError) as error:
+        raise QualificationRejected("E_PIPE_QUALIFICATION_EVIDENCE") from error
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--browser-binary", type=Path)
     parser.add_argument("--repository-root", type=Path)
+    parser.add_argument("--transport", choices=("legacy", "pipe"), default="legacy")
     args = parser.parse_args()
     print(
         json.dumps(
@@ -550,6 +1047,7 @@ def main() -> None:
                 args.workspace,
                 browser_binary=args.browser_binary,
                 repository_root=args.repository_root,
+                transport=args.transport,
             ),
             sort_keys=True,
         )

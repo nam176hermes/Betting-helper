@@ -79,7 +79,7 @@ def capture_binding() -> dict[str, Any]:
         text=True, timeout=10,
     ).stdout.strip()
     sources = [p for directory, suffix in (
-        ("src", ".py"), ("tools", ".py"), ("extension/src", ".ts"),
+        ("src", ".py"), ("tools", ".py"), ("tools", ".cjs"), ("extension/src", ".ts"),
         ("extension/test-harness", ".ts"),
     ) for p in (ROOT / directory).rglob("*" + suffix)]
     sources += [ROOT / name for name in (

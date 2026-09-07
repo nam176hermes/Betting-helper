@@ -30,6 +30,13 @@ def save(path: Path, value: Any) -> dict[str, str]:
 
 def observe(child: subprocess.Popen[bytes]) -> dict[str, Any]:
     """Query the live process through the exact owned native handle, not its label."""
+    if child.poll() is not None:
+        raise RuntimeError("E_ENV_NATIVE_HANDLE")
+    return observe_handle(child.pid, int(child._handle), child.args)  # type: ignore[attr-defined]
+
+
+def observe_handle(pid: int, handle: int, argv: Any) -> dict[str, Any]:
+    """Read an already owned handle; the controller verifies its parent chain."""
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)  # type: ignore[attr-defined]
     query = kernel.QueryFullProcessImageNameW
     query.argtypes = [
@@ -41,8 +48,7 @@ def observe(child: subprocess.Popen[bytes]) -> dict[str, Any]:
     query.restype = ctypes.c_int
     buffer = ctypes.create_unicode_buffer(32768)
     size = ctypes.c_ulong(len(buffer))
-    handle = int(child._handle)  # type: ignore[attr-defined]  # Native Popen owns this handle.
-    if child.poll() is not None or not query(handle, 0, buffer, ctypes.byref(size)):
+    if not query(handle, 0, buffer, ctypes.byref(size)):
         raise RuntimeError("E_ENV_NATIVE_HANDLE")
     command = subprocess.run(  # noqa: S603 -- read-only exact PID observation.
         [
@@ -50,7 +56,7 @@ def observe(child: subprocess.Popen[bytes]) -> dict[str, Any]:
             "-NoProfile",
             "-NonInteractive",
             "-Command",
-            f"Get-CimInstance Win32_Process -Filter 'ProcessId={child.pid}' | "
+            f"Get-CimInstance Win32_Process -Filter 'ProcessId={pid}' | "
             "Select-Object ProcessId,ParentProcessId,ExecutablePath,CommandLine,CreationDate | "
             "ConvertTo-Json -Compress",
         ],
@@ -59,11 +65,11 @@ def observe(child: subprocess.Popen[bytes]) -> dict[str, Any]:
         timeout=15,
     )
     return {
-        "pid": child.pid,
+        "pid": pid,
         "handle": handle,
         "executable": buffer.value,
         "sha256": sha(Path(buffer.value)),
-        "argv": child.args,
+        "argv": argv,
         "cim": json.loads(command.stdout),
         "cim_raw": command.stdout.decode().strip(),
     }
@@ -312,6 +318,30 @@ def browser_leader(config: dict[str, Any]) -> None:
         or not kernel.AssignProcessToJobObject(job, kernel.GetCurrentProcess())
     ):
         raise RuntimeError("E_ENV_WINDOWS_JOB")
+    if config.get("transport") == "pipe":
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from tools.qualify_chrome_indexeddb import _pipe_node_environment
+
+        case = Path(config["workspace"])
+        with (case / "node.stdout").open("wb") as out, (case / "node.stderr").open("wb") as err:
+            child = subprocess.Popen(  # noqa: S603 -- exact retained pipe program, owned job.
+                [config["node"], config["script"], config["input_path"]],
+                stdout=out,
+                stderr=err,
+                env=_pipe_node_environment(),
+            )
+        save(
+            case / "node-ready.json",
+            {
+                "leader_pid": os.getpid(),
+                "job_handle": int(job),
+                "job_kill_on_close": True,
+                "node": observe(child),
+            },
+        )
+        while child.poll() is None:
+            time.sleep(0.05)
+        raise RuntimeError("E_ENV_PIPE_OWNER_EXIT")
     with (Path(config["workspace"]) / "chrome.log").open("wb") as log:
         child = subprocess.Popen(config["command"], stdout=log, stderr=log)  # noqa: S603 -- fixed approved browser command.
     save(
@@ -328,6 +358,8 @@ def browser_leader(config: dict[str, Any]) -> None:
 
 
 def browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
+    if config.get("transport") == "pipe":
+        return pipe_browser(config, input_path)
     case = Path(config["workspace"])
     with (case / "leader.stdout").open("wb") as out, (case / "leader.stderr").open("wb") as err:
         leader = subprocess.Popen(  # noqa: S603 -- fixed native leader and owned input.
@@ -455,6 +487,149 @@ def browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
         },
         "scope": "UNPACKED_EXTENSION_TARGET_AVAILABILITY_ONLY",
         "physical_power_loss": "HOLD_NOT_EXECUTED",
+    }
+
+
+def pipe_browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
+    """Force the first owned job down, then run the independent successor reader."""
+    from ctypes import wintypes
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from tools.qualify_chrome_indexeddb import _pipe_work
+
+    phases = []
+    for phase in ("before", "after"):
+        case = Path(config["workspace"]) / phase
+        case.mkdir()
+        request = dict(config["requests"][phase])
+        phase_cfg = {
+            key: config[key]
+            for key in ("transport", "command", "extension", "origin", "node", "script")
+        }
+        phase_cfg.update(workspace=str(case), input_path=str(case / "input.json"))
+        save(case / "input.json", phase_cfg)
+        invocation = [
+            sys.executable,
+            "-I",
+            str(Path(__file__).resolve()),
+            "browser-leader",
+            str(case / "input.json"),
+        ]
+        with (case / "leader.stdout").open("wb") as out, (case / "leader.stderr").open("wb") as err:
+            leader = subprocess.Popen(invocation, stdout=out, stderr=err)  # noqa: S603
+        try:
+            deadline = time.monotonic() + 30
+            while not all(
+                (case / name).is_file() for name in ("node-ready.json", "pipe-ready.json")
+            ):
+                if leader.poll() is not None or time.monotonic() > deadline:
+                    raise RuntimeError("E_ENV_PIPE_READY")
+                time.sleep(0.02)
+            observed = observe(leader)
+            ready = json.loads((case / "node-ready.json").read_text())
+            pipe_ready = json.loads((case / "pipe-ready.json").read_text())
+            if pipe_ready["node_pid"] != ready["node"]["pid"]:
+                raise RuntimeError("E_ENV_PIPE_PARENT")
+            kernel = ctypes.WinDLL("kernel32", use_last_error=True)  # type: ignore[attr-defined]
+            kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+            kernel.OpenProcess.restype = wintypes.HANDLE
+            kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+            handle = kernel.OpenProcess(0x1000 | 0x100000, False, pipe_ready["pid"])
+            if not handle:
+                raise RuntimeError("E_ENV_PIPE_CHROME_HANDLE")
+            try:
+                chrome = observe_handle(pipe_ready["pid"], int(handle), config["command"])
+            finally:
+                kernel.CloseHandle(handle)
+            if chrome["cim"]["ParentProcessId"] != ready["node"]["pid"]:
+                raise RuntimeError("E_ENV_PIPE_CHROME_PARENT")
+            request["identity"] = {
+                "run_id": config["profile_id"],
+                "pid": chrome["pid"],
+                "phase": phase,
+            }
+            work = _pipe_work(config["profile_id"], phase, config["worker_ids"][phase], request)
+            save(case / "start.json", work)
+            deadline = time.monotonic() + 35
+            while not (case / "pipe-result.json").is_file():
+                if (case / "pipe-error.json").is_file():
+                    raise RuntimeError(
+                        "E_ENV_PIPE_EXECUTION:" + (case / "pipe-error.json").read_text()
+                    )
+                if leader.poll() is not None or time.monotonic() > deadline:
+                    raise RuntimeError("E_ENV_PIPE_RESULT")
+                time.sleep(0.02)
+            result = json.loads((case / "pipe-result.json").read_text())
+            enumeration = subprocess.run(  # noqa: S603 -- only owned descendants, read-only.
+                [
+                    "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-Command",
+                    "function Desc([int]$taskpid){$children=@(Get-CimInstance "
+                    "Win32_Process -Filter "
+                    '"ParentProcessId=$taskpid");foreach($c in $children){$c | Select-Object '
+                    "ProcessId,ParentProcessId,CreationDate,ExecutablePath,CommandLine;"
+                    "Desc $c.ProcessId}};"
+                    f"ConvertTo-Json -InputObject @(Desc {leader.pid}) -Compress",
+                ],
+                capture_output=True,
+                check=True,
+                timeout=15,
+            )
+            descendants = json.loads(enumeration.stdout)
+        finally:
+            if leader.poll() is None:
+                leader.kill()  # Owned leader handle; inherited job kills Node/Chrome.
+            code = leader.wait(timeout=10)
+        ids = [row["ProcessId"] for row in descendants]
+        cleanup = subprocess.run(  # noqa: S603 -- read-only exact observed identity set.
+            [
+                "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "-NoProfile",
+                "-NonInteractive",
+                "-Command",
+                "ConvertTo-Json -InputObject @(Get-CimInstance Win32_Process -Filter '"
+                + " OR ".join(f"ProcessId={pid}" for pid in ids)
+                + "' | Select-Object ProcessId,ParentProcessId,CreationDate,"
+                "ExecutablePath,CommandLine) -Compress",
+            ],
+            capture_output=True,
+            check=True,
+            timeout=15,
+        )
+        survivors = [old for old in descendants if old in json.loads(cleanup.stdout)]
+        if code != 1 or survivors:
+            raise RuntimeError("E_ENV_PIPE_JOB_SURVIVOR")
+        phases.append(
+            {
+                "phase": phase,
+                "config": phase_cfg,
+                "leader": observed,
+                **ready,
+                "browser": chrome,
+                "result": result,
+                "work": work,
+                "descendants": descendants,
+                "descendants_raw": enumeration.stdout.decode(),
+                "cleanup_raw": cleanup.stdout.decode(),
+                "cleanup_command": cleanup.args,
+                "termination": {
+                    "mechanism": "WINDOWS_JOB_KILL_ON_CONTROLLER_TERMINATION",
+                    "leader_exit": code,
+                    "remaining_observed_descendants": 0,
+                    "graceful": False,
+                },
+            }
+        )
+    return {
+        "phases": phases,
+        "input_path": str(input_path),
+        "controller": observe_handle(
+            os.getpid(),
+            -1,
+            [sys.executable, "-I", str(Path(__file__).resolve()), "browser", str(input_path)],
+        ),
     }
 
 

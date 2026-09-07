@@ -235,10 +235,19 @@ def verify_native_storage(report: dict[str, Any]) -> None:
         raise ValueError("E_ENV_NATIVE_EVIDENCE") from error
 
 
-def _verify_native_observation(row: dict[str, Any], command: list[str], parent: int) -> None:
+def _verify_native_observation(
+    row: dict[str, Any],
+    command: list[str],
+    parent: int,
+    *,
+    wsl_entry: bool = False,
+) -> None:
+    command_lines = [subprocess.list2cmdline(command)]
+    if wsl_entry:
+        command_lines.append(subprocess.list2cmdline(["python.exe", *command[1:]]))
     if (
         row["argv"] != command
-        or row["cim"]["CommandLine"] != subprocess.list2cmdline(command)
+        or row["cim"]["CommandLine"] not in command_lines
         or row["pid"] != row["cim"]["ProcessId"]
         or row["cim"]["ParentProcessId"] != parent
         or row["executable"] != row["cim"]["ExecutablePath"]
@@ -640,12 +649,8 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
 
 
 def run_windows_browser(workspace: Path) -> dict[str, Any]:
-    from tools.qualify_chrome_indexeddb import (
-        _CDP,
-        _browser_command,
-        _free_port,
-        _prepare_test_extension,
-    )
+    from tools.qualify_chrome_indexeddb import _pipe_browser_command, _prepare_test_extension
+    from tools.run_indexeddb_crash_matrix import PRODUCER, REGISTRY, STREAM
 
     workspace.mkdir(parents=True, exist_ok=True)
     owned = WINDOWS_PARENT / f"browser-environment-{uuid4()}"
@@ -653,24 +658,44 @@ def run_windows_browser(workspace: Path) -> dict[str, Any]:
     extension, extension_id, _ = _prepare_test_extension(ROOT, owned)
     profile = owned / "profile"
     profile.mkdir()
+    profile_id = str(uuid4())
+    save(profile / "environment-profile.json", {"id": profile_id})
+    script = owned / "chrome_pipe.cjs"
+    shutil.copy2(ROOT / "tools/chrome_pipe.cjs", script)
     browser = Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe")
-    port = _free_port()
-    origin = "chrome-extension://" + extension_id
-    command = _browser_command(browser, profile, extension, origin + "/repair-probe.html", port)
+    command = _pipe_browser_command(browser, profile)
     command[0] = winpath(browser)
-    command = [
-        arg.replace(str(profile.resolve()), winpath(profile)).replace(
-            str(extension.resolve()), winpath(extension)
-        )
-        for arg in command
-    ]
+    command = [arg.replace(str(profile.resolve()), winpath(profile)) for arg in command]
+    requests = {
+        phase: {
+            "operation": "exercise" if phase == "before" else "read",
+            "options": {
+                "browser_run_id": profile_id,
+                "producer_id": PRODUCER,
+                "stream_id": STREAM,
+                "generation": "0",
+                "registry": json.loads(REGISTRY.read_text()),
+            },
+            "observations": [
+                json.dumps(value, sort_keys=True, separators=(",", ":"))
+                for value in _observations(profile_id)
+            ]
+            if phase == "before"
+            else [],
+        }
+        for phase in ("before", "after")
+    }
     config = {
+        "transport": "pipe",
         "workspace": winpath(owned),
         "command": command,
-        "origin": origin,
-        "port": port,
+        "extension": winpath(extension),
+        "origin": "chrome-extension://" + extension_id,
         "node": winpath(NATIVE.parent.parent / "node/bin/node.exe"),
-        "cdp_script": _CDP,
+        "script": winpath(script),
+        "profile_id": profile_id,
+        "requests": requests,
+        "worker_ids": {phase: str(uuid4()) for phase in ("before", "after")},
     }
     input_file = workspace / "windows-browser-input.json"
     save(input_file, config)
@@ -681,109 +706,324 @@ def run_windows_browser(workspace: Path) -> dict[str, Any]:
         "browser",
         winpath(input_file),
     ]
-    completed = subprocess.run(invocation, capture_output=True, timeout=60)  # noqa: S603
+    completed = subprocess.run(invocation, capture_output=True, timeout=180)  # noqa: S603
     (workspace / "windows-browser.stdout").write_bytes(completed.stdout)
     (workspace / "windows-browser.stderr").write_bytes(completed.stderr)
     if completed.returncode or completed.stderr:
         raise RuntimeError(
             f"E_ENV_WINDOWS_BROWSER:{completed.returncode}:{completed.stderr.decode()}"
         )
-    report: dict[str, Any] = json.loads(completed.stdout)
-    report.update(
-        {
-            "binding": capture_binding(),
-            "input": artifact(input_file),
-            "owner_command": invocation,
-            "stdout": artifact(workspace / "windows-browser.stdout"),
-            "stderr": artifact(workspace / "windows-browser.stderr"),
-            "owned_workspace": str(owned),
-            "browser_binary": artifact(browser),
-            "node_binary": artifact(NATIVE.parent.parent / "node/bin/node.exe"),
-            "leader_stderr": artifact(owned / "leader.stderr"),
-            "leader_stdout": artifact(owned / "leader.stdout"),
-            "chrome_log": artifact(owned / "chrome.log"),
-            "document_artifact": artifact(owned / "document-observation.json"),
-        }
-    )
+    raw = json.loads(completed.stdout)
+    for phase in raw["phases"]:
+        case = owned / phase["phase"]
+        for key, name in (
+            ("transcript", "pipe.ndjson"),
+            ("result_artifact", "pipe-result.json"),
+            ("work_artifact", "start.json"),
+            ("config_artifact", "input.json"),
+            ("node_stderr", "node.stderr"),
+            ("node_stdout", "node.stdout"),
+            ("leader_stderr", "leader.stderr"),
+            ("leader_stdout", "leader.stdout"),
+            ("chrome_stdout", "chrome.stdout"),
+            ("chrome_stderr", "chrome.stderr"),
+        ):
+            phase[key] = artifact(case / name)
+    first = raw["phases"][0]
+    report = {
+        **raw,
+        "result": "PASS",
+        "restart_result": "PASS",
+        "case_id": "WINDOWS-CHROME-PROCESS-RESTART",
+        "binding": capture_binding(),
+        "input": artifact(input_file),
+        "owner_command": invocation,
+        "stdout": artifact(workspace / "windows-browser.stdout"),
+        "stderr": artifact(workspace / "windows-browser.stderr"),
+        "owned_workspace": str(owned),
+        "profile_id": profile_id,
+        "origin": config["origin"],
+        "script": artifact(script),
+        "browser_binary": artifact(browser),
+        "node_binary": artifact(NATIVE.parent.parent / "node/bin/node.exe"),
+        "modules": {
+            str(path.relative_to(extension)): artifact(path)["sha256"]
+            for path in extension.rglob("*.js")
+        },
+        "before": first["result"]["worker"],
+        "after": raw["phases"][1]["result"]["worker"],
+        "browser": first["browser"],
+        "document": first["result"]["document"],
+        "termination": first["termination"],
+        "observed_error": None,
+        "physical_power_loss": "HOLD_NOT_EXECUTED",
+    }
     verify_windows_browser(report)
     save(workspace / "windows-browser-terminal.json", report)
     return report
 
 
 def verify_windows_browser(report: dict[str, Any]) -> None:
-    from tools.qualify_chrome_indexeddb import _CDP, _browser_command
+    from tools.qualify_chrome_indexeddb import (
+        _extension_id,
+        _pipe_browser_command,
+        _pipe_work,
+        _verify_pipe_transcript,
+    )
+    from tools.run_indexeddb_crash_matrix import PRODUCER, REGISTRY, STREAM, compare_indexeddb_state
+    from tools.verify_repair_evidence import (
+        _compiled_browser_module_hashes,
+        _typescript_compile_binding,
+    )
 
     try:
+        current = capture_binding()
         cfg = json.loads(checked(report["input"]))
         raw = json.loads(checked(report["stdout"]))
+        owned = Path(report["owned_workspace"])
+        profile = owned / "profile"
+        extension = owned / "test-extension"
+        script = owned / "chrome_pipe.cjs"
+        browser = Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe")
         if (
-            any(report[key] != value for key, value in raw.items())
+            report["binding"] != current
             or checked(report["stderr"])
-            or checked(report["leader_stdout"])
-            or checked(report["leader_stderr"])
-            or report["binding"] != capture_binding()
-            or cfg["cdp_script"] != _CDP
+            or report["result"] != "PASS"
+            or report["restart_result"] != "PASS"
+            or report["case_id"] != "WINDOWS-CHROME-PROCESS-RESTART"
+            or report["physical_power_loss"] != "HOLD_NOT_EXECUTED"
+            or checked(report["script"]) != (ROOT / "tools/chrome_pipe.cjs").read_bytes()
+            or Path(report["script"]["path"]) != script
+            or localpath(report["browser_binary"]["path"]) != browser
         ):
             raise ValueError("binding")
+        checked(report["browser_binary"])
         checked(report["node_binary"])
-        checked(report["chrome_log"])
-        if json.loads(checked(report["document_artifact"])) != report["document"]:
-            raise ValueError("document")
-        owned = Path(report["owned_workspace"])
-        browser = localpath(report["browser_binary"]["path"])
-        if browser != Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"):
-            raise ValueError("browser path")
-        expected = _browser_command(
-            browser,
-            owned / "profile",
-            owned / "test-extension",
-            report["origin"] + "/repair-probe.html",
-            cfg["port"],
-        )
-        expected[0] = winpath(browser)
-        expected = [
-            arg.replace(str((owned / "profile").resolve()), winpath(owned / "profile")).replace(
-                str((owned / "test-extension").resolve()), winpath(owned / "test-extension")
-            )
-            for arg in expected
+        expected_invocation = [
+            str(NATIVE),
+            "-I",
+            winpath(ROOT / "tools/native_environment_probe.py"),
+            "browser",
+            winpath(Path(report["input"]["path"])),
         ]
-        if cfg["command"] != expected or cfg["workspace"] != winpath(owned):
-            raise ValueError("command")
-        _verify_native_observation(report["browser"], expected, report["leader_pid"])
+        native_invocation = [winpath(NATIVE), *expected_invocation[1:]]
         if (
-            report["leader"]["pid"] != report["leader_pid"]
-            or not report["job_kill_on_close"]
-            or report["descendant_cleanup_raw"] != "0"
-            or json.loads(report["descendants_raw"]) != report["descendants_before"]
+            report["owner_command"] != expected_invocation
+            or owned.parent != WINDOWS_PARENT
+            or raw["input_path"] != expected_invocation[-1]
+            or report["controller"] != raw["controller"]
         ):
-            raise ValueError("job")
-        descendants = report["descendants_before"]
-        ids = [item["ProcessId"] for item in descendants]
-        if not ids or len(ids) != len(set(ids)) or report["browser"]["pid"] not in ids:
-            raise ValueError("descendants")
-        if any(item["ParentProcessId"] not in {*ids, report["leader_pid"]} for item in descendants):
-            raise ValueError("ownership")
-        termination = report["termination"]
-        if (
-            termination["observed_descendant_pids"] != ids
-            or termination["remaining_observed_descendants"] != 0
-            or termination["leader_exit"] != 1
-            or termination["mechanism"] != "WINDOWS_JOB_KILL_ON_CONTROLLER_TERMINATION"
-        ):
-            raise ValueError("termination")
-        document = report["document"]
-        available = (
-            document["protocol"] == "chrome-extension:"
-            and document["origin"] == report["origin"]
-            and document["probe"]
-            and document["extensionId"] == report["origin"].split("://")[1]
+            raise ValueError("controller")
+        _verify_native_observation(
+            report["controller"],
+            native_invocation,
+            report["controller"]["cim"]["ParentProcessId"],
+            wsl_entry=True,
         )
-        if report["result"] != ("PASS" if available else "HOLD") or report["observed_error"] != (
-            None if available else "E_EXTENSION_TARGET_UNAVAILABLE"
+        for name, source in (
+            ("manifest.json", "repair-manifest.json"),
+            ("repair-probe.html", "repair-probe.html"),
         ):
-            raise ValueError("availability")
-        if report["physical_power_loss"] != "HOLD_NOT_EXECUTED":
-            raise ValueError("physical claim")
+            if (extension / name).read_bytes() != (
+                ROOT / "extension/test-harness" / source
+            ).read_bytes():
+                raise ValueError("asset")
+        origin = "chrome-extension://" + _extension_id(
+            json.loads((extension / "manifest.json").read_text())["key"]
+        )
+        if report["origin"] != origin or json.loads(
+            (profile / "environment-profile.json").read_text()
+        ) != {"id": report["profile_id"]}:
+            raise ValueError("profile")
+        modules = report["modules"]
+        if modules != _compiled_browser_module_hashes(_typescript_compile_binding(current)):
+            raise ValueError("compiled modules")
+        if any(artifact(extension / name)["sha256"] != digest for name, digest in modules.items()):
+            raise ValueError("module bytes")
+        command = _pipe_browser_command(browser, profile)
+        command[0] = winpath(browser)
+        command = [arg.replace(str(profile.resolve()), winpath(profile)) for arg in command]
+        requests = {
+            phase: {
+                "operation": "exercise" if phase == "before" else "read",
+                "options": {
+                    "browser_run_id": report["profile_id"],
+                    "producer_id": PRODUCER,
+                    "stream_id": STREAM,
+                    "generation": "0",
+                    "registry": json.loads(REGISTRY.read_text()),
+                },
+                "observations": [
+                    json.dumps(value, sort_keys=True, separators=(",", ":"))
+                    for value in _observations(report["profile_id"])
+                ]
+                if phase == "before"
+                else [],
+            }
+            for phase in ("before", "after")
+        }
+        expected_cfg = {
+            "transport": "pipe",
+            "workspace": winpath(owned),
+            "command": command,
+            "extension": winpath(extension),
+            "origin": origin,
+            "node": winpath(NATIVE.parent.parent / "node/bin/node.exe"),
+            "script": winpath(script),
+            "profile_id": report["profile_id"],
+            "requests": requests,
+            "worker_ids": cfg["worker_ids"],
+        }
+        if cfg != expected_cfg or set(cfg["worker_ids"]) != {"before", "after"}:
+            raise ValueError("config")
+        observed_pids = []
+        for phase, row, saved in zip(
+            ("before", "after"), report["phases"], raw["phases"], strict=True
+        ):
+            if any(row.get(key) != value for key, value in saved.items()):
+                raise ValueError("raw owner")
+            case = owned / phase
+            expected_phase_cfg = {
+                key: cfg[key]
+                for key in ("transport", "command", "extension", "origin", "node", "script")
+            }
+            expected_phase_cfg.update(
+                workspace=winpath(case), input_path=winpath(case / "input.json")
+            )
+            if row["phase"] != phase or row["config"] != expected_phase_cfg:
+                raise ValueError("phase config")
+            for key, name in (
+                ("transcript", "pipe.ndjson"),
+                ("result_artifact", "pipe-result.json"),
+                ("work_artifact", "start.json"),
+                ("config_artifact", "input.json"),
+                ("node_stderr", "node.stderr"),
+                ("node_stdout", "node.stdout"),
+                ("leader_stderr", "leader.stderr"),
+                ("leader_stdout", "leader.stdout"),
+                ("chrome_stdout", "chrome.stdout"),
+                ("chrome_stderr", "chrome.stderr"),
+            ):
+                if Path(row[key]["path"]) != case / name:
+                    raise ValueError("artifact path")
+                content = checked(row[key])
+                if (
+                    key
+                    in {
+                        "node_stderr",
+                        "node_stdout",
+                        "leader_stderr",
+                        "leader_stdout",
+                        "chrome_stdout",
+                    }
+                    and content
+                ):
+                    raise ValueError("unexpected output")
+            leader_command = [
+                winpath(NATIVE),
+                "-I",
+                winpath(ROOT / "tools/native_environment_probe.py"),
+                "browser-leader",
+                winpath(case / "input.json"),
+            ]
+            _verify_native_observation(row["leader"], leader_command, report["controller"]["pid"])
+            _verify_native_observation(
+                row["node"],
+                [cfg["node"], cfg["script"], winpath(case / "input.json")],
+                row["leader_pid"],
+            )
+            _verify_native_observation(row["browser"], command, row["node"]["pid"])
+            if (
+                row["leader"]["pid"] != row["leader_pid"]
+                or not row["job_kill_on_close"]
+                or not row["job_handle"]
+            ):
+                raise ValueError("job")
+            pids = [row["leader_pid"], row["node"]["pid"], row["browser"]["pid"]]
+            if len(set(pids)) != 3 or any(pid in observed_pids for pid in pids):
+                raise ValueError("restart process")
+            observed_pids.extend(pids)
+            descendants = json.loads(row["descendants_raw"])
+            cleanup = json.loads(row["cleanup_raw"])
+            ids = [item["ProcessId"] for item in descendants]
+            if (
+                descendants != row["descendants"]
+                or len(ids) != len(set(ids))
+                or row["browser"]["pid"] not in ids
+                or row["node"]["pid"] not in ids
+                or any(
+                    item["ParentProcessId"] not in {*ids, row["leader_pid"]} for item in descendants
+                )
+                or any(item in cleanup for item in descendants)
+                or row["termination"]
+                != {
+                    "mechanism": "WINDOWS_JOB_KILL_ON_CONTROLLER_TERMINATION",
+                    "leader_exit": 1,
+                    "remaining_observed_descendants": 0,
+                    "graceful": False,
+                }
+            ):
+                raise ValueError("termination")
+            for process in (row["node"], row["browser"]):
+                if process["cim"] not in descendants:
+                    raise ValueError("descendant identity")
+            request: dict[str, Any] = {
+                **requests[phase],
+                "identity": {
+                    "run_id": report["profile_id"],
+                    "pid": row["browser"]["pid"],
+                    "phase": phase,
+                },
+            }
+            work = _pipe_work(report["profile_id"], phase, cfg["worker_ids"][phase], request)
+            if (
+                row["work"] != work
+                or json.loads(checked(row["work_artifact"])) != work
+                or json.loads(checked(row["config_artifact"])) != expected_phase_cfg
+            ):
+                raise ValueError("work")
+            result = row["result"]
+            if (
+                json.loads(checked(row["result_artifact"])) != result
+                or result["pid"] != row["browser"]["pid"]
+                or result["node_pid"] != row["node"]["pid"]
+            ):
+                raise ValueError("result identity")
+            _verify_pipe_transcript(checked(row["transcript"]), expected_phase_cfg, work, result)
+            sentinel = result["sentinel"]
+            if (
+                sentinel["sentinel"] != report["profile_id"]
+                or sentinel["profileId"] != report["profile_id"]
+                or sentinel["origin"] != origin
+                or sentinel["moduleSha256"] != modules["src/spool.js"]
+            ):
+                raise ValueError("sentinel")
+            value = result["worker"]
+            if (
+                value != report[phase]
+                or value["worker_id"] != work["worker_id"]
+                or value["origin"] != origin
+                or value["module_sha256"] != modules["src/spool.js"]
+            ):
+                raise ValueError("worker")
+            compare_indexeddb_state(
+                value, request["identity"], _observations(report["profile_id"]), 2, ack=1
+            )
+        before = report["before"]
+        first, second = [entry["spool_record"] for entry in before["entries"]]
+        if (
+            before["aborted"] is not True
+            or before["first"] != first
+            or before["second"] != second
+            or before["duplicate"] != first
+            or before["pending"] != [second]
+            or before["invalid_ack"] != "Error: E_SPOOL_ACK"
+            or any(before[key] != report["after"][key] for key in ("entries", "states", "keys"))
+            or report["browser"] != report["phases"][0]["browser"]
+            or report["document"] != report["phases"][0]["result"]["document"]
+            or report["termination"] != report["phases"][0]["termination"]
+        ):
+            raise ValueError("restart state")
     except (KeyError, ValueError, TypeError, OSError) as error:
         raise ValueError("E_ENV_WINDOWS_BROWSER_EVIDENCE") from error
 
@@ -815,6 +1055,10 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
         + [
             {"case_id": "LINUX-CHROME-PROCESS-RESTART", "result": linux_browser["result"]},
             {"case_id": "WINDOWS-CONTROLLER-JOB-TERMINATION", "result": "PASS"},
+            {
+                "case_id": "WINDOWS-CHROME-PROCESS-RESTART",
+                "result": windows_browser["restart_result"],
+            },
             {
                 "case_id": "WINDOWS-CHROME-EXTENSION-TARGET",
                 "result": windows_browser["result"],
