@@ -70,6 +70,48 @@ def checked(
     return data
 
 
+def _browser_file_paths(case: Path, modules: dict[str, str], *, workers: bool) -> list[Path]:
+    paths = [case / "test-extension" / name for name in sorted(modules)]
+    paths.extend(case / "test-extension" / name for name in ("manifest.json", "repair-probe.html"))
+    paths.append(case / "profile/environment-profile.json")
+    if workers:
+        paths.extend(case / f"{phase}-worker.json" for phase in ("before", "after"))
+    return paths
+
+
+def environment_retained_boundaries(report: dict[str, Any], workspace: Path) -> tuple[Path, ...]:
+    """Only the controller workspace and explicitly owned per-run native stores."""
+    roots = {workspace.resolve()}
+    for name, value in report["reports"].items():
+        if name in {"native_ingestor", "native_commit_io"}:
+            owned = localpath(value["config"]["workspace"])
+            prefix = "native-ingestor-"
+        elif name in {"native", "windows_browser"}:
+            owned = Path(value["owned_workspace"])
+            prefix = "environment-" if name == "native" else "browser-environment-"
+        else:
+            continue
+        if owned.parent != WINDOWS_PARENT or not owned.name.startswith(prefix):
+            raise ValueError("E_ENV_ARTIFACT_BOUNDARY")
+        roots.add(owned)
+    return tuple(sorted(roots))
+
+
+def environment_live_roots() -> tuple[Path, ...]:
+    """Verified native prerequisites, never the parent containing disposable stores."""
+    from tools.run_native_ingestor_qualification import DEPENDENCIES, dependency_binding
+
+    dependency = dependency_binding()
+    return (
+        ROOT,
+        NATIVE.parent.parent,
+        CHROME,
+        Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"),
+        DEPENDENCIES,
+        *(Path(row["path"]) for row in dependency["wheels"]),
+    )
+
+
 def run_native_storage(workspace: Path) -> dict[str, Any]:
     import rfc8785
 
@@ -557,6 +599,9 @@ def run_browser_restart(workspace: Path) -> dict[str, Any]:
         "terminations": terminations,
         "physical_power_loss": "HOLD_NOT_EXECUTED",
     }
+    report["retained_browser_files"] = [
+        artifact(path) for path in _browser_file_paths(workspace, modules, workers=True)
+    ]
     verify_browser_restart(report)
     save(workspace / "browser-terminal.json", report)
     return report
@@ -602,6 +647,12 @@ def verify_browser_restart(
             raise ValueError("binding")
         if modules != _compiled_browser_module_hashes(_typescript_compile_binding(current)):
             raise ValueError("modules")
+        expected_files = _browser_file_paths(case, modules, workers=True)
+        files = report["retained_browser_files"]
+        if [row["path"] for row in files] != [str(path) for path in expected_files]:
+            raise ValueError("browser files")
+        for row in files:
+            retained(row)
         for name, digest in modules.items():
             if hashlib.sha256(read_path(extension / name)).hexdigest() != digest:
                 raise ValueError("module bytes")
@@ -837,6 +888,9 @@ def run_windows_browser(workspace: Path) -> dict[str, Any]:
         "observed_error": None,
         "physical_power_loss": "HOLD_NOT_EXECUTED",
     }
+    report["retained_browser_files"] = [
+        artifact(path) for path in _browser_file_paths(owned, report["modules"], workers=False)
+    ]
     verify_windows_browser(report)
     save(workspace / "windows-browser-terminal.json", report)
     return report
@@ -936,7 +990,16 @@ def verify_windows_browser(
         modules = report["modules"]
         if modules != _compiled_browser_module_hashes(_typescript_compile_binding(current)):
             raise ValueError("compiled modules")
-        if any(artifact(extension / name)["sha256"] != digest for name, digest in modules.items()):
+        expected_files = _browser_file_paths(owned, modules, workers=False)
+        files = report["retained_browser_files"]
+        if [row["path"] for row in files] != [str(path) for path in expected_files]:
+            raise ValueError("browser files")
+        for row in files:
+            retained(row)
+        if any(
+            hashlib.sha256(read_path(extension / name)).hexdigest() != digest
+            for name, digest in modules.items()
+        ):
             raise ValueError("module bytes")
         command = _pipe_browser_command(browser, profile)
         command[0] = winpath(browser)
@@ -1347,9 +1410,10 @@ def verify_environment_qualification(
             raise ValueError("terminal projection")
         for descriptor, expected in zip(terminal_files, terminal_reports, strict=True):
             boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
-            if json.loads(
-                checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
-            ) != expected:
+            if (
+                json.loads(checked(descriptor, artifacts=artifacts, recorded_boundary=boundary))
+                != expected
+            ):
                 raise ValueError("terminal projection")
     except (KeyError, TypeError, ValueError, OSError) as error:
         raise ValueError("E_ENVIRONMENT_QUALIFICATION") from error
@@ -1408,7 +1472,7 @@ def verify_environment_qualification_evidence(
             report,
             aggregate_locator=recorded,
             aggregate_raw=raw,
-            live_roots=(ROOT, NATIVE.parent.parent, config.chrome_path.parent),
+            live_roots=environment_live_roots(),
         )
         verify_environment_qualification(report, artifacts=active)
     except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as error:
@@ -1445,18 +1509,12 @@ def main() -> None:
     ):
         raise ValueError("E_ENVIRONMENT_QUALIFICATION")
     report = run_environment_qualification(args.workspace)
-    roots = {args.workspace.resolve()}
-    for value in report["reports"].values():
-        if isinstance(value, dict):
-            owned = value.get("owned_workspace")
-            if isinstance(owned, str):
-                roots.add(Path(owned))
     sources = [
         (args.aggregate, str(args.aggregate.resolve()), str(args.workspace.resolve())),
         *collect_retained_sources(
             report,
-            retained_boundaries=tuple(sorted(roots)),
-            live_roots=(ROOT, NATIVE.parent.parent, config.chrome_path.parent),
+            retained_boundaries=environment_retained_boundaries(report, args.workspace),
+            live_roots=environment_live_roots(),
         ),
     ]
     write_closed_inventory(sources, args.inventory)
