@@ -8,7 +8,10 @@ import json
 import signal
 import sys
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 import rfc8785
 
@@ -203,10 +206,12 @@ def verify_destruction(
     *,
     terminal: bool = True,
     mutation_type: str | None = None,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> None:
     from tools.run_indexeddb_crash_matrix import PRODUCER, REGISTRY, STREAM, compare_indexeddb_state
     from tools.verify_repair_evidence import (
         _contains_expected,
+        _read_retained,
         _sqlite_descriptor,
         _sqlite_file,
         _verify_browser_binding,
@@ -297,7 +302,7 @@ def verify_destruction(
             or descriptor["path"] != str(case / filename)
             or _sqlite_descriptor(row, descriptor, "E_DESTRUCTION_EXTERNAL_ARTIFACT")
             != expected_value
-            or Path(descriptor["path"]).read_bytes() != rfc8785.dumps(expected_value)
+            or _read_retained(Path(descriptor["path"])) != rfc8785.dumps(expected_value)
         ):
             raise ValueError("E_DESTRUCTION_EXTERNAL_ARTIFACT")
     processes = row["processes"]
@@ -335,7 +340,7 @@ def verify_destruction(
         stderr_path = _sqlite_file(
             row, stderr["path"], stderr["sha256"], "E_DESTRUCTION_PROCESS_STDERR"
         )
-        if stderr_path != case / (name + ".stderr") or stderr_path.read_bytes() != b"":
+        if stderr_path != case / (name + ".stderr") or _read_retained(stderr_path) != b"":
             raise ValueError("E_DESTRUCTION_PROCESS_STDERR")
         stdout = process["stdout"]
         if not isinstance(stdout, dict) or set(stdout) != {"path", "sha256"}:
@@ -347,7 +352,7 @@ def verify_destruction(
             raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
         expected_exit = (1 if mutation_type == "INPUT" else -signal.SIGKILL) if mode == "run" else 0
         if (
-            hashlib.sha256(output_path.read_bytes()).hexdigest() != process["stdout"]["sha256"]
+            hashlib.sha256(_read_retained(output_path)).hexdigest() != process["stdout"]["sha256"]
             or process["exit_code"] != expected_exit
         ):
             raise ValueError("E_DESTRUCTION_PROCESS_EXIT")
@@ -372,7 +377,7 @@ def verify_destruction(
                 "observed_error": "E_DESTRUCTION_HUMAN_INVOCATION"
             }:
                 raise ValueError("E_DESTRUCTION_WRONG_REJECTION")
-        elif output_path.read_bytes() != b"":
+        elif _read_retained(output_path) != b"":
             raise ValueError("E_DESTRUCTION_PROCESS_OUTPUT")
     if mutation_type == "INPUT":
         if row["checkpoint"] is not None:

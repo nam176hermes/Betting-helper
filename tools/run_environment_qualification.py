@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import re
@@ -10,11 +11,14 @@ import sqlite3
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from tools.run_indexeddb_crash_matrix import CHROME, PACK, ROOT, _observations
 from tools.verify_repair_evidence import capture_binding
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 NATIVE = Path(
     "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe"
@@ -47,8 +51,20 @@ def localpath(path: str) -> Path:
     )  # noqa: S603
 
 
-def checked(descriptor: dict[str, str]) -> bytes:
-    data = localpath(descriptor["path"]).read_bytes()
+def checked(
+    descriptor: dict[str, str],
+    *,
+    artifacts: RetainedArtifactIO | None = None,
+    recorded_boundary: str | None = None,
+) -> bytes:
+    if artifacts is not None:
+        if recorded_boundary is None:
+            raise ValueError("E_ENV_ARTIFACT_BOUNDARY")
+        data = artifacts.read_bytes(descriptor["path"], recorded_boundary=recorded_boundary)
+    else:
+        if recorded_boundary is not None:
+            raise ValueError("E_ENV_ARTIFACT_BOUNDARY")
+        data = localpath(descriptor["path"]).read_bytes()
     if hashlib.sha256(data).hexdigest() != descriptor["sha256"]:
         raise ValueError("E_ENV_ARTIFACT_HASH")
     return data
@@ -107,8 +123,14 @@ def run_native_storage(workspace: Path) -> dict[str, Any]:
     return result
 
 
-def verify_native_storage(report: dict[str, Any]) -> None:
+def verify_native_storage(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
     from moj_discovery.store import validate_journal
+
+    def retained(descriptor: dict[str, str]) -> bytes:
+        boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+        return checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
 
     try:
         if (
@@ -121,18 +143,18 @@ def verify_native_storage(report: dict[str, Any]) -> None:
             or report["native_ingestor"] != "HOLD_MISSING_NATIVE_SCHEMA_DEPENDENCIES"
         ):
             raise ValueError("header")
-        raw = json.loads(checked(report["owner_stdout"]))
-        if any(report[key] != value for key, value in raw.items()) or checked(
+        raw = json.loads(retained(report["owner_stdout"]))
+        if any(report[key] != value for key, value in raw.items()) or retained(
             report["owner_stderr"]
         ):
             raise ValueError("owner")
         for entry in report["dependency_closure"]:
-            if checked(entry["source"]) != checked(entry["copy"]):
+            if checked(entry["source"]) != retained(entry["copy"]):
                 raise ValueError("dependency")
         for item in report["runtime_files"]:
             checked(item)
         checked(report["entrypoint"])
-        cfg = json.loads(checked(report["owner_input"]))
+        cfg = json.loads(retained(report["owner_input"]))
         if cfg["root"] != winpath(ROOT) or cfg["workspace"] != winpath(
             Path(report["owned_workspace"])
         ):
@@ -188,8 +210,8 @@ def verify_native_storage(report: dict[str, Any]) -> None:
                     "pid": writer["pid"],
                     "exit": 1,
                 }
-                or checked(row["writer_stdout"])
-                or checked(row["writer_stderr"])
+                or retained(row["writer_stdout"])
+                or retained(row["writer_stderr"])
             ):
                 raise ValueError("process")
             if (
@@ -199,7 +221,7 @@ def verify_native_storage(report: dict[str, Any]) -> None:
                 raise ValueError("observation")
             if hashlib.sha256(NATIVE.read_bytes()).hexdigest() != writer["sha256"]:
                 raise ValueError("executable")
-            child_input = json.loads(checked(row["input"]))
+            child_input = json.loads(retained(row["input"]))
             if set(child_input) != {"root", "dependency_root", "run_dir", "phase", "ready"}:
                 raise ValueError("oracle in child")
             if [p["mode"] for p in row["processes"]] != ["setup", "reopen", "read"]:
@@ -220,11 +242,11 @@ def verify_native_storage(report: dict[str, Any]) -> None:
                     or process["observed"]["pid"] != process["pid"]
                 ):
                     raise ValueError("reader command")
-                value = json.loads(checked(process["stdout"]))
+                value = json.loads(retained(process["stdout"]))
                 if (
                     process["exit"] != 0
                     or value["pid"] != process["pid"]
-                    or checked(process["stderr"])
+                    or retained(process["stderr"])
                 ):
                     raise ValueError("reader")
                 if value["state"] != (
@@ -365,9 +387,15 @@ def run_filesystem_faults(workspace: Path) -> dict[str, Any]:
     return report
 
 
-def verify_filesystem_faults(report: dict[str, Any]) -> None:
+def verify_filesystem_faults(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
     from tools.owner_mutation_evidence import verify_process
-    from tools.verify_repair_evidence import aggregate_repair_evidence
+    from tools.verify_repair_evidence import _RETAINED_ARTIFACTS, aggregate_repair_evidence
+
+    def retained(descriptor: dict[str, str]) -> bytes:
+        boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+        return checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
 
     if (
         report["binding"] != capture_binding()
@@ -376,7 +404,9 @@ def verify_filesystem_faults(report: dict[str, Any]) -> None:
         raise ValueError("E_ENV_FILESYSTEM_BINDING")
     controls = report["commit_io"]["records"]
     if (
-        aggregate_repair_evidence([row["vector_id"] for row in controls], controls)["result"]
+        aggregate_repair_evidence(
+            [row["vector_id"] for row in controls], controls, artifacts=artifacts
+        )["result"]
         != "PASS"
     ):
         raise ValueError("E_ENV_FILESYSTEM_CONTROL")
@@ -386,43 +416,52 @@ def verify_filesystem_faults(report: dict[str, Any]) -> None:
         ("schema_corruption", "E_STORE_SCHEMA"),
         ("missing_database", "E_RESTART_MISSING_DATABASE"),
     ]
-    for (name, error), fault in zip(names, report["faults"], strict=True):
-        case = Path(fault["case_directory"])
-        request = {"run_id": fault["run_id"]}
-        if fault["fault"] != name or fault["observed_error"] != error:
-            raise ValueError("E_ENV_FILESYSTEM_FAULT")
-        verify_process(
-            fault["reader_before"], case, "sql-read", "reader-before", request, fault["before"]
-        )
-        verify_process(
-            fault["reader_after"],
-            case,
-            "sql-read",
-            "reader-after",
-            request,
-            {"observed_error": error},
-            rejection=True,
-        )
-        before = checked(fault["before_copy"])
-        if fault["before"] != controls[1]["actual"]["after"]:
-            raise ValueError("E_ENV_FILESYSTEM_BASELINE")
-        if name == "missing_database":
-            if (
-                checked(fault["removed_copy"]) != before
-                or (case / fault["run_id"] / "run.sqlite3").exists()
-            ):
-                raise ValueError("E_ENV_FILESYSTEM_ABSENCE")
-        else:
-            after = checked(fault["after_file"])
-            if (
-                name == "truncated_database"
-                and after != before[:128]
-                or name == "corrupt_header"
-                and after != b"BROKEN SQLITE!!!" + before[16:]
-                or name == "schema_corruption"
-                and after == before
-            ):
-                raise ValueError("E_ENV_FILESYSTEM_BYTES")
+    token = _RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        for (name, error), fault in zip(names, report["faults"], strict=True):
+            case = Path(fault["case_directory"])
+            request = {"run_id": fault["run_id"]}
+            if fault["fault"] != name or fault["observed_error"] != error:
+                raise ValueError("E_ENV_FILESYSTEM_FAULT")
+            verify_process(
+                fault["reader_before"],
+                case,
+                "sql-read",
+                "reader-before",
+                request,
+                fault["before"],
+            )
+            verify_process(
+                fault["reader_after"],
+                case,
+                "sql-read",
+                "reader-after",
+                request,
+                {"observed_error": error},
+                rejection=True,
+            )
+            before = retained(fault["before_copy"])
+            if fault["before"] != controls[1]["actual"]["after"]:
+                raise ValueError("E_ENV_FILESYSTEM_BASELINE")
+            if name == "missing_database":
+                if (
+                    retained(fault["removed_copy"]) != before
+                    or (case / fault["run_id"] / "run.sqlite3").exists()
+                ):
+                    raise ValueError("E_ENV_FILESYSTEM_ABSENCE")
+            else:
+                after = retained(fault["after_file"])
+                if (
+                    name == "truncated_database"
+                    and after != before[:128]
+                    or name == "corrupt_header"
+                    and after != b"BROKEN SQLITE!!!" + before[16:]
+                    or name == "schema_corruption"
+                    and after == before
+                ):
+                    raise ValueError("E_ENV_FILESYSTEM_BYTES")
+    finally:
+        _RETAINED_ARTIFACTS.reset(token)
 
 
 def run_browser_restart(workspace: Path) -> dict[str, Any]:
@@ -523,7 +562,9 @@ def run_browser_restart(workspace: Path) -> dict[str, Any]:
     return report
 
 
-def verify_browser_restart(report: dict[str, Any]) -> None:
+def verify_browser_restart(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
     from jsonschema.exceptions import ValidationError  # type: ignore[import-untyped]
 
     from tools.qualify_chrome_indexeddb import _browser_command, _extension_id
@@ -533,6 +574,19 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
         STREAM,
         compare_indexeddb_state,
     )
+
+    def read_path(path: Path) -> bytes:
+        recorded = str(path)
+        return (
+            artifacts.read_bytes(recorded, recorded_boundary=artifacts.recorded_boundary(recorded))
+            if artifacts is not None
+            else path.read_bytes()
+        )
+
+    def retained(descriptor: dict[str, str]) -> bytes:
+        boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+        return checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+
     from tools.verify_repair_evidence import (
         _compiled_browser_module_hashes,
         _typescript_compile_binding,
@@ -549,20 +603,21 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
         if modules != _compiled_browser_module_hashes(_typescript_compile_binding(current)):
             raise ValueError("modules")
         for name, digest in modules.items():
-            if artifact(extension / name)["sha256"] != digest:
+            if hashlib.sha256(read_path(extension / name)).hexdigest() != digest:
                 raise ValueError("module bytes")
         for name, source in (
             ("manifest.json", "repair-manifest.json"),
             ("repair-probe.html", "repair-probe.html"),
         ):
-            if (extension / name).read_bytes() != (
-                ROOT / "extension/test-harness" / source
-            ).read_bytes():
+            if (
+                read_path(extension / name)
+                != (ROOT / "extension/test-harness" / source).read_bytes()
+            ):
                 raise ValueError("asset")
-        key = json.loads((extension / "manifest.json").read_text())["key"]
+        key = json.loads(read_path(extension / "manifest.json"))["key"]
         if report["origin"] != "chrome-extension://" + _extension_id(key):
             raise ValueError("origin")
-        if json.loads((profile / "environment-profile.json").read_text()) != {
+        if json.loads(read_path(profile / "environment-profile.json")) != {
             "id": report["profile_id"]
         }:
             raise ValueError("profile")
@@ -612,8 +667,8 @@ def verify_browser_restart(report: dict[str, Any]) -> None:
                 or termination["method"] != "SIGKILL_PROCESS_GROUP"
             ):
                 raise ValueError("process")
-            value = json.loads((case / f"{phase}-worker.json").read_text())
-            request = json.loads(checked(descriptor))
+            value = json.loads(read_path(case / f"{phase}-worker.json"))
+            request = json.loads(retained(descriptor))
             ordinary_request: dict[str, Any] = {
                 "operation": "exercise" if phase == "before" else "read",
                 "identity": {"run_id": report["profile_id"], "pid": process["pid"], "phase": phase},
@@ -787,7 +842,9 @@ def run_windows_browser(workspace: Path) -> dict[str, Any]:
     return report
 
 
-def verify_windows_browser(report: dict[str, Any]) -> None:
+def verify_windows_browser(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
     from tools.qualify_chrome_indexeddb import (
         _extension_id,
         _pipe_browser_command,
@@ -802,8 +859,23 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
 
     try:
         current = capture_binding()
-        cfg = json.loads(checked(report["input"]))
-        raw = json.loads(checked(report["stdout"]))
+
+        def retained(descriptor: dict[str, str]) -> bytes:
+            boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+            return checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+
+        def read_path(path: Path) -> bytes:
+            recorded = str(path)
+            return (
+                artifacts.read_bytes(
+                    recorded, recorded_boundary=artifacts.recorded_boundary(recorded)
+                )
+                if artifacts is not None
+                else path.read_bytes()
+            )
+
+        cfg = json.loads(retained(report["input"]))
+        raw = json.loads(retained(report["stdout"]))
         owned = Path(report["owned_workspace"])
         profile = owned / "profile"
         extension = owned / "test-extension"
@@ -811,16 +883,17 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
         browser = Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe")
         if (
             report["binding"] != current
-            or checked(report["stderr"])
+            or retained(report["stderr"])
             or report["result"] != "PASS"
             or report["restart_result"] != "PASS"
             or report["case_id"] != "WINDOWS-CHROME-PROCESS-RESTART"
             or report["physical_power_loss"] != "HOLD_NOT_EXECUTED"
-            or checked(report["script"]) != (ROOT / "tools/chrome_pipe.cjs").read_bytes()
+            or retained(report["script"]) != (ROOT / "tools/chrome_pipe.cjs").read_bytes()
             or Path(report["script"]["path"]) != script
             or localpath(report["browser_binary"]["path"]) != browser
         ):
             raise ValueError("binding")
+        # Executables are live prerequisites, never retained-artifact substitutes.
         checked(report["browser_binary"])
         checked(report["node_binary"])
         expected_invocation = [
@@ -848,15 +921,16 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
             ("manifest.json", "repair-manifest.json"),
             ("repair-probe.html", "repair-probe.html"),
         ):
-            if (extension / name).read_bytes() != (
-                ROOT / "extension/test-harness" / source
-            ).read_bytes():
+            if (
+                read_path(extension / name)
+                != (ROOT / "extension/test-harness" / source).read_bytes()
+            ):
                 raise ValueError("asset")
         origin = "chrome-extension://" + _extension_id(
-            json.loads((extension / "manifest.json").read_text())["key"]
+            json.loads(read_path(extension / "manifest.json"))["key"]
         )
         if report["origin"] != origin or json.loads(
-            (profile / "environment-profile.json").read_text()
+            read_path(profile / "environment-profile.json")
         ) != {"id": report["profile_id"]}:
             raise ValueError("profile")
         modules = report["modules"]
@@ -930,7 +1004,7 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
             ):
                 if Path(row[key]["path"]) != case / name:
                     raise ValueError("artifact path")
-                content = checked(row[key])
+                content = retained(row[key])
                 if (
                     key
                     in {
@@ -1011,18 +1085,18 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
             work = _pipe_work(report["profile_id"], phase, cfg["worker_ids"][phase], request)
             if (
                 row["work"] != work
-                or json.loads(checked(row["work_artifact"])) != work
-                or json.loads(checked(row["config_artifact"])) != expected_phase_cfg
+                or json.loads(retained(row["work_artifact"])) != work
+                or json.loads(retained(row["config_artifact"])) != expected_phase_cfg
             ):
                 raise ValueError("work")
             result = row["result"]
             if (
-                json.loads(checked(row["result_artifact"])) != result
+                json.loads(retained(row["result_artifact"])) != result
                 or result["pid"] != row["browser"]["pid"]
                 or result["node_pid"] != row["node"]["pid"]
             ):
                 raise ValueError("result identity")
-            _verify_pipe_transcript(checked(row["transcript"]), expected_phase_cfg, work, result)
+            _verify_pipe_transcript(retained(row["transcript"]), expected_phase_cfg, work, result)
             sentinel = result["sentinel"]
             if (
                 sentinel["sentinel"] != report["profile_id"]
@@ -1159,3 +1233,98 @@ def run_environment_qualification(workspace: Path) -> dict[str, Any]:
     )
     save(workspace / "environment-aggregate.json", report)
     return report
+
+
+def verify_environment_qualification(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
+    from tools.run_native_ingestor_qualification import (
+        verify_native_commit_io,
+        verify_native_ingestor,
+    )
+
+    try:
+        reports = report["reports"]
+        if (
+            report["result"] != "PARTIAL_HOLD"
+            or report["scope"] != "SUPPLEMENTAL_ENVIRONMENT_ONLY"
+            or report["production_authority"] != "NONE"
+            or report["live_authority"] != "NONE"
+            or report["money_authority"] != "NONE"
+            or report["full111"] != "NOT_RERUN_AT_THIS_SOURCE"
+            or report["security_review"] != "NOT_REVIEWED"
+            or report["binding"] != capture_binding()
+            or set(reports)
+            != {
+                "native",
+                "filesystem",
+                "linux_browser",
+                "windows_browser",
+                "native_ingestor",
+                "native_commit_io",
+            }
+        ):
+            raise ValueError("header")
+        verify_native_storage(reports["native"], artifacts=artifacts)
+        verify_filesystem_faults(reports["filesystem"], artifacts=artifacts)
+        verify_browser_restart(reports["linux_browser"], artifacts=artifacts)
+        verify_windows_browser(reports["windows_browser"], artifacts=artifacts)
+        verify_native_ingestor(reports["native_ingestor"], artifacts=artifacts)
+        verify_native_commit_io(reports["native_commit_io"], artifacts=artifacts)
+        if not any(
+            row
+            == {
+                "case_id": "PHYSICAL-POWER-LOSS",
+                "result": "HOLD",
+                "observed_error": "NOT_EXECUTED_NO_EXTERNAL_FACILITY",
+            }
+            for row in report["cases"]
+        ):
+            raise ValueError("physical power")
+        for descriptor in report["terminal_files"]:
+            boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+            checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+    except (KeyError, TypeError, ValueError, OSError) as error:
+        raise ValueError("E_ENVIRONMENT_QUALIFICATION") from error
+
+
+def main() -> None:
+    from tools.full_verifier_config import load_controller_config
+    from tools.run_full_repair_qualification import write_closed_inventory
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", required=True, type=Path)
+    parser.add_argument("--workspace", required=True, type=Path)
+    parser.add_argument("--aggregate", required=True, type=Path)
+    parser.add_argument("--inventory", required=True, type=Path)
+    args = parser.parse_args()
+    config = load_controller_config(args.config)
+    qualification = config.qualification_evidence
+    if (
+        qualification is None
+        or args.aggregate != qualification.environment_qualification_aggregate
+        or args.inventory != qualification.environment_qualification_inventory
+        or args.aggregate != args.workspace / "environment-aggregate.json"
+        or any(path.exists() for path in (args.workspace, args.aggregate, args.inventory))
+        or (args.inventory.parent / "retained").exists()
+    ):
+        raise ValueError("E_ENVIRONMENT_QUALIFICATION")
+    report = run_environment_qualification(args.workspace)
+    roots = {args.workspace.resolve()}
+    for value in report["reports"].values():
+        if isinstance(value, dict):
+            owned = value.get("owned_workspace")
+            if isinstance(owned, str):
+                roots.add(Path(owned))
+    sources = [
+        (path, str(path.resolve()), str(root.resolve()))
+        for root in sorted(roots)
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    ]
+    write_closed_inventory(sources, args.inventory)
+    print(json.dumps(report, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

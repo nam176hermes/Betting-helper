@@ -1,5 +1,6 @@
 import hashlib
 import json
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -39,6 +40,69 @@ def test_normative_source_set_uses_normalized_plan_hashes(tmp_path: Path) -> Non
     _map_hash, _source_root, count = _normative_source_set(tmp_path)
 
     assert count == "1"
+
+
+def test_normative_source_set_replays_from_closed_copy_and_rejects_tamper(
+    tmp_path: Path,
+) -> None:
+    from tools.retained_artifact_io import RetainedArtifactIO
+
+    pack = tmp_path / "original-pack"
+    source = pack / "docs/source.json"
+    source.parent.mkdir(parents=True)
+    source.write_bytes(b"{}")
+    registry = pack / "docs/registries/normative-source-map.v1.json"
+    registry.parent.mkdir(parents=True)
+    registry.write_text(
+        json.dumps(
+            {
+                "schema_version": "normative-source-map/v1",
+                "owner_phase": "MIG0",
+                "inherited_entries": [],
+                "plan_entries": [
+                    {
+                        "plan_source": "docs/source.json",
+                        "vendor_relative": "docs/source.json",
+                        "plan_sha256": hashlib.sha256(b"{}").hexdigest(),
+                    }
+                ],
+            }
+        )
+    )
+    expected = _normative_source_set(pack)
+    closure = tmp_path / "closure"
+    copied_registry = closure / "files/map.json"
+    copied_source = closure / "files/source.json"
+    copied_registry.parent.mkdir(parents=True)
+    copied_registry.write_bytes(registry.read_bytes())
+    copied_source.write_bytes(source.read_bytes())
+    manifest = {
+        "schema_version": "retained-artifact-manifest/v1",
+        "recorded_boundaries": [str(pack)],
+        "files": [
+            {
+                "recorded_locator": str(registry),
+                "recorded_boundary": str(pack),
+                "copied_relative_path": "files/map.json",
+                "size_bytes": copied_registry.stat().st_size,
+                "sha256": hashlib.sha256(copied_registry.read_bytes()).hexdigest(),
+            },
+            {
+                "recorded_locator": str(source),
+                "recorded_boundary": str(pack),
+                "copied_relative_path": "files/source.json",
+                "size_bytes": copied_source.stat().st_size,
+                "sha256": hashlib.sha256(copied_source.read_bytes()).hexdigest(),
+            },
+        ],
+    }
+    artifacts = RetainedArtifactIO.from_manifest(manifest, closure)
+    shutil.rmtree(pack)
+
+    assert _normative_source_set(pack, artifacts=artifacts) == expected
+    copied_source.write_bytes(b'{"tampered":true}')
+    with pytest.raises(ValueError, match="E_RETAINED_ARTIFACT"):
+        _normative_source_set(pack, artifacts=artifacts)
 
 
 def test_baseline_qualifier_cli_resolves_runtime_modules(tmp_path: Path) -> None:

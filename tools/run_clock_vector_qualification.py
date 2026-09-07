@@ -16,7 +16,10 @@ from pathlib import Path
 from shutil import which
 from subprocess import CalledProcessError, TimeoutExpired, run
 from tempfile import mkdtemp
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 from jsonschema import ValidationError  # type: ignore[import-untyped]
 
@@ -1068,7 +1071,18 @@ def _execute(case: dict[str, Any], runtime: Path, directory: Path,
 
 def verify_record(
     row: dict[str, Any], *, _current_binding: dict[str, Any] | None = None,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> bool:
+    def retained(reference: dict[str, Any]) -> bytes:
+        path = str(reference["path"])
+        return (
+            artifacts.read_bytes(
+                path, recorded_boundary=artifacts.recorded_boundary(path)
+            )
+            if artifacts is not None
+            else Path(path).read_bytes()
+        )
+
     try:
         if _current_binding is None:
             from tools.verify_repair_evidence import capture_binding
@@ -1085,13 +1099,13 @@ def verify_record(
         if not row["executed"] and row.get("execution_kind") != "QUALIFICATION_MUTATION":
             return hashes_match
         artifact = row["actual_artifact"]
-        digest = hashlib.sha256(Path(artifact["path"]).read_bytes()).hexdigest()
+        digest = hashlib.sha256(retained(artifact)).hexdigest()
         evaluator_artifacts = row.get("evaluator_artifacts", {})
         evaluator_match = (
             row.get("execution_kind") == "QUALIFICATION_MUTATION"
             or set(evaluator_artifacts) == {"python", "typescript"}
         ) and all(
-            hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            hashlib.sha256(retained(reference)).hexdigest()
             == reference["sha256"] == _hash(row["actual"][language])
             for language, reference in evaluator_artifacts.items()
         )
@@ -1101,7 +1115,7 @@ def verify_record(
             Path(reference["path"]).resolve().is_relative_to(
                 evidence / "typescript-executable"
             )
-            and hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            and hashlib.sha256(retained(reference)).hexdigest()
             == reference["sha256"]
             for reference in executable_artifacts.values()
         )
@@ -1112,12 +1126,12 @@ def verify_record(
             and execution_reference is not None
             and execution_binding["before"] == execution_binding["after"]
             == {key: value["sha256"] for key, value in executable_artifacts.items()}
-            and hashlib.sha256(Path(execution_reference["path"]).read_bytes()).hexdigest()
+            and hashlib.sha256(retained(execution_reference)).hexdigest()
             == execution_reference["sha256"] == _hash(execution_binding)
         )
         sql_reference = row.get("sql_observation_artifact")
         sql_match = sql_reference is None or (
-            hashlib.sha256(Path(sql_reference["path"]).read_bytes()).hexdigest()
+            hashlib.sha256(retained(sql_reference)).hexdigest()
             == sql_reference["sha256"] == _hash(row["sql_observation"])
         )
         operation_metadata = row.get("operation_metadata", {})
@@ -1125,7 +1139,7 @@ def verify_record(
         operation_match = (
             set(operation_metadata) == set(operation_artifacts)
             and all(
-            hashlib.sha256(Path(reference["path"]).read_bytes()).hexdigest()
+            hashlib.sha256(retained(reference)).hexdigest()
             == reference["sha256"] == _hash(operation_metadata[language])
             for language, reference in operation_artifacts.items()
             )
@@ -1135,7 +1149,11 @@ def verify_record(
                 and hashes_match
                 and evaluator_match and executable_match and execution_match
                 and sql_match and operation_match
-                and all(verify_record(row["actual"][key], _current_binding=_current_binding)
+                and all(verify_record(
+                            row["actual"][key],
+                            _current_binding=_current_binding,
+                            artifacts=artifacts,
+                        )
                         for key in ("control", "trial")
                         if key in row["actual"]))
     except (OSError, KeyError, TypeError, ValueError):

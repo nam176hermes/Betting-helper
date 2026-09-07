@@ -20,6 +20,121 @@ def owner() -> ModuleType:
         )
 
 
+def test_checked_uses_explicit_retained_boundary_without_original_fallback(
+    tmp_path: Path,
+) -> None:
+    from tools.retained_artifact_io import RetainedArtifactIO
+
+    recorded_root = "/mnt/c/Users/thenam/Documents/native-case"
+    recorded = recorded_root + "/input.json"
+    data = b'{"native":true}'
+    closure = tmp_path / "closure"
+    (closure / "files").mkdir(parents=True)
+    (closure / "files/input.json").write_bytes(data)
+    artifacts = RetainedArtifactIO.from_manifest(
+        {
+            "schema_version": "retained-artifact-manifest/v1",
+            "recorded_boundaries": [recorded_root],
+            "files": [
+                {
+                    "recorded_locator": recorded,
+                    "recorded_boundary": recorded_root,
+                    "copied_relative_path": "files/input.json",
+                    "size_bytes": len(data),
+                    "sha256": hashlib.sha256(data).hexdigest(),
+                }
+            ],
+        },
+        closure,
+    )
+    descriptor = {
+        "path": r"C:\Users\thenam\Documents\native-case\input.json",
+        "sha256": hashlib.sha256(data).hexdigest(),
+    }
+    with pytest.raises(ValueError, match="E_ENV_ARTIFACT_BOUNDARY"):
+        owner().checked(descriptor, artifacts=artifacts)
+    assert (
+        owner().checked(
+            descriptor,
+            artifacts=artifacts,
+            recorded_boundary=r"C:\Users\thenam\Documents\native-case",
+        )
+        == data
+    )
+
+
+def test_environment_aggregate_dispatches_every_owner_and_keeps_power_hold(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    module = owner()
+    seen: list[str] = []
+    monkeypatch.setattr(module, "capture_binding", lambda: {"source": "current"})
+    for name in (
+        "verify_native_storage",
+        "verify_filesystem_faults",
+        "verify_browser_restart",
+        "verify_windows_browser",
+    ):
+        monkeypatch.setattr(
+            module,
+            name,
+            lambda _report, *, artifacts=None, owner=name: seen.append(owner),
+        )
+    import tools.run_native_ingestor_qualification as native
+
+    monkeypatch.setattr(
+        native,
+        "verify_native_ingestor",
+        lambda _report, *, artifacts=None: seen.append("native_ingestor"),
+    )
+    monkeypatch.setattr(
+        native,
+        "verify_native_commit_io",
+        lambda _report, *, artifacts=None: seen.append("native_commit_io"),
+    )
+    report = {
+        "result": "PARTIAL_HOLD",
+        "binding": {"source": "current"},
+        "cases": [
+            {
+                "case_id": "PHYSICAL-POWER-LOSS",
+                "result": "HOLD",
+                "observed_error": "NOT_EXECUTED_NO_EXTERNAL_FACILITY",
+            }
+        ],
+        "reports": {
+            key: {}
+            for key in (
+                "native",
+                "filesystem",
+                "linux_browser",
+                "windows_browser",
+                "native_ingestor",
+                "native_commit_io",
+            )
+        },
+        "scope": "SUPPLEMENTAL_ENVIRONMENT_ONLY",
+        "production_authority": "NONE",
+        "live_authority": "NONE",
+        "money_authority": "NONE",
+        "full111": "NOT_RERUN_AT_THIS_SOURCE",
+        "security_review": "NOT_REVIEWED",
+        "terminal_files": [],
+    }
+    module.verify_environment_qualification(report)
+    assert set(seen) == {
+        "verify_native_storage",
+        "verify_filesystem_faults",
+        "verify_browser_restart",
+        "verify_windows_browser",
+        "native_ingestor",
+        "native_commit_io",
+    }
+    report["result"] = "PASS"
+    with pytest.raises(ValueError, match="E_ENVIRONMENT_QUALIFICATION"):
+        module.verify_environment_qualification(report)
+
+
 def test_native_owned_termination_preserves_only_committed_state(tmp_path: Path) -> None:
     report = owner().run_native_storage(tmp_path)
     assert report["result"] == "PASS"

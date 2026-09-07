@@ -11,6 +11,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
@@ -32,11 +36,54 @@ _REQUIRED = {
 }
 
 
+def _mapped(path: Path, artifacts: RetainedArtifactIO | None) -> Path:
+    if artifacts is None:
+        return path
+    recorded = str(path)
+    return artifacts.physical_path(
+        recorded, recorded_boundary=artifacts.recorded_boundary(recorded)
+    )
+
+
+def _verify_full_repair_proof(
+    command_id: object,
+    evidence: dict[str, object],
+    config: FullVerifierConfig,
+    artifacts: RetainedArtifactIO | None,
+) -> None:
+    if command_id not in {"TEST_V636_P03_T07", "TEST_V636_P04_T04"}:
+        return
+    if config.qualification_evidence is None:
+        raise ValueError("E_PROOF_COVERAGE")
+    from tools.verify_full_repair_qualification import verify_full_repair_qualification
+
+    qualification = config.qualification_evidence
+    expected = verify_full_repair_qualification(
+        _mapped(qualification.full_repair_aggregate, artifacts),
+        _mapped(qualification.full_repair_inventory, artifacts),
+        config,
+        artifacts=artifacts,
+    )
+    if command_id == "TEST_V636_P04_T04":
+        if evidence != expected:
+            raise ValueError("E_PROOF_COVERAGE")
+        return
+    p03 = {
+        **expected,
+        "schema_version": "full-repair-qualification/v1",
+        "clock_proof_pending": True,
+    }
+    if evidence != p03:
+        raise ValueError("E_PROOF_COVERAGE")
+
+
 def verify_proof_coverage_matrix(
     matrix: dict[str, object],
     evidence_root: Path | None = None,
     stage: str | None = None,
     config: FullVerifierConfig | None = None,
+    *,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, object]:
     entries = matrix.get("entries")
     if not isinstance(entries, list) or len(entries) != 18:
@@ -77,16 +124,31 @@ def verify_proof_coverage_matrix(
                     "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/"
                 )
                 artifact = entry["evidence_artifact"]
-                if not isinstance(artifact, str) or not artifact.startswith(prefix):
+                if not isinstance(artifact, str):
                     raise ValueError("E_PROOF_COVERAGE")
-                path = evidence_root / artifact.removeprefix(prefix)
+                if artifacts is not None:
+                    path = Path(artifact)
+                elif artifact.startswith(prefix):
+                    path = evidence_root / artifact.removeprefix(prefix)
+                elif config is not None and Path(artifact).is_relative_to(config.evidence_root):
+                    path = Path(artifact)
+                else:
+                    raise ValueError("E_PROOF_COVERAGE")
             else:
                 sealed = entry.get("sealed_evidence_path")
                 if not isinstance(sealed, str) or not sealed.startswith("evidence/"):
                     raise ValueError("E_PROOF_COVERAGE")
                 path = evidence_root.parent / sealed
             try:
-                evidence = json.loads(path.read_text())
+                raw = (
+                    artifacts.read_bytes(
+                        str(path),
+                        recorded_boundary=artifacts.recorded_boundary(str(path)),
+                    )
+                    if artifacts is not None
+                    else path.read_bytes()
+                )
+                evidence = json.loads(raw)
             except (OSError, json.JSONDecodeError) as error:
                 raise ValueError("E_PROOF_COVERAGE") from error
             if (
@@ -95,11 +157,13 @@ def verify_proof_coverage_matrix(
                 or (config is not None and evidence.get("controller_binding") != config.binding())
             ):
                 raise ValueError("E_PROOF_COVERAGE")
+            if config is not None:
+                _verify_full_repair_proof(entry["command_id"], evidence, config, artifacts)
             verified.append(
                 {
                     "requirement_id": str(entry["requirement_id"]),
                     "path": str(path),
-                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    "sha256": hashlib.sha256(raw).hexdigest(),
                 }
             )
     result: dict[str, object] = {"result": "PASS", "control_count": len(entries)}

@@ -1,0 +1,256 @@
+"""Issue or verify the clean descendant repository qualification receipt."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import re
+import shutil
+import subprocess
+from pathlib import Path
+from typing import NoReturn, cast
+
+from moj_discovery.pack_verifier import compute_vendor_tree_root
+from tools.build_candidate_qualification_receipt import (
+    _inventory,
+    _read_bytes,
+    _read_evidence,
+    validate_candidate_qualification_receipt,
+)
+from tools.full_verifier_config import FullVerifierConfig, load_controller_config
+from tools.qualify_zero_parent_baseline import _normative_source_set
+from tools.retained_artifact_io import RetainedArtifactIO
+from tools.verify_toolchains import EXPECTED, dependency_lock_hashes, verify_toolchains
+
+
+def _fail() -> NoReturn:
+    raise ValueError("E_DESCENDANT_REPOSITORY")
+
+
+def _canonical(value: object) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _git(root: Path, *args: str) -> str:
+    git = shutil.which("git")
+    if git is None:
+        _fail()
+    completed = subprocess.run(  # noqa: S603 - resolved Git, fixed read-only operations.
+        [git, "-C", str(root), *args], capture_output=True, check=False, timeout=30
+    )
+    if completed.returncode != 0:
+        _fail()
+    return completed.stdout.decode().strip()
+
+
+def descendant_repository_identity(root: Path, audited_ancestor: str) -> dict[str, str]:
+    if (
+        root.is_symlink()
+        or not root.is_dir()
+        or re.fullmatch(r"[0-9a-f]{40}", audited_ancestor) is None
+        or _git(root, "rev-parse", "--show-toplevel") != str(root.resolve())
+        or _git(root, "rev-parse", "--show-object-format") != "sha1"
+    ):
+        _fail()
+    head = _git(root, "rev-parse", "HEAD")
+    tree = _git(root, "rev-parse", "HEAD^{tree}")
+    if head == audited_ancestor:
+        _fail()
+    git = shutil.which("git")
+    assert git is not None
+    ancestor = subprocess.run(  # noqa: S603 - resolved Git, fixed read-only operation.
+        [git, "-C", str(root), "merge-base", "--is-ancestor", audited_ancestor, head],
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if ancestor.returncode != 0:
+        _fail()
+    try:
+        inventory = _inventory(root)
+    except ValueError as error:
+        raise ValueError("E_DESCENDANT_REPOSITORY") from error
+    return {
+        "repository_commit": head,
+        "repository_tree": tree,
+        "repository_file_root_sha256": hashlib.sha256(
+            b"HD636/DESCENDANT-FILE-ROOT/v1\0" + _canonical(inventory)
+        ).hexdigest(),
+    }
+
+
+def _regular_hash(path: Path, artifacts: RetainedArtifactIO | None = None) -> str:
+    return hashlib.sha256(_read_bytes(path, artifacts)).hexdigest()
+
+
+def _receipt_record(
+    root: Path,
+    config: FullVerifierConfig,
+    artifacts: RetainedArtifactIO | None = None,
+) -> dict[str, object]:
+    if (
+        config.schema_version != "full-verifier-controller/v2"
+        or config.audited_runtime_ancestor is None
+        or config.qualification_evidence is None
+    ):
+        _fail()
+    identity = descendant_repository_identity(root, config.audited_runtime_ancestor)
+    candidate = _read_evidence(config.candidate_qualification_receipt, artifacts)
+    validate_candidate_qualification_receipt(
+        root,
+        config.candidate_command_evidence,
+        candidate,
+        config,
+        artifacts=artifacts,
+    )
+    if verify_toolchains():
+        _fail()
+    source_map, source_root, source_count = _normative_source_set(
+        config.governed_source_pack, artifacts=artifacts
+    )
+    p03 = _read_evidence(config.qualification_evidence.p03_proof, artifacts)
+    environment_inventory = _read_evidence(
+        config.qualification_evidence.environment_qualification_inventory, artifacts
+    )
+    if (
+        p03.get("result") != "PASS"
+        or p03.get("controller_binding") != config.binding()
+        or p03.get("control_count") != 111
+        or p03.get("mutation_count") != 105
+        or p03.get("mutation_survivors") != 0
+    ):
+        _fail()
+    candidate_inventory = candidate.get("inventory")
+    if not isinstance(candidate_inventory, dict):
+        _fail()
+    return {
+        "schema_version": "descendant-repository-qualification-receipt/v1",
+        "repository_identity_kind": "DESCENDANT",
+        "production_authority": "NONE",
+        "audited_ancestor_commit": config.audited_runtime_ancestor,
+        **identity,
+        "candidate_qualification_sha256": _regular_hash(
+            config.candidate_qualification_receipt, artifacts
+        ),
+        "candidate_command_evidence_sha256": _regular_hash(
+            config.candidate_command_evidence, artifacts
+        ),
+        "proof_coverage_sha256": _regular_hash(config.proof_coverage_evidence, artifacts),
+        "controller_config_sha256": config.source_sha256,
+        "command_result_root": candidate["command_result_root"],
+        "candidate_inventory_sha256": hashlib.sha256(
+            b"HD636/CANDIDATE-INVENTORY/v1\0" + _canonical(candidate_inventory)
+        ).hexdigest(),
+        "toolchain_versions": EXPECTED,
+        "lockfile_hashes": dependency_lock_hashes(root),
+        "vendor_root_sha256": compute_vendor_tree_root(root / "vendor/hybrid-discovery-v6.3.6"),
+        "normative_source_map_sha256": source_map,
+        "normative_source_set_root": source_root,
+        "normative_source_set_count": int(source_count),
+        "full_repair_aggregate_sha256": _regular_hash(
+            config.qualification_evidence.full_repair_aggregate, artifacts
+        ),
+        "full_repair_evidence_root_sha256": p03["evidence_root_sha256"],
+        "environment_qualification_aggregate_sha256": _regular_hash(
+            config.qualification_evidence.environment_qualification_aggregate,
+            artifacts,
+        ),
+        "environment_qualification_evidence_root_sha256": hashlib.sha256(
+            _canonical(environment_inventory)
+        ).hexdigest(),
+    }
+
+
+def _outside_protected(output: Path, root: Path, config: FullVerifierConfig) -> None:
+    if not output.is_absolute() or output.exists():
+        _fail()
+    candidate = output.resolve(strict=False)
+    boundaries = (
+        root.resolve(),
+        config.governed_source_pack.resolve(),
+        config.external_authoring_tests.parent.resolve(),
+    )
+    if any(
+        candidate == boundary
+        or candidate.is_relative_to(boundary)
+        or boundary.is_relative_to(candidate)
+        for boundary in boundaries
+    ):
+        _fail()
+
+
+def issue_descendant_qualification_receipt(
+    root: Path, config: FullVerifierConfig, output: Path
+) -> dict[str, object]:
+    _outside_protected(output, root, config)
+    before = _receipt_record(root, config)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with output.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(before, sort_keys=True, separators=(",", ":")) + "\n")
+        after = _receipt_record(root, config)
+        if before != after:
+            _fail()
+        return before
+    except Exception:
+        if output.is_file() and not output.is_symlink():
+            output.unlink()
+        raise
+
+
+def verify_descendant_qualification_receipt(
+    root: Path,
+    receipt_path: Path,
+    *,
+    pack: Path,
+    config: FullVerifierConfig,
+    artifacts: RetainedArtifactIO | None = None,
+) -> dict[str, object]:
+    if pack != config.governed_source_pack:
+        _fail()
+    receipt = _read_evidence(receipt_path, artifacts)
+    expected = _receipt_record(root, config, artifacts)
+    if receipt != expected:
+        _fail()
+    return receipt
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", required=True, type=Path)
+    parser.add_argument("--config", required=True, type=Path)
+    parser.add_argument("--receipt", type=Path)
+    parser.add_argument("--output", required=True, type=Path)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--preflight", action="store_true")
+    mode.add_argument("--issue", action="store_true")
+    mode.add_argument("--check-only", action="store_true")
+    args = parser.parse_args()
+    config = load_controller_config(args.config)
+    if args.issue:
+        if args.receipt is None:
+            _fail()
+        result = issue_descendant_qualification_receipt(args.root, config, args.receipt)
+    elif args.check_only:
+        if args.receipt is None:
+            _fail()
+        result = verify_descendant_qualification_receipt(
+            args.root, args.receipt, pack=config.governed_source_pack, config=config
+        )
+    else:
+        result = {
+            "schema_version": "descendant-repository-preflight/v1",
+            "result": "PASS",
+            "production_authority": "NONE",
+            **descendant_repository_identity(args.root, cast(str, config.audited_runtime_ancestor)),
+            "controller_binding": config.binding(),
+        }
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with args.output.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n")
+    print(json.dumps(result, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

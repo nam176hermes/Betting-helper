@@ -11,16 +11,23 @@ import sqlite3
 import sys
 from collections import Counter
 from contextlib import closing
+from contextvars import ContextVar
 from functools import lru_cache
 from pathlib import Path
 from shutil import which
 from subprocess import run
 from tempfile import TemporaryDirectory
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 ROOT = Path(__file__).resolve().parents[1]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
 STATUSES = {"PASS", "FAIL", "BLOCKED_ENVIRONMENT", "NOT_IMPLEMENTED", "NOT_EXECUTED"}
+_RETAINED_ARTIFACTS: ContextVar[RetainedArtifactIO | None] = ContextVar(
+    "repair_retained_artifacts", default=None
+)
 
 
 def _sha(path: Path) -> str:
@@ -151,7 +158,9 @@ def _verify_clock(row: dict[str, Any], current: dict[str, Any]) -> None:
         _sha(Path(path)) != digest for path, digest in row["code"]["sha256"].items()
     ):
         raise ValueError("E_REPAIR_SOURCE")
-    if not clock.verify_record(row, _current_binding=current):
+    if not clock.verify_record(
+        row, _current_binding=current, artifacts=_RETAINED_ARTIFACTS.get()
+    ):
         raise ValueError("E_REPAIR_ARTIFACT")
     if row["status"] != "PASS":
         return
@@ -192,9 +201,10 @@ def _contains_expected(value: object) -> bool:
 def _indexeddb_artifact(row: dict[str, Any], name: str) -> object:
     artifact = row[name]
     path = Path(artifact["path"])
-    if _sha(path) != artifact["sha256"]:
+    data = _read_retained(path)
+    if hashlib.sha256(data).hexdigest() != artifact["sha256"]:
         raise ValueError("E_INDEXEDDB_ARTIFACT:" + name)
-    return json.loads(path.read_text())
+    return json.loads(data)
 
 
 def _verify_indexeddb(row: dict[str, Any], current: dict[str, Any]) -> None:
@@ -304,12 +314,21 @@ def _sqlite_file(row: dict[str, Any], path_value: object, digest: object, error:
     if not isinstance(path_value, str) or not isinstance(digest, str):
         raise ValueError(error)
     path = Path(path_value)
-    case = Path(row["case_directory"]).resolve()
-    if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(case):
+    case = Path(row["case_directory"])
+    if not path.is_absolute() or not path.is_relative_to(case):
         raise ValueError(error)
-    if _sha(path) != digest:
+    data = _read_retained(path)
+    if hashlib.sha256(data).hexdigest() != digest:
         raise ValueError(error)
     return path
+
+
+def _read_retained(path: Path) -> bytes:
+    artifacts = _RETAINED_ARTIFACTS.get()
+    if artifacts is None:
+        return path.read_bytes()
+    boundary = artifacts.recorded_boundary(str(path))
+    return artifacts.read_bytes(str(path), recorded_boundary=boundary)
 
 
 def _sqlite_descriptor(
@@ -319,7 +338,7 @@ def _sqlite_descriptor(
         raise ValueError(error)
     path = _sqlite_file(row, artifact["path"], artifact["sha256"], error)
     try:
-        return json.loads(path.read_text())
+        return json.loads(_read_retained(path))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError(error) from exc
 
@@ -712,7 +731,7 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
     if row.get("execution_kind") == "DISPOSABLE_DESTRUCTION_PROCESS_CRASH":
         from tools.verify_destruction_evidence import verify_destruction
 
-        verify_destruction(row, current)
+        verify_destruction(row, current, artifacts=_RETAINED_ARTIFACTS.get())
     elif row.get("execution_kind") == "BROWSER_LOOPBACK_ACK":
         _verify_browser_ack(row, current)
     elif row.get("execution_kind") == "EXTENSION_DEDICATED_WORKER_TERMINATION":
@@ -724,18 +743,26 @@ def _verify_executed(row: dict[str, Any], current: dict[str, Any]) -> None:
     elif row.get("execution_kind") == "GAP_GENERATION_COHERENCE_PROCESS":
         from tools.run_gap_coherence_crash_matrix import verify_gap_record
 
-        verify_gap_record(row, current)
+        verify_gap_record(row, current, artifacts=_RETAINED_ARTIFACTS.get())
     else:
         raise ValueError("E_REPAIR_EXECUTION_KIND")
 
 
 def verify_owner_mutation(
-    harness: str, row: dict[str, Any], current: dict[str, Any]
+    harness: str,
+    row: dict[str, Any],
+    current: dict[str, Any],
+    *,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> None:
     """Recursively validate fresh registered SQL/browser mutation executions."""
     from tools.owner_mutation_evidence import verify_mutation
 
-    verify_mutation(harness, row, current)
+    token = _RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        verify_mutation(harness, row, current)
+    finally:
+        _RETAINED_ARTIFACTS.reset(token)
 
 
 def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> None:
@@ -759,10 +786,10 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
         if (
             path != extension / name
             or descriptor["sha256"] != current["source_sha256"][source_path]
-            or path.read_bytes() != (ROOT / source_path).read_bytes()
+            or _read_retained(path) != (ROOT / source_path).read_bytes()
         ):
             raise ValueError("E_ACK_LOADED_ASSET")
-    manifest = json.loads((extension / "manifest.json").read_text())
+    manifest = json.loads(_read_retained(extension / "manifest.json"))
     if (
         manifest["host_permissions"] != ["http://127.0.0.1/*"]
         or manifest["permissions"] != []
@@ -776,7 +803,10 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
     marker = _sqlite_file(
         row, readbacks["marker"]["path"], readbacks["marker"]["sha256"], "E_ACK_PROFILE_MARKER"
     )
-    if marker != profile / "BH_R05_PROFILE_ID" or marker.read_text() != identity["profile_id"]:
+    if (
+        marker != profile / "BH_R05_PROFILE_ID"
+        or _read_retained(marker).decode() != identity["profile_id"]
+    ):
         raise ValueError("E_ACK_PROFILE_MARKER")
     expected_profile = {
         "profile_path": str(profile),
@@ -962,12 +992,23 @@ def _verify_retained_typescript_graph(
         "src/errors.js",
         "src/spool.js",
     }
+    artifacts = _RETAINED_ARTIFACTS.get()
+    actual_names = (
+        {
+            str(Path(locator).relative_to(extension))
+            for locator in artifacts.recorded_locators()
+            if Path(locator).is_relative_to(extension) and locator.endswith(".js")
+        }
+        if artifacts is not None
+        else {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
+    )
     if (
         set(modules) != expected
-        or set(modules) != {
-            str(path.relative_to(extension)) for path in extension.rglob("*.js")
-        }
-        or any(_sha(extension / name) != digest for name, digest in modules.items())
+        or set(modules) != actual_names
+        or any(
+            hashlib.sha256(_read_retained(extension / name)).hexdigest() != digest
+            for name, digest in modules.items()
+        )
         or modules.get("src/spool.js") != row["identity"]["module_sha256"]
         or modules != _compiled_browser_module_hashes(_typescript_compile_binding(current))
     ):
@@ -978,7 +1019,7 @@ def _verify_retained_typescript_graph(
         execution_binding != {"before": modules, "after": modules}
         or _sqlite_descriptor(row, descriptor, error) != execution_binding
         or 'from "./canonicalize.js"'
-        not in (extension / "src/canonical.js").read_text()
+        not in _read_retained(extension / "src/canonical.js").decode()
     ):
         raise ValueError(error)
 
@@ -1357,6 +1398,7 @@ def _verify_browser_ack(
 
 def aggregate_repair_evidence(
     required_ids: list[str], results: list[dict[str, Any]],
+    *, artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, Any]:
     """Validate exact terminal records. An unsupported execution never qualifies."""
     errors: list[dict[str, str]] = []
@@ -1371,27 +1413,35 @@ def aggregate_repair_evidence(
     except (OSError, ValueError) as error:
         current = {}
         errors.append({"case_id": "", "error": f"E_REPAIR_BINDING_UNAVAILABLE:{error}"})
-    for case_id, row in zip(ids, results, strict=True):
-        try:
-            status = row["status"]
-            if "scoped_evidence" in row or "scoped_result" in row:
-                raise ValueError("E_REPAIR_SUPPLEMENTAL_MUST_BE_SEPARATE")
-            validate_case_status(row)
-            if "case_id" in row and "vector_id" in row and row["case_id"] != row["vector_id"]:
-                raise ValueError("E_REPAIR_CASE_ID")
-            if status == "PASS":
-                _verify_executed(row, current)
-            elif status == "FAIL":
-                _verify_executed(row, current)
-                raise ValueError("E_REPAIR_REPORTED_FAILURE")
-            else:
-                if not (row.get("reason") or row.get("observed_error")):
-                    raise ValueError("E_REPAIR_REASON_REQUIRED")
-                # Existing evidence cannot disappear behind a non-PASS status.
-                if "actual_artifact" in row or "evidence_binding" in row:
+    token = _RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        for case_id, row in zip(ids, results, strict=True):
+            try:
+                status = row["status"]
+                if "scoped_evidence" in row or "scoped_result" in row:
+                    raise ValueError("E_REPAIR_SUPPLEMENTAL_MUST_BE_SEPARATE")
+                validate_case_status(row)
+                if (
+                    "case_id" in row
+                    and "vector_id" in row
+                    and row["case_id"] != row["vector_id"]
+                ):
+                    raise ValueError("E_REPAIR_CASE_ID")
+                if status == "PASS":
                     _verify_executed(row, current)
-        except (KeyError, ValueError, TypeError, OSError, StopIteration) as error:
-            errors.append({"case_id": str(case_id), "error": str(error)})
+                elif status == "FAIL":
+                    _verify_executed(row, current)
+                    raise ValueError("E_REPAIR_REPORTED_FAILURE")
+                else:
+                    if not (row.get("reason") or row.get("observed_error")):
+                        raise ValueError("E_REPAIR_REASON_REQUIRED")
+                    # Existing evidence cannot disappear behind a non-PASS status.
+                    if "actual_artifact" in row or "evidence_binding" in row:
+                        _verify_executed(row, current)
+            except (KeyError, ValueError, TypeError, OSError, StopIteration) as error:
+                errors.append({"case_id": str(case_id), "error": str(error)})
+    finally:
+        _RETAINED_ARTIFACTS.reset(token)
     full = exact and set(required_ids) == set(full_required_ids())
     counts = Counter(str(row.get("status", "INVALID")) for row in results)
     result = "FAIL" if errors else "PASS" if counts["PASS"] == len(required_ids) else "HOLD"

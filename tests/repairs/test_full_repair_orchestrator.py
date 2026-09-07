@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, cast
 
@@ -48,24 +50,30 @@ def _report(harness: str) -> dict[str, Any]:
 
 
 def _clock_report() -> dict[str, Any]:
-    entries = json.loads(
-        (PACK / "docs/registries/clock-vector-coverage.v1.json").read_text()
-    )["entries"]
+    entries = json.loads((PACK / "docs/registries/clock-vector-coverage.v1.json").read_text())[
+        "entries"
+    ]
     ids = [row["vector_id"] for row in entries]
     return {
         "result": "PASS",
         "required_vector_ids": ids,
         "records": [{"case_id": case_id, "status": "PASS"} for case_id in ids],
         "mutation_records": [
-            {"case_id": name, "source_vector_id": ids[0], "detected": True,
-             "executed": True, "verified": True}
+            {
+                "case_id": name,
+                "source_vector_id": ids[0],
+                "detected": True,
+                "executed": True,
+                "verified": True,
+            }
             for name in full.required_clock_mutation_ids()
         ],
     }
 
 
 def test_full_runner_wires_every_owner_in_registry_order(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls: list[str] = []
 
@@ -93,6 +101,7 @@ def test_full_runner_wires_every_owner_in_registry_order(
         "tools.run_destruction_crash_matrix.run_destruction_crash_matrix",
         owner("destruction", "WHOLE_RUN_DESTRUCTION"),
     )
+
     def clock(*args: object, **kwargs: object) -> dict[str, Any]:
         calls.append("clock")
         return _clock_report()
@@ -131,7 +140,8 @@ def test_full_runner_wires_every_owner_in_registry_order(
     "damage", ["missing", "duplicate", "survivor", "unverified", "control-linkage", "control-bytes"]
 )
 def test_registered_mutation_damage_fails_closed(
-    damage: str, monkeypatch: pytest.MonkeyPatch,
+    damage: str,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     reports = {
         harness: _report(harness)
@@ -199,8 +209,7 @@ def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
             ["invented"],
             mutation_survivors=0,
             evidence=[{"case_id": "one"}],
-            mutation_summary={"required": 105, "verified": 105, "survivors": 0,
-                              "complete": True},
+            mutation_summary={"required": 105, "verified": 105, "survivors": 0, "complete": True},
         )
     with pytest.raises(ValueError, match="E_DURABILITY_MUTATION_EVIDENCE_REQUIRED"):
         validate_full_durability_release(
@@ -208,8 +217,7 @@ def test_release_requires_exact_full_ids_and_complete_mutation_evidence(
             required,
             mutation_survivors=0,
             evidence=[{"case_id": "one"}],
-            mutation_summary={"required": 105, "verified": 105, "survivors": 0,
-                              "complete": True},
+            mutation_summary={"required": 105, "verified": 105, "survivors": 0, "complete": True},
         )
 
 
@@ -298,9 +306,7 @@ def test_arbitrary_rehashed_retained_browser_graph_is_rejected(tmp_path: Path) -
         path.write_text(
             'import value from "./canonicalize.js";' if name == "src/canonical.js" else name
         )
-    modules = {
-        name: hashlib.sha256((extension / name).read_bytes()).hexdigest() for name in names
-    }
+    modules = {name: hashlib.sha256((extension / name).read_bytes()).hexdigest() for name in names}
     binding = {"before": modules, "after": modules}
     binding_path = tmp_path / "typescript-execution-binding.json"
     binding_path.write_text(json.dumps(binding, sort_keys=True, separators=(",", ":")))
@@ -344,3 +350,61 @@ def test_typescript_compile_binding_covers_extended_config_and_compiler_payload(
 
     monkeypatch.setattr(evidence_gate, "_sha", changed_compiler_payload)
     assert evidence_gate._typescript_compile_binding(current) != baseline
+
+
+def test_full_repair_closed_inventory_replays_without_original_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from tools import verify_full_repair_qualification as verifier
+    from tools.full_verifier_config import QualificationEvidenceConfig, load_controller_config
+    from tools.run_full_repair_qualification import _write_closed_inventory
+
+    source_config = Path(
+        "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack/"
+        "docs/configs/full-verifier-controller.v2.json"
+    )
+    original = load_controller_config(source_config)
+    evidence = tmp_path / "evidence"
+    aggregate = evidence / "aggregate.json"
+    inventory = evidence / "inventory.json"
+    aggregate.parent.mkdir()
+    aggregate.write_text('{"result":"PASS"}')
+    campaign = evidence / "campaign"
+    campaign.mkdir()
+    artifact = campaign / "actual.json"
+    artifact.write_text('{"observed":1}')
+    qualification = QualificationEvidenceConfig(
+        full_repair_aggregate=aggregate,
+        full_repair_inventory=inventory,
+        environment_qualification_aggregate=evidence / "environment.json",
+        environment_qualification_inventory=evidence / "environment-inventory.json",
+        p03_proof=evidence / "p03.json",
+        p04_proof=evidence / "p04.json",
+    )
+    config = replace(original, qualification_evidence=qualification)
+    manifest = _write_closed_inventory(aggregate, campaign, inventory, config)
+    aggregate_copy = next(
+        inventory.parent / "retained" / row["copied_relative_path"]
+        for row in manifest["files"]
+        if row["recorded_locator"] == str(aggregate)
+    )
+    shutil.rmtree(campaign)
+    aggregate.unlink()
+    seen: list[dict[str, Any]] = []
+    monkeypatch.setattr(
+        verifier,
+        "_semantic_validation",
+        lambda value, artifacts: (
+            seen.append(value)
+            if artifacts.read_bytes(str(artifact), recorded_boundary=str(campaign))
+            == b'{"observed":1}'
+            else pytest.fail("wrong retained bytes")
+        ),
+    )
+    proof = verifier.verify_full_repair_qualification(aggregate_copy, inventory, config)
+    assert proof["result"] == "PASS"
+    assert seen == [{"result": "PASS"}]
+
+    aggregate_copy.write_text('{"result":"PASS","forged":true}')
+    with pytest.raises(ValueError, match="E_FULL_REPAIR_QUALIFICATION"):
+        verifier.verify_full_repair_qualification(aggregate_copy, inventory, config)

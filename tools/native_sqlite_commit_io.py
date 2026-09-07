@@ -9,7 +9,10 @@ import os
 import sqlite3
 import time
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 DLL_SHA256 = "8f05e8585c1c439872dded8f930a7462ed8e8e0ff8242b5202d3a2d052b672f6"
 
@@ -246,7 +249,13 @@ class CommitIoHook:
             time.sleep(1)
 
 
-def verify_commit_callback(row: dict[str, Any], case: Path, mode: str) -> None:
+def verify_commit_callback(
+    row: dict[str, Any],
+    case: Path,
+    mode: str,
+    *,
+    artifacts: RetainedArtifactIO | None = None,
+) -> None:
     from tools.run_environment_qualification import NATIVE, checked, localpath, winpath
 
     try:
@@ -327,7 +336,16 @@ def verify_commit_callback(row: dict[str, Any], case: Path, mode: str) -> None:
             raise ValueError("independent file handle")
         if localpath(row["commit_io_events"]["path"]) != case / "commit-io-events.json":
             raise ValueError("events path")
-        events = json.loads(checked(row["commit_io_events"]))
+        boundary = (
+            artifacts.recorded_boundary(row["commit_io_events"]["path"]) if artifacts else None
+        )
+        events = json.loads(
+            checked(
+                row["commit_io_events"],
+                artifacts=artifacts,
+                recorded_boundary=boundary,
+            )
+        )
         expected = [
             {"event": "install", **info},
             {

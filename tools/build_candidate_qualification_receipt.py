@@ -10,7 +10,10 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import cast
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
@@ -103,9 +106,16 @@ def _inventory(root: Path, generated_outputs: object = None) -> dict[str, object
     return inventory
 
 
-def _read_evidence(path: Path) -> dict[str, object]:
+def _read_bytes(path: Path, artifacts: RetainedArtifactIO | None = None) -> bytes:
+    if artifacts is None:
+        return path.read_bytes()
+    recorded = str(path)
+    return artifacts.read_bytes(recorded, recorded_boundary=artifacts.recorded_boundary(recorded))
+
+
+def _read_evidence(path: Path, artifacts: RetainedArtifactIO | None = None) -> dict[str, object]:
     try:
-        value = json.loads(path.read_text())
+        value = json.loads(_read_bytes(path, artifacts))
     except (OSError, json.JSONDecodeError) as error:
         raise ValueError("E_CANDIDATE_RECEIPT") from error
     if not isinstance(value, dict):
@@ -133,16 +143,16 @@ def _validate_command_evidence(
         raise ValueError("E_CANDIDATE_RECEIPT") from error
     expected["schema_version"] = "candidate-command-results/v3"
     expected["external_authoring_result"] = evidence["external_authoring_result"]
-    if (
-        evidence != expected
-        or evidence.get("generated_outputs")
-        != run_command_registry.collect_generated_outputs(source)
-    ):
+    if evidence != expected or evidence.get(
+        "generated_outputs"
+    ) != run_command_registry.collect_generated_outputs(source):
         raise ValueError("E_CANDIDATE_RECEIPT")
 
 
-def _validate_proof_coverage(config: FullVerifierConfig) -> dict[str, object]:
-    proof = _read_evidence(config.proof_coverage_evidence)
+def _validate_proof_coverage(
+    config: FullVerifierConfig, artifacts: RetainedArtifactIO | None = None
+) -> dict[str, object]:
+    proof = _read_evidence(config.proof_coverage_evidence, artifacts)
     evidence = proof.get("evidence")
     if (
         proof.get("schema_version") != "proof-coverage-result/v2"
@@ -155,23 +165,22 @@ def _validate_proof_coverage(config: FullVerifierConfig) -> dict[str, object]:
     ):
         raise ValueError("E_CANDIDATE_RECEIPT")
     try:
-        source = (
-            config.governed_source_pack
-            / "docs/registries/proof-coverage-matrix.v1.json"
-        )
-        matrix = _read_evidence(source)
+        source = config.governed_source_pack / "docs/registries/proof-coverage-matrix.v1.json"
+        matrix = _read_evidence(source, artifacts)
         expected = verify_proof_coverage_matrix(
-            matrix, config.evidence_root, "CANDIDATE", config
+            matrix, config.evidence_root, "CANDIDATE", config, artifacts=artifacts
         )
     except (OSError, ValueError, json.JSONDecodeError) as error:
         raise ValueError("E_CANDIDATE_RECEIPT") from error
-    if proof != expected or not source.is_file():
+    if proof != expected or (artifacts is None and not source.is_file()):
         raise ValueError("E_CANDIDATE_RECEIPT")
     return proof
 
 
-def _proof_coverage_sha256(config: FullVerifierConfig) -> str:
-    return hashlib.sha256(config.proof_coverage_evidence.read_bytes()).hexdigest()
+def _proof_coverage_sha256(
+    config: FullVerifierConfig, artifacts: RetainedArtifactIO | None = None
+) -> str:
+    return hashlib.sha256(_read_bytes(config.proof_coverage_evidence, artifacts)).hexdigest()
 
 
 def validate_candidate_qualification_receipt(
@@ -179,12 +188,17 @@ def validate_candidate_qualification_receipt(
     command_evidence: Path,
     receipt: dict[str, object],
     config: FullVerifierConfig | None = None,
+    *,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> None:
-    evidence = _read_evidence(command_evidence)
+    evidence = _read_evidence(command_evidence, artifacts)
     if config is None:
         raise ValueError("E_CANDIDATE_RECEIPT")
     _validate_command_evidence(source, evidence, config)
-    _validate_proof_coverage(config)
+    if artifacts is None:
+        _validate_proof_coverage(config)
+    else:
+        _validate_proof_coverage(config, artifacts)
     inventory = _inventory(source, evidence.get("generated_outputs"))
     required = {
         "schema_version",
@@ -205,14 +219,18 @@ def validate_candidate_qualification_receipt(
             b"HD636/CANDIDATE-COMMAND-RESULTS/v2\0" + _canonical(evidence)
         ).hexdigest()
         or receipt.get("command_evidence_sha256")
-        != hashlib.sha256(command_evidence.read_bytes()).hexdigest()
+        != hashlib.sha256(_read_bytes(command_evidence, artifacts)).hexdigest()
         or receipt.get("command_ids")
         != [entry["command_id"] for entry in cast(list[dict[str, object]], evidence["results"])]
         or receipt.get("inventory") != inventory
         or config is None
         or receipt.get("controller_binding") != config.binding()
         or receipt.get("proof_coverage_sha256")
-        != _proof_coverage_sha256(config)
+        != (
+            _proof_coverage_sha256(config)
+            if artifacts is None
+            else _proof_coverage_sha256(config, artifacts)
+        )
     ):
         raise ValueError("E_CANDIDATE_RECEIPT")
 

@@ -7,7 +7,7 @@ import subprocess
 import tomllib
 import zipfile
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from tools.native_ingestor_probe import COMMIT_PHASE, PHASES, dependency_payload
@@ -23,6 +23,9 @@ from tools.run_environment_qualification import (
 )
 from tools.run_indexeddb_crash_matrix import ROOT, _observations
 from tools.verify_repair_evidence import _validate_sqlite_state, capture_binding
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 DEPENDENCIES = WINDOWS_PARENT / "native-dependency-closure-b82739f5-1369-4d01-a701-b39a1a8e228b"
 SCRIPT = ROOT / "tools/native_ingestor_probe.py"
@@ -155,13 +158,21 @@ def run_native_commit_io(workspace: Path, *, mode: str = "armed") -> dict[str, A
     return _execute_native_ingestor(workspace, commit_io=mode)
 
 
-def verify_native_commit_io(report: dict[str, Any]) -> None:
-    verify_native_ingestor(report)
+def verify_native_commit_io(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
+    verify_native_ingestor(report, artifacts=artifacts)
     if report["native_sql06"] != "PASS" or report["scope"] != "NATIVE_SQLITE_COMMIT_IO_ONLY":
         raise ValueError("E_NATIVE_COMMIT_IO_CALLBACK")
 
 
-def verify_native_ingestor(report: dict[str, Any]) -> None:
+def verify_native_ingestor(
+    report: dict[str, Any], *, artifacts: RetainedArtifactIO | None = None
+) -> None:
+    def retained(descriptor: dict[str, str]) -> bytes:
+        boundary = artifacts.recorded_boundary(descriptor["path"]) if artifacts else None
+        return checked(descriptor, artifacts=artifacts, recorded_boundary=boundary)
+
     try:
         io = "commit_io" in report["config"]
         if (
@@ -169,7 +180,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
             or report["binding"] != capture_binding()
             or report["dependency"] != dependency_binding()
             or report["exit"] != 0
-            or checked(report["stderr"])
+            or retained(report["stderr"])
             or report["scope"]
             != (
                 "NATIVE_SQLITE_COMMIT_IO_ONLY"
@@ -182,7 +193,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
             or report["production_authority"] != "NONE"
         ):
             raise ValueError("binding")
-        raw = json.loads(checked(report["stdout"]))
+        raw = json.loads(retained(report["stdout"]))
         if set(raw) != {
             "cases",
             "controller",
@@ -204,7 +215,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
         for descriptor, path in zip(report["runtime_files"], runtime, strict=True):
             if localpath(descriptor["path"]) != path or checked(descriptor) != path.read_bytes():
                 raise ValueError("native runtime files")
-        cfg = json.loads(checked(report["input"]))
+        cfg = json.loads(retained(report["input"]))
         if cfg != report["config"] or set(cfg) != {
             "workspace",
             "root",
@@ -283,7 +294,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                 item = row["inputs"][mode]
                 if (
                     item["value"] != value
-                    or json.loads(checked(item["artifact"])) != value
+                    or json.loads(retained(item["artifact"])) != value
                     or localpath(item["artifact"]["path"]) != case / f"{mode}.input.json"
                 ):
                     raise ValueError("oracle-free child input")
@@ -313,11 +324,11 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                 ("writer_stdout", "write.stdout"),
                 ("writer_stderr", "write.stderr"),
             ]:
-                if localpath(row[key]["path"]) != case / filename or checked(row[key]):
+                if localpath(row[key]["path"]) != case / filename or retained(row[key]):
                     raise ValueError("writer output")
             checkpoint = row["checkpoint"]
             if (
-                checkpoint != json.loads(checked(row["checkpoint_artifact"]))
+                checkpoint != json.loads(retained(row["checkpoint_artifact"]))
                 or localpath(row["checkpoint_artifact"]["path"]) != case / "checkpoint.json"
                 or set(checkpoint)
                 != {
@@ -358,10 +369,10 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                 value = process["value"]
                 if (
                     process["exit"] != 0
-                    or checked(process["stderr"])
+                    or retained(process["stderr"])
                     or localpath(process["stdout"]["path"]) != case / f"{mode}.stdout"
                     or localpath(process["stderr"]["path"]) != case / f"{mode}.stderr"
-                    or value != json.loads(checked(process["stdout"]))
+                    or value != json.loads(retained(process["stdout"]))
                     or set(value) != {"pid", "identity", "state", "ack", "loaded_dependencies"}
                     or value["pid"] != process["observed"]["pid"]
                     or value["identity"] != identity
@@ -402,6 +413,11 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
         if io:
             from tools.native_sqlite_commit_io import verify_commit_callback
 
-            verify_commit_callback(report["cases"][0], owned / COMMIT_PHASE, cfg["commit_io"])
+            verify_commit_callback(
+                report["cases"][0],
+                owned / COMMIT_PHASE,
+                cfg["commit_io"],
+                artifacts=artifacts,
+            )
     except (ValueError, KeyError, TypeError, OSError) as error:
         raise ValueError("E_NATIVE_INGESTOR_EVIDENCE") from error

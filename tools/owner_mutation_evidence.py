@@ -91,7 +91,7 @@ def verify_process(
     *,
     rejection: bool = False,
 ) -> None:
-    from tools.verify_repair_evidence import _sqlite_descriptor, _sqlite_file
+    from tools.verify_repair_evidence import _read_retained, _sqlite_descriptor, _sqlite_file
 
     owner = {"case_directory": str(case)}
     command = [
@@ -123,7 +123,7 @@ def verify_process(
         )
         if path != case / (name + "." + stream):
             raise ValueError("E_OWNER_MUTATION_OUTPUT")
-        if stream == "stderr" and path.read_bytes():
+        if stream == "stderr" and _read_retained(path):
             raise ValueError("E_OWNER_MUTATION_OUTPUT")
     if _sqlite_descriptor(owner, row["stdout"], "E_OWNER_MUTATION_OUTPUT") != {
         "pid": row["pid"],

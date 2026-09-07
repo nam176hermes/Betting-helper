@@ -12,7 +12,10 @@ import subprocess
 import sys
 from pathlib import Path
 from time import monotonic, sleep
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 from uuid import uuid4
 
 from tools.gap_state_reader import read_gap_state
@@ -170,10 +173,13 @@ def _proc_observation(
 def _verify_proc_observation(
     observation: dict[str, Any], descriptor: dict[str, str], command: list[str]
 ) -> None:
+    from tools.verify_repair_evidence import _read_retained
+
     path = Path(descriptor["path"])
-    if _sha(path) != descriptor["sha256"]:
+    raw_bytes = _read_retained(path)
+    if hashlib.sha256(raw_bytes).hexdigest() != descriptor["sha256"]:
         raise ValueError("E_GAP_PROCESS_PROVENANCE")
-    raw = json.loads(path.read_text())
+    raw = json.loads(raw_bytes)
     stat = raw["proc_stat"].split()
     cmdline = bytes.fromhex(raw["proc_cmdline_hex"]).rstrip(b"\0").split(b"\0")
     derived = {
@@ -578,9 +584,11 @@ def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> Non
             successor is not None
             and successor["generation_state"] == "CLOSED"
             and successor["close_reason"] == "RUN_CLOSED"
-            and any(meta["run_id"] == gap["run_id"]
+            and any(
+                meta["run_id"] == gap["run_id"]
                     and meta["run_status"] in {"CLOSED", "DESTRUCTION_PENDING"}
-                    for meta in tables["run_meta"])
+                for meta in tables["run_meta"]
+            )
         )
         transition = transitions.get(binding["coherence_transition_id"])
         controller = controllers.get(binding["coherence_controller_id"])
@@ -590,8 +598,11 @@ def _validate_snapshot_relations(tables: dict[str, list[dict[str, Any]]]) -> Non
             or successor is None
             or predecessor["generation_state"] == "ACTIVE"
             or predecessor["close_reason"] != gap["gap_reason"]
-            or (successor["generation_state"] != "ACTIVE"
-                and not successor_was_reclosed and not successor_closed_with_run)
+            or (
+                successor["generation_state"] != "ACTIVE"
+                and not successor_was_reclosed
+                and not successor_closed_with_run
+            )
             or generation_transition["predecessor_generation"] != gap["predecessor_generation"]
             or generation_transition["successor_generation"] != gap["successor_generation"]
             or transition is None
@@ -1105,7 +1116,22 @@ def _record(
     return row
 
 
-def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
+def _retained_json(path: object, artifacts: RetainedArtifactIO | None) -> Any:
+    recorded = str(path)
+    data = (
+        artifacts.read_bytes(recorded, recorded_boundary=artifacts.recorded_boundary(recorded))
+        if artifacts is not None
+        else Path(recorded).read_bytes()
+    )
+    return json.loads(data)
+
+
+def verify_gap_record(
+    row: dict[str, Any],
+    binding: dict[str, Any],
+    *,
+    artifacts: RetainedArtifactIO | None = None,
+) -> None:
     entry = next(
         item
         for item in json.loads(REGISTRY.read_text())["entries"]
@@ -1120,8 +1146,8 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         or row["identity"]["case_id"] != entry["vector_id"]
     ):
         raise ValueError("E_GAP_IDENTITY")
-    boundary = json.loads(Path(row["boundary_artifact"]["path"]).read_text())
-    checkpoint = json.loads(Path(row["checkpoint_artifact"]["path"]).read_text())
+    boundary = _retained_json(row["boundary_artifact"]["path"], artifacts)
+    checkpoint = _retained_json(row["checkpoint_artifact"]["path"], artifacts)
     process = row["process_observation"]
     if (
         checkpoint != row["identity"]
@@ -1174,7 +1200,7 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
             descriptor = reader[descriptor_name]
             if _sha(Path(descriptor["path"])) != descriptor["sha256"]:
                 raise ValueError("E_GAP_READER")
-        output = json.loads(Path(reader["output"]["path"]).read_text())
+        output = _retained_json(reader["output"]["path"], artifacts)
         expected_state = row[f"{reader['phase']}_restart"]
         if (
             output["process"] != reader["process"]
@@ -1192,7 +1218,7 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         ):
             raise ValueError("E_GAP_READER")
         reader_processes.append(reader["process"])
-    terminal = json.loads(Path(row["terminal_artifact"]["path"]).read_text())
+    terminal = _retained_json(row["terminal_artifact"]["path"], artifacts)
     if terminal != {
         "identity": row["identity"],
         "kill_action": row["kill_action"],
@@ -1214,8 +1240,8 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         "exit": expected_exit,
     }:
         raise ValueError("E_GAP_TERMINATION")
-    scenario = json.loads(Path(row["scenario_artifact"]["path"]).read_text())
-    baseline = json.loads(Path(row["baseline_artifact"]["path"]).read_text())
+    scenario = _retained_json(row["scenario_artifact"]["path"], artifacts)
+    baseline = _retained_json(row["baseline_artifact"]["path"], artifacts)
     _validate_snapshot_ddl(baseline)
     _validate_snapshot_ddl(row["before_restart"])
     _validate_snapshot_ddl(row["after_restart"])
@@ -1239,7 +1265,12 @@ def verify_gap_record(row: dict[str, Any], binding: dict[str, Any]) -> None:
         raise ValueError("E_GAP_SHIM")
 
 
-def verify_gap_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
+def verify_gap_mutation(
+    row: dict[str, Any],
+    binding: dict[str, Any],
+    *,
+    artifacts: RetainedArtifactIO | None = None,
+) -> None:
     if (
         row["evidence_binding"] != binding
         or row["revision"] != binding["revision"]
@@ -1275,7 +1306,7 @@ def verify_gap_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
             status="PASS",
             result="PASS",
         )
-        verify_gap_record(control, binding)
+        verify_gap_record(control, binding, artifacts=artifacts)
         return
     if row["kind"] != "INPUT" or row["observed_error"] != "CONTENT_HASH_MISMATCH":
         raise ValueError("E_GAP_MUTATION_INPUT")
@@ -1287,7 +1318,7 @@ def verify_gap_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
     _verify_proc_observation(
         row["process_observation"], row["process_observation_artifact"], row["command"]
     )
-    scenario = json.loads(Path(row["scenario_artifact"]["path"]).read_text())
+    scenario = _retained_json(row["scenario_artifact"]["path"], artifacts)
     original, mutated = row["original_input"], row["mutated_input"]
     from moj_discovery.canonical import canonical_content_hash
     from moj_discovery.store import VENDOR
@@ -1303,9 +1334,16 @@ def verify_gap_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
         == mutated["content_hash"]
     ):
         raise ValueError("E_GAP_MUTATION_INPUT")
-    launch = json.loads(Path(row["launch_artifact"]["path"]).read_text())
-    terminal = json.loads(Path(row["terminal_artifact"]["path"]).read_text())
-    stderr = Path(row["stderr_artifact"]["path"]).read_text()
+    launch = _retained_json(row["launch_artifact"]["path"], artifacts)
+    terminal = _retained_json(row["terminal_artifact"]["path"], artifacts)
+    stderr_path = str(row["stderr_artifact"]["path"])
+    stderr = (
+        artifacts.read_bytes(
+            stderr_path, recorded_boundary=artifacts.recorded_boundary(stderr_path)
+        ).decode()
+        if artifacts is not None
+        else Path(stderr_path).read_text()
+    )
     if (
         launch != row["identity"]
         or terminal

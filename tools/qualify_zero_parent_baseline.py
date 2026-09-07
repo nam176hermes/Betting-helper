@@ -12,7 +12,10 @@ import stat
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
-from typing import cast
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
@@ -187,10 +190,25 @@ def _registry(path: Path, root: Path) -> list[dict[str, object]]:
     return result
 
 
-def _normative_source_set(pack: Path) -> tuple[str, str, str]:
+def _normative_source_set(
+    pack: Path, *, artifacts: RetainedArtifactIO | None = None
+) -> tuple[str, str, str]:
+    def read(path: Path) -> bytes:
+        if artifacts is None:
+            return _regular(path)
+        recorded = str(path)
+        return artifacts.read_bytes(
+            recorded, recorded_boundary=artifacts.recorded_boundary(recorded)
+        )
+
     source_map_path = pack / "docs/registries/normative-source-map.v1.json"
-    source_map_bytes = _regular(source_map_path)
-    source_map = _object(source_map_path)
+    source_map_bytes = read(source_map_path)
+    try:
+        source_map = json.loads(source_map_bytes)
+    except json.JSONDecodeError as error:
+        raise ValueError("E_ZERO_PARENT_BASELINE") from error
+    if not isinstance(source_map, dict):
+        raise ValueError("E_ZERO_PARENT_BASELINE")
     inherited = source_map.get("inherited_entries")
     plan = source_map.get("plan_entries")
     if (
@@ -206,7 +224,7 @@ def _normative_source_set(pack: Path) -> tuple[str, str, str]:
             raise ValueError("E_ZERO_PARENT_BASELINE")
         source = _relative(entry.get("plan_source"))
         _relative(entry.get("vendor_relative"))
-        contents = _regular(pack / source)
+        contents = read(pack / source)
         digest = hashlib.sha256(contents).hexdigest()
         declared = entry.get("plan_sha256", entry.get("source_sha256"))
         if declared is not None and declared != digest:

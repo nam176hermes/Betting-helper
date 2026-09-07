@@ -9,7 +9,10 @@ import shutil
 from pathlib import Path
 from secrets import token_hex
 from subprocess import run
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from tools.retained_artifact_io import RetainedArtifactIO
 from uuid import uuid4
 
 from moj_discovery.canonical import canonical_content_hash
@@ -250,8 +253,10 @@ def run_indexeddb_case(
         _wait_for_probe(socket)
         sentinel = token_hex(32)
         initial_sentinel = _call(socket, "writeSentinel", sentinel, profile_id)
-        if (initial_sentinel.get("sentinel") != sentinel
-                or initial_sentinel.get("profileId") != profile_id):
+        if (
+            initial_sentinel.get("sentinel") != sentinel
+            or initial_sentinel.get("profileId") != profile_id
+        ):
             raise ValueError("E_INDEXEDDB_PROFILE")
         run_id = str(uuid4())
         observations = _observations(run_id)
@@ -299,7 +304,9 @@ def run_indexeddb_case(
                 extension,
                 binary,
                 observations,
-                browser_process=process, profile=profile, sentinel=sentinel,
+                browser_process=process,
+                profile=profile,
+                sentinel=sentinel,
                 initial_sentinel=initial_sentinel,
                 input_rejection=input_rejection,
             )
@@ -465,9 +472,7 @@ def run_full_repair_evidence(
         "GAP_GENERATION_COHERENCE": run_gap_coherence_crash_matrix(
             pack, workspace / "gap-coherence"
         ),
-        "WHOLE_RUN_DESTRUCTION": run_destruction_crash_matrix(
-            pack, workspace / "destruction"
-        ),
+        "WHOLE_RUN_DESTRUCTION": run_destruction_crash_matrix(pack, workspace / "destruction"),
     }
     crash_by_id: dict[str, dict[str, Any]] = {}
     for harness, report in owner_reports.items():
@@ -494,11 +499,19 @@ def run_full_repair_evidence(
     try:
         mutation_summary = validate_full_mutation_reports(pack, owner_reports, clock)
     except (KeyError, TypeError, ValueError, OSError) as error:
-        mutation_summary = {"required": 105, "verified": 0, "survivors": None,
-                            "complete": False, "error": str(error)}
-        aggregate = {**aggregate, "result": "FAIL", "legacy_full_qualification": "HOLD",
-                     "errors": [*aggregate["errors"],
-                                {"case_id": "", "error": str(error)}]}
+        mutation_summary = {
+            "required": 105,
+            "verified": 0,
+            "survivors": None,
+            "complete": False,
+            "error": str(error),
+        }
+        aggregate = {
+            **aggregate,
+            "result": "FAIL",
+            "legacy_full_qualification": "HOLD",
+            "errors": [*aggregate["errors"], {"case_id": "", "error": str(error)}],
+        }
     result = {
         **aggregate,
         "records": records,
@@ -582,27 +595,34 @@ def full_control_records(
 
 
 def _verify_owner_mutation(
-    harness: str, row: dict[str, Any], binding: dict[str, Any]
+    harness: str,
+    row: dict[str, Any],
+    binding: dict[str, Any],
+    artifacts: RetainedArtifactIO | None = None,
 ) -> None:
     if harness == "GAP_GENERATION_COHERENCE":
         from tools.run_gap_coherence_crash_matrix import verify_gap_mutation
 
-        verify_gap_mutation(row, binding)
+        verify_gap_mutation(row, binding, artifacts=artifacts)
     elif harness == "WHOLE_RUN_DESTRUCTION":
         from tools.verify_destruction_evidence import verify_destruction
 
         execution = row["execution"]
-        verify_destruction(execution, binding, mutation_type=row["kind"])
+        verify_destruction(execution, binding, mutation_type=row["kind"], artifacts=artifacts)
     else:
         from tools.verify_repair_evidence import verify_owner_mutation
 
-        verify_owner_mutation(harness, row, binding)
+        verify_owner_mutation(harness, row, binding, artifacts=artifacts)
 
 
-def _verify_clock_mutation(row: dict[str, Any], binding: dict[str, Any]) -> None:
+def _verify_clock_mutation(
+    row: dict[str, Any],
+    binding: dict[str, Any],
+    artifacts: RetainedArtifactIO | None = None,
+) -> None:
     from tools.run_clock_vector_qualification import verify_record
 
-    if not verify_record(row, _current_binding=binding):
+    if not verify_record(row, _current_binding=binding, artifacts=artifacts):
         raise ValueError("E_FULL_MUTATION_CLOCK_EVIDENCE")
 
 
@@ -610,9 +630,11 @@ def validate_full_mutation_reports(
     pack: Path,
     owner_reports: dict[str, dict[str, Any]],
     clock_report: dict[str, Any] | None,
+    *,
+    artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, Any]:
     """Require every registered mutation once and recursively verify its evidence."""
-    from tools.verify_repair_evidence import capture_binding
+    from tools.verify_repair_evidence import _RETAINED_ARTIFACTS, capture_binding
 
     registry = json.loads((pack / "docs/registries/crash-harness-registry.v1.json").read_text())
     harnesses = list(dict.fromkeys(entry["harness"] for entry in registry["entries"]))
@@ -632,45 +654,62 @@ def validate_full_mutation_reports(
         for harness in harnesses
     }
     binding = capture_binding()
+    artifact_token = _RETAINED_ARTIFACTS.set(artifacts)
     verified = 0
     survivors = 0
-    for harness, expected_pairs in expected_by_harness.items():
-        mutations = _owner_mutations(owner_reports[harness])
-        if [(_mutation_id(row), _mutation_control_id(row)) for row in mutations] != expected_pairs:
-            raise ValueError("E_FULL_MUTATION_REQUIRED_SET:" + harness)
-        for row in mutations:
-            if row.get("detected") is not True:
-                survivors += 1
+    try:
+        for harness, expected_pairs in expected_by_harness.items():
+            mutations = _owner_mutations(owner_reports[harness])
+            actual_pairs = [(_mutation_id(row), _mutation_control_id(row)) for row in mutations]
+            if actual_pairs != expected_pairs:
+                raise ValueError("E_FULL_MUTATION_REQUIRED_SET:" + harness)
+            for row in mutations:
+                if row.get("detected") is not True:
+                    survivors += 1
+                    raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
+                if "control" in row and row["control"] != next(
+                    control
+                    for control in controls
+                    if control.get("case_id", control.get("vector_id"))
+                    == _mutation_control_id(row)
+                ):
+                    raise ValueError("E_FULL_MUTATION_CONTROL_LINK")
+                if artifacts is None:
+                    _verify_owner_mutation(harness, row, binding)
+                else:
+                    _verify_owner_mutation(harness, row, binding, artifacts)
+                verified += 1
+        clock_mutations = list(clock_report.get("mutation_records", []))
+        expected_clock = required_clock_mutation_ids()
+        if [_mutation_id(row) for row in clock_mutations] != expected_clock:
+            raise ValueError("E_FULL_MUTATION_REQUIRED_SET:CLOCK")
+        for row in clock_mutations:
+            if row.get("detected") is not True or row.get("executed") is not True:
                 raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
-            if "control" in row and row["control"] != next(
-                control for control in controls
-                if control.get("case_id", control.get("vector_id")) == _mutation_control_id(row)
-            ):
-                raise ValueError("E_FULL_MUTATION_CONTROL_LINK")
-            _verify_owner_mutation(harness, row, binding)
+            if artifacts is None:
+                _verify_clock_mutation(row, binding)
+            else:
+                _verify_clock_mutation(row, binding, artifacts)
+            actual = row.get("actual", {})
+            source = row.get("source_vector_id")
+            if source is None and isinstance(actual, dict):
+                control = actual.get("control", {})
+                trial = actual.get("trial", {})
+                if isinstance(control, dict) and isinstance(trial, dict):
+                    if control.get("case_id") != trial.get("case_id"):
+                        raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
+                    source = control.get("case_id")
+            if source not in control_ids:
+                raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
             verified += 1
-    clock_mutations = list(clock_report.get("mutation_records", []))
-    expected_clock = required_clock_mutation_ids()
-    if [_mutation_id(row) for row in clock_mutations] != expected_clock:
-        raise ValueError("E_FULL_MUTATION_REQUIRED_SET:CLOCK")
-    for row in clock_mutations:
-        if row.get("detected") is not True or row.get("executed") is not True:
-            raise ValueError("E_FULL_MUTATION_SURVIVOR:" + _mutation_id(row))
-        _verify_clock_mutation(row, binding)
-        actual = row.get("actual", {})
-        source = row.get("source_vector_id")
-        if source is None and isinstance(actual, dict):
-            control = actual.get("control", {})
-            trial = actual.get("trial", {})
-            if isinstance(control, dict) and isinstance(trial, dict):
-                if control.get("case_id") != trial.get("case_id"):
-                    raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
-                source = control.get("case_id")
-        if source not in control_ids:
-            raise ValueError("E_FULL_MUTATION_CLOCK_CONTROL")
-        verified += 1
-    return {"required": 105, "verified": verified, "survivors": survivors,
-            "complete": verified == 105 and survivors == 0}
+    finally:
+        _RETAINED_ARTIFACTS.reset(artifact_token)
+    return {
+        "required": 105,
+        "verified": verified,
+        "survivors": survivors,
+        "complete": verified == 105 and survivors == 0,
+    }
 
 
 def run_indexeddb_crash_matrix(
