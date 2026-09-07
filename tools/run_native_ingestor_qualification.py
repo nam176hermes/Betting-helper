@@ -246,7 +246,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
         ]
         if report["command"] != command:
             raise ValueError("command")
-        _verify_native_observation(
+        controller_identity = _verify_native_observation(
             report["controller"],
             [winpath(NATIVE), *command[1:]],
             report["controller"]["cim"]["ParentProcessId"],
@@ -255,7 +255,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
         phases = (COMMIT_PHASE,) if io else PHASES
         if [row["case_id"] for row in report["cases"]] != list(phases):
             raise ValueError("case set")
-        identities = {report["controller"]["pid"]}
+        identities = {controller_identity}
         for ordinal, row in enumerate(report["cases"]):
             phase = phases[ordinal]
             committed_after = ordinal if not io else int(cfg["commit_io"] != "armed")
@@ -289,7 +289,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                     raise ValueError("oracle-free child input")
             if row["writer"] != row["writer_start"]:
                 raise ValueError("writer replacement")
-            _verify_native_observation(
+            writer_identity = _verify_native_observation(
                 row["writer"],
                 [
                     winpath(NATIVE),
@@ -301,7 +301,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                 ],
                 report["controller"]["pid"],
             )
-            identities.add(row["writer"]["pid"])
+            identities.add(writer_identity)
             if row["termination"] != {
                 "mechanism": "WINDOWS_TERMINATE_PROCESS_OWNED_HANDLE",
                 "exit": 1,
@@ -342,7 +342,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                 raise ValueError("reader set")
             for name, process in zip(names, row["processes"], strict=True):
                 mode = process["mode"]
-                _verify_native_observation(
+                process_identity = _verify_native_observation(
                     process["observed"],
                     [
                         winpath(NATIVE),
@@ -354,7 +354,7 @@ def verify_native_ingestor(report: dict[str, Any]) -> None:
                     ],
                     report["controller"]["pid"],
                 )
-                identities.add(process["observed"]["pid"])
+                identities.add(process_identity)
                 value = process["value"]
                 if (
                     process["exit"] != 0

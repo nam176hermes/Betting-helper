@@ -64,9 +64,61 @@ def test_native_pipe_restarts_actual_spool(native_report: dict[str, Any]) -> Non
     assert native_report["before"]["entries"] == native_report["after"]["entries"]
     assert len(native_report["before"]["entries"]) == 2
     assert len(native_report["phases"]) == 2
-    assert (
-        native_report["phases"][0]["browser"]["pid"] != native_report["phases"][1]["browser"]["pid"]
+    identities = [
+        environment._verify_native_observation(
+            phase["browser"], phase["browser"]["argv"], phase["node"]["pid"]
+        )
+        for phase in native_report["phases"]
+    ]
+    assert identities[0] != identities[1]
+
+
+@pytest.mark.parametrize(
+    "reuse", ["distinct_creation", "duplicate_identity", "live_controller", "same_phase"]
+)
+def test_native_browser_restart_identity_uses_creation_time(
+    native_report: dict[str, Any], reuse: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import hashlib
+    import json
+
+    row = copy.deepcopy(native_report)
+    first, later = row["phases"]
+    previous = first["leader"]
+    observed = later["leader"]
+    old_pid = observed["pid"]
+    pid = (
+        row["controller"]["pid"]
+        if reuse == "live_controller"
+        else later["node"]["pid"]
+        if reuse == "same_phase"
+        else previous["pid"]
     )
+    later["leader_pid"] = observed["pid"] = observed["cim"]["ProcessId"] = pid
+    if reuse == "duplicate_identity":
+        observed["cim"]["CreationDate"] = previous["cim"]["CreationDate"]
+    else:
+        assert observed["cim"]["CreationDate"] != previous["cim"]["CreationDate"]
+    observed["cim_raw"] = json.dumps(observed["cim"])
+    later["node"]["cim"]["ParentProcessId"] = pid
+    later["node"]["cim_raw"] = json.dumps(later["node"]["cim"])
+    for item in later["descendants"]:
+        if item["ParentProcessId"] == old_pid:
+            item["ParentProcessId"] = pid
+    later["descendants_raw"] = json.dumps(later["descendants"])
+    read = Path.read_bytes
+    path = Path(row["stdout"]["path"])
+    raw = json.loads(read(path))
+    raw["phases"][1] = {key: later[key] for key in raw["phases"][1]}
+    content = json.dumps(raw).encode()
+    row["stdout"]["sha256"] = hashlib.sha256(content).hexdigest()
+    monkeypatch.setattr(Path, "read_bytes", lambda value: content if value == path else read(value))
+    if reuse == "distinct_creation":
+        environment.verify_windows_browser(row)
+    else:
+        with pytest.raises(ValueError, match="E_ENV_WINDOWS_BROWSER_EVIDENCE") as error:
+            environment.verify_windows_browser(row)
+        assert str(error.value.__cause__) in {"restart process", "E_ENV_NATIVE_OBSERVATION"}
 
 
 @pytest.mark.parametrize("damage", ["missing", "null", "empty", "malformed", "overflow", "extra"])

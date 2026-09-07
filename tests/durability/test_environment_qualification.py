@@ -34,6 +34,50 @@ def test_native_owned_termination_preserves_only_committed_state(tmp_path: Path)
     owner().verify_native_storage(report)
 
 
+@pytest.fixture(scope="module")
+def native_storage_identity_report(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
+    return dict(owner().run_native_storage(tmp_path_factory.mktemp("native-storage-identities")))
+
+
+@pytest.mark.parametrize("reuse", ["distinct_creation", "duplicate_identity", "live_controller"])
+def test_native_storage_sequential_identity_uses_creation_time(
+    native_storage_identity_report: dict[str, Any], reuse: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    module = owner()
+    row = copy.deepcopy(native_storage_identity_report)
+    first, later = row["cases"][0]["processes"][0], row["cases"][0]["processes"][2]
+    previous = first["observed"]
+    pid = previous["pid"] if reuse != "live_controller" else row["pid"]
+    observed = later["observed"]
+    later["pid"] = observed["pid"] = observed["cim"]["ProcessId"] = pid
+    if reuse == "duplicate_identity":
+        observed["cim"]["CreationDate"] = previous["cim"]["CreationDate"]
+    else:
+        assert observed["cim"]["CreationDate"] != previous["cim"]["CreationDate"]
+    observed["cim_raw"] = json.dumps(observed["cim"])
+    read = Path.read_bytes
+    virtual: dict[Path, bytes] = {}
+
+    def replace(descriptor: dict[str, str], value: Any) -> None:
+        content = json.dumps(value).encode()
+        virtual[module.localpath(descriptor["path"])] = content
+        descriptor["sha256"] = hashlib.sha256(content).hexdigest()
+
+    output = json.loads(read(module.localpath(later["stdout"]["path"])))
+    output["pid"] = pid
+    replace(later["stdout"], output)
+    raw = json.loads(read(module.localpath(row["owner_stdout"]["path"])))
+    raw["cases"] = row["cases"]
+    replace(row["owner_stdout"], raw)
+    monkeypatch.setattr(Path, "read_bytes", lambda path: virtual.get(path, read(path)))
+    if reuse == "distinct_creation":
+        module.verify_native_storage(row)
+    else:
+        with pytest.raises(ValueError, match="E_ENV_NATIVE_EVIDENCE") as error:
+            module.verify_native_storage(row)
+        assert str(error.value.__cause__) in {"independent processes", "E_ENV_NATIVE_OBSERVATION"}
+
+
 def test_filesystem_corruption_is_rejected_by_actual_restart_reader(tmp_path: Path) -> None:
     report = owner().run_filesystem_faults(tmp_path)
     assert report["result"] == "PASS"

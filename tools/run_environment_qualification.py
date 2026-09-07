@@ -163,7 +163,7 @@ def verify_native_storage(report: dict[str, Any]) -> None:
             validate_journal(row["after"]["tables"])
             checkpoint = row["checkpoint"]
             writer = row["writer"]
-            _verify_native_observation(
+            writer_identity = _verify_native_observation(
                 writer,
                 [
                     winpath(NATIVE),
@@ -212,7 +212,9 @@ def verify_native_storage(report: dict[str, Any]) -> None:
                     process["mode"],
                     row["input"]["path"],
                 ]
-                _verify_native_observation(process["observed"], expected_command, report["pid"])
+                process_identity = _verify_native_observation(
+                    process["observed"], expected_command, report["pid"]
+                )
                 if (
                     process["argv"] != expected_command
                     or process["observed"]["pid"] != process["pid"]
@@ -229,8 +231,8 @@ def verify_native_storage(report: dict[str, Any]) -> None:
                     row["before"] if process["mode"] == "setup" else row["after"]
                 ):
                     raise ValueError("readback")
-                identities.add(process["pid"])
-            identities.add(writer["pid"])
+                identities.add(process_identity)
+            identities.add(writer_identity)
         if len(identities) != 8:
             raise ValueError("independent processes")
     except (KeyError, TypeError, ValueError, OSError) as error:
@@ -243,7 +245,7 @@ def _verify_native_observation(
     parent: int,
     *,
     wsl_entry: bool = False,
-) -> None:
+) -> tuple[int, int]:
     cim = row.get("cim")
     if not isinstance(cim, dict) or set(cim) != {
         "ProcessId",
@@ -270,6 +272,7 @@ def _verify_native_observation(
         or row["cim"]["CommandLine"] not in command_lines
         or row["pid"] != row["cim"]["ProcessId"]
         or row["cim"]["ParentProcessId"] != parent
+        or row["pid"] == parent
         or row["executable"] != row["cim"]["ExecutablePath"]
         or localpath(row["executable"]) != localpath(command[0])
         or row["sha256"] != artifact(localpath(command[0]))["sha256"]
@@ -277,6 +280,7 @@ def _verify_native_observation(
         or not row["handle"]
     ):
         raise ValueError("E_ENV_NATIVE_OBSERVATION")
+    return row["pid"], int(match[1])
 
 
 def run_filesystem_faults(workspace: Path) -> dict[str, Any]:
@@ -896,7 +900,7 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
         }
         if cfg != expected_cfg or set(cfg["worker_ids"]) != {"before", "after"}:
             raise ValueError("config")
-        observed_pids = []
+        observed_identities: set[tuple[int, int]] = set()
         for phase, row, saved in zip(
             ("before", "after"), report["phases"], raw["phases"], strict=True
         ):
@@ -946,13 +950,17 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
                 "browser-leader",
                 winpath(case / "input.json"),
             ]
-            _verify_native_observation(row["leader"], leader_command, report["controller"]["pid"])
-            _verify_native_observation(
+            leader_identity = _verify_native_observation(
+                row["leader"], leader_command, report["controller"]["pid"]
+            )
+            node_identity = _verify_native_observation(
                 row["node"],
                 [cfg["node"], cfg["script"], winpath(case / "input.json")],
                 row["leader_pid"],
             )
-            _verify_native_observation(row["browser"], command, row["node"]["pid"])
+            browser_identity = _verify_native_observation(
+                row["browser"], command, row["node"]["pid"]
+            )
             if (
                 row["leader"]["pid"] != row["leader_pid"]
                 or not row["job_kill_on_close"]
@@ -960,9 +968,14 @@ def verify_windows_browser(report: dict[str, Any]) -> None:
             ):
                 raise ValueError("job")
             pids = [row["leader_pid"], row["node"]["pid"], row["browser"]["pid"]]
-            if len(set(pids)) != 3 or any(pid in observed_pids for pid in pids):
+            identities = {leader_identity, node_identity, browser_identity}
+            if (
+                len(set(pids)) != 3
+                or report["controller"]["pid"] in pids
+                or identities & observed_identities
+            ):
                 raise ValueError("restart process")
-            observed_pids.extend(pids)
+            observed_identities.update(identities)
             descendants = json.loads(row["descendants_raw"])
             cleanup = json.loads(row["cleanup_raw"])
             ids = [item["ProcessId"] for item in descendants]

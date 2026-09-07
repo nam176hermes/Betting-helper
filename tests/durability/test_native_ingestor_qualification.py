@@ -34,6 +34,48 @@ def test_actual_native_ingestor_boundaries(owner: Any, report: dict[str, Any]) -
     owner.verify_native_ingestor(report)
 
 
+@pytest.mark.parametrize("reuse", ["distinct_creation", "duplicate_identity", "live_controller"])
+def test_sequential_native_identity_uses_creation_time(
+    owner: Any, report: dict[str, Any], reuse: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import hashlib
+    import json
+
+    row = copy.deepcopy(report)
+    first, later = row["cases"][0]["processes"][0], row["cases"][0]["processes"][4]
+    previous = first["observed"] if reuse != "live_controller" else row["controller"]
+    observed = later["observed"]
+    observed["pid"] = observed["cim"]["ProcessId"] = previous["pid"]
+    if reuse == "duplicate_identity":
+        observed["cim"]["CreationDate"] = previous["cim"]["CreationDate"]
+    else:
+        assert observed["cim"]["CreationDate"] != previous["cim"]["CreationDate"]
+    observed["cim_raw"] = json.dumps(observed["cim"])
+    later["value"]["pid"] = previous["pid"]
+    read = Path.read_bytes
+    virtual: dict[Path, bytes] = {}
+
+    def replace(descriptor: dict[str, str], value: Any) -> None:
+        content = json.dumps(value).encode()
+        virtual[owner.localpath(descriptor["path"])] = content
+        descriptor["sha256"] = hashlib.sha256(content).hexdigest()
+
+    replace(later["stdout"], later["value"])
+    raw = json.loads(read(owner.localpath(row["stdout"]["path"])))
+    raw["cases"] = row["cases"]
+    replace(row["stdout"], raw)
+    monkeypatch.setattr(Path, "read_bytes", lambda path: virtual.get(path, read(path)))
+    if reuse == "distinct_creation":
+        owner.verify_native_ingestor(row)
+    else:
+        with pytest.raises(ValueError, match="E_NATIVE_INGESTOR_EVIDENCE") as error:
+            owner.verify_native_ingestor(row)
+        assert str(error.value.__cause__) in {
+            "independent process identity",
+            "E_ENV_NATIVE_OBSERVATION",
+        }
+
+
 def test_native_ingestor_records_actual_loaded_modules(report: dict[str, Any]) -> None:
     for case in report["cases"]:
         for process in case["processes"]:
