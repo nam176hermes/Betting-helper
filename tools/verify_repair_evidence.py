@@ -10,12 +10,14 @@ import signal
 import sqlite3
 import sys
 from collections import Counter
-from contextlib import closing
+from collections.abc import Iterator
+from contextlib import closing, contextmanager
 from contextvars import ContextVar
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 from shutil import which
-from subprocess import run
+from subprocess import SubprocessError, run
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING, Any
 
@@ -28,6 +30,71 @@ STATUSES = {"PASS", "FAIL", "BLOCKED_ENVIRONMENT", "NOT_IMPLEMENTED", "NOT_EXECU
 _RETAINED_ARTIFACTS: ContextVar[RetainedArtifactIO | None] = ContextVar(
     "repair_retained_artifacts", default=None
 )
+
+
+class _ClockValidationDrift(ValueError):
+    """An operation cannot publish results validated against changed inputs."""
+
+
+@dataclass
+class _ClockValidationState:
+    current_json: str | None = None
+    compile_binding: str | None = None
+    active: bool = True
+
+
+_CLOCK_VALIDATION: ContextVar[_ClockValidationState | None] = ContextVar(
+    "repair_clock_validation", default=None
+)
+
+
+@contextmanager
+def _clock_validation_scope() -> Iterator[bool]:
+    """Share actual input identity only until this outer operation revalidates it."""
+    existing = _CLOCK_VALIDATION.get()
+    if existing is not None:
+        if not existing.active:
+            raise _ClockValidationDrift("E_REPAIR_VALIDATION_INPUT_DRIFT")
+        yield False
+        return
+    state = _ClockValidationState()
+    token = _CLOCK_VALIDATION.set(state)
+    try:
+        yield True
+        if state.current_json is not None:
+            try:
+                current = capture_binding()
+                if json.dumps(current, sort_keys=True) != state.current_json or (
+                    state.compile_binding is not None
+                    and _typescript_compile_binding(current) != state.compile_binding
+                ):
+                    raise ValueError("changed clock validation inputs")
+            except (OSError, ValueError, AttributeError, TypeError, SubprocessError) as error:
+                raise _ClockValidationDrift("E_REPAIR_VALIDATION_INPUT_DRIFT") from error
+    finally:
+        state.active = False
+        _CLOCK_VALIDATION.reset(token)
+
+
+def _clock_current_binding() -> dict[str, Any]:
+    state = _CLOCK_VALIDATION.get()
+    if state is None or not state.active:
+        raise _ClockValidationDrift("E_REPAIR_VALIDATION_INPUT_DRIFT")
+    if state.current_json is None:
+        state.current_json = json.dumps(capture_binding(), sort_keys=True)
+    # A caller/record can never mutate the private authenticated snapshot.
+    value: dict[str, Any] = json.loads(state.current_json)
+    return value
+
+
+def _clock_compile_binding(current: dict[str, Any]) -> str:
+    if current != _clock_current_binding():
+        raise ValueError("E_REPAIR_STALE_BINDING")
+    state = _CLOCK_VALIDATION.get()
+    assert state is not None
+    if state.compile_binding is None:
+        state.compile_binding = _typescript_compile_binding(current)
+    return state.compile_binding
 
 
 def _sha(path: Path) -> str:
@@ -1429,6 +1496,23 @@ def aggregate_repair_evidence(
     *, artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, Any]:
     """Validate exact terminal records. An unsupported execution never qualifies."""
+    report: dict[str, Any] | None = None
+    try:
+        with _clock_validation_scope():
+            report = _aggregate_repair_evidence(required_ids, results, artifacts=artifacts)
+    except _ClockValidationDrift as error:
+        if report is None:
+            raise
+        report["errors"].append({"case_id": "", "error": str(error)})
+        report["result"] = "FAIL"
+        report["legacy_full_qualification"] = "HOLD"
+    return report
+
+
+def _aggregate_repair_evidence(
+    required_ids: list[str], results: list[dict[str, Any]],
+    *, artifacts: RetainedArtifactIO | None = None,
+) -> dict[str, Any]:
     errors: list[dict[str, str]] = []
     ids = [row.get("case_id", row.get("vector_id", "")) for row in results]
     exact = (bool(required_ids) and all(isinstance(i, str) and i for i in required_ids)
@@ -1437,7 +1521,9 @@ def aggregate_repair_evidence(
     if not exact:
         errors.append({"case_id": "", "error": "E_REPAIR_REQUIRED_ID_SET"})
     try:
-        current = capture_binding() if any("evidence_binding" in row for row in results) else {}
+        current = _clock_current_binding() if any(
+            "evidence_binding" in row for row in results
+        ) else {}
     except (OSError, ValueError) as error:
         current = {}
         errors.append({"case_id": "", "error": f"E_REPAIR_BINDING_UNAVAILABLE:{error}"})

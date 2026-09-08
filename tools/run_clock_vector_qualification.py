@@ -1073,6 +1073,23 @@ def verify_record(
     row: dict[str, Any], *, _current_binding: dict[str, Any] | None = None,
     artifacts: RetainedArtifactIO | None = None,
 ) -> bool:
+    from tools.verify_repair_evidence import _clock_current_binding, _clock_validation_scope
+
+    try:
+        with _clock_validation_scope():
+            current = _clock_current_binding()
+            if _current_binding is not None and _current_binding != current:
+                return False
+            result = _verify_record(row, _current_binding=current, artifacts=artifacts)
+        return result
+    except (OSError, KeyError, TypeError, ValueError):
+        return False
+
+
+def _verify_record(
+    row: dict[str, Any], *, _current_binding: dict[str, Any],
+    artifacts: RetainedArtifactIO | None = None,
+) -> bool:
     def retained(reference: dict[str, Any]) -> bytes:
         path = str(reference["path"])
         return (
@@ -1084,10 +1101,6 @@ def verify_record(
         )
 
     try:
-        if _current_binding is None:
-            from tools.verify_repair_evidence import capture_binding
-
-            _current_binding = capture_binding()
         if row["evidence_binding"] != _current_binding:
             return False
         if row.get("execution_kind") != "QUALIFICATION_MUTATION":
@@ -1120,14 +1133,14 @@ def verify_record(
             for reference in executable_artifacts.values()
         )
         from tools.verify_repair_evidence import (
+            _clock_compile_binding,
             _compiled_typescript_module_hashes,
-            _typescript_compile_binding,
         )
 
         executable_match = executable_match and (
             {name: reference["sha256"] for name, reference in executable_artifacts.items()}
             == _compiled_typescript_module_hashes(
-                _typescript_compile_binding(_current_binding), "clock"
+                _clock_compile_binding(_current_binding), "clock"
             )
         )
         execution_binding = row.get("typescript_execution_binding")
@@ -1172,11 +1185,25 @@ def verify_record(
 
 
 def summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[str, Any]:
-    from tools.verify_repair_evidence import aggregate_repair_evidence, capture_binding
+    from tools.verify_repair_evidence import _clock_validation_scope, _ClockValidationDrift
+
+    report: dict[str, Any] | None = None
+    try:
+        with _clock_validation_scope():
+            report = _summarize(required_ids, records)
+    except _ClockValidationDrift:
+        if report is None:
+            raise
+        report.update(result="FAIL", covered_vector_count=0, executed_vector_count=0)
+    return report
+
+
+def _summarize(required_ids: list[str], records: list[dict[str, Any]]) -> dict[str, Any]:
+    from tools.verify_repair_evidence import _clock_current_binding, aggregate_repair_evidence
 
     counts = Counter(row["case_id"] for row in records)
     exact = len(required_ids) == len(set(required_ids)) and counts == Counter(required_ids)
-    current_binding = capture_binding()
+    current_binding = _clock_current_binding()
     valid = [
         row for row in records if verify_record(row, _current_binding=current_binding)
     ]
@@ -1292,7 +1319,23 @@ def _mutations(
 def run_clock_vector_qualification(
     pack: Path, runtime: Path, *, evidence_dir: Path | None = None,
 ) -> dict[str, Any]:
-    from tools.verify_repair_evidence import capture_binding
+    from tools.verify_repair_evidence import _clock_current_binding, _clock_validation_scope
+
+    with _clock_validation_scope() as owns_scope:
+        if not owns_scope:
+            raise ValueError("E_CLOCK_NESTED_PRODUCER")
+        _clock_current_binding()
+        report = _run_clock_vector_qualification(pack, runtime, evidence_dir=evidence_dir)
+    evidence = Path(report["evidence_directory"])
+    with (evidence / "qualification.json").open("xb") as stream:
+        stream.write(_bytes(report))
+    return report
+
+
+def _run_clock_vector_qualification(
+    pack: Path, runtime: Path, *, evidence_dir: Path | None = None,
+) -> dict[str, Any]:
+    from tools.verify_repair_evidence import _clock_current_binding
 
     vectors = json.loads((pack / _VECTOR_PATH).read_text())
     coverage = json.loads((pack / _COVERAGE_PATH).read_text())
@@ -1325,7 +1368,7 @@ def run_clock_vector_qualification(
              pack / "sql/discovery-store-v1.sql",
              pack / "schemas/clock-coherence-records.schema.json",
              pack / "registries/canonical-hash-domains.v1.json"]
-    context = {"evidence_binding": capture_binding(),
+    context = {"evidence_binding": _clock_current_binding(),
                "evidence_directory": str(evidence.resolve()),
                "typescript_executable_artifacts": executable_artifacts,
                "environment": {"python": platform.python_version(),
@@ -1362,8 +1405,6 @@ def run_clock_vector_qualification(
               "mutation_executions": len(executed_mutations), "mutation_survivors": survivors,
               "mutation_id_set_complete": mutation_exact,
               "evidence_directory": str(evidence.resolve())}
-    with (evidence / "qualification.json").open("xb") as stream:
-        stream.write(_bytes(report))
     return report
 
 
