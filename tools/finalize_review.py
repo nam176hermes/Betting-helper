@@ -31,6 +31,7 @@ from moj_discovery.review_authorization import (
 from moj_discovery.schema_formats import STRICT_FORMAT_CHECKER
 from tools.bootstrap_review_authority import bootstrap_review_authority
 from tools.issue_review_launch_authorization import (
+    _regular_hash,
     authorized_review_context,
     recheck_review_context,
 )
@@ -158,6 +159,30 @@ def _validate_consumed_authorization(
         raise ValueError("E_REVIEW_FINALIZE_BINDING")
 
 
+def _validate_current_delivery(
+    authorization: dict[str, object], result: Path, receipt: Path
+) -> None:
+    root = Path(cast(str, authorization["allowed_output_root"]))
+    try:
+        if (
+            not root.is_absolute()
+            or root != root.resolve(strict=True)
+            or not root.is_dir()
+            or root.is_symlink()
+            or result != root / "result.json"
+            or receipt != root / "execution-receipt.json"
+            or receipt.exists()
+            or receipt.is_symlink()
+        ):
+            raise ValueError("E_REVIEW_FINALIZE_BINDING")
+        for path in (result, root / "workspace-attestation.json"):
+            if path != path.resolve(strict=True):
+                raise ValueError("E_REVIEW_FINALIZE_BINDING")
+            _regular_hash(path)
+    except (OSError, ValueError, RuntimeError) as error:
+        raise ValueError("E_REVIEW_FINALIZE_BINDING") from error
+
+
 def finalize_review(
     authorization: dict[str, object],
     result: dict[str, object],
@@ -237,12 +262,13 @@ def main() -> None:
     parser.add_argument("--receipt", required=True, type=Path)
     args = parser.parse_args()
     authorization = json.loads(args.authorization.read_text())
-    result = json.loads(args.result.read_text())
     workspace = Path(cast(str, authorization["workspace_root"]))
     authority = json.loads((RUNTIME_ROOT / "review-config/review-authority.v1.json").read_text())
     context = None
     if authorization.get("schema_version") == "review-launch-authorization/v2":
         context = authorized_review_context(authorization, authority, runtime_root=RUNTIME_ROOT)
+        _validate_current_delivery(authorization, args.result, args.receipt)
+    result = json.loads(args.result.read_text())
     attestation = json.loads(
         (
             Path(cast(str, authorization["allowed_output_root"])) / "workspace-attestation.json"
@@ -271,6 +297,7 @@ def main() -> None:
     )
     if context is not None:
         recheck_review_context(context)
+        _validate_current_delivery(authorization, args.result, args.receipt)
     receipt = finalize_review(
         authorization,
         result,
@@ -291,8 +318,17 @@ def main() -> None:
         expected_host_boot_id=Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
         expected_trust_epoch=cast(int, authorization["trust_epoch"]),
     )
-    args.receipt.parent.mkdir(parents=True, exist_ok=True)
-    args.receipt.write_text(json.dumps(receipt, sort_keys=True, separators=(",", ":")) + "\n")
+    receipt_text = json.dumps(receipt, sort_keys=True, separators=(",", ":")) + "\n"
+    if context is not None:
+        _validate_current_delivery(authorization, args.result, args.receipt)
+        try:
+            with args.receipt.open("x") as output:
+                output.write(receipt_text)
+        except OSError as error:
+            raise ValueError("E_REVIEW_FINALIZE_BINDING") from error
+    else:
+        args.receipt.parent.mkdir(parents=True, exist_ok=True)
+        args.receipt.write_text(receipt_text)
     print(json.dumps(receipt, sort_keys=True))
 
 

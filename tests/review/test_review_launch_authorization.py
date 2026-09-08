@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 import subprocess
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
@@ -229,9 +230,12 @@ def test_current_cli_authentication_precedes_private_state_and_workspace_reads(
     authorization_path.write_text(json.dumps(auth))
     result_path.write_text(json.dumps(signed_current["reviews"][0]))
     output = tmp_path / "must-not-write-output.json"
+    configured_result = Path(str(auth["allowed_output_root"])) / "result.json"
     original_read = Path.read_text
 
     def guarded_read(path: Path, *args: Any, **kwargs: Any) -> str:
+        if entrypoint == "finalize_review" and path == configured_result:
+            pytest.fail("unverified authorization reached configured result")
         if str(path).startswith("/home/thenam176/betting-helper/reviews/"):
             pytest.fail("unverified authorization reached configured human workspace")
         return original_read(path, *args, **kwargs)
@@ -248,7 +252,7 @@ def test_current_cli_authentication_precedes_private_state_and_workspace_reads(
             "--authorization",
             str(authorization_path),
             "--result",
-            str(result_path),
+            str(configured_result),
             "--receipt",
             str(output),
         ]
@@ -290,6 +294,9 @@ def measured_current_pack(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> di
         witnesses: dict[str, bytes],
     ) -> None:
         replacements = {
+            "/home/thenam176/.config/hybrid-discovery/review-authority": str(
+                tmp_path / "TEST_ONLY_EPHEMERAL_AUTHORITY"
+            ),
             "/home/thenam176/betting-helper/discovery-runtime-v6.3.6": str(root),
             "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6": str(delivery),
             "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip": str(
@@ -317,6 +324,7 @@ def measured_current_pack(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> di
             return value
 
         for relative in (
+            "docs/configs/review-authority.v1.json",
             "docs/configs/review-a.v2.json",
             "docs/configs/review-b.v2.json",
             "docs/configs/review-aggregation.v2.json",
@@ -557,6 +565,202 @@ def test_current_both_roles_measure_actual_seal_and_separate_registries(
         json.loads(output.splitlines()[-1])["schema_version"]
         == "descendant-repository-qualification-receipt/v1"
     )
+
+
+def test_current_finalizer_cli_confines_delivery_after_real_authentication(
+    measured_current_pack: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Real crypto/context/state; only exact configured delivery IO is virtualized."""
+    from cryptography.hazmat.primitives import serialization
+
+    from moj_discovery import review_authorization as auth_library
+    from moj_discovery.review_aggregation import review_content_hash
+    from tests.review.test_review_aggregation_and_self_review import _review
+    from tools import finalize_review as finalizer
+    from tools import prepare_review_workspace as preparation
+    from tools.bootstrap_review_authority import bootstrap_review_authority
+    from tools.issue_review_launch_authorization import (
+        issue_review_launch_authorization,
+        review_config_for_role,
+    )
+
+    chain = measured_current_pack
+    root, directory = chain["root"], chain["directory"]
+    monkeypatch.setattr(auth_library, "RUNTIME_ROOT", root)
+    monkeypatch.setattr(finalizer, "RUNTIME_ROOT", root)
+    monkeypatch.setattr(preparation, "RUNTIME_ROOT", root)
+    config = review_config_for_role("IMPLEMENTATION_READINESS_REVIEWER", 2, runtime_root=root)
+    authority = json.loads(Path(config["authority_config"]).read_bytes())
+    assert Path(authority["private_key_path"]).is_relative_to(directory)
+    bootstrap_review_authority(authority, initialize_if_absent=True)
+    auth_path = directory / "TEST_ONLY-current-launch.json"
+    auth = issue_review_launch_authorization(config, authority, auth_path)
+    private = serialization.load_pem_private_key(
+        Path(authority["private_key_path"]).read_bytes(), password=None
+    )
+    assert isinstance(private, Ed25519PrivateKey)
+    logical_output, logical_workspace = (
+        Path(auth["allowed_output_root"]),
+        Path(auth["workspace_root"]),
+    )
+    output, workspace = directory / "delivery-output", directory / "delivery-workspace"
+    mapping = {logical_output: output, logical_workspace: workspace}
+    original_open, original_stat, original_lstat = Path.open, Path.stat, Path.lstat
+    original_mkdir, original_resolve = Path.mkdir, Path.resolve
+
+    def mapped(path: Path) -> Path:
+        for logical, physical in mapping.items():
+            if path == logical or path.is_relative_to(logical):
+                return physical / path.relative_to(logical)
+        return path
+
+    def resolved(path: Path, *args: Any, **kwargs: Any) -> Path:
+        physical = original_resolve(mapped(path), *args, **kwargs)
+        for logical, backing in mapping.items():
+            if (path == logical or path.is_relative_to(logical)) and physical.is_relative_to(
+                backing
+            ):
+                return logical / physical.relative_to(backing)
+        return physical
+
+    monkeypatch.setattr(
+        Path, "open", lambda path, *args, **kwargs: original_open(mapped(path), *args, **kwargs)
+    )
+    monkeypatch.setattr(
+        Path, "stat", lambda path, *args, **kwargs: original_stat(mapped(path), *args, **kwargs)
+    )
+    monkeypatch.setattr(
+        Path, "lstat", lambda path, *args, **kwargs: original_lstat(mapped(path), *args, **kwargs)
+    )
+    monkeypatch.setattr(
+        Path, "mkdir", lambda path, *args, **kwargs: original_mkdir(mapped(path), *args, **kwargs)
+    )
+    monkeypatch.setattr(Path, "resolve", resolved)
+    records = [
+        {
+            "command_id": command_id,
+            "argv": argv,
+            "cwd": str(root),
+            "environment": {},
+            "exit_code": 0,
+            "stdout_sha256": "0" * 64,
+            "stderr_sha256": "0" * 64,
+        }
+        for command_id, argv in (
+            ("A_INSTALL_PYTHON", ["uv", "sync", "--frozen", "--offline"]),
+            (
+                "A_INSTALL_NODE",
+                ["pnpm", "install", "--frozen-lockfile", "--offline", "--ignore-scripts"],
+            ),
+        )
+    ]
+    # Install/namespace execution are separate TEST_ONLY boundaries, not actual reviews.
+    monkeypatch.setattr(preparation, "_preparation_commands", lambda *_: [])
+    monkeypatch.setattr(preparation, "_run_preparation", lambda *_: records)
+    monkeypatch.setattr(
+        preparation, "_start_namespace", lambda *_: {"TEST_ONLY_NOT_EXECUTED": True}
+    )
+    assert preparation._consume(config, auth, execute=False)["result"] == "PASS"
+    assert output.is_dir() and workspace.is_dir()
+    result = _review(auth["review_role"])
+    del result["repo0_receipt_sha256"]
+    result.update(
+        auth_library.review_identity(auth),
+        schema_version="independent-review-result/v2",
+        review_run_id=auth["review_run_id"],
+        pack_zip_sha256=auth["pack_zip_sha256"],
+    )
+    result["verdicts"]["DESCENDANT_REPOSITORY_VALID"] = result["verdicts"].pop(
+        "REPO0_BASELINE_VALID"
+    )
+    result["content_hash"] = review_content_hash(result)
+    (output / "result.json").write_text(json.dumps(result))
+    attestation_path = output / "workspace-attestation.json"
+    attestation = json.loads(attestation_path.read_bytes())
+    now = datetime.now(UTC).isoformat()
+    attestation.update(
+        finished_at=now,
+        fresh_session_attestation={
+            "attestation_type": "HUMAN_FRESH_CODEX_SESSION",
+            "attested": True,
+            "attested_by": "TEST_ONLY_PROCEDURAL_RECORD",
+            "attested_at": now,
+            "procedural_not_cryptographic": True,
+        },
+    )
+    attestation_path.write_text(json.dumps(attestation))
+    sentinel = directory / "outside-sentinel.json"
+    sentinel.write_bytes(b"outside preserved")
+    original_sign = finalizer.sign_review_execution_receipt
+    forbidden_signing = True
+
+    def sign(value: dict[str, object], key: Ed25519PrivateKey) -> dict[str, object]:
+        if forbidden_signing:
+            pytest.fail("invalid current delivery reached signing")
+        return original_sign(value, key)
+
+    monkeypatch.setattr(finalizer, "sign_review_execution_receipt", sign)
+    receipt = output / "execution-receipt.json"
+    for damage in ("outside", "parent-symlink", "hardlink", "existing", "result-outside"):
+        supplied_result, supplied_receipt = (
+            logical_output / "result.json",
+            logical_output / "execution-receipt.json",
+        )
+        saved_output = directory / "saved-output"
+        if damage == "outside":
+            supplied_receipt = sentinel
+        elif damage == "parent-symlink":
+            output.rename(saved_output)
+            output.symlink_to(saved_output, target_is_directory=True)
+        elif damage == "hardlink":
+            os.link(sentinel, receipt)
+        elif damage == "existing":
+            receipt.write_bytes(b"existing preserved")
+        else:
+            supplied_result = sentinel
+        monkeypatch.setattr(
+            "sys.argv",
+            [
+                "finalize_review.py",
+                "--authorization",
+                str(auth_path),
+                "--result",
+                str(supplied_result),
+                "--receipt",
+                str(supplied_receipt),
+            ],
+        )
+        try:
+            with pytest.raises(ValueError, match="E_REVIEW_FINALIZE_BINDING"):
+                finalizer.main()
+            assert sentinel.read_bytes() == b"outside preserved"
+            if damage == "existing":
+                assert receipt.read_bytes() == b"existing preserved"
+        finally:
+            if damage == "parent-symlink":
+                output.unlink()
+                saved_output.rename(output)
+            elif damage in {"hardlink", "existing"}:
+                receipt.unlink()
+    forbidden_signing = False
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "finalize_review.py",
+            "--authorization",
+            str(auth_path),
+            "--result",
+            str(logical_output / "result.json"),
+            "--receipt",
+            str(logical_output / "execution-receipt.json"),
+        ],
+    )
+    finalizer.main()
+    emitted = json.loads(receipt.read_bytes())
+    auth_library.verify_review_execution_receipt(
+        emitted, auth, private.public_key(), result_sha256=emitted["result_sha256"]
+    )
+    assert emitted["schema_version"] == "review-execution-receipt/v2"
 
 
 def test_mount_roots_read_governed_root_schema(tmp_path: Path) -> None:

@@ -59,6 +59,12 @@ def _sha256(path: Path) -> str:
 
 
 def prepare_review_workspace(config: dict[str, object]) -> dict[str, object]:
+    if config.get("schema_version") == "review-config/v2":
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    return _prepare_review_directories(config)
+
+
+def _prepare_review_directories(config: dict[str, object]) -> dict[str, object]:
     if config.get("network") != "DENY":
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     excluded_roots = config.get("excluded_roots")
@@ -817,7 +823,11 @@ def _consume(
         attestation_path.write_text(json.dumps(prior, sort_keys=True, separators=(",", ":")) + "\n")
         return execution
     _authority_state(authorization, cast(dict[str, object], authority), consume=False)
-    prepared = prepare_review_workspace(config)
+    prepared = (
+        _prepare_review_directories(config)
+        if context is not None
+        else prepare_review_workspace(config)
+    )
     commands = _preparation_commands(config)
     records = _run_preparation(config, commands)
     namespace = _start_namespace(config, authorization)

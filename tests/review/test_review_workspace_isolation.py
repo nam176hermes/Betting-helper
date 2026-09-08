@@ -630,3 +630,38 @@ def test_current_consume_rejects_unmeasured_inputs_before_state(
     monkeypatch.setattr(review_workspace, "prepare_review_workspace", forbidden)
     with pytest.raises(ValueError, match="E_REVIEW_LAUNCH_INPUT"):
         review_workspace._consume(config, launch, execute=execute)
+
+
+@pytest.mark.parametrize("plausible", [False, True])
+@pytest.mark.parametrize("entrypoint", ["direct", "cli"])
+def test_current_config_only_preparation_rejects_before_mkdir(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, plausible: bool, entrypoint: str
+) -> None:
+    from tests.release.test_descendant_repository_qualification import SOURCE_CONFIG
+
+    config = (
+        json.loads((SOURCE_CONFIG.parents[2] / "docs/configs/review-a.v2.json").read_bytes())
+        if plausible
+        else {
+            "schema_version": "review-config/v2",
+            "network": "DENY",
+            "excluded_roots": [str(tmp_path / "excluded")],
+            "input_mounts": [],
+        }
+    )
+    config.update(workspace_root=str(tmp_path / "workspace"), output_root=str(tmp_path / "output"))
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(config))
+
+    def forbidden(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("unauthorized current config-only preparation reached mkdir")
+
+    monkeypatch.setattr(Path, "mkdir", forbidden)
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        if entrypoint == "direct":
+            prepare_review_workspace(config)
+        else:
+            monkeypatch.setattr(
+                "sys.argv", ["prepare_review_workspace.py", "--config", str(config_path)]
+            )
+            review_workspace.main()
