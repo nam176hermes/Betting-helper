@@ -8,6 +8,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 from pathlib import Path
 from typing import NoReturn, cast
@@ -47,7 +48,9 @@ def _git(root: Path, *args: str) -> str:
 
 def descendant_repository_identity(root: Path, audited_ancestor: str) -> dict[str, str]:
     if (
-        root.is_symlink()
+        not root.is_absolute()
+        or root != root.resolve()
+        or root.is_symlink()
         or not root.is_dir()
         or re.fullmatch(r"[0-9a-f]{40}", audited_ancestor) is None
         or _git(root, "rev-parse", "--show-toplevel") != str(root.resolve())
@@ -85,10 +88,50 @@ def _regular_hash(path: Path, artifacts: RetainedArtifactIO | None = None) -> st
     return hashlib.sha256(_read_bytes(path, artifacts)).hexdigest()
 
 
+def _validated_context(
+    root: Path, config: FullVerifierConfig, artifacts: RetainedArtifactIO | None = None
+) -> None:
+    try:
+        if (
+            not isinstance(config, FullVerifierConfig)
+            or config.schema_version != "full-verifier-controller/v2"
+            or config.audited_runtime_ancestor is None
+            or config.qualification_evidence is None
+            or config.descendant_repository_receipt is None
+            or root != root.resolve()
+            or root != config.current_checkout_root
+        ):
+            _fail()
+        if artifacts is None:
+            reloaded = load_controller_config(config.source_path)
+        else:
+            recorded = str(config.source_path)
+            physical = artifacts.physical_path(
+                recorded, recorded_boundary=artifacts.recorded_boundary(recorded)
+            )
+            reloaded = load_controller_config(
+                physical, mode="SEALED", artifacts=artifacts, recorded_locator=recorded
+            )
+        if reloaded != config:
+            _fail()
+    except (OSError, ValueError, TypeError, KeyError) as error:
+        raise ValueError("E_DESCENDANT_REPOSITORY") from error
+
+
 def _receipt_record(
     root: Path,
     config: FullVerifierConfig,
     artifacts: RetainedArtifactIO | None = None,
+) -> dict[str, object]:
+    try:
+        _validated_context(root, config, artifacts)
+        return _capture_receipt_record(root, config, artifacts)
+    except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
+        raise ValueError("E_DESCENDANT_REPOSITORY") from error
+
+
+def _capture_receipt_record(
+    root: Path, config: FullVerifierConfig, artifacts: RetainedArtifactIO | None
 ) -> dict[str, object]:
     if (
         config.schema_version != "full-verifier-controller/v2"
@@ -190,7 +233,18 @@ def _receipt_record(
 
 
 def _outside_protected(output: Path, root: Path, config: FullVerifierConfig) -> None:
-    if not output.is_absolute() or output.exists():
+    if (
+        output != config.descendant_repository_receipt
+        or not output.is_absolute()
+        or output.parent.resolve(strict=True) != output.parent
+        or not output.parent.is_dir()
+    ):
+        _fail()
+    try:
+        output.lstat()
+    except FileNotFoundError:
+        pass
+    else:
         _fail()
     candidate = output.resolve(strict=False)
     boundaries = (
@@ -210,29 +264,45 @@ def _outside_protected(output: Path, root: Path, config: FullVerifierConfig) -> 
 def issue_descendant_qualification_receipt(
     root: Path, config: FullVerifierConfig, output: Path
 ) -> dict[str, object]:
-    _outside_protected(output, root, config)
-    before = _receipt_record(root, config)
-    output.parent.mkdir(parents=True, exist_ok=True)
     owned_identity: tuple[int, int] | None = None
     try:
+        _validated_context(root, config)
+        _outside_protected(output, root, config)
+        before = _receipt_record(root, config)
+        encoded = _canonical(before) + b"\n"
         with output.open("x", encoding="utf-8") as stream:
             info = os.fstat(stream.fileno())
             owned_identity = (info.st_dev, info.st_ino)
-            stream.write(json.dumps(before, sort_keys=True, separators=(",", ":")) + "\n")
+            stream.write(encoded.decode())
             stream.flush()
+            os.fsync(stream.fileno())
             after = _receipt_record(root, config)
             if before != after:
                 _fail()
+            for _ in range(2):
+                info = output.lstat()
+                if (
+                    not stat.S_ISREG(info.st_mode)
+                    or info.st_nlink != 1
+                    or (info.st_dev, info.st_ino) != owned_identity
+                ):
+                    _fail()
+                if _ == 0 and _read_bytes(output) != encoded:
+                    _fail()
         return before
-    except Exception:
+    except Exception as error:
         if owned_identity is not None:
             try:
                 info = output.lstat()
-                if not output.is_symlink() and (info.st_dev, info.st_ino) == owned_identity:
+                if (
+                    stat.S_ISREG(info.st_mode)
+                    and info.st_nlink == 1
+                    and (info.st_dev, info.st_ino) == owned_identity
+                ):
                     output.unlink()
-            except FileNotFoundError:
+            except OSError:
                 pass
-        raise
+        raise ValueError("E_DESCENDANT_REPOSITORY") from error
 
 
 def verify_descendant_qualification_receipt(
@@ -243,13 +313,20 @@ def verify_descendant_qualification_receipt(
     config: FullVerifierConfig,
     artifacts: RetainedArtifactIO | None = None,
 ) -> dict[str, object]:
-    if pack != config.governed_source_pack:
-        _fail()
-    receipt = _read_evidence(receipt_path, artifacts)
-    expected = _receipt_record(root, config, artifacts)
-    if receipt != expected:
-        _fail()
-    return receipt
+    try:
+        _validated_context(root, config, artifacts)
+        if (
+            pack != config.governed_source_pack
+            or receipt_path != config.descendant_repository_receipt
+        ):
+            _fail()
+        receipt = _read_evidence(receipt_path, artifacts)
+        expected = _receipt_record(root, config, artifacts)
+        if receipt != expected:
+            _fail()
+        return receipt
+    except (OSError, ValueError, TypeError, KeyError) as error:
+        raise ValueError("E_DESCENDANT_REPOSITORY") from error
 
 
 def main() -> None:

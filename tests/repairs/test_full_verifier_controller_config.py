@@ -504,6 +504,7 @@ def test_sealed_v2_controller_reads_only_manifest_authorized_copies(
     from tools.retained_artifact_io import RetainedArtifactIO
 
     config_path = _write_v2_config_copy(tmp_path / "fixture")
+    live = load_controller_config(config_path)
     payload = json.loads(config_path.read_text())
     raw = config_path.read_bytes()
     recorded_config = "/review/config/full-verifier-controller.v2.json"
@@ -548,6 +549,21 @@ def test_sealed_v2_controller_reads_only_manifest_authorized_copies(
         artifacts=artifacts,
         recorded_locator=recorded_config,
     )
+    assert sealed.source_path == Path(recorded_config)
+    assert sealed.binding() == live.binding()
+    physical = artifacts.physical_path(
+        str(sealed.source_path),
+        recorded_boundary=artifacts.recorded_boundary(str(sealed.source_path)),
+    )
+    assert load_controller_config(
+        physical, mode="SEALED", artifacts=artifacts,
+        recorded_locator=str(sealed.source_path),
+    ) == sealed
+    with pytest.raises(ValueError, match="^E_CONTROLLER_CONFIG$"):
+        load_controller_config(
+            closure / "config/source-copy.json", mode="SEALED", artifacts=artifacts,
+            recorded_locator=recorded_config,
+        )
     assert sealed.binding()["qualification_evidence"] == payload["qualification_evidence"]
     (closure / "config/source-copy.json").write_bytes(b"changed")
     with pytest.raises(ValueError, match="E_CONTROLLER_CONFIG"):

@@ -135,6 +135,25 @@ def test_environment_aggregate_dispatches_every_owner_and_keeps_power_hold(
         "native_ingestor",
         "native_commit_io",
     }
+    # Projection boundary only: the six semantic owners above remain explicit stubs.
+    missing_case = copy.deepcopy(report)
+    missing_case["cases"].pop()
+    with pytest.raises(ValueError, match="^E_ENVIRONMENT_QUALIFICATION$") as missing:
+        module.verify_environment_qualification(missing_case)
+    assert str(missing.value.__cause__) == "case projection"
+
+    terminal_disagreement = copy.deepcopy(report)
+    terminal = Path(terminal_files[0]["path"])
+    original = terminal.read_bytes()
+    changed = json.dumps({"cases": [], "changed": True}, sort_keys=True).encode()
+    terminal.write_bytes(changed)
+    terminal_disagreement["terminal_files"][0]["sha256"] = hashlib.sha256(changed).hexdigest()
+    try:
+        with pytest.raises(ValueError, match="^E_ENVIRONMENT_QUALIFICATION$") as mismatch:
+            module.verify_environment_qualification(terminal_disagreement)
+        assert str(mismatch.value.__cause__) == "terminal projection"
+    finally:
+        terminal.write_bytes(original)
     report["result"] = "PASS"
     with pytest.raises(ValueError, match="E_ENVIRONMENT_QUALIFICATION"):
         module.verify_environment_qualification(report)

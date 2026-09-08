@@ -10,6 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, NoReturn, cast
 
+from tools.retained_artifact_io import canonical_recorded_locator
+
 if TYPE_CHECKING:
     from tools.retained_artifact_io import RetainedArtifactIO
 
@@ -298,6 +300,7 @@ def load_controller_config(
         if schema_version == "full-verifier-controller/v2"
         else None,
         descendant_repository_receipt=receipt_paths.get("descendant_repository"),
-        source_path=canonical_path,
+        source_path=Path(canonical_recorded_locator(cast(str, recorded_locator)))
+        if mode == "SEALED" else canonical_path,
         source_sha256=hashlib.sha256(raw).hexdigest(),
     )
