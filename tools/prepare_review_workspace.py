@@ -412,8 +412,39 @@ def _tool_mounts(
     return mounts, links
 
 
+def _reject_unvalidated_python_bytecode(environment: Path) -> None:
+    """A projected prepared environment must not expose excluded executable caches."""
+    _directory(environment)
+
+    def failed_walk(_error: OSError) -> None:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+
+    try:
+        for directory, names, files in os.walk(
+            environment, followlinks=True, onerror=failed_walk
+        ):
+            parent = Path(directory)
+            for name in (*names, *files):
+                entry = parent / name
+                if name == "__pycache__" or name.lower().endswith((".pyc", ".pyo")):
+                    raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+                if entry.is_symlink():
+                    resolved = entry.resolve(strict=True)
+                    if ("__pycache__" in resolved.parts
+                            or resolved.suffix.lower() in {".pyc", ".pyo"}):
+                        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+            for name in names:
+                resolved = (parent / name).resolve(strict=True)
+                if not resolved.is_relative_to(environment) or any(
+                    ancestor.resolve() == resolved for ancestor in (parent, *parent.parents)
+                ):
+                    raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    except (OSError, RuntimeError) as error:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION") from error
+
+
 def _dependency_projection(root: Path, boundary: Path, *, python: bool) -> dict[str, str]:
-    """Compare all imported package bytes; installation wrappers have local shebangs."""
+    """Compare package source bytes; only a cache-free prepared tree is projectable."""
     _directory(root)
     result: dict[str, str] = {}
     for directory, names, files in os.walk(root, followlinks=True):
@@ -514,6 +545,7 @@ def _producer_projection(
         or _sha256(translation) != declaration["path_translation_sha256"]
     ):
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    _reject_unvalidated_python_bytecode(prepared)
     distro = declaration["wsl_distro"]
     runtime_unc = declaration["runtime_unc"]
     if (

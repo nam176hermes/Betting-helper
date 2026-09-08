@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import marshal
+import os
 import platform
+import struct
 import subprocess
 from copy import deepcopy
 from pathlib import Path
@@ -19,6 +23,148 @@ from tools import verify_repair_evidence as repair
 from tools.run_full_repair_qualification import collect_retained_sources, write_closed_inventory
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("kind", [
+    "cache_directory", "legacy_root", "pyo", "optimized", "cache_alias",
+    "escaped_directory", "cyclic_directory",
+])
+def test_python_bytecode_guard_rejects_hidden_or_unsafe_tree(tmp_path: Path, kind: str) -> None:
+    environment = tmp_path / "prepared"
+    environment.mkdir()
+    if kind == "cache_directory":
+        (environment / "__pycache__").mkdir()
+    elif kind in {"legacy_root", "pyo", "optimized"}:
+        name = {"legacy_root": "module.pyc", "pyo": "module.pyo",
+                "optimized": "module.cpython-312.opt-1.pyc"}[kind]
+        (environment / name).write_bytes(b"TEST_ONLY-unvalidated-bytecode")
+    elif kind == "cache_alias":
+        target = tmp_path / "external.pyc"
+        target.write_bytes(b"TEST_ONLY-unvalidated-bytecode")
+        (environment / "ordinary-name").symlink_to(target)
+    elif kind == "escaped_directory":
+        target = tmp_path / "external-library"
+        target.mkdir()
+        (environment / "library").symlink_to(target, target_is_directory=True)
+    else:
+        (environment / "recursive").symlink_to(environment, target_is_directory=True)
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        workspace._reject_unvalidated_python_bytecode(environment)
+
+
+def test_python_bytecode_guard_accepts_contained_source_alias_without_touching_other_cache(
+    tmp_path: Path,
+) -> None:
+    environment = tmp_path / "prepared"
+    library = environment / "lib"
+    library.mkdir(parents=True)
+    (library / "module.py").write_text("value = 'SOURCE'\n")
+    (environment / "lib64").symlink_to(library, target_is_directory=True)
+    other_cache = tmp_path / "qualified-cache.pyc"
+    other_cache.write_bytes(b"TEST_ONLY-preserved-other-environment")
+    workspace._reject_unvalidated_python_bytecode(environment)
+    assert other_cache.read_bytes() == b"TEST_ONLY-preserved-other-environment"
+
+
+def test_python_bytecode_guard_fails_closed_when_walk_cannot_read(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unreadable_walk(_path: Path, *, followlinks: bool, onerror: Any) -> Any:
+        onerror(PermissionError("TEST_ONLY unreadable directory"))
+        return iter(())
+
+    monkeypatch.setattr(os, "walk", unreadable_walk)
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        workspace._reject_unvalidated_python_bytecode(tmp_path)
+
+
+@pytest.fixture
+def cache_projection(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> tuple[dict[str, Any], Path]:
+    config = json.loads((ROOT / "review-config/review-a.v2.json").read_text())
+    old_scratch = config["scratch_root"]
+    scratch = tmp_path / "TEST_ONLY-cache-scratch"
+    config = json.loads(json.dumps(config).replace(old_scratch, str(scratch)))
+    commands = workspace._preparation_commands(config)
+    commands = json.loads(json.dumps(commands).replace(old_scratch, str(scratch)))
+    assert all(old_scratch not in json.dumps(command) for command in commands)
+    workspace._run_preparation(config, commands)
+    prepared = scratch / "python-env"
+    initial_caches = [
+        str(Path(directory) / name)
+        for directory, names, files in os.walk(prepared, followlinks=True)
+        for name in (*names, *files)
+        if name == "__pycache__" or name.endswith((".pyc", ".pyo"))
+    ]
+    assert not initial_caches, f"HOLD_FRESH_PREPARATION_HAS_CACHES:{initial_caches}"
+    monkeypatch.setattr(workspace, "_config_for_role", lambda *_args: deepcopy(config))
+    return config, prepared
+
+
+@pytest.mark.parametrize("cache_kind", [
+    "timestamp", "checked_hash", "unchecked_hash", "legacy_module", "legacy_package",
+])
+def test_cache_only_prepared_python_cannot_be_projected(
+    cache_projection: tuple[dict[str, Any], Path], cache_kind: str,
+) -> None:
+    config, prepared = cache_projection
+    site = prepared / "lib/python3.12/site-packages"
+    source_path = site / "rfc8785/_impl.py"
+    record = site / "rfc8785-0.1.4.dist-info/RECORD"
+    fixed = [
+        source_path, record, prepared / "pyvenv.cfg", ROOT / "uv.lock",
+        ROOT / "pyproject.toml", prepared.parent / "node-project/pnpm-lock.yaml",
+    ]
+
+    def snapshot() -> tuple[dict[Path, bytes], tuple[int, int], dict[str, tuple[str, bytes]]]:
+        info = source_path.stat()
+        return (
+            {path: path.read_bytes() for path in fixed}, (info.st_mtime_ns, info.st_size),
+            {alias: (os.readlink(prepared / "bin" / alias),
+                     (prepared / "bin" / alias).resolve().read_bytes())
+             for alias in ("python", "python3", "python3.12")},
+        )
+
+    frozen = snapshot()
+    before = workspace._dependency_projection(prepared / "lib", prepared, python=True)
+    assert before == workspace._dependency_projection(ROOT / ".venv/lib", ROOT / ".venv",
+                                                       python=True)
+    source = source_path.read_bytes()
+    code_source = source + b"\nCACHE_SENTINEL = 'UNVALIDATED_CACHE'\n"
+    module = "rfc8785._impl"
+    cache = Path(importlib.util.cache_from_source(str(source_path)))
+    header = importlib.util.MAGIC_NUMBER + struct.pack(
+        "<III", 0, int(source_path.stat().st_mtime) & 0xffffffff, len(source)
+    )
+    if cache_kind in {"checked_hash", "unchecked_hash"}:
+        flags = 3 if cache_kind == "checked_hash" else 1
+        header = (importlib.util.MAGIC_NUMBER + struct.pack("<I", flags)
+                  + importlib.util.source_hash(source))
+    elif cache_kind in {"legacy_module", "legacy_package"}:
+        code_source = b"CACHE_SENTINEL = 'UNVALIDATED_CACHE'\n"
+        module = "rfc8785.bytecode_only" if cache_kind == "legacy_module" else "bytecode_only"
+        cache = (site / "rfc8785/bytecode_only.pyc" if cache_kind == "legacy_module"
+                 else site / "bytecode_only/__init__.pyc")
+        assert not cache.with_suffix(".py").exists()
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    code = compile(code_source, str(source_path), "exec", dont_inherit=True, optimize=0)
+    cache.write_bytes(header + marshal.dumps(code))
+    probe = (
+        "import importlib,sys; "
+        f"sys.path.insert(0,{str(site)!r}); "
+        f"print(importlib.import_module({module!r}).CACHE_SENTINEL)"
+    )
+    observed = subprocess.run(  # noqa: S603 -- benign cache in wholly owned TEST_ONLY environment.
+        [str(prepared / "bin/python3"), "-I", "-B", "-S", "-c", probe],
+        capture_output=True, text=True, check=False, timeout=15,
+    )
+    assert observed.returncode == 0, observed.stderr
+    assert observed.stdout.strip() == "UNVALIDATED_CACHE"
+    assert snapshot() == frozen
+    assert workspace._dependency_projection(prepared / "lib", prepared, python=True) == before
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        workspace._producer_projection(config, [{"command_id": "A_CHECK_DESCENDANT"}])
 
 
 def test_projection_rejects_divergent_python_alias_before_subprocess(
