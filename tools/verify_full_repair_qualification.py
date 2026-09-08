@@ -1,13 +1,19 @@
 """Verify one immutable full111/105 aggregate through its closed artifact map."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
 import stat
+import sys
 from pathlib import Path
 from typing import Any, cast
+
+RUNTIME_ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 
 from tools.full_verifier_config import FullVerifierConfig, load_controller_config
 from tools.retained_artifact_io import RetainedArtifactIO

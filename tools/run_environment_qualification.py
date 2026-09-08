@@ -1,5 +1,7 @@
 """Supplemental real environment experiments; never broad/physical qualification."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
@@ -9,10 +11,14 @@ import re
 import shutil
 import sqlite3
 import subprocess
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
+
+RUNTIME_ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 
 from tools.run_indexeddb_crash_matrix import CHROME, PACK, ROOT, _observations
 from tools.verify_repair_evidence import capture_binding
