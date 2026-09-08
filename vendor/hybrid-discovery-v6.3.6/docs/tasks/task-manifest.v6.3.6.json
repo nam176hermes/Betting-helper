@@ -4274,6 +4274,7 @@
       ],
       "outputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
         "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
@@ -4318,6 +4319,7 @@
       ],
       "exact_files": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
         "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
@@ -5187,7 +5189,7 @@
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",

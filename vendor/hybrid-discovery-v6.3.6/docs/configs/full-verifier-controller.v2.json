@@ -6,7 +6,7 @@
   "governed_source_pack": "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack",
   "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller",
   "external_authoring_tests": "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
-  "external_authoring_source_sha256": "5049f726b3f3429c1fd4aa55471e3d97803a108d86e93f8778339372eec2b1c3",
+  "external_authoring_source_sha256": "11fce77a2e0b6854da047a06449394ed96e3194ce6d7c448bd15e52a6dc56d46",
   "external_authoring_command": {
     "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
     "argv": [
@@ -38,7 +38,7 @@
     "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
   },
   "receipts": {
-    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
     "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
     "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
     "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",

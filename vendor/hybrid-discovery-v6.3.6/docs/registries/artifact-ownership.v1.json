@@ -206,6 +206,19 @@
       ]
     },
     {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
       "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
@@ -7528,6 +7541,20 @@
         "V636-P08-T03",
         "V636-P10-T02"
       ]
+    },
+    {
+      "path": "runtime/extension/dist/contracts/clock-coherence.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T07",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/contracts/clock-coherence.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": []
     },
     {
       "path": "runtime/extension/dist/contracts/clock-vectors.js",

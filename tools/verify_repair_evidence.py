@@ -932,8 +932,12 @@ def _verify_browser_binding(row: dict[str, Any], current: dict[str, Any]) -> Non
         raise ValueError("E_ACK_BROWSER_PROCESS_REPLACED")
 
 
-@lru_cache(maxsize=4)
 def _compiled_browser_module_hashes(input_binding: str) -> dict[str, str]:
+    return _compiled_typescript_module_hashes(input_binding, "browser")
+
+
+@lru_cache(maxsize=4)
+def _compiled_typescript_module_hashes(input_binding: str, graph: str) -> dict[str, str]:
     """Compile the current pinned sources in isolation; the binding is the cache authority."""
     if not input_binding:
         raise ValueError("E_TYPESCRIPT_COMPILE_BINDING")
@@ -951,6 +955,12 @@ def _compiled_browser_module_hashes(input_binding: str) -> dict[str, str]:
         )
         if completed.returncode:
             raise ValueError("E_TYPESCRIPT_COMPILE:" + completed.stderr.strip())
+        if graph == "clock":
+            from tools.run_clock_vector_qualification import _TYPESCRIPT_MODULES
+
+            return {name: _sha(output / "src" / name) for name in _TYPESCRIPT_MODULES}
+        if graph != "browser":
+            raise ValueError("E_TYPESCRIPT_COMPILE_GRAPH")
         sources = {
             "indexeddb-crash-child.js": output / "test-harness/indexeddb-crash-child.js",
             "repair-probe.js": output / "test-harness/repair-probe.js",

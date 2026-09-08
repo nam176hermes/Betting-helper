@@ -3,8 +3,10 @@ import json
 import shutil
 import subprocess
 import sys
+from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -18,6 +20,88 @@ from tools.run_full_repair_qualification import write_closed_inventory
 CONFIG = Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json")
 
 
+def test_historical_three_argument_api_is_strict_and_cannot_downgrade_current_source(
+    tmp_path: Path,
+) -> None:
+    # Synthetic historical API fixture only: no commands or BOOT0 are executed.
+    source = tmp_path / "historical"
+    source.mkdir()
+    git = shutil.which("git")
+    assert git is not None
+    raw = subprocess.check_output(  # noqa: S603 -- read-only audited registry fixture.
+        [git, "show", "7cd7ab14652458608386d940bdc7764910044f6a:task-command-registry.json"]
+    )
+    registry_path = source / "task-command-registry.json"
+    registry_path.write_bytes(raw)
+    vendored = source / (
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json"
+    )
+    vendored.parent.mkdir(parents=True)
+    vendored.write_bytes(raw)
+    registry = run_command_registry.validate_registry(registry_path)
+    rows = [
+        {**{key: command[key] for key in ("command_id", "argv", "cwd", "expected_exit")},
+         "exit_code": command["expected_exit"], "passed": True,
+         "stdout_sha256": hashlib.sha256(b"").hexdigest(), "stdout_size_bytes": "0",
+         "stderr_sha256": hashlib.sha256(b"").hexdigest(), "stderr_size_bytes": "0"}
+        for command in run_command_registry.candidate_commands(registry)
+    ]
+    evidence: dict[str, Any] = {"schema_version": "candidate-command-results/v1",
+                "production_authority": "NONE", "results": rows}
+    evidence_path = tmp_path / "historical-evidence.json"
+    evidence_path.write_text(json.dumps(evidence))
+    receipt_path = tmp_path / "historical-receipt.json"
+    historical: dict[str, object] = {
+        "schema_version": "candidate-qualification-receipt/v1", "production_authority": "NONE",
+        "command_result_root": hashlib.sha256(
+            b"HD636/CANDIDATE-COMMAND-RESULTS/v1\0"
+            + json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        "command_evidence_sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+        "command_ids": [row["command_id"] for row in rows],
+        "inventory": [
+            {"path": path.relative_to(source).as_posix(), "sha256": hashlib.sha256(raw).hexdigest(),
+             "size": str(len(raw)), "mode": "100644"}
+            for path in (registry_path, vendored)
+        ],
+    }
+    receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, historical)
+    receipt = build_candidate_qualification_receipt(source, evidence_path, receipt_path)
+    assert receipt == historical
+    assert receipt["schema_version"] == "candidate-qualification-receipt/v1"
+    assert len(cast(list[object], receipt["inventory"])) == 2
+    receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, receipt)
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder.validate_candidate_qualification_receipt(Path.cwd(), evidence_path, receipt)
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        build_candidate_qualification_receipt(
+            Path.cwd(), evidence_path, tmp_path / "downgrade.json"
+        )
+    for change in ("missing", "failed", "mixed", "authority"):
+        damaged = deepcopy(evidence)
+        if change == "missing":
+            damaged["results"].pop()
+        elif change == "failed":
+            damaged["results"][0]["passed"] = False
+        elif change == "mixed":
+            damaged["schema_version"] = "candidate-command-results/v3"
+        else:
+            damaged["production_authority"] = "PRODUCTION"
+        evidence_path.write_text(json.dumps(damaged))
+        with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+            build_candidate_qualification_receipt(source, evidence_path, tmp_path / "invalid.json")
+    evidence_path.write_text(json.dumps(evidence))
+    (source / "stale.txt").write_text("changed source")
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, receipt)
+    current = {**receipt, "schema_version": "candidate-qualification-receipt/v2"}
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, current)
+    evidence_path.unlink()
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, receipt)
+
+
 def test_candidate_receipt_cli_is_directly_executable() -> None:
     completed = subprocess.run(
         [sys.executable, "tools/build_candidate_qualification_receipt.py", "--help"],
@@ -25,6 +109,51 @@ def test_candidate_receipt_cli_is_directly_executable() -> None:
         capture_output=True,
     )
     assert completed.returncode == 0, completed.stderr.decode()
+
+
+def test_coherent_current_v1_rows_cannot_downgrade_descendant_contract(tmp_path: Path) -> None:
+    # Synthetic descriptor-only forgery with every current command row internally coherent.
+    source = tmp_path / "current-descendant"
+    names = [
+        "task-command-registry.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+    ]
+    for name in names:
+        target = source / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(Path(name).read_bytes())
+    registry = run_command_registry.validate_registry(source / names[0])
+    rows = [
+        {**{key: command[key] for key in ("command_id", "argv", "cwd", "expected_exit")},
+         "exit_code": command["expected_exit"], "passed": True,
+         "stdout_sha256": hashlib.sha256(b"").hexdigest(), "stdout_size_bytes": "0",
+         "stderr_sha256": hashlib.sha256(b"").hexdigest(), "stderr_size_bytes": "0"}
+        for command in run_command_registry.candidate_commands(registry)
+    ]
+    evidence = run_command_registry.build_candidate_command_results(registry, rows)
+    assert evidence["schema_version"] == "candidate-command-results/v1"
+    evidence_path = tmp_path / "coherent-current-v1.json"
+    evidence_path.write_text(json.dumps(evidence))
+    receipt: dict[str, object] = {
+        "schema_version": "candidate-qualification-receipt/v1", "production_authority": "NONE",
+        "command_result_root": hashlib.sha256(
+            b"HD636/CANDIDATE-COMMAND-RESULTS/v1\0"
+            + json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+        "command_evidence_sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+        "command_ids": [row["command_id"] for row in rows],
+        "inventory": [
+            {"path": name, "sha256": hashlib.sha256((source / name).read_bytes()).hexdigest(),
+             "size": str((source / name).stat().st_size), "mode": "100644"}
+            for name in sorted(names)
+        ],
+    }
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        receipt_builder.validate_candidate_qualification_receipt(source, evidence_path, receipt)
+    with pytest.raises(ValueError, match="E_CANDIDATE_RECEIPT"):
+        build_candidate_qualification_receipt(source, evidence_path, tmp_path / "forbidden.json")
+    assert not (tmp_path / "forbidden.json").exists()
 
 
 def _evidence() -> dict[str, object]:
@@ -76,7 +205,7 @@ def test_receipt_rejects_skipped_command_live_evidence_or_production_authority(
     receipt = build_candidate_qualification_receipt(
         Path.cwd(), evidence, tmp_path / "receipt.json", config
     )
-    assert len(receipt["command_ids"]) == 45
+    assert len(cast(list[str], receipt["command_ids"])) == 45
     assert receipt["inventory"]
 
     invalid = _evidence()

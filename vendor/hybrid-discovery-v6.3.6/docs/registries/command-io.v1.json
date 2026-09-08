@@ -1153,6 +1153,7 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
         "runtime/task-command-registry.json",
         "runtime/tools/run_command_registry.py"
       ],
@@ -1294,7 +1295,7 @@
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
@@ -2865,7 +2866,7 @@
         "authoring-tools/issue_current_authoring_repository_receipt.py"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json"
       ],
       "input_directories": []
     },

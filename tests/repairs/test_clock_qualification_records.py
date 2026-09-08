@@ -14,6 +14,8 @@ import pytest
 
 from tools import run_clock_vector_qualification as runner
 from tools import verify_repair_evidence as evidence_gate
+from tools.retained_artifact_io import RetainedArtifactIO
+from tools.run_full_repair_qualification import collect_retained_sources, write_closed_inventory
 
 ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "vendor/hybrid-discovery-v6.3.6"
@@ -229,6 +231,61 @@ def test_imported_coherence_javascript_is_bound_and_damage_fails_evidence(
         ]
     finally:
         executable.write_bytes(original)
+
+
+def test_coherently_rehashed_clock_graph_fails_shared_replay_but_valid_copy_passes(
+    tmp_path: Path,
+) -> None:
+    original = tmp_path / "original"
+    result = runner.run_clock_vector_qualification(PACK, ROOT, evidence_dir=original)
+    row = copy.deepcopy(result["records"][0])
+    closure = tmp_path / "closure"
+    closure.mkdir()
+    manifest = write_closed_inventory(
+        collect_retained_sources(row, retained_boundaries=(original,), live_roots=(ROOT,)),
+        closure / "inventory.json",
+    )
+    artifacts = RetainedArtifactIO.from_manifest(manifest, closure / "retained")
+    # Replay only the immutable closure even when generated and captured files disappear.
+    hidden = tmp_path / "hidden-original"
+    original.rename(hidden)
+    generated = ROOT / "extension/.test-build/src/contracts/clock-coherence.js"
+    compiled = generated.read_bytes()
+    try:
+        generated.unlink()
+        assert evidence_gate.aggregate_repair_evidence(
+            [row["case_id"]], [row], artifacts=artifacts
+        )["result"] == "PASS"
+    finally:
+        generated.write_bytes(compiled)
+        hidden.rename(original)
+
+    key = "contracts/clock-coherence.js"
+    descriptor = row["typescript_executable_artifacts"][key]
+    executable = Path(descriptor["path"])
+    executable.write_bytes(executable.read_bytes() + b"\n// coherently rehashed\n")
+    descriptor["sha256"] = hashlib.sha256(executable.read_bytes()).hexdigest()
+    for phase in ("before", "after"):
+        row["typescript_execution_binding"][phase][key] = descriptor["sha256"]
+    binding = row["typescript_execution_binding_artifact"]
+    content = runner._bytes(row["typescript_execution_binding"])
+    Path(binding["path"]).write_bytes(content)
+    binding["sha256"] = hashlib.sha256(content).hexdigest()
+    changed = tmp_path / "changed-closure"
+    changed.mkdir()
+    changed_manifest = write_closed_inventory(
+        collect_retained_sources(row, retained_boundaries=(original,), live_roots=(ROOT,)),
+        changed / "inventory.json",
+    )
+    rehashed = RetainedArtifactIO.from_manifest(changed_manifest, changed / "retained")
+    for transport in (None, rehashed):
+        checked = evidence_gate.aggregate_repair_evidence(
+            [row["case_id"]], [row], artifacts=transport
+        )
+        assert checked["result"] == "FAIL"
+        assert checked["errors"] == [
+            {"case_id": row["case_id"], "error": "E_REPAIR_ARTIFACT"}
+        ]
 
 
 def test_same_wrong_evaluators_fail_independent_numeric_oracle(

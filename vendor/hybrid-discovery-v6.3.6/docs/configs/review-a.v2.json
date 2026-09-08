@@ -105,5 +105,42 @@
   "repository_identity": {
     "kind": "DESCENDANT",
     "receipt": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/receipts/descendant-repository-qualification-receipt.json"
+  },
+  "producer_environment": {
+    "schema_version": "review-producer-environment/v1",
+    "mode": "VERIFIED_READ_ONLY_PROJECTION",
+    "python_environment": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv",
+    "python_executable": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv/bin/python3",
+    "python_executable_sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+    "node_lookup": "/home/thenam176/.local/share/mise/shims/node",
+    "node_executable": "/home/thenam176/.local/share/mise/installs/node/22.23.0/bin/node",
+    "node_executable_sha256": "b587d8a062552ab52ecae2a7b0bcd079351d1dc61cf2555fd5994f558274ae58",
+    "path_translation_executable": "/init",
+    "wsl_distro": "Ubuntu",
+    "runtime_unc": "\\\\wsl.localhost\\Ubuntu\\home\\thenam176\\betting-helper\\discovery-runtime-v6.3.6",
+    "path_translation_sha256": "85abd6d52d1a1e602aa6b545c9ac125c9021a3bb8383d337f1d009766d7ea4d2",
+    "native_dependency_root": "/mnt/c/Users/thenam/Documents/BettingHelper-Repair-Chrome/native-dependency-closure-b82739f5-1369-4d01-a701-b39a1a8e228b",
+    "live_files": [
+      "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
+      "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",
+      "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe",
+      "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python312.dll",
+      "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/DLLs/_sqlite3.pyd",
+      "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/DLLs/sqlite3.dll",
+      "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe",
+      "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.local/bh-repair/native-wheel-cache/rpds_py-2026.6.3-cp312-cp312-win_amd64.whl",
+      "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/1/1/2/7/e/1127e3d2d646b8b978b6f86221cfed3abb713e990a117406d3ce6b47.body",
+      "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/c/9/2/3/4/c92343c66b0dc7638b486b828ba26c07e51fe308e9da38034706d11f.body",
+      "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/b/1/4/e/c/b14ec1286f8ec83b268f9c52cdccd1001d22496d6e01ba5b4fd8aeb4.body",
+      "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/9/8/0/6/4/9806464430c23d93c717be0a494a22ece76de403154ebf770ebd0e44.body",
+      "/home/thenam176/.cache/trading-agent/runtime-release-wheelhouse/432cc5e62b703e45f49ad16a9a42a795ce0090ac004a0a2c58af58b5f29e5f5c/typing_extensions-4.16.0-py3-none-any.whl",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785/__init__.py",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785/_impl.py",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785/py.typed",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/LICENSE",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/WHEEL",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/METADATA",
+      "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/RECORD"
+    ]
   }
 }

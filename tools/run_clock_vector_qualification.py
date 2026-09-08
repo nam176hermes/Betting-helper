@@ -1119,6 +1119,17 @@ def verify_record(
             == reference["sha256"]
             for reference in executable_artifacts.values()
         )
+        from tools.verify_repair_evidence import (
+            _compiled_typescript_module_hashes,
+            _typescript_compile_binding,
+        )
+
+        executable_match = executable_match and (
+            {name: reference["sha256"] for name, reference in executable_artifacts.items()}
+            == _compiled_typescript_module_hashes(
+                _typescript_compile_binding(_current_binding), "clock"
+            )
+        )
         execution_binding = row.get("typescript_execution_binding")
         execution_reference = row.get("typescript_execution_binding_artifact")
         execution_match = row.get("execution_kind") == "QUALIFICATION_MUTATION" or (

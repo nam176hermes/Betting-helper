@@ -1,5 +1,7 @@
 """Issue or verify the clean descendant repository qualification receipt."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
@@ -13,6 +15,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import NoReturn, cast
+
+RUNTIME_ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 
 from moj_discovery.pack_verifier import compute_vendor_tree_root
 from tools.build_candidate_qualification_receipt import (

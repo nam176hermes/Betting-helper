@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import csv
 import hashlib
 import json
 import os
@@ -411,6 +412,182 @@ def _tool_mounts(
     return mounts, links
 
 
+def _dependency_projection(root: Path, boundary: Path, *, python: bool) -> dict[str, str]:
+    """Compare all imported package bytes; installation wrappers have local shebangs."""
+    _directory(root)
+    result: dict[str, str] = {}
+    for directory, names, files in os.walk(root, followlinks=True):
+        parent = Path(directory)
+        names[:] = [name for name in names if name not in {"__pycache__", ".bin"}]
+        for name in list(names):
+            entry = parent / name
+            resolved = entry.resolve(strict=True)
+            if not python and entry.is_symlink() and resolved == boundary / "extension":
+                # pnpm's declared local workspace resolves to the mounted governed source.
+                result[entry.relative_to(root).as_posix()] = "workspace:extension"
+                names.remove(name)
+                continue
+            if not resolved.is_relative_to(boundary) or any(
+                ancestor.resolve() == resolved for ancestor in (parent, *parent.parents)
+            ):
+                raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+        for name in files:
+            path = parent / name
+            if name.endswith((".pyc", ".pyo")) or name in {
+                ".modules.yaml", ".pnpm-workspace-state-v1.json",
+            }:
+                continue
+            if not path.resolve(strict=True).is_relative_to(boundary) or not path.is_file():
+                raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+            content = path.read_bytes()
+            if python and name == "RECORD" and parent.name.endswith(".dist-info"):
+                rows = list(csv.reader(content.decode().splitlines()))
+                if any(len(row) != 3 for row in rows):
+                    raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+                # Console wrappers are not imported; frozen uv checks them as installed scripts.
+                content = json.dumps([row for row in rows if not row[0].startswith(
+                    "../../../bin/"
+                )], sort_keys=True).encode()
+            result[path.relative_to(root).as_posix()] = hashlib.sha256(content).hexdigest()
+    if not result:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    return result
+
+
+def _producer_projection(
+    config: dict[str, object], commands: list[dict[str, object]],
+) -> tuple[list[tuple[Path, Path]], list[tuple[str, str]], dict[str, str]]:
+    """Validate source-owned exact live identities before creating read-only projections."""
+    if not any(row.get("command_id") == "A_CHECK_DESCENDANT" for row in commands):
+        return [], [], {}
+    from tools.run_environment_qualification import NATIVE
+    from tools.run_indexeddb_crash_matrix import CHROME
+    from tools.run_native_ingestor_qualification import DEPENDENCIES, dependency_binding
+    from tools.verify_repair_evidence import _resolved_node_executable
+
+    if config.get("schema_version") != "review-config/v2" or config != _config_for_role(
+        cast(str, config["role"]), 2
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    declaration = config.get("producer_environment")
+    if not isinstance(declaration, dict) or set(declaration) != {
+        "schema_version", "mode", "python_environment", "python_executable",
+        "python_executable_sha256", "node_lookup", "node_executable", "node_executable_sha256",
+        "native_dependency_root", "live_files",
+        "path_translation_executable", "path_translation_sha256",
+        "wsl_distro", "runtime_unc",
+    } or declaration.get("schema_version") != "review-producer-environment/v1" or declaration.get(
+        "mode"
+    ) != "VERIFIED_READ_ONLY_PROJECTION":
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    qualified = Path(cast(str, declaration["python_environment"]))
+    python = Path(cast(str, declaration["python_executable"]))
+    node = Path(cast(str, declaration["node_executable"]))
+    lookup = Path(cast(str, declaration["node_lookup"]))
+    prepared = _prepared_python_environment(config)
+    translation = Path(cast(str, declaration["path_translation_executable"]))
+    python_configs = []
+    for path in (qualified, prepared):
+        _directory(path / "bin")
+        _regular(path / "pyvenv.cfg")
+        lines = (path / "pyvenv.cfg").read_text().splitlines()
+        settings = dict(line.split(" = ", 1) for line in lines)
+        if len(settings) != len(lines):
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+        settings["home"] = str(Path(settings["home"]).resolve(strict=True))
+        python_configs.append(settings)
+    if (
+        qualified != RUNTIME_ROOT / ".venv" or python != qualified / "bin/python3"
+        or shutil.which("node") != str(lookup) or _resolved_node_executable() != node
+        or _sha256(node) != declaration["node_executable_sha256"]
+        or _sha256(python.resolve(strict=True)) != declaration["python_executable_sha256"]
+        or (prepared / "bin/python3").resolve(strict=True) != python.resolve(strict=True)
+        or any(
+            not (environment / "bin" / alias).is_symlink()
+            or (environment / "bin" / alias).resolve(strict=True) != python.resolve(strict=True)
+            for environment in (qualified, prepared)
+            for alias in ("python", "python3", "python3.12")
+        )
+        or python_configs[0] != python_configs[1]
+        or translation != Path("/init")
+        or Path("/usr/bin/wslpath").resolve(strict=True) != translation
+        or _sha256(translation) != declaration["path_translation_sha256"]
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    distro = declaration["wsl_distro"]
+    runtime_unc = declaration["runtime_unc"]
+    if (
+        distro != "Ubuntu"
+        or runtime_unc != "\\\\wsl.localhost\\Ubuntu" + str(RUNTIME_ROOT).replace("/", "\\")
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    for option, operand, expected in (
+        ("-w", str(RUNTIME_ROOT), runtime_unc), ("-u", runtime_unc, str(RUNTIME_ROOT)),
+    ):
+        translated = subprocess.run(  # noqa: S603 -- fixed source-owned path translation only.
+            ["/usr/bin/wslpath", option, operand], env={"PATH": "/usr/bin"},
+            capture_output=True, text=True, check=False, timeout=10,
+        )
+        if translated.returncode or translated.stdout.strip() != expected:
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    uv = shutil.which("uv")
+    if uv is None:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    for environment_root in (qualified, prepared):
+        checked = subprocess.run(  # noqa: S603 -- pinned offline read-only lock/environment check.
+            [uv, "sync", "--check", "--frozen", "--offline"], cwd=RUNTIME_ROOT,
+            env={**_environment(config), "UV_PROJECT_ENVIRONMENT": str(environment_root)},
+            capture_output=True, check=False, timeout=60,
+        )
+        if checked.returncode:
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    if _dependency_projection(qualified / "lib", qualified, python=True) != _dependency_projection(
+        prepared / "lib", prepared, python=True
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    node_environment = cast(dict[str, object], config["node_environment"])
+    project = Path(cast(str, node_environment["project_root"]))
+    for item in cast(list[dict[str, str]], node_environment["project_inputs"]):
+        if (project / item["destination"]).read_bytes() != Path(item["source"]).read_bytes():
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    if _dependency_projection(RUNTIME_ROOT / "node_modules", RUNTIME_ROOT, python=False) != (
+        _dependency_projection(project / "node_modules", project, python=False)
+    ) or _dependency_projection(
+        RUNTIME_ROOT / "extension/node_modules", RUNTIME_ROOT, python=False
+    ) != _dependency_projection(project / "extension/node_modules", project, python=False):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    dependency = dependency_binding()  # Includes independent wheel, lock and rfc8785 provenance.
+    preparation = json.loads((DEPENDENCIES / "preparation.json").read_text())
+    expected_files = {
+        CHROME, Path("/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"), NATIVE,
+        NATIVE.parent / "python312.dll", NATIVE.parent / "DLLs/_sqlite3.pyd",
+        NATIVE.parent / "DLLs/sqlite3.dll", NATIVE.parent.parent / "node/bin/node.exe",
+        *(Path(row["path"]) for row in dependency["wheels"]),
+        *(Path(row["independent_source"]) for row in preparation["rfc8785"]["files"]),
+    }
+    live_files = declaration["live_files"]
+    if (
+        declaration["native_dependency_root"] != str(DEPENDENCIES)
+        or not isinstance(live_files, list)
+        or len(live_files) != len(expected_files)
+        or set(live_files) != {str(path) for path in expected_files}
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    for path in expected_files:
+        _regular(path)
+    _directory(DEPENDENCIES)
+    mounts = [
+        (node, node), (translation, translation), (DEPENDENCIES, DEPENDENCIES),
+        (prepared, qualified),
+    ]
+    mounts.extend((path, path) for path in sorted(expected_files))
+    return mounts, [(str(node), str(lookup))], {
+        "PATH": f"{lookup.parent}:/review-bin:/usr/bin",
+        "UV_PROJECT_ENVIRONMENT": str(qualified),
+        "WSL_DISTRO_NAME": distro,
+    }
+
+
 def build_bubblewrap_argv(
     config: dict[str, object],
     command: dict[str, object],
@@ -467,6 +644,11 @@ def build_bubblewrap_argv(
     executable_path = Path(executable).resolve(strict=True)
     _regular(executable_path)
     tools, links = _tool_mounts(leaf_commands or [command])
+    projected, projected_links, projected_environment = _producer_projection(
+        config, leaf_commands or [command]
+    )
+    readonly.extend(projected)
+    links.extend(projected_links)
     if leaf_commands is None and not any(target.name == argv[0] for _, target in tools):
         tools.append((executable_path, Path(f"/review-bin/{argv[0]}")))
     temporary_target = Path(os.sep) / "tmp"
@@ -478,6 +660,8 @@ def build_bubblewrap_argv(
             Path("/review-bin"),
             Path("/review-tools"),
         ]
+        + [Path(target) for _source, target in links]
+        + [target for _source, target in tools]
     )
     result = [
         "/usr/bin/bwrap",
@@ -493,16 +677,15 @@ def build_bubblewrap_argv(
         "--ro-bind",
         "/usr",
         "/usr",
-        "--ro-bind",
-        "/bin",
-        "/bin",
-        "--ro-bind",
-        "/lib",
-        "/lib",
-        "--ro-bind",
-        "/lib64",
-        "/lib64",
     ]
+    for system_path in ("/bin", "/lib", "/lib64"):
+        path = Path(system_path)
+        if projected and path.is_symlink():
+            if not path.resolve(strict=True).is_relative_to("/usr"):
+                raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+            result.extend(["--symlink", os.readlink(path), system_path])
+        else:
+            result.extend(["--ro-bind", system_path, system_path])
     for directory in _parent_dirs(destinations):
         result.extend(["--dir", directory])
     result.extend(
@@ -520,6 +703,7 @@ def build_bubblewrap_argv(
         result.extend(["--symlink", link_source, link_target])
     environment = _environment(config)
     environment["PATH"] = "/review-bin:/usr/bin"
+    environment.update(projected_environment)
     for key, value in sorted(environment.items()):
         result.extend(["--setenv", key, value])
     result.extend(["--chdir", cwd, "--", *cast(list[str], argv)])
