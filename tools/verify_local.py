@@ -12,7 +12,7 @@ import stat
 import subprocess
 import sys
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, cast
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -255,14 +255,41 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
     exports = delivery.get("authoring_source_exports")
     if not isinstance(exports, list):
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
-    expected = {
-        cast(str, item["source"])
-        for item in exports
-        if isinstance(item, dict)
-        and isinstance(item.get("source"), str)
-        and cast(str, item["source"]).startswith(("authoring-tests/", "authoring-tools/"))
+    expected: set[str] = set()
+    destinations: set[str] = set()
+    for item in exports:
+        if (
+            not isinstance(item, dict)
+            or set(item) != {"source", "destination", "owner"}
+            or item["owner"] != "V636-P09-T01"
+        ):
+            raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+        for field in ("source", "destination"):
+            value = item[field]
+            if (
+                not isinstance(value, str)
+                or not value
+                or "\\" in value
+                or "\0" in value
+                or PurePosixPath(value).is_absolute()
+                or PurePosixPath(value).as_posix() != value
+                or any(part in {".", ".."} for part in PurePosixPath(value).parts)
+            ):
+                raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+        name, destination = item["source"], item["destination"]
+        if (
+            name in expected
+            or destination in destinations
+            or PurePosixPath(destination).parts[:2] != ("pack", "authoring-source")
+            or len(PurePosixPath(destination).parts) < 3
+        ):
+            raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+        expected.add(name)
+        destinations.add(destination)
+    python_expected = {
+        name for name in expected if name.startswith(("authoring-tests/", "authoring-tools/"))
     }
-    if not expected:
+    if not python_expected:
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
     authoring_root = root.parent
     actual_paths = {
@@ -271,17 +298,25 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
         for path in directory.rglob("*.py")
         if path.is_file()
     }
-    if actual_paths != expected:
+    if actual_paths != python_expected:
         raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
     rows: list[tuple[str, int, str]] = []
     for name in sorted(expected, key=lambda item: item.encode()):
         path = authoring_root / name
         try:
             info = path.lstat()
-            source = path.read_text()
-        except (OSError, UnicodeError) as error:
+            if (
+                path.is_symlink()
+                or not stat.S_ISREG(info.st_mode)
+                or info.st_nlink != 1
+                or path.resolve(strict=True) != path
+            ):
+                raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
+            contents = path.read_bytes()
+            source = contents.decode("utf-8") if name in python_expected else ""
+        except (OSError, UnicodeError, RuntimeError) as error:
             raise ValueError("E_EXTERNAL_AUTHORING_TESTS") from error
-        if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not source:
+        if not contents:
             raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
         if name.startswith("authoring-tests/"):
             try:
@@ -294,7 +329,6 @@ def _validate_authoring_tests(root: Path, expected_sha256: str | None = None) ->
                 for node in ast.walk(tree)
             ):
                 raise ValueError("E_EXTERNAL_AUTHORING_TESTS")
-        contents = source.encode()
         rows.append((name, len(contents), hashlib.sha256(contents).hexdigest()))
     payload = "".join(f"{name}\0{size}\0{digest}\n" for name, size, digest in rows).encode()
     digest = hashlib.sha256(payload).hexdigest()

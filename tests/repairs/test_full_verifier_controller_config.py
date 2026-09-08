@@ -25,12 +25,17 @@ def test_source_owned_controller_config_is_strict_and_fully_consumed() -> None:
     config = load_controller_config(SOURCE_CONFIG)
     assert config.current_checkout_root == ROOT
     assert config.production_authority == "NONE"
+    current = load_controller_config(SOURCE_CONFIG_V2)
     assert (
         verify_local._validate_authoring_tests(
-            config.external_authoring_tests, config.external_authoring_source_sha256
+            current.external_authoring_tests, current.external_authoring_source_sha256
         )
-        == config.external_authoring_source_sha256
+        == current.external_authoring_source_sha256
     )
+    with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
+        verify_local._validate_authoring_tests(
+            current.external_authoring_tests, config.external_authoring_source_sha256
+        )
     with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
         verify_local._validate_authoring_tests(config.external_authoring_tests, "0" * 64)
 
@@ -143,6 +148,108 @@ def test_external_authoring_source_rejects_unbound_conftest(tmp_path: Path) -> N
     with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
         verify_local._validate_authoring_tests(
             root / "authoring-tests", config.external_authoring_source_sha256
+        )
+
+
+@pytest.fixture
+def authoring_export_fixture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path]:
+    runtime = tmp_path / "runtime"
+    root = tmp_path / "authoring"
+    files = {
+        "authoring-tests/test_contract.py": b"def test_contract():\r\n    assert True\r\n",
+        "authoring-tools/tool.py": b"VALUE = 1\n",
+        "plan-input/bootstrap/bootstrap.py": b"# bootstrap\r\nVALUE = 2\r\n",
+    }
+    exports = []
+    for name, contents in files.items():
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(contents)
+        exports.append(
+            {
+                "source": name,
+                "destination": "pack/authoring-source/" + name.removeprefix("plan-input/"),
+                "owner": "V636-P09-T01",
+            }
+        )
+    delivery = runtime / "vendor/hybrid-discovery-v6.3.6/docs/registries/delivery-map.v1.json"
+    delivery.parent.mkdir(parents=True)
+    delivery.write_text(json.dumps({"authoring_source_exports": exports}))
+    monkeypatch.setattr(verify_local, "REPOSITORY_ROOT", runtime)
+    return root, delivery
+
+
+def test_external_authoring_hash_covers_complete_exports_and_raw_crlf(
+    authoring_export_fixture: tuple[Path, Path],
+) -> None:
+    root, _delivery = authoring_export_fixture
+    # Independently recorded producer-format digest over the three exact fixture payloads.
+    expected = "5e0d76c02b93f7f64414ec5e469ea5108accf58ae0b07281a7744979cbfc9c0d"
+    assert verify_local._validate_authoring_tests(root / "authoring-tests", expected) == expected
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "bootstrap-tamper",
+        "bootstrap-missing",
+        "bootstrap-symlink",
+        "bootstrap-parent-symlink",
+        "bootstrap-hardlink",
+        "duplicate-source",
+        "duplicate-destination",
+        "unsafe-source",
+        "unsafe-destination",
+        "wrong-owner",
+        "malformed-row",
+        "extra-test",
+        "missing-test-function",
+    ],
+)
+def test_external_authoring_exports_reject_unbound_inputs_and_mappings(
+    authoring_export_fixture: tuple[Path, Path],
+    damage: str,
+) -> None:
+    root, delivery = authoring_export_fixture
+    before = verify_local._validate_authoring_tests(root / "authoring-tests")
+    exports = json.loads(delivery.read_bytes())["authoring_source_exports"]
+    bootstrap = root / exports[-1]["source"]
+    if damage == "bootstrap-tamper":
+        bootstrap.write_bytes(b"# changed bootstrap\n")
+    elif damage == "bootstrap-missing":
+        bootstrap.unlink()
+    elif damage in {"bootstrap-symlink", "bootstrap-hardlink"}:
+        saved = root / "saved.py"
+        bootstrap.rename(saved)
+        if damage == "bootstrap-symlink":
+            bootstrap.symlink_to(saved)
+        else:
+            os.link(saved, bootstrap)
+    elif damage == "bootstrap-parent-symlink":
+        saved = root / "saved-bootstrap"
+        bootstrap.parent.rename(saved)
+        bootstrap.parent.symlink_to(saved, target_is_directory=True)
+    elif damage == "duplicate-source":
+        exports.append({**exports[-1], "destination": "pack/authoring-source/other.py"})
+    elif damage == "duplicate-destination":
+        exports[-1]["destination"] = exports[0]["destination"]
+    elif damage == "unsafe-source":
+        exports[-1]["source"] = "../outside.py"
+    elif damage == "unsafe-destination":
+        exports[-1]["destination"] = "pack/authoring-source/../outside.py"
+    elif damage == "wrong-owner":
+        exports[-1]["owner"] = "UNOWNED"
+    elif damage == "malformed-row":
+        exports.append({"source": "plan-input/bootstrap/ignored.py"})
+    elif damage == "extra-test":
+        (root / "authoring-tests/conftest.py").write_text("VALUE = 1\n")
+    else:
+        (root / "authoring-tests/test_contract.py").write_text("VALUE = 1\n")
+    delivery.write_text(json.dumps({"authoring_source_exports": exports}))
+    with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
+        verify_local._validate_authoring_tests(
+            root / "authoring-tests",
+            None if damage in {"extra-test", "missing-test-function"} else before,
         )
 
 
