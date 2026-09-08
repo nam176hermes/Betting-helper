@@ -88,6 +88,75 @@ def _regular_hash(path: Path, artifacts: RetainedArtifactIO | None = None) -> st
     return hashlib.sha256(_read_bytes(path, artifacts)).hexdigest()
 
 
+def _validate_issuance(config: FullVerifierConfig, artifacts: RetainedArtifactIO | None) -> None:
+    """The controller's P07 T03 record binds the actual declared invocation."""
+    record = _read_evidence(config.candidate_issuance_evidence, artifacts)
+    registry = _read_evidence(config.current_checkout_root / "task-command-registry.json")
+    rows = registry.get("commands")
+    if not isinstance(rows, list):
+        _fail()
+    declared = next(
+        (
+            row
+            for row in rows
+            if isinstance(row, dict) and row.get("command_id") == "VERIFY_V636_P07_T03"
+        ),
+        None,
+    )
+    if declared is None:
+        _fail()
+    command = record.get("command")
+    if (
+        set(record)
+        != {
+            "schema_version",
+            "result",
+            "production_authority",
+            "controller_binding",
+            "command",
+            "proof_coverage_sha256",
+        }
+        or record.get("schema_version") != "candidate-issuance-result/v1"
+        or record.get("result") != "PASS"
+        or record.get("production_authority") != "NONE"
+        or record.get("controller_binding") != config.binding()
+        or record.get("proof_coverage_sha256")
+        != hashlib.sha256(_read_bytes(config.proof_coverage_evidence, artifacts)).hexdigest()
+        or not isinstance(command, dict)
+        or set(command)
+        != {
+            "command_id",
+            "argv",
+            "cwd",
+            "expected_exit",
+            "exit_code",
+            "passed",
+            "stdout_sha256",
+            "stderr_sha256",
+            "stdout_size_bytes",
+            "stderr_size_bytes",
+        }
+        or any(
+            command[key] != declared[key] for key in ("command_id", "argv", "cwd", "expected_exit")
+        )
+        or command["cwd"] != str(config.current_checkout_root)
+        or type(command["exit_code"]) is not int
+        or command["exit_code"] != 0
+        or type(command["expected_exit"]) is not int
+        or command["expected_exit"] != 0
+        or command["passed"] is not True
+    ):
+        _fail()
+    for stream in ("stdout", "stderr"):
+        if (
+            not isinstance(command[stream + "_sha256"], str)
+            or re.fullmatch(r"[0-9a-f]{64}", command[stream + "_sha256"]) is None
+            or not isinstance(command[stream + "_size_bytes"], str)
+            or re.fullmatch(r"0|[1-9][0-9]*", command[stream + "_size_bytes"]) is None
+        ):
+            _fail()
+
+
 def _validated_context(
     root: Path, config: FullVerifierConfig, artifacts: RetainedArtifactIO | None = None
 ) -> None:
@@ -139,6 +208,7 @@ def _capture_receipt_record(
         or config.qualification_evidence is None
     ):
         _fail()
+    _validate_issuance(config, artifacts)
     identity = descendant_repository_identity(root, config.audited_runtime_ancestor)
     candidate = _read_evidence(config.candidate_qualification_receipt, artifacts)
     validate_candidate_qualification_receipt(
@@ -226,9 +296,7 @@ def _capture_receipt_record(
             config.qualification_evidence.environment_qualification_aggregate,
             artifacts,
         ),
-        "environment_qualification_evidence_root_sha256": environment[
-            "evidence_root_sha256"
-        ],
+        "environment_qualification_evidence_root_sha256": environment["evidence_root_sha256"],
     }
 
 

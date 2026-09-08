@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import os
 import shutil
 import subprocess
+import sys
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
@@ -78,6 +80,72 @@ def _write(path: Path, value: object) -> bytes:
     return raw
 
 
+def _sync_fixture_sources(
+    source: Path, pack: Path, root: Path, monkeypatch: pytest.MonkeyPatch,
+    witnesses: dict[str, bytes],
+) -> None:
+    """Approved path-only disposable source transport and official materialization."""
+    from tools.sync_pack_assets import _tree_files, sync_pack_assets
+
+    for original in _tree_files(source):
+        target = pack / original.relative_to(source)
+        if not target.exists():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(original, target)
+    relative = "docs/registries/task-command-registry.v1.json"
+    raw = (source / relative).read_bytes()
+    witnesses[relative] = raw
+    registry = json.loads(raw)
+    original_config = json.loads(SOURCE_CONFIG.read_bytes())
+    replacements = {
+        original_config["current_checkout_root"]: str(root),
+        original_config["governed_source_pack"]: str(pack),
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime": str(root),
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack": str(pack),
+    }
+
+    def token(value: str) -> str:
+        for old, new in replacements.items():
+            if value == old or value.startswith(old + "/"):
+                return new + value[len(old):]
+        return value
+
+    for command in registry["commands"]:
+        command["cwd"] = token(command["cwd"])
+        command["argv"] = [token(item) for item in command["argv"]]
+    restored = deepcopy(registry)
+    for original, transported in zip(
+        json.loads(raw)["commands"], restored["commands"], strict=True,
+    ):
+        assert transported["cwd"] == token(original["cwd"])
+        assert transported["argv"] == [token(item) for item in original["argv"]]
+        transported["cwd"], transported["argv"] = original["cwd"], original["argv"]
+    assert restored == json.loads(raw)
+    _write(pack / relative, registry)
+    sync_pack_assets(pack, root)
+    spec = importlib.util.spec_from_file_location(
+        "descendant_fixture_materializer",
+        source.parent / "authoring-tools/build_task_command_registry.py",
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    with monkeypatch.context() as importing:
+        importing.setattr(sys, "dont_write_bytecode", True)
+        spec.loader.exec_module(module)
+    module.build_task_command_registry(
+        json.loads((pack / "docs/tasks/task-manifest.v6.3.6.json").read_bytes()),
+        pack / relative, pack / "docs/configs", root / "task-command-registry.json",
+        review_config_profile="current",
+    )
+    assert (root / "task-command-registry.json").read_bytes() == (pack / relative).read_bytes()
+    assert (root / "vendor/hybrid-discovery-v6.3.6" / relative).read_bytes() == (
+        pack / relative
+    ).read_bytes()
+    _git(root, "add", "--force", "vendor", "schema-lock.json",
+         "task-command-registry.json", "review-config")
+    _git(root, "commit", "-m", "official isolated source fixture sync")
+
+
 @pytest.fixture
 def actual_matrix_candidate_chain(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
@@ -142,6 +210,10 @@ def actual_matrix_candidate_chain(
     (tmp_path / "source-matrix-witness.json").write_bytes(source_raw)
     print("fixture source_matrix_sha256=" + hashlib.sha256(source_raw).hexdigest())
     _write(config.governed_source_pack / matrix_relative, matrix)
+    source_witnesses: dict[str, bytes] = {}
+    _sync_fixture_sources(
+        source_pack, config.governed_source_pack, root, monkeypatch, source_witnesses,
+    )
 
     vendor = root / "vendor/hybrid-discovery-v6.3.6"
     for name, path in (
@@ -247,11 +319,29 @@ def actual_matrix_candidate_chain(
     candidate.build_candidate_qualification_receipt(
         root, config.candidate_command_evidence, config.candidate_qualification_receipt, config,
     )
+    issuance = next(
+        row for row in registry["commands"] if row["command_id"] == "VERIFY_V636_P07_T03"
+    )
+    _write(config.candidate_issuance_evidence, {
+        "schema_version": "candidate-issuance-result/v1", "result": "PASS",
+        "production_authority": "NONE", "controller_binding": config.binding(),
+        "command": {
+            **{key: issuance[key] for key in ("command_id", "argv", "cwd", "expected_exit")},
+            "exit_code": issuance["expected_exit"], "passed": True, **stream_fields,
+        },
+        "proof_coverage_sha256": hashlib.sha256(
+            config.proof_coverage_evidence.read_bytes()
+        ).hexdigest(),
+    })
+    print("P07 T03 fixture TEST_ONLY_NOT_EXECUTED; source registry sha256=" + hashlib.sha256(
+        source_witnesses["docs/registries/task-command-registry.v1.json"]
+    ).hexdigest())
     calls.clear()
     return {
         "root": root, "ancestor": ancestor, "config": config, "matrix": matrix,
         "source_matrix": source_matrix, "source_raw": source_raw, "calls": calls,
         "full": full, "directory": tmp_path,
+        "source_witnesses": source_witnesses,
     }
 
 
@@ -306,6 +396,75 @@ def _verify(chain: dict[str, Any], artifacts: Any = None) -> dict[str, object]:
     )
 
 
+@pytest.mark.parametrize("operation", ["issue", "check"])
+@pytest.mark.parametrize("damage", ["missing", "binding", "command", "proof"])
+def test_descendant_public_paths_require_bound_p07_issuance(
+    issued_chain: dict[str, Any], operation: str, damage: str,
+) -> None:
+    from tools import qualify_descendant_repository as qualifier
+
+    chain = issued_chain
+    config = chain["config"]
+    path = config.candidate_issuance_evidence
+    if damage == "missing":
+        path.unlink(missing_ok=True)
+    else:
+        # Once the common fixture produces P07, alter one otherwise coherent
+        # semantic field. Before the fix P07 is wholly ignored by public APIs.
+        value = json.loads(path.read_bytes())
+        if damage == "binding":
+            value["controller_binding"] = {**config.binding(), "config_sha256": "0" * 64}
+        elif damage == "command":
+            value["command"] = {**value.get("command", {}), "argv": ["wrong-command"]}
+        else:
+            value["proof_coverage_sha256"] = "0" * 64
+        _write(path, value)
+    receipt = config.descendant_repository_receipt
+    raw = receipt.read_bytes()
+    if operation == "issue":
+        receipt.unlink()  # Only this fixture's prior receipt; issue must leave it absent.
+    with pytest.raises(ValueError, match="^E_DESCENDANT_REPOSITORY$"):
+        if operation == "issue":
+            qualifier.issue_descendant_qualification_receipt(chain["root"], config, receipt)
+        else:
+            _verify(chain)
+    if operation == "issue":
+        assert not receipt.exists()
+    else:
+        assert receipt.read_bytes() == raw
+
+
+def test_descendant_sealed_p07_binding_uses_only_rehashed_retained_record(
+    sealed_chain: dict[str, Any],
+) -> None:
+    from tools.retained_artifact_io import RetainedArtifactIO
+
+    chain = sealed_chain
+    config, artifacts = chain["config"], chain["artifacts"]
+    path = config.candidate_issuance_evidence
+    physical = artifacts.physical_path(str(path), recorded_boundary=str(config.evidence_root))
+    original = physical.read_bytes()
+    for damage in ("binding", "command", "proof", "cwd"):
+        record = json.loads(original)
+        if damage == "binding":
+            record["controller_binding"]["config_sha256"] = "0" * 64
+        elif damage == "command":
+            record["command"]["argv"] = ["wrong-command"]
+        elif damage == "cwd":
+            record["command"]["cwd"] = str(chain["directory"])
+        else:
+            record["proof_coverage_sha256"] = "0" * 64
+        raw = _write(physical, record)
+        manifest = deepcopy(chain["manifest"])
+        row = next(row for row in manifest["files"] if row["recorded_locator"] == str(path))
+        row.update(size_bytes=len(raw), sha256=hashlib.sha256(raw).hexdigest())
+        changed = RetainedArtifactIO.from_manifest(manifest, artifacts.physical_root)
+        with pytest.raises(ValueError, match="^E_DESCENDANT_REPOSITORY$"):
+            _verify(chain, changed)
+    physical.write_bytes(original)
+    assert _verify(chain, artifacts) == chain["receipt"]
+
+
 @pytest.fixture
 def sealed_chain(issued_chain: dict[str, Any]) -> dict[str, Any]:
     from tools.full_verifier_config import load_controller_config
@@ -321,6 +480,7 @@ def sealed_chain(issued_chain: dict[str, Any]) -> dict[str, Any]:
     paths = {
         config.source_path, source_map, config.candidate_qualification_receipt,
         config.candidate_command_evidence, config.proof_coverage_evidence,
+        config.candidate_issuance_evidence,
         config.descendant_repository_receipt,
         qualification.full_repair_aggregate, qualification.full_repair_inventory,
         qualification.environment_qualification_aggregate,
