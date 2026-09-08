@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "d1a0828beda6ca88e18e6986367595280394cd10afe18eb656c4a0bcd865a53c",
+  "tree_sha256": "a4f8e304b81e9d6eec109d8ea91bdff7e6b8e2f59ee6fde3763e2f0de395836f",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -20,14 +20,29 @@
       "sha256": "c4fcb099ad6aa2dcd5d021d11d16bb332061611a8084a2f21b7cf5fdef86ffab"
     },
     {
+      "path": "docs/configs/full-verifier-controller.v2.json",
+      "size_bytes": 3518,
+      "sha256": "df7597e93a42dad1e6ad3d493b748c69541c3ae1c45c79058ca293cdfa26198d"
+    },
+    {
       "path": "docs/configs/review-a.v1.json",
       "size_bytes": 5083,
       "sha256": "f63a115fdca2037e3124755585f15b6a0764afc7b555d17c159f5e89ba684390"
     },
     {
+      "path": "docs/configs/review-a.v2.json",
+      "size_bytes": 5291,
+      "sha256": "b704db5786268db92f7738e4a7734a631627baabe31081e70d8c59b79095925f"
+    },
+    {
       "path": "docs/configs/review-aggregation.v1.json",
       "size_bytes": 489,
       "sha256": "ed48b1a253b0ce116e31ebd171b6dfd0401c2e71b1f91a0da0d0e62f09544a32"
+    },
+    {
+      "path": "docs/configs/review-aggregation.v2.json",
+      "size_bytes": 695,
+      "sha256": "5bb6902686b44586b6f8dbed091828567ab40619837a1a21ea234ec208c2d6d6"
     },
     {
       "path": "docs/configs/review-authority.v1.json",
@@ -38,6 +53,11 @@
       "path": "docs/configs/review-b.v1.json",
       "size_bytes": 5403,
       "sha256": "aaf9385c2dcf9374a5b099e0312a3b0fd810cbcf760bd6c077fb7bc3c9c71a49"
+    },
+    {
+      "path": "docs/configs/review-b.v2.json",
+      "size_bytes": 5609,
+      "sha256": "dde8007b798630daadc62f011ae4e813e17664498bbfa6447ceef057725bbc7f"
     },
     {
       "path": "docs/configs/runtime-pyproject.toml",
@@ -96,8 +116,8 @@
     },
     {
       "path": "docs/contracts/07-command-and-config-lifecycle.md",
-      "size_bytes": 6617,
-      "sha256": "ec57fc0b97cfaf44f8dfc2ce21deada26de9ceda61940c37f867a14e2c32fce4"
+      "size_bytes": 7232,
+      "sha256": "abc30dea52f072364ee21a6ce395dc6b44666362e6db780f3626769660ef0aae"
     },
     {
       "path": "docs/contracts/08-execution-and-ownership.md",
@@ -151,8 +171,8 @@
     },
     {
       "path": "docs/registries/artifact-ownership.v1.json",
-      "size_bytes": 408546,
-      "sha256": "85ce00c5af3ade93667781fcdbec8ea5cd64960dd113769c37b487998cdda158"
+      "size_bytes": 434779,
+      "sha256": "ba3efc00d58bdb4e632ab8691b62a228b5d8aea4cbf7670f7782e0ec00280c5f"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -176,8 +196,8 @@
     },
     {
       "path": "docs/registries/command-io.v1.json",
-      "size_bytes": 68908,
-      "sha256": "94aa3f130f367210f972533a41e04c841446f21a42ec17256bb494ca838c11d7"
+      "size_bytes": 93053,
+      "sha256": "1cb21a45b43e3ff8e87ce0263e4b7f92bef3c50ba552ba0fe226af516a7953e6"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -206,8 +226,8 @@
     },
     {
       "path": "docs/registries/delivery-map.v1.json",
-      "size_bytes": 5846,
-      "sha256": "34b728b1d728195a726513fedfa285569a8c556c4595165115a5e219b0e3cb20"
+      "size_bytes": 7251,
+      "sha256": "3cbcc4d5889661adbc27471ed7740e281770519d4d32a5aa3d628e39c4f92a50"
     },
     {
       "path": "docs/registries/inherited-baseline-qualification.v1.json",
@@ -221,8 +241,8 @@
     },
     {
       "path": "docs/registries/normative-source-map.v1.json",
-      "size_bytes": 24324,
-      "sha256": "1501f4757764553c194a107d0c0e8e1b1b2f5db35b19a84e381e469be01ec5b2"
+      "size_bytes": 25238,
+      "sha256": "1d4c4f4bd099213570e3142ef64f67b2f9db6d11b4073a7246a88f9914565231"
     },
     {
       "path": "docs/registries/path-registry.v1.json",
@@ -231,13 +251,13 @@
     },
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
-      "size_bytes": 15899,
-      "sha256": "48adfecbece62f487d764414ea115f15b101825d23d2054adfeb992b621fbf58"
+      "size_bytes": 16021,
+      "sha256": "48750b54a2db4bcb3218720ea9e613ee367cf788467ead02708e8346bfccd621"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
-      "size_bytes": 10581,
-      "sha256": "9f22f2ba7d503c51d584d27b9cfdd5cce2d607645197f0b594ab74aff697c7b7"
+      "size_bytes": 13345,
+      "sha256": "359dbe0f0087a46c79dcd9ef5077897906829c40bf04b25de44f04363382465a"
     },
     {
       "path": "docs/registries/reviewer-role-registry.v1.json",
@@ -251,8 +271,8 @@
     },
     {
       "path": "docs/registries/schema-reference-registry.v1.json",
-      "size_bytes": 4330,
-      "sha256": "9865608b210fc9f3c2cd7b0345a708b9306e90b98d815b896ac46ce6fc4cd618"
+      "size_bytes": 5215,
+      "sha256": "c3c81f61454d0486518a076d3a5eb7d26baab6b8f7968f49375681f7aa180d80"
     },
     {
       "path": "docs/registries/seal-exclusions.v1.json",
@@ -271,8 +291,8 @@
     },
     {
       "path": "docs/registries/task-command-registry.v1.json",
-      "size_bytes": 100322,
-      "sha256": "1289141cf3087729e60c29a0d52c5ac65184c1396603fadee3a4e0faa697ef58"
+      "size_bytes": 105486,
+      "sha256": "5ab787eba703283ecd6e8b69179a9251f27217e49599b25da35fb0c6b3b19a6b"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -295,9 +315,19 @@
       "sha256": "fea1701aa554efc04276198586f8ae76267732945c58a900dc6edf248448f5af"
     },
     {
+      "path": "docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "size_bytes": 3873,
+      "sha256": "ff3e4e1a39fd5c3b7f9b78a25f36d1fa7a51c815e0efe227854a10aa39d503be"
+    },
+    {
       "path": "docs/schemas/external-seal-attestation.schema.json",
-      "size_bytes": 3525,
-      "sha256": "bf5d72e1d968c3ebcc80ba866cc2a09e2827ef0348e22e29a373525e33c1e612"
+      "size_bytes": 6237,
+      "sha256": "6e71a4aee9e78592864ea34f6436e8c0d255744101fc3ab6d8cd8afa63af8081"
+    },
+    {
+      "path": "docs/schemas/full-verifier-controller.schema.json",
+      "size_bytes": 9046,
+      "sha256": "6a5b69cbef5bd2acec97893e0330c21d1a118f5e9e8cd7fd24532e947db1664e"
     },
     {
       "path": "docs/schemas/migration-receipt.schema.json",
@@ -311,23 +341,23 @@
     },
     {
       "path": "docs/schemas/review-execution-receipt.schema.json",
-      "size_bytes": 4444,
-      "sha256": "ba33b7cb77b6ee371336e09e9175b652884776024854fbde0a71adc2d7e7e4e5"
+      "size_bytes": 9011,
+      "sha256": "1950f00c7864429ae14709d130355a9f173db05189f28ff3ea6b472df5e6a798"
     },
     {
       "path": "docs/schemas/review-launch-authorization.schema.json",
-      "size_bytes": 5325,
-      "sha256": "c4c29586527ed4f0f2bd966311ae5ca577508d40cc26f6651a67a393ba1c4baa"
+      "size_bytes": 10319,
+      "sha256": "fa1693e642dd6af254add67504aba29084327dcdf3960a08544be425a069d464"
     },
     {
       "path": "docs/schemas/review-result.schema.json",
-      "size_bytes": 15670,
-      "sha256": "6e24a48d3ba2674ba8d86f3fbc26ece9b163466def73cccf0bb1c3a5f2adafec"
+      "size_bytes": 32301,
+      "sha256": "6d63ccd794f52875bf0f7825cf0d67c72986300fa278b0dcdaf8970fb48bc212"
     },
     {
       "path": "docs/schemas/self-review-record.schema.json",
-      "size_bytes": 2535,
-      "sha256": "70bea039caf06c0c0511cfe151d49f691ec3c4a4a231f4a954a8a727e7c359a8"
+      "size_bytes": 4573,
+      "sha256": "a6293e45fa09fcf65b30f6955a58c168fd963f624a9442f89924a70f0b67b03c"
     },
     {
       "path": "docs/schemas/task-card-v6.3.6.schema.json",
@@ -341,8 +371,8 @@
     },
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
-      "size_bytes": 247193,
-      "sha256": "62f872a95db1b7c608c2c49910ead270c0a5688225142c9884fd3a701c5496c8"
+      "size_bytes": 270182,
+      "sha256": "3b62de1232d765ad2d66735487fd316bc7a4dff73ec8a97802bd08514d78dbf3"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",

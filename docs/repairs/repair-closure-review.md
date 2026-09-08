@@ -1,5 +1,12 @@
 # BH-R11 independent repair closure
 
+> Historical snapshots only. The verdicts and counts below apply exclusively to
+> their named commits, not the current descendant candidate. Final BH-R11 closure
+> must be recorded externally under
+> `/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/`
+> after final source-bound qualification and the required independent reviews.
+> This document does not assert that such final closure has been issued.
+
 ## Post-closure amendment: source-contract repair and BH-R05
 
 The prior snapshot below is superseded for BH-AUDIT-02 by independently

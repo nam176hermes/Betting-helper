@@ -448,23 +448,28 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
+        "authoring-tests/test_task_manifest_semantics.py",
         "authoring-tools/validate_task_manifest.py",
-        "authoring-tests/test_task_manifest_semantics.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/schemas/full-verifier-controller.schema.json"
       ],
       "exact_files": [
-        "authoring-tools/validate_task_manifest.py",
         "authoring-tests/test_task_manifest_semantics.py",
-        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "authoring-tools/validate_task_manifest.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/contracts/01-artifact-lifecycle.md",
+        "pack/docs/schemas/full-verifier-controller.schema.json",
         "pack/docs/schemas/task-card-v6.3.6.schema.json",
-        "pack/docs/contracts/01-artifact-lifecycle.md"
+        "pack/docs/tasks/task-manifest.v6.3.6.json"
       ],
       "exact_symbols": [
         "authoring-tools/validate_task_manifest.py::validate_task_manifest_semantics",
         "authoring-tests/test_task_manifest_semantics.py::test_task_manifest_rejects_placeholders_unknown_dependencies_and_production_authority"
       ],
       "exact_schema_refs": [
-        "pack/docs/schemas/task-card-v6.3.6.schema.json#/$defs/TaskManifestV636",
-        "pack/docs/schemas/task-card-v6.3.6.schema.json#/$defs/TaskCardV636"
+        "pack/docs/schemas/full-verifier-controller.schema.json#/$defs/FullVerifierController",
+        "pack/docs/schemas/task-card-v6.3.6.schema.json#/$defs/TaskCardV636",
+        "pack/docs/schemas/task-card-v6.3.6.schema.json#/$defs/TaskManifestV636"
       ],
       "exact_command_ids": [
         "VERIFY_V636_P00_T03"
@@ -1743,7 +1748,7 @@
         "runtime/extension/src/contracts/clock-vectors.ts"
       ],
       "exact_symbols": [
-        "runtime/tests/materialization/test_harness_entrypoints.py::test_all_registered_harness_entrypoints_compile_and_emit_contract_not_implemented"
+        "runtime/tests/materialization/test_harness_entrypoints.py::test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked"
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
@@ -2692,8 +2697,9 @@
         "runtime/tests/durability/test_sqlite_process_crash.py"
       ],
       "exact_symbols": [
-        "runtime/tools/run_sqlite_crash_matrix.py::run_sqlite_crash_matrix",
-        "runtime/tests/durability/test_sqlite_process_crash.py::test_sql_transaction_is_all_or_none_after_sigkill"
+        "runtime/tests/durability/test_sqlite_process_crash.py::test_sql06_checkpoint_is_inside_real_sqlite_commit_io",
+        "runtime/tests/durability/test_sqlite_process_crash.py::test_sql_transaction_emits_exact_full_terminal_evidence",
+        "runtime/tools/run_sqlite_crash_matrix.py::run_sqlite_crash_matrix"
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
@@ -2854,9 +2860,9 @@
     },
     {
       "task_id": "V636-P03-T07",
-      "title": "Execute destruction matrix and durability release gate",
+      "title": "Execute and retain the complete durability qualification campaign",
       "phase": "P03",
-      "objective": "Process-execute every whole-run destruction boundary, mutate every expected restart state, and issue the durability release receipt only when coverage is exact.",
+      "objective": "Execute all 46 durability controls and their registered mutations exactly once, retain the closed artifact inventory, and issue the P03 proof.",
       "findings": [
         "V631-C5"
       ],
@@ -2870,35 +2876,51 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "runtime/tools/run_destruction_crash_matrix.py",
-        "runtime/tools/destruction_crash_child.py",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
         "runtime/src/moj_discovery/durability_release.py",
-        "runtime/tests/durability/test_destruction_and_release.py"
+        "runtime/tests/durability/test_destruction_and_release.py",
+        "runtime/tests/durability/test_owner_mutation_review.py",
+        "runtime/tools/destruction_crash_child.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/run_destruction_crash_matrix.py",
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/run_full_repair_qualification.py"
       ],
       "exact_files": [
-        "runtime/tools/run_destruction_crash_matrix.py",
-        "runtime/tools/destruction_crash_child.py",
         "runtime/src/moj_discovery/durability_release.py",
-        "runtime/tests/durability/test_destruction_and_release.py"
+        "runtime/tests/durability/test_destruction_and_release.py",
+        "runtime/tests/durability/test_owner_mutation_review.py",
+        "runtime/tools/destruction_crash_child.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/run_destruction_crash_matrix.py",
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/run_full_repair_qualification.py"
       ],
       "exact_symbols": [
-        "runtime/tools/run_destruction_crash_matrix.py::run_destruction_crash_matrix",
         "runtime/src/moj_discovery/durability_release.py::validate_full_durability_release",
-        "runtime/tests/durability/test_destruction_and_release.py::test_declared_equals_executed_and_mutation_survivors_zero"
+        "runtime/tests/durability/test_destruction_and_release.py::test_declared_equals_executed_and_mutation_survivors_zero",
+        "runtime/tests/durability/test_owner_mutation_review.py::test_coherent_review_substitutions_reject",
+        "runtime/tools/run_destruction_crash_matrix.py::run_destruction_crash_matrix",
+        "runtime/tools/run_full_repair_qualification.py::main"
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
-        "TEST_V636_P03_T07",
-        "CRASH_VECTOR_DESTROY_01_BEFORE_AUTHORITY",
+        "CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT",
         "CRASH_VECTOR_DESTROY_01A_AFTER_CONSUMPTION_BEFORE_INTENT",
+        "CRASH_VECTOR_DESTROY_01_BEFORE_AUTHORITY",
         "CRASH_VECTOR_DESTROY_02_AFTER_INTENT_BEFORE_DELETION",
         "CRASH_VECTOR_DESTROY_03_AFTER_EXTENSION_DELETION",
         "CRASH_VECTOR_DESTROY_04_AFTER_BACKEND_DELETION",
         "CRASH_VECTOR_DESTROY_05_AFTER_BOTH_DELETIONS_BEFORE_PROOF",
-        "CRASH_VECTOR_DESTROY_06_AFTER_PROOF"
+        "CRASH_VECTOR_DESTROY_06_AFTER_PROOF",
+        "TEST_V636_P03_T07"
       ],
       "tests_first": [
-        "runtime/tests/durability/test_destruction_and_release.py"
+        "runtime/tests/durability/test_owner_mutation_review.py"
       ],
       "positive_vectors": [
         "V636-P03-T07-POS-01"
@@ -2925,7 +2947,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -3185,9 +3207,9 @@
     },
     {
       "task_id": "V636-P04-T04",
-      "title": "Qualify cross-language clock parity and mutation sensitivity",
+      "title": "Verify clock qualification from the immutable P03 aggregate",
       "phase": "P04",
-      "objective": "Run all vectors through both evaluators and prove expected eligibility/error/input mutations are detected.",
+      "objective": "Verify all 65 clock controls and registered mutations from the exact P03 aggregate without rerunning the campaign, then issue the P04 proof.",
       "findings": [
         "V631-C5"
       ],
@@ -3198,26 +3220,32 @@
         "Dependency V636-P04-T03 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json"
       ],
       "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "runtime/tests/clock/test_clock_parity_and_mutation.py",
         "runtime/tools/run_clock_vector_qualification.py",
-        "runtime/tests/clock/test_clock_parity_and_mutation.py"
+        "runtime/tools/verify_full_repair_qualification.py"
       ],
       "exact_files": [
+        "runtime/tests/clock/test_clock_parity_and_mutation.py",
+        "runtime/tests/durability/test_owner_mutation_review.py",
         "runtime/tools/run_clock_vector_qualification.py",
-        "runtime/tests/clock/test_clock_parity_and_mutation.py"
+        "runtime/tools/verify_full_repair_qualification.py"
       ],
       "exact_symbols": [
+        "runtime/tests/clock/test_clock_parity_and_mutation.py::test_cross_language_drift_and_mutation_survivors_are_zero",
         "runtime/tools/run_clock_vector_qualification.py::run_clock_vector_qualification",
-        "runtime/tests/clock/test_clock_parity_and_mutation.py::test_cross_language_drift_and_mutation_survivors_are_zero"
+        "runtime/tools/verify_full_repair_qualification.py::main"
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
         "TEST_V636_P04_T04"
       ],
       "tests_first": [
-        "runtime/tests/clock/test_clock_parity_and_mutation.py"
+        "runtime/tests/durability/test_owner_mutation_review.py"
       ],
       "positive_vectors": [
         "V636-P04-T04-POS-01"
@@ -3243,7 +3271,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -3255,6 +3283,7 @@
         "Production WDL, market, Paper, Real Money, Cashout, or Hermes"
       ],
       "dependencies": [
+        "V636-P03-T07",
         "V636-P04-T03"
       ],
       "commit_message": "NO_COMMIT_WITHOUT_SEPARATE_USER_AUTHORIZATION",
@@ -4244,32 +4273,90 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_declaration_gate.py",
+        "authoring-tests/test_descendant_qualification_followup.py",
         "authoring-tests/test_full_verifier_controller_config.py",
         "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tests/test_task_manifest_semantics.py",
+        "authoring-tools/apply_descendant_qualification_followup.py",
         "authoring-tools/apply_full_verifier_followup.py",
+        "authoring-tools/build_task_command_registry.py",
         "authoring-tools/issue_current_authoring_repository_receipt.py",
         "pack/docs/configs/full-verifier-controller.v1.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-aggregation.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/contracts/07-command-and-config-lifecycle.md",
         "pack/docs/receipts/migration-final-receipt.v1.json",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/command-io.v1.json",
+        "pack/docs/registries/delivery-map.v1.json",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/docs/registries/schema-reference-registry.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+        "pack/docs/schemas/external-seal-attestation.schema.json",
+        "pack/docs/schemas/review-execution-receipt.schema.json",
+        "pack/docs/schemas/review-launch-authorization.schema.json",
+        "pack/docs/schemas/review-result.schema.json",
+        "pack/docs/schemas/self-review-record.schema.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
         "runtime/review-config/review-a.v1.json",
+        "runtime/review-config/review-a.v2.json",
         "runtime/review-config/review-aggregation.v1.json",
+        "runtime/review-config/review-aggregation.v2.json",
         "runtime/review-config/review-authority.v1.json",
         "runtime/review-config/review-b.v1.json",
+        "runtime/review-config/review-b.v2.json",
         "runtime/task-command-registry.json"
       ],
       "exact_files": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_declaration_gate.py",
+        "authoring-tests/test_descendant_qualification_followup.py",
         "authoring-tests/test_full_verifier_controller_config.py",
         "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tests/test_task_manifest_semantics.py",
+        "authoring-tools/apply_descendant_qualification_followup.py",
         "authoring-tools/apply_full_verifier_followup.py",
+        "authoring-tools/build_task_command_registry.py",
         "authoring-tools/issue_current_authoring_repository_receipt.py",
         "pack/docs/configs/full-verifier-controller.v1.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-aggregation.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/contracts/07-command-and-config-lifecycle.md",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/command-io.v1.json",
+        "pack/docs/registries/delivery-map.v1.json",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/docs/registries/schema-reference-registry.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+        "pack/docs/schemas/external-seal-attestation.schema.json",
+        "pack/docs/schemas/review-execution-receipt.schema.json",
+        "pack/docs/schemas/review-launch-authorization.schema.json",
+        "pack/docs/schemas/review-result.schema.json",
+        "pack/docs/schemas/self-review-record.schema.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
         "runtime/review-config/review-a.v1.json",
+        "runtime/review-config/review-a.v2.json",
         "runtime/review-config/review-aggregation.v1.json",
+        "runtime/review-config/review-aggregation.v2.json",
         "runtime/review-config/review-authority.v1.json",
         "runtime/review-config/review-b.v1.json",
+        "runtime/review-config/review-b.v2.json",
         "runtime/task-command-registry.json"
       ],
       "exact_symbols": [
@@ -4661,7 +4748,9 @@
         "Dependency V636-P07-T01 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "Verified immutable plan-input and the task-specific registered command inputs",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json"
@@ -4805,9 +4894,9 @@
     },
     {
       "task_id": "V636-P08-T01",
-      "title": "Export deterministic final runtime candidate",
+      "title": "Preflight descendant repository qualification",
       "phase": "P08",
-      "objective": "Export only the exact P07-qualified source/build inventory bytes and modes from the authoring runtime working tree into a fresh destination; verify each hash before and after copy. Authoring HEAD is provenance only and is never substituted for current qualified content.",
+      "objective": "Read-only preflight of the current descendant checkout, candidate, config, inventories and audited ancestry.",
       "findings": [
         "V631-C2"
       ],
@@ -4818,23 +4907,36 @@
         "Dependency V636-P07-T03 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T01.json"
+      ],
       "exact_files": [
-        "runtime/tools/export_zero_parent_candidate.py",
-        "runtime/tests/release/test_zero_parent_export.py"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "exact_symbols": [
-        "runtime/tools/export_zero_parent_candidate.py::export_zero_parent_candidate",
-        "runtime/tests/release/test_zero_parent_export.py::test_export_contains_only_candidate_inventory_and_exact_modes"
+        "runtime/tools/qualify_descendant_repository.py::main"
       ],
-      "exact_schema_refs": [],
+      "exact_schema_refs": [
+        "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json#/$defs/DescendantRepositoryQualificationReceipt"
+      ],
       "exact_command_ids": [
         "VERIFY_V636_P08_T01"
       ],
       "tests_first": [
-        "runtime/tests/release/test_zero_parent_export.py"
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "positive_vectors": [
         "V636-P08-T01-POS-01"
@@ -4848,9 +4950,9 @@
         "Write the external evidence record and stop."
       ],
       "acceptance_criteria": [
-        "All exact commands pass",
-        "All declared outputs are content-addressed",
-        "No production authority is introduced"
+        "Audited ancestor, current HEAD/tree, candidate and configured evidence validate read-only",
+        "No repository, receipt or tracked file is written",
+        "Production authority remains NONE"
       ],
       "failure_states": [
         "MISSING_DECLARED_ARTIFACT",
@@ -4859,7 +4961,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4879,9 +4981,9 @@
     },
     {
       "task_id": "V636-P08-T02",
-      "title": "Create delivered zero-parent Git baseline",
+      "title": "Issue descendant repository qualification receipt",
       "phase": "P08",
-      "objective": "Initialize the final runtime as a no-remote repository and create one zero-parent commit from exported bytes.",
+      "objective": "Exclusively issue the current descendant receipt without creating a repository, baseline or commit.",
       "findings": [
         "V631-C2"
       ],
@@ -4892,23 +4994,37 @@
         "Dependency V636-P08-T01 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      ],
       "exact_files": [
-        "runtime/tools/create_zero_parent_repository.py",
-        "runtime/tests/release/test_zero_parent_repository.py"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "exact_symbols": [
-        "runtime/tools/create_zero_parent_repository.py::create_zero_parent_repository",
-        "runtime/tests/release/test_zero_parent_repository.py::test_delivered_repository_has_one_zero_parent_commit_and_no_remote"
+        "runtime/tools/qualify_descendant_repository.py::main"
       ],
-      "exact_schema_refs": [],
+      "exact_schema_refs": [
+        "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json#/$defs/DescendantRepositoryQualificationReceipt"
+      ],
       "exact_command_ids": [
         "VERIFY_V636_P08_T02"
       ],
       "tests_first": [
-        "runtime/tests/release/test_zero_parent_repository.py"
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "positive_vectors": [
         "V636-P08-T02-POS-01"
@@ -4922,10 +5038,9 @@
         "Write the external evidence record and stop."
       ],
       "acceptance_criteria": [
-        "All exact commands pass",
-        "All declared outputs are content-addressed",
-        "No production authority is introduced",
-        "Stage precisely the qualified export inventory, explicitly including its ignored .test-build and dist files; never force-add dependency environments or arbitrary untracked files. Final tracked paths and hashes must equal that inventory before creating the single zero-parent commit."
+        "Exactly one exclusive descendant receipt is issued from the passing preflight",
+        "Repository HEAD, tree and status are unchanged across issuance",
+        "Production authority remains NONE"
       ],
       "failure_states": [
         "MISSING_DECLARED_ARTIFACT",
@@ -4934,7 +5049,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P08-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4954,9 +5069,9 @@
     },
     {
       "task_id": "V636-P08-T03",
-      "title": "Replay committed baseline in place and issue REPO0 receipt",
+      "title": "Check descendant repository qualification receipt",
       "phase": "P08",
-      "objective": "Run POST_COMMIT_BASELINE directly in the delivered Git repository and record actual commit/tree/file-root/toolchain/lock/vendor/command roots.",
+      "objective": "Check-only revalidation of the immutable descendant receipt against the current source contract.",
       "findings": [
         "V631-C2"
       ],
@@ -4967,28 +5082,38 @@
         "Dependency V636-P08-T02 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "pack/docs/receipts/repo0-baseline-receipt.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T03.json"
       ],
       "exact_files": [
-        "runtime/tools/qualify_zero_parent_baseline.py",
-        "runtime/tests/release/test_post_commit_baseline.py",
-        "pack/docs/receipts/repo0-baseline-receipt.json"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "exact_symbols": [
-        "runtime/tools/qualify_zero_parent_baseline.py::qualify_zero_parent_baseline",
-        "runtime/tests/release/test_post_commit_baseline.py::test_full_registry_replays_in_actual_committed_repository"
+        "runtime/tools/qualify_descendant_repository.py::main"
       ],
-      "exact_schema_refs": [],
+      "exact_schema_refs": [
+        "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json#/$defs/DescendantRepositoryQualificationReceipt"
+      ],
       "exact_command_ids": [
         "BASELINE_INSTALL_PYTHON",
         "BASELINE_INSTALL_NODE",
         "VERIFY_V636_P08_T03"
       ],
       "tests_first": [
-        "runtime/tests/release/test_post_commit_baseline.py"
+        "runtime/tests/release/test_descendant_repository_qualification.py"
       ],
       "positive_vectors": [
         "V636-P08-T03-POS-01"
@@ -5002,9 +5127,9 @@
         "Write the external evidence record and stop."
       ],
       "acceptance_criteria": [
-        "No temporary Git-less overlay",
-        "Working tree clean",
-        "HEAD/tree/file root and command root match receipt"
+        "Check-only recomputation matches every bound receipt field",
+        "Missing, stale, mixed-kind or aliased inputs fail closed",
+        "Production authority remains NONE"
       ],
       "failure_states": [
         "MISSING_DECLARED_ARTIFACT",
@@ -5013,7 +5138,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5035,7 +5160,7 @@
       "task_id": "V636-P09-T01",
       "title": "Assemble immutable review-pack candidate",
       "phase": "P09",
-      "objective": "Assemble governed pack content, previous review imports, plans, registries, receipts, prompts, and source provenance after REPO0 receipt exists.",
+      "objective": "Assemble the governed source, configured evidence closure and the verified descendant receipt without consulting historical hard-coded roots.",
       "findings": [
         "V631-C1"
       ],
@@ -5046,9 +5171,68 @@
         "Dependency V636-P08-T03 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
+        "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/contracts/02-authority-graph.md",
+        "pack/docs/receipts/declaration-complete.v1.json",
+        "pack/docs/receipts/migration-receipt.v1.json",
+        "pack/docs/receipts/source-provenance.v1.json",
+        "plan-input/bootstrap/create_authoring_workspace.py",
+        "plan-input/bootstrap/extract_plan.py",
+        "plan-input/bootstrap/initialize_authoring_repository.py",
+        "plan-input/bootstrap/test_bootstrap_tools.py",
+        "plan-input/bootstrap/verify_extracted_plan.py"
       ],
-      "outputs": [],
+      "outputs": [
+        "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+        "pack/authoring-source/bootstrap/extract_plan.py",
+        "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+        "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+        "pack/authoring-source/bootstrap/verify_extracted_plan.py",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/CANDIDATE_QUALIFICATION.json",
+        "pack/evidence/V636-MIG0-T06.json",
+        "pack/evidence/V636-P00-T05.json",
+        "pack/evidence/V636-P02-T02.json",
+        "pack/evidence/V636-P03-T02.json",
+        "pack/evidence/V636-P03-T07.json",
+        "pack/evidence/V636-P04-T04.json",
+        "pack/evidence/V636-P05-T02.json",
+        "pack/evidence/V636-P05-T04.json",
+        "pack/evidence/V636-P05-T05.json",
+        "pack/evidence/V636-P05-T09.json",
+        "pack/evidence/V636-P06-T01.json",
+        "pack/evidence/V636-P07-T01.json",
+        "pack/evidence/V636-P07-T02.json",
+        "pack/evidence/V636-P07-T03.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json"
+      ],
       "exact_files": [
         "runtime/tools/assemble_review_pack.py",
         "runtime/tests/seal/test_pack_assembly.py"
@@ -5078,7 +5262,11 @@
       "acceptance_criteria": [
         "All exact commands pass",
         "All declared outputs are content-addressed",
-        "No production authority is introduced"
+        "No production authority is introduced",
+        "Verify the configured descendant receipt and exact inputs before exclusive destination creation.",
+        "Copy the finite declared source and evidence closure into evidence/retained with its sibling retained-artifact-manifest/v1; preserve original bytes and locator boundaries.",
+        "Reject conflicting locator boundaries, unsafe or aliased files, named-copy divergence and protected destination overlap; remove only an owned failed destination.",
+        "Revalidate full-repair, supplemental, descendant and normative semantics through the copied SEALED context without original-root fallback."
       ],
       "failure_states": [
         "MISSING_DECLARED_ARTIFACT",
@@ -5187,7 +5375,7 @@
       "task_id": "V636-P09-T03",
       "title": "Generate internal self-review without ZIP or manifest self-reference",
       "phase": "P09",
-      "objective": "Create Markdown/JSON self-review binding only governed content, REPO0 receipt, candidate qualification, task manifest, and command result roots.",
+      "objective": "Create Markdown and JSON self-review records binding governed content, the neutral descendant identity, candidate qualification, task manifest and command-result roots.",
       "findings": [
         "V631-C1"
       ],
@@ -5198,7 +5386,19 @@
         "Dependency V636-P09-T02 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/GOVERNED_CONTENT_ROOT.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/build_self_review.py",
+        "runtime/tools/retained_artifact_io.py"
       ],
       "outputs": [
         "pack/SELF_REVIEW_REPORT.md",
@@ -5279,7 +5479,19 @@
         "Dependency V636-P09-T03 is ACCEPTED"
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "Verified immutable plan-input and the task-specific registered command inputs",
+        "pack/GOVERNED_CONTENT_ROOT.json",
+        "pack/SELF_REVIEW_REPORT.json",
+        "pack/SELF_REVIEW_REPORT.md",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "pack/MANIFEST_SHA256.json"
@@ -5360,7 +5572,27 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py",
+        "runtime/tools/verify_executable_references.py",
+        "runtime/tools/verify_proof_coverage.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
@@ -5376,9 +5608,9 @@
       ],
       "exact_schema_refs": [],
       "exact_command_ids": [
-        "VERIFY_V636_P10_T01",
+        "REVIEW_A_MECHANICAL",
         "REVIEW_A_PREPARE",
-        "REVIEW_A_MECHANICAL"
+        "VERIFY_V636_P10_T01"
       ],
       "tests_first": [
         "runtime/tests/review/test_review_launch_authorization.py",
@@ -5442,7 +5674,26 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
@@ -5525,7 +5776,30 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
+        "Verified immutable plan-input and the task-specific registered command inputs",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/finalize_review.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
@@ -5613,7 +5887,32 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "Verified immutable plan-input and the task-specific registered command inputs"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/aggregate_reviews.py",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/aggregate/result.json"

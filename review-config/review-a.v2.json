@@ -1,0 +1,109 @@
+{
+  "schema_version": "review-config/v2",
+  "role": "IMPLEMENTATION_READINESS_REVIEWER",
+  "prompt_path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
+  "mechanical_command_ids": [
+    "A_CHECK_SOURCE",
+    "A_CHECK_EVIDENCE",
+    "A_CHECK_DESCENDANT"
+  ],
+  "input_roots": [
+    "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+    "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+    "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+    "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+    "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256"
+  ],
+  "output_root": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a",
+  "network": "DENY",
+  "workspace_root": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a",
+  "authorization_path": "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+  "command_registry_path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/registries/review-command-registry.v1.json",
+  "input_mounts": [
+    {
+      "source_root": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+      "workspace_mount": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+      "mode": "READ_ONLY"
+    },
+    {
+      "source_root": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "mode": "READ_ONLY"
+    },
+    {
+      "source_root": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+      "workspace_mount": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+      "mode": "READ_ONLY"
+    },
+    {
+      "source_root": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+      "workspace_mount": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+      "mode": "READ_ONLY"
+    },
+    {
+      "source_root": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+      "workspace_mount": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+      "mode": "READ_ONLY"
+    }
+  ],
+  "excluded_roots": [
+    "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+    "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b"
+  ],
+  "scratch_root": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTEST_ADDOPTS": "-p no:cacheprovider",
+    "UV_OFFLINE": "1",
+    "UV_PROJECT_ENVIRONMENT": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/python-env"
+  },
+  "authority_config": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/review-config/review-authority.v1.json",
+  "seal_inputs": {
+    "attestation": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+    "zip": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+    "sidecar": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256"
+  },
+  "node_environment": {
+    "project_root": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project",
+    "project_inputs": [
+      {
+        "source": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/package.json",
+        "destination": "package.json"
+      },
+      {
+        "source": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/pnpm-lock.yaml",
+        "destination": "pnpm-lock.yaml"
+      },
+      {
+        "source": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/pnpm-workspace.yaml",
+        "destination": "pnpm-workspace.yaml"
+      },
+      {
+        "source": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/extension/package.json",
+        "destination": "extension/package.json"
+      }
+    ],
+    "install_command_id": "A_INSTALL_NODE",
+    "dependency_mounts": [
+      {
+        "source_root": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/node_modules",
+        "mode": "READ_ONLY"
+      },
+      {
+        "source_root": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/extension/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/extension/node_modules",
+        "mode": "READ_ONLY"
+      }
+    ],
+    "projection_binding": "QUALIFIED_PACKAGE_CONTENT_AND_LOCK_IDENTITY"
+  },
+  "preparation_command_ids": [
+    "A_INSTALL_PYTHON",
+    "A_INSTALL_NODE"
+  ],
+  "repository_identity": {
+    "kind": "DESCENDANT",
+    "receipt": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/receipts/descendant-repository-qualification-receipt.json"
+  }
+}

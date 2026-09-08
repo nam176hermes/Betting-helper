@@ -11,7 +11,8 @@
       "qualification_owner": null,
       "consumers": [
         "V636-BOOT0-T02",
-        "V636-P01-T06"
+        "V636-P01-T06",
+        "V636-P09-T01"
       ]
     },
     {
@@ -68,7 +69,54 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P08-T01"
+        "V636-P08-T01",
+        "V636-P08-T02",
+        "V636-P08-T03",
+        "V636-P09-T01",
+        "V636-P09-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P08-T02",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T03",
+        "V636-P09-T01",
+        "V636-P10-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P04-T04",
+        "V636-P07-T02",
+        "V636-P08-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P04-T04",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T02",
+        "V636-P08-T01",
+        "V636-P09-T01"
       ]
     },
     {
@@ -81,7 +129,8 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P07-T02",
-        "V636-P07-T03"
+        "V636-P07-T03",
+        "V636-P09-T03"
       ]
     },
     {
@@ -93,7 +142,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P07-T03"
+        "V636-P07-T03",
+        "V636-P09-T03"
       ]
     },
     {
@@ -104,7 +154,56 @@
       "materialization_required": false,
       "source": null,
       "qualification_owner": null,
+      "consumers": [
+        "V636-P09-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T01.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P08-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T02.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P08-T02",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T03"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T03.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P08-T03",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
       "consumers": []
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
     },
     {
       "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
@@ -115,7 +214,63 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P07-T01"
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P08-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P04-T04",
+        "V636-P07-T02",
+        "V636-P08-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P04-T04",
+        "V636-P08-T01",
+        "V636-P09-T01"
       ]
     },
     {
@@ -309,7 +464,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P01-T02"
+        "V636-P01-T02",
+        "V636-P09-T01"
       ]
     },
     {
@@ -761,7 +917,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-BOOT0-T03"
+        "V636-BOOT0-T03",
+        "V636-P09-T01"
       ]
     },
     {
@@ -839,7 +996,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-BOOT0-T01"
+        "V636-BOOT0-T01",
+        "V636-P09-T01"
       ]
     },
     {
@@ -852,7 +1010,8 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P10-T01",
-        "V636-P10-T03"
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -865,7 +1024,8 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P10-T02",
-        "V636-P10-T03"
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -877,7 +1037,10 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P10-T01"
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -889,7 +1052,10 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P10-T01"
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -901,7 +1067,10 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P10-T01"
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -1188,12 +1357,15 @@
       "path": "authoring-tests/test_command_registry_generation.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-MIG0-T05",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-MIG0-T05"
+        "V636-MIG0-T05",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -1212,12 +1384,28 @@
       "path": "authoring-tests/test_declaration_gate.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P00-T05",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T05"
+        "V636-P00-T05",
+        "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_descendant_qualification_followup.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
       ]
     },
     {
@@ -1296,12 +1484,15 @@
       "path": "authoring-tests/test_task_manifest_semantics.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P00-T03",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T03"
+        "V636-P00-T03",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -1329,6 +1520,19 @@
       ]
     },
     {
+      "path": "authoring-tools/apply_descendant_qualification_followup.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
       "path": "authoring-tools/apply_full_verifier_followup.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
@@ -1344,7 +1548,9 @@
       "path": "authoring-tools/build_task_command_registry.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-MIG0-T05",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": null,
@@ -1523,7 +1729,8 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P09-T02",
-        "V636-P09-T03"
+        "V636-P09-T03",
+        "V636-P09-T04"
       ]
     },
     {
@@ -1583,7 +1790,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P09-T03"
+        "V636-P09-T03",
+        "V636-P09-T04"
       ]
     },
     {
@@ -1595,7 +1803,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P09-T03"
+        "V636-P09-T03",
+        "V636-P09-T04"
       ]
     },
     {
@@ -1863,6 +2072,96 @@
       "consumers": []
     },
     {
+      "path": "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/authoring-source/bootstrap/extract_plan.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/authoring-source/bootstrap/verify_extracted_plan.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
       "path": "pack/docs/configs/full-verifier-controller.v1.json",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
@@ -1872,6 +2171,32 @@
       "qualification_owner": "V636-MIG0-T08",
       "consumers": [
         "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "pack/docs/configs/full-verifier-controller.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P00-T03",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P00-T03",
+      "consumers": [
+        "V636-P00-T03",
+        "V636-P03-T07",
+        "V636-P04-T04",
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P07-T03",
+        "V636-P08-T01",
+        "V636-P08-T02",
+        "V636-P08-T03",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -1891,6 +2216,23 @@
       ]
     },
     {
+      "path": "pack/docs/configs/review-a.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
       "path": "pack/docs/configs/review-aggregation.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
@@ -1904,6 +2246,19 @@
         "V636-MIG0-T05",
         "V636-MIG0-T07",
         "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "pack/docs/configs/review-aggregation.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
       ]
     },
     {
@@ -1938,6 +2293,22 @@
         "V636-MIG0-T05",
         "V636-MIG0-T07",
         "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "pack/docs/configs/review-b.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -2023,7 +2394,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T02"
+        "V636-P00-T02",
+        "V636-P09-T01"
       ]
     },
     {
@@ -2094,13 +2466,17 @@
       "path": "pack/docs/contracts/07-command-and-config-lifecycle.md",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/contracts/07-command-and-config-lifecycle.md"
       },
       "qualification_owner": null,
-      "consumers": []
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
     },
     {
       "path": "pack/docs/contracts/08-execution-and-ownership.md",
@@ -2851,7 +3227,26 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T05"
+        "V636-P00-T05",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -2873,7 +3268,8 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-MIG0-T06"
+        "V636-MIG0-T06",
+        "V636-P09-T01"
       ]
     },
     {
@@ -2899,14 +3295,17 @@
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T01"
+        "V636-P00-T01",
+        "V636-P09-T01"
       ]
     },
     {
       "path": "pack/docs/registries/artifact-ownership.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/artifact-ownership.v1.json"
@@ -2982,14 +3381,17 @@
       "path": "pack/docs/registries/command-io.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/command-io.v1.json"
       },
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T03"
+        "V636-P00-T03",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -3059,20 +3461,27 @@
         "V636-P00-T03",
         "V636-P00-T04",
         "V636-P01-T03",
-        "V636-P05-T03"
+        "V636-P05-T03",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
       "path": "pack/docs/registries/delivery-map.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/delivery-map.v1.json"
       },
       "qualification_owner": null,
-      "consumers": []
+      "consumers": [
+        "V636-MIG0-T08"
+      ]
     },
     {
       "path": "pack/docs/registries/inherited-baseline-qualification.v1.json",
@@ -3112,7 +3521,9 @@
       "path": "pack/docs/registries/normative-source-map.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/normative-source-map.v1.json"
@@ -3143,13 +3554,16 @@
       "path": "pack/docs/registries/proof-coverage-matrix.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/proof-coverage-matrix.v1.json"
       },
       "qualification_owner": null,
       "consumers": [
+        "V636-MIG0-T08",
         "V636-P01-T03",
         "V636-P05-T02",
         "V636-P07-T02",
@@ -3160,16 +3574,23 @@
       "path": "pack/docs/registries/review-command-registry.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/review-command-registry.v1.json"
       },
       "qualification_owner": null,
       "consumers": [
+        "V636-MIG0-T08",
         "V636-P00-T03",
         "V636-P00-T04",
-        "V636-P01-T03"
+        "V636-P01-T03",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -3202,14 +3623,17 @@
       "path": "pack/docs/registries/schema-reference-registry.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/schema-reference-registry.v1.json"
       },
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T04"
+        "V636-P00-T04",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -3257,7 +3681,9 @@
       "path": "pack/docs/registries/task-command-registry.v1.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/registries/task-command-registry.v1.json"
@@ -3443,10 +3869,25 @@
       ]
     },
     {
+      "path": "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
       "path": "pack/docs/schemas/external-seal-attestation.schema.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/schemas/external-seal-attestation.schema.json"
@@ -3454,7 +3895,20 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P01-T03",
-        "V636-P09-T04"
+        "V636-P09-T04",
+        "V636-MIG0-T08"
+      ]
+    },
+    {
+      "path": "pack/docs/schemas/full-verifier-controller.schema.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P00-T03",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P00-T03",
+      "consumers": [
+        "V636-P00-T03"
       ]
     },
     {
@@ -3494,7 +3948,9 @@
       "path": "pack/docs/schemas/review-execution-receipt.schema.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/schemas/review-execution-receipt.schema.json"
@@ -3503,14 +3959,17 @@
       "consumers": [
         "V636-P01-T03",
         "V636-P05-T08",
-        "V636-P10-T03"
+        "V636-P10-T03",
+        "V636-MIG0-T08"
       ]
     },
     {
       "path": "pack/docs/schemas/review-launch-authorization.schema.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/schemas/review-launch-authorization.schema.json"
@@ -3518,14 +3977,17 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P01-T03",
-        "V636-P05-T04"
+        "V636-P05-T04",
+        "V636-MIG0-T08"
       ]
     },
     {
       "path": "pack/docs/schemas/review-result.schema.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/schemas/review-result.schema.json"
@@ -3535,14 +3997,17 @@
         "V636-P01-T03",
         "V636-P05-T08",
         "V636-P10-T03",
-        "V636-P10-T04"
+        "V636-P10-T04",
+        "V636-MIG0-T08"
       ]
     },
     {
       "path": "pack/docs/schemas/self-review-record.schema.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/schemas/self-review-record.schema.json"
@@ -3551,7 +4016,8 @@
       "consumers": [
         "V636-P01-T03",
         "V636-P05-T08",
-        "V636-P09-T03"
+        "V636-P09-T03",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -3684,19 +4150,22 @@
       "path": "pack/docs/tasks/task-manifest.v6.3.6.json",
       "classification": "PLAN_SEED",
       "creation_owner": "V636-BOOT0-T02",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": {
         "path": "plan-input/docs/tasks/task-manifest.v6.3.6.json"
       },
       "qualification_owner": null,
       "consumers": [
+        "V636-MIG0-T05",
+        "V636-MIG0-T07",
+        "V636-MIG0-T08",
         "V636-P00-T03",
         "V636-P00-T04",
         "V636-P00-T05",
-        "V636-MIG0-T05",
-        "V636-MIG0-T07",
-        "V636-MIG0-T08"
+        "V636-P09-T04"
       ]
     },
     {
@@ -3739,6 +4208,312 @@
       "qualification_owner": null,
       "consumers": [
         "V636-P00-T03"
+      ]
+    },
+    {
+      "path": "pack/evidence/CANDIDATE_QUALIFICATION.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-MIG0-T06.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P00-T05.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P02-T02.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P03-T02.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P03-T07.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P04-T04.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P05-T02.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P05-T04.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P05-T05.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P05-T09.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P06-T01.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P07-T01.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P07-T02.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/V636-P07-T03.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/retained",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "pack/evidence/retained-artifact-manifest.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P09-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P09-T01",
+      "consumers": [
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -3898,7 +4673,8 @@
       },
       "qualification_owner": null,
       "consumers": [
-        "V636-BOOT0-T02"
+        "V636-BOOT0-T02",
+        "V636-P09-T01"
       ]
     },
     {
@@ -3911,7 +4687,9 @@
         "path": "bootstrap/extract_plan.py"
       },
       "qualification_owner": null,
-      "consumers": []
+      "consumers": [
+        "V636-P09-T01"
+      ]
     },
     {
       "path": "plan-input/bootstrap/initialize_authoring_repository.py",
@@ -3924,7 +4702,8 @@
       },
       "qualification_owner": null,
       "consumers": [
-        "V636-BOOT0-T03"
+        "V636-BOOT0-T03",
+        "V636-P09-T01"
       ]
     },
     {
@@ -3940,7 +4719,8 @@
       "consumers": [
         "V636-BOOT0-T01",
         "V636-BOOT0-T02",
-        "V636-BOOT0-T03"
+        "V636-BOOT0-T03",
+        "V636-P09-T01"
       ]
     },
     {
@@ -3954,7 +4734,8 @@
       },
       "qualification_owner": null,
       "consumers": [
-        "V636-BOOT0-T01"
+        "V636-BOOT0-T01",
+        "V636-P09-T01"
       ]
     },
     {
@@ -8045,6 +8826,21 @@
       ]
     },
     {
+      "path": "runtime/review-config/review-a.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
+      ]
+    },
+    {
       "path": "runtime/review-config/review-aggregation.v1.json",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-MIG0-T05",
@@ -8061,6 +8857,18 @@
         "V636-MIG0-T05",
         "V636-MIG0-T07",
         "V636-MIG0-T08",
+        "V636-P10-T04"
+      ]
+    },
+    {
+      "path": "runtime/review-config/review-aggregation.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
         "V636-P10-T04"
       ]
     },
@@ -8103,6 +8911,20 @@
         "V636-P05-T07",
         "V636-MIG0-T08",
         "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/review-config/review-b.v2.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -9632,6 +10454,19 @@
       ]
     },
     {
+      "path": "runtime/tests/durability/test_owner_mutation_review.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P03-T07",
+      "consumers": [
+        "V636-P03-T07",
+        "V636-P04-T04"
+      ]
+    },
+    {
       "path": "runtime/tests/durability/test_sqlite_process_crash.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
@@ -9956,6 +10791,20 @@
         "V636-P01-T02",
         "V636-P05-T09",
         "V636-P07-T03",
+        "V636-P08-T03"
+      ]
+    },
+    {
+      "path": "runtime/tests/release/test_descendant_repository_qualification.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P08-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P08-T01",
+      "consumers": [
+        "V636-P08-T01",
+        "V636-P08-T02",
         "V636-P08-T03"
       ]
     },
@@ -10558,7 +11407,8 @@
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
-        "V636-P05-T09"
+        "V636-P05-T09",
+        "V636-P09-T01"
       ],
       "materialization_required": true,
       "source": null,
@@ -10566,7 +11416,13 @@
       "consumers": [
         "V636-P01-T02",
         "V636-P05-T09",
-        "V636-P09-T01"
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -10706,6 +11562,20 @@
       ]
     },
     {
+      "path": "runtime/tools/full_verifier_config.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P07-T01",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P07-T03"
+      ]
+    },
+    {
       "path": "runtime/tools/gap_coherence_crash_child.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
@@ -10751,7 +11621,9 @@
         "V636-P01-T02",
         "V636-P05-T04",
         "V636-P10-T01",
-        "V636-P10-T02"
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -10818,6 +11690,23 @@
       ]
     },
     {
+      "path": "runtime/tools/qualify_descendant_repository.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P08-T01",
+      "modifying_tasks": [
+        "V636-P10-T01"
+      ],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P08-T01",
+      "consumers": [
+        "V636-P08-T01",
+        "V636-P08-T02",
+        "V636-P08-T03",
+        "V636-P10-T01"
+      ]
+    },
+    {
       "path": "runtime/tools/qualify_zero_parent_baseline.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
@@ -10832,6 +11721,32 @@
         "V636-P05-T09",
         "V636-P08-T03",
         "V636-P10-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/retained_artifact_io.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P03-T07",
+      "consumers": [
+        "V636-P03-T07",
+        "V636-P04-T04",
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P07-T03",
+        "V636-P08-T01",
+        "V636-P08-T02",
+        "V636-P08-T03",
+        "V636-P09-T01",
+        "V636-P09-T03",
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -10883,6 +11798,33 @@
       "consumers": [
         "V636-P01-T02",
         "V636-P03-T07"
+      ]
+    },
+    {
+      "path": "runtime/tools/run_environment_qualification.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P03-T07",
+      "consumers": [
+        "V636-P03-T07",
+        "V636-P08-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/run_full_repair_qualification.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P03-T07",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P03-T07",
+      "consumers": [
+        "V636-P03-T07",
+        "V636-P07-T01"
       ]
     },
     {
@@ -11007,7 +11949,11 @@
         "V636-P01-T02",
         "V636-P01-T05",
         "V636-P05-T09",
-        "V636-P09-T04"
+        "V636-P09-T04",
+        "V636-P10-T01",
+        "V636-P10-T02",
+        "V636-P10-T03",
+        "V636-P10-T04"
       ]
     },
     {
@@ -11081,7 +12027,8 @@
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
         "V636-P01-T05",
-        "V636-P06-T01"
+        "V636-P06-T01",
+        "V636-P09-T01"
       ],
       "materialization_required": true,
       "source": null,
@@ -11091,6 +12038,19 @@
         "V636-P01-T05",
         "V636-P06-T01",
         "V636-P10-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/verify_full_repair_qualification.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P04-T04",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P04-T04",
+      "consumers": [
+        "V636-P04-T04",
+        "V636-P07-T01"
       ]
     },
     {
@@ -11899,7 +12859,9 @@
         "path": "pack/docs/registries/proof-coverage-matrix.v1.json"
       },
       "qualification_owner": "V636-MIG0-T08",
-      "consumers": []
+      "consumers": [
+        "V636-P07-T02"
+      ]
     },
     {
       "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/review-command-registry.v1.json",

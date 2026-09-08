@@ -3,6 +3,63 @@
   "$id": "urn:hybrid-discovery:v6.3.6:selfreviewrecord",
   "$defs": {
     "SelfReviewRecord": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LegacySelfReviewRecord"
+        },
+        {
+          "$ref": "#/$defs/DescendantSelfReviewRecord"
+        }
+      ]
+    },
+    "PlanSelfReviewRecord": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "governed_content_root",
+        "task_manifest_sha256",
+        "checks",
+        "test_exit_code",
+        "test_output_sha256",
+        "independent_plan_review",
+        "runtime_implementation_ready",
+        "authorized_production_phases"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "plan-self-review/v1"
+        },
+        "governed_content_root": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "task_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "checks": {
+          "type": "object"
+        },
+        "test_exit_code": {
+          "const": 0
+        },
+        "test_output_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "independent_plan_review": {
+          "const": "PENDING"
+        },
+        "runtime_implementation_ready": {
+          "const": "NO"
+        },
+        "authorized_production_phases": {
+          "const": "NONE"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LegacySelfReviewRecord": {
       "type": "object",
       "required": [
         "schema_version",
@@ -52,49 +109,70 @@
       },
       "additionalProperties": false
     },
-    "PlanSelfReviewRecord": {
+    "DescendantSelfReviewRecord": {
       "type": "object",
       "required": [
         "schema_version",
         "governed_content_root",
+        "candidate_qualification_sha256",
         "task_manifest_sha256",
+        "command_result_root",
         "checks",
-        "test_exit_code",
-        "test_output_sha256",
-        "independent_plan_review",
-        "runtime_implementation_ready",
-        "authorized_production_phases"
+        "authority_granted",
+        "repository_qualification_receipt_sha256",
+        "repository_identity_kind",
+        "repository_commit_oid",
+        "repository_tree_oid",
+        "repository_file_tree_root_sha256"
       ],
       "properties": {
         "schema_version": {
-          "const": "plan-self-review/v1"
+          "const": "runtime-self-review/v2"
         },
         "governed_content_root": {
           "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
+          "minLength": 1
+        },
+        "candidate_qualification_sha256": {
+          "type": "string",
+          "minLength": 1
         },
         "task_manifest_sha256": {
           "type": "string",
-          "pattern": "^[0-9a-f]{64}$"
+          "minLength": 1
+        },
+        "command_result_root": {
+          "type": "string",
+          "minLength": 1
         },
         "checks": {
-          "type": "object"
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object"
+          }
         },
-        "test_exit_code": {
-          "const": 0
+        "authority_granted": {
+          "const": "NONE"
         },
-        "test_output_sha256": {
+        "repository_qualification_receipt_sha256": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
         },
-        "independent_plan_review": {
-          "const": "PENDING"
+        "repository_identity_kind": {
+          "const": "DESCENDANT"
         },
-        "runtime_implementation_ready": {
-          "const": "NO"
+        "repository_commit_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
         },
-        "authorized_production_phases": {
-          "const": "NONE"
+        "repository_tree_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "repository_file_tree_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
         }
       },
       "additionalProperties": false

@@ -1,0 +1,326 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.3.6:full-verifier-controller",
+  "$defs": {
+    "LegacyFullVerifierController": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "production_authority",
+        "accepted_authoring_ancestor",
+        "current_checkout_root",
+        "governed_source_pack",
+        "evidence_root",
+        "external_authoring_tests",
+        "external_authoring_source_sha256",
+        "external_authoring_command",
+        "uv_cache",
+        "pnpm_store",
+        "chrome",
+        "receipts"
+      ],
+      "properties": {
+        "production_authority": {
+          "const": "NONE"
+        },
+        "accepted_authoring_ancestor": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "current_checkout_root": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "governed_source_pack": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "evidence_root": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "external_authoring_tests": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "external_authoring_source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "external_authoring_command": {
+          "type": "object",
+          "required": [
+            "cwd",
+            "argv"
+          ],
+          "properties": {
+            "cwd": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "argv": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "uv_cache": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "pnpm_store": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "chrome": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "schema_version": {
+          "const": "full-verifier-controller/v1"
+        },
+        "receipts": {
+          "type": "object",
+          "required": [
+            "authoring_repository",
+            "candidate_command_evidence",
+            "proof_coverage_evidence",
+            "candidate_issuance_evidence",
+            "candidate_qualification"
+          ],
+          "properties": {
+            "authoring_repository": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_command_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "proof_coverage_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_issuance_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_qualification": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "DescendantFullVerifierController": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "production_authority",
+        "accepted_authoring_ancestor",
+        "current_checkout_root",
+        "governed_source_pack",
+        "evidence_root",
+        "external_authoring_tests",
+        "external_authoring_source_sha256",
+        "external_authoring_command",
+        "uv_cache",
+        "pnpm_store",
+        "chrome",
+        "receipts",
+        "audited_runtime_ancestor",
+        "qualification_evidence"
+      ],
+      "properties": {
+        "production_authority": {
+          "const": "NONE"
+        },
+        "accepted_authoring_ancestor": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "current_checkout_root": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "governed_source_pack": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "evidence_root": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "external_authoring_tests": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "external_authoring_source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "external_authoring_command": {
+          "type": "object",
+          "required": [
+            "cwd",
+            "argv"
+          ],
+          "properties": {
+            "cwd": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "argv": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "uv_cache": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "pnpm_store": {
+          "type": "string",
+          "pattern": "^/[^\\u0000]+$"
+        },
+        "chrome": {
+          "type": "object",
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "schema_version": {
+          "const": "full-verifier-controller/v2"
+        },
+        "receipts": {
+          "type": "object",
+          "required": [
+            "authoring_repository",
+            "candidate_command_evidence",
+            "proof_coverage_evidence",
+            "candidate_issuance_evidence",
+            "candidate_qualification",
+            "descendant_repository"
+          ],
+          "properties": {
+            "authoring_repository": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_command_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "proof_coverage_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_issuance_evidence": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "candidate_qualification": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "descendant_repository": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "audited_runtime_ancestor": {
+          "const": "7cd7ab14652458608386d940bdc7764910044f6a"
+        },
+        "qualification_evidence": {
+          "type": "object",
+          "required": [
+            "full_repair_aggregate",
+            "full_repair_inventory",
+            "environment_qualification_aggregate",
+            "environment_qualification_inventory",
+            "p03_proof",
+            "p04_proof"
+          ],
+          "properties": {
+            "full_repair_aggregate": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "full_repair_inventory": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "environment_qualification_aggregate": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "environment_qualification_inventory": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "p03_proof": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            },
+            "p04_proof": {
+              "type": "string",
+              "pattern": "^/[^\\u0000]+$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "FullVerifierController": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LegacyFullVerifierController"
+        },
+        {
+          "$ref": "#/$defs/DescendantFullVerifierController"
+        }
+      ]
+    }
+  }
+}

@@ -251,12 +251,24 @@
       "vendor_relative": "docs/configs/full-verifier-controller.v1.json"
     },
     {
+      "plan_source": "docs/configs/full-verifier-controller.v2.json",
+      "vendor_relative": "docs/configs/full-verifier-controller.v2.json"
+    },
+    {
       "plan_source": "docs/configs/review-a.v1.json",
       "vendor_relative": "docs/configs/review-a.v1.json"
     },
     {
+      "plan_source": "docs/configs/review-a.v2.json",
+      "vendor_relative": "docs/configs/review-a.v2.json"
+    },
+    {
       "plan_source": "docs/configs/review-aggregation.v1.json",
       "vendor_relative": "docs/configs/review-aggregation.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/review-aggregation.v2.json",
+      "vendor_relative": "docs/configs/review-aggregation.v2.json"
     },
     {
       "plan_source": "docs/configs/review-authority.v1.json",
@@ -265,6 +277,10 @@
     {
       "plan_source": "docs/configs/review-b.v1.json",
       "vendor_relative": "docs/configs/review-b.v1.json"
+    },
+    {
+      "plan_source": "docs/configs/review-b.v2.json",
+      "vendor_relative": "docs/configs/review-b.v2.json"
     },
     {
       "plan_source": "docs/configs/runtime-pyproject.toml",
@@ -471,8 +487,16 @@
       "vendor_relative": "docs/schemas/command-registry.schema.json"
     },
     {
+      "plan_source": "docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "vendor_relative": "docs/schemas/descendant-repository-qualification-receipt.schema.json"
+    },
+    {
       "plan_source": "docs/schemas/external-seal-attestation.schema.json",
       "vendor_relative": "docs/schemas/external-seal-attestation.schema.json"
+    },
+    {
+      "plan_source": "docs/schemas/full-verifier-controller.schema.json",
+      "vendor_relative": "docs/schemas/full-verifier-controller.schema.json"
     },
     {
       "plan_source": "docs/schemas/migration-receipt.schema.json",

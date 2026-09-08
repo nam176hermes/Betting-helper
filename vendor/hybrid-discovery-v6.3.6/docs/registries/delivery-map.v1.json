@@ -27,6 +27,11 @@
       "owner": "V636-P09-T01"
     },
     {
+      "source": "authoring-tests/test_descendant_qualification_followup.py",
+      "destination": "pack/authoring-source/authoring-tests/test_descendant_qualification_followup.py",
+      "owner": "V636-P09-T01"
+    },
+    {
       "source": "authoring-tests/test_full_verifier_controller_config.py",
       "destination": "pack/authoring-source/authoring-tests/test_full_verifier_controller_config.py",
       "owner": "V636-P09-T01"
@@ -69,6 +74,11 @@
     {
       "source": "authoring-tests/test_version_rebinding.py",
       "destination": "pack/authoring-source/authoring-tests/test_version_rebinding.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/apply_descendant_qualification_followup.py",
+      "destination": "pack/authoring-source/authoring-tools/apply_descendant_qualification_followup.py",
       "owner": "V636-P09-T01"
     },
     {
@@ -134,6 +144,31 @@
     {
       "source": "authoring-tools/verify_v62_source.py",
       "destination": "pack/authoring-source/authoring-tools/verify_v62_source.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/create_authoring_workspace.py",
+      "destination": "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/extract_plan.py",
+      "destination": "pack/authoring-source/bootstrap/extract_plan.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/initialize_authoring_repository.py",
+      "destination": "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/test_bootstrap_tools.py",
+      "destination": "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/verify_extracted_plan.py",
+      "destination": "pack/authoring-source/bootstrap/verify_extracted_plan.py",
       "owner": "V636-P09-T01"
     }
   ],

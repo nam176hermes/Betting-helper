@@ -811,9 +811,15 @@
         "V636-P03-T07"
       ],
       "inputs": [
-        "runtime/tests/durability/test_destruction_and_release.py"
+        "runtime/tools/run_full_repair_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json"
+      ],
       "input_directories": []
     },
     {
@@ -844,9 +850,16 @@
         "V636-P04-T04"
       ],
       "inputs": [
-        "runtime/tests/clock/test_clock_parity_and_mutation.py"
+        "runtime/tools/verify_full_repair_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json"
+      ],
       "input_directories": []
     },
     {
@@ -1080,7 +1093,9 @@
         "authoring-tools/import_review_sources.py",
         "pack/docs/registries/source-inputs.v1.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "pack/docs/receipts/source-provenance.v1.json"
+      ],
       "input_directories": []
     },
     {
@@ -1137,7 +1152,7 @@
         "V636-P07-T01"
       ],
       "inputs": [
-        "pack/docs/configs/full-verifier-controller.v1.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
         "runtime/task-command-registry.json",
         "runtime/tools/run_command_registry.py"
       ],
@@ -1153,9 +1168,10 @@
       ],
       "inputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
-        "pack/docs/configs/full-verifier-controller.v1.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/registries/proof-coverage-matrix.v1.json",
-        "runtime/tools/verify_proof_coverage.py"
+        "runtime/tools/verify_proof_coverage.py",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json"
@@ -1170,7 +1186,8 @@
       "inputs": [
         "runtime/tools/build_candidate_qualification_receipt.py",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "pack/docs/configs/full-verifier-controller.v2.json"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
@@ -1184,11 +1201,23 @@
         "V636-P08-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/CANDIDATE_QUALIFICATION.json",
-        "pack/docs/registries/artifact-ownership.v1.json",
-        "runtime/tools/export_zero_parent_candidate.py"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T01.json"
+      ],
       "input_directories": []
     },
     {
@@ -1197,9 +1226,24 @@
         "V636-P08-T02"
       ],
       "inputs": [
-        "runtime/tools/create_zero_parent_repository.py"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      ],
       "input_directories": []
     },
     {
@@ -1208,11 +1252,23 @@
         "V636-P08-T03"
       ],
       "inputs": [
-        "pack/docs/registries/baseline-replay-command-registry.v1.json",
-        "runtime/tools/qualify_zero_parent_baseline.py"
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json"
       ],
       "outputs": [
-        "pack/docs/receipts/repo0-baseline-receipt.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T03.json"
       ],
       "input_directories": []
     },
@@ -1222,9 +1278,69 @@
         "V636-P09-T01"
       ],
       "inputs": [
-        "runtime/tools/assemble_review_pack.py"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
+        "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/contracts/02-authority-graph.md",
+        "pack/docs/receipts/declaration-complete.v1.json",
+        "pack/docs/receipts/migration-receipt.v1.json",
+        "pack/docs/receipts/source-provenance.v1.json",
+        "runtime/tools/assemble_review_pack.py",
+        "plan-input/bootstrap/create_authoring_workspace.py",
+        "plan-input/bootstrap/extract_plan.py",
+        "plan-input/bootstrap/initialize_authoring_repository.py",
+        "plan-input/bootstrap/test_bootstrap_tools.py",
+        "plan-input/bootstrap/verify_extracted_plan.py"
       ],
-      "outputs": [],
+      "outputs": [
+        "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+        "pack/authoring-source/bootstrap/extract_plan.py",
+        "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+        "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+        "pack/authoring-source/bootstrap/verify_extracted_plan.py",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/CANDIDATE_QUALIFICATION.json",
+        "pack/evidence/V636-MIG0-T06.json",
+        "pack/evidence/V636-P00-T05.json",
+        "pack/evidence/V636-P02-T02.json",
+        "pack/evidence/V636-P03-T02.json",
+        "pack/evidence/V636-P03-T07.json",
+        "pack/evidence/V636-P04-T04.json",
+        "pack/evidence/V636-P05-T02.json",
+        "pack/evidence/V636-P05-T04.json",
+        "pack/evidence/V636-P05-T05.json",
+        "pack/evidence/V636-P05-T09.json",
+        "pack/evidence/V636-P06-T01.json",
+        "pack/evidence/V636-P07-T01.json",
+        "pack/evidence/V636-P07-T02.json",
+        "pack/evidence/V636-P07-T03.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json"
+      ],
       "input_directories": []
     },
     {
@@ -1236,7 +1352,9 @@
         "pack/docs/registries/seal-exclusions.v1.json",
         "runtime/tools/compute_governed_content_root.py"
       ],
-      "outputs": [],
+      "outputs": [
+        "pack/GOVERNED_CONTENT_ROOT.json"
+      ],
       "input_directories": []
     },
     {
@@ -1245,12 +1363,26 @@
         "V636-P09-T03"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
-        "pack/docs/receipts/repo0-baseline-receipt.json",
-        "runtime/tools/build_self_review.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/build_self_review.py",
+        "runtime/tools/retained_artifact_io.py"
       ],
-      "outputs": [],
-      "input_directories": []
+      "outputs": [
+        "pack/SELF_REVIEW_REPORT.json",
+        "pack/SELF_REVIEW_REPORT.md"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "VERIFY_V636_P09_T04",
@@ -1258,14 +1390,27 @@
         "V636-P09-T04"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/GOVERNED_CONTENT_ROOT.json",
+        "pack/SELF_REVIEW_REPORT.json",
+        "pack/SELF_REVIEW_REPORT.md",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
         "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
         "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
-        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256"
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/MANIFEST_SHA256.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "VERIFY_V636_P10_T01",
@@ -1273,13 +1418,27 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "runtime/review-config/review-a.v1.json",
-        "runtime/tools/issue_review_launch_authorization.py"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "VERIFY_V636_P10_T02",
@@ -1287,13 +1446,30 @@
         "V636-P10-T02"
       ],
       "inputs": [
-        "runtime/review-config/review-b.v1.json",
-        "runtime/tools/issue_review_launch_authorization.py"
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "VERIFY_V636_P10_T04",
@@ -1301,19 +1477,38 @@
         "V636-P10-T04"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
-        "runtime/review-config/review-aggregation.v1.json",
-        "runtime/tools/aggregate_reviews.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/aggregate_reviews.py",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/aggregate/result.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "BOOT0_PREPARE_INPUT_DIRS",
@@ -1561,16 +1756,16 @@
         "authoring-tools/build_task_command_registry.py",
         "pack/docs/tasks/task-manifest.v6.3.6.json",
         "pack/docs/registries/task-command-registry.v1.json",
-        "pack/docs/configs/review-a.v1.json",
-        "pack/docs/configs/review-b.v1.json",
-        "pack/docs/configs/review-aggregation.v1.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/configs/review-aggregation.v2.json",
         "pack/docs/configs/review-authority.v1.json"
       ],
       "outputs": [
         "runtime/task-command-registry.json",
-        "runtime/review-config/review-a.v1.json",
-        "runtime/review-config/review-b.v1.json",
-        "runtime/review-config/review-aggregation.v1.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
         "runtime/review-config/review-authority.v1.json"
       ],
       "input_directories": [
@@ -1717,11 +1912,27 @@
         "V636-P10-T01"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
-        "runtime/tools/prepare_review_workspace.py"
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "REVIEW_A_MECHANICAL",
@@ -1737,16 +1948,34 @@
     },
     {
       "command_id": "REVIEW_A_FINALIZE",
-      "consumers": [],
+      "consumers": [
+        "V636-P10-T03"
+      ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
-        "runtime/tools/finalize_review.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/finalize_review.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "REVIEW_B_PREPARE",
@@ -1754,11 +1983,30 @@
         "V636-P10-T02"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
-        "runtime/tools/prepare_review_workspace.py"
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "REVIEW_B_MECHANICAL",
@@ -1774,34 +2022,76 @@
     },
     {
       "command_id": "REVIEW_B_FINALIZE",
-      "consumers": [],
+      "consumers": [
+        "V636-P10-T03"
+      ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
-        "runtime/tools/finalize_review.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/finalize_review.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "REVIEW_AGGREGATE",
-      "consumers": [],
+      "consumers": [
+        "V636-P10-T04"
+      ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
         "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
-        "runtime/review-config/review-aggregation.v1.json",
-        "runtime/tools/aggregate_reviews.py"
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/aggregate_reviews.py",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
       ],
       "outputs": [
         "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/aggregate/result.json"
       ],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "A_CHECK_SOURCE",
@@ -1809,10 +2099,18 @@
         "V636-P10-T01"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
         "runtime/tools/verify_executable_references.py"
       ],
       "outputs": [],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "A_CHECK_EVIDENCE",
@@ -1820,14 +2118,22 @@
         "V636-P10-T01"
       ],
       "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
         "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
         "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
         "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
         "runtime/tools/verify_proof_coverage.py"
       ],
       "outputs": [],
-      "input_directories": []
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
     },
     {
       "command_id": "A_CHECK_BASELINE",
@@ -2559,7 +2865,7 @@
         "authoring-tools/issue_current_authoring_repository_receipt.py"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json"
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json"
       ],
       "input_directories": []
     },
@@ -2577,6 +2883,41 @@
         "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
         "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tools"
       ]
+    },
+    {
+      "command_id": "A_CHECK_DESCENDANT",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json"
+      ],
+      "input_directories": []
     }
   ]
 }

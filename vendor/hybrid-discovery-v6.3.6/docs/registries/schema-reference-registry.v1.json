@@ -2,22 +2,6 @@
   "schema_version": "schema-reference-registry/v2",
   "references": [
     {
-      "logical_name": "TaskCardV636",
-      "plan_source_path": "pack/docs/schemas/task-card-v6.3.6.schema.json",
-      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/task-card-v6.3.6.schema.json",
-      "json_pointer": "#/$defs/TaskCardV636",
-      "creation_owner": "V636-BOOT0-T02",
-      "required_stage": "DECLARED"
-    },
-    {
-      "logical_name": "TaskManifestV636",
-      "plan_source_path": "pack/docs/schemas/task-card-v6.3.6.schema.json",
-      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/task-card-v6.3.6.schema.json",
-      "json_pointer": "#/$defs/TaskManifestV636",
-      "creation_owner": "V636-BOOT0-T02",
-      "required_stage": "DECLARED"
-    },
-    {
       "logical_name": "ArtifactOwnershipRegistry",
       "plan_source_path": "pack/docs/schemas/artifact-ownership.schema.json",
       "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/artifact-ownership.schema.json",
@@ -34,6 +18,38 @@
       "required_stage": "DECLARED"
     },
     {
+      "logical_name": "DescendantRepositoryQualificationReceipt",
+      "plan_source_path": "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "json_pointer": "#/$defs/DescendantRepositoryQualificationReceipt",
+      "creation_owner": "V636-MIG0-T08",
+      "required_stage": "MATERIALIZED"
+    },
+    {
+      "logical_name": "ExternalSealAttestation",
+      "plan_source_path": "pack/docs/schemas/external-seal-attestation.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/external-seal-attestation.schema.json",
+      "json_pointer": "#/$defs/ExternalSealAttestation",
+      "creation_owner": "V636-BOOT0-T02",
+      "required_stage": "DECLARED"
+    },
+    {
+      "logical_name": "FullVerifierController",
+      "plan_source_path": "pack/docs/schemas/full-verifier-controller.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/full-verifier-controller.schema.json",
+      "json_pointer": "#/$defs/FullVerifierController",
+      "creation_owner": "V636-P00-T03",
+      "required_stage": "DECLARED"
+    },
+    {
+      "logical_name": "MigrationReceipt",
+      "plan_source_path": "pack/docs/schemas/migration-receipt.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/migration-receipt.schema.json",
+      "json_pointer": "#/$defs/MigrationReceipt",
+      "creation_owner": "V636-BOOT0-T02",
+      "required_stage": "DECLARED"
+    },
+    {
       "logical_name": "ProofCoverageMatrix",
       "plan_source_path": "pack/docs/schemas/proof-coverage.schema.json",
       "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/proof-coverage.schema.json",
@@ -42,18 +58,18 @@
       "required_stage": "DECLARED"
     },
     {
-      "logical_name": "ReviewLaunchAuthorization",
-      "plan_source_path": "pack/docs/schemas/review-launch-authorization.schema.json",
-      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/review-launch-authorization.schema.json",
-      "json_pointer": "#/$defs/ReviewLaunchAuthorization",
-      "creation_owner": "V636-BOOT0-T02",
-      "required_stage": "DECLARED"
-    },
-    {
       "logical_name": "ReviewExecutionReceipt",
       "plan_source_path": "pack/docs/schemas/review-execution-receipt.schema.json",
       "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/review-execution-receipt.schema.json",
       "json_pointer": "#/$defs/ReviewExecutionReceipt",
+      "creation_owner": "V636-BOOT0-T02",
+      "required_stage": "DECLARED"
+    },
+    {
+      "logical_name": "ReviewLaunchAuthorization",
+      "plan_source_path": "pack/docs/schemas/review-launch-authorization.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/review-launch-authorization.schema.json",
+      "json_pointer": "#/$defs/ReviewLaunchAuthorization",
       "creation_owner": "V636-BOOT0-T02",
       "required_stage": "DECLARED"
     },
@@ -74,18 +90,18 @@
       "required_stage": "DECLARED"
     },
     {
-      "logical_name": "ExternalSealAttestation",
-      "plan_source_path": "pack/docs/schemas/external-seal-attestation.schema.json",
-      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/external-seal-attestation.schema.json",
-      "json_pointer": "#/$defs/ExternalSealAttestation",
+      "logical_name": "TaskCardV636",
+      "plan_source_path": "pack/docs/schemas/task-card-v6.3.6.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/task-card-v6.3.6.schema.json",
+      "json_pointer": "#/$defs/TaskCardV636",
       "creation_owner": "V636-BOOT0-T02",
       "required_stage": "DECLARED"
     },
     {
-      "logical_name": "MigrationReceipt",
-      "plan_source_path": "pack/docs/schemas/migration-receipt.schema.json",
-      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/migration-receipt.schema.json",
-      "json_pointer": "#/$defs/MigrationReceipt",
+      "logical_name": "TaskManifestV636",
+      "plan_source_path": "pack/docs/schemas/task-card-v6.3.6.schema.json",
+      "materialized_runtime_path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/task-card-v6.3.6.schema.json",
+      "json_pointer": "#/$defs/TaskManifestV636",
       "creation_owner": "V636-BOOT0-T02",
       "required_stage": "DECLARED"
     }
