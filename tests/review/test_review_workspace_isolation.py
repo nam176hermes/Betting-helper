@@ -1,8 +1,11 @@
+import base64
 import json
 import socket
 import subprocess
 import sys
 import time
+from copy import deepcopy
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from pathlib import Path
 from typing import Any, cast
@@ -12,6 +15,7 @@ import rfc8785
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 import tools.prepare_review_workspace as review_workspace
+from tests.review.test_review_aggregation_and_self_review import signed_current as signed_current
 from tools.finalize_review import finalize_review, review_content_hash
 from tools.prepare_review_workspace import (
     NAMESPACE_SOCKET,
@@ -59,8 +63,7 @@ def test_broker_environment_accepts_only_mounted_tools(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        review_workspace.shutil,
-        "which",
+        "tools.prepare_review_workspace.shutil.which",
         lambda command: "/review-bin/uv" if command == "uv" else None,
     )
 
@@ -69,8 +72,9 @@ def test_broker_environment_accepts_only_mounted_tools(
     assert environment["PATH"] == "/bin:/review-bin:/usr/bin"
 
 
+@pytest.mark.parametrize("leaf", ["A_CHECK_BASELINE", "A_CHECK_DESCENDANT"])
 def test_baseline_check_mounts_transitive_node_toolchain(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, leaf: str
 ) -> None:
     uv = tmp_path / "uv"
     node = tmp_path / "node"
@@ -80,18 +84,18 @@ def test_baseline_check_mounts_transitive_node_toolchain(
         path.write_text("")
     monkeypatch.setattr(review_workspace, "_node_binary", lambda: node)
     monkeypatch.setattr(
-        review_workspace.shutil,
-        "which",
+        "tools.prepare_review_workspace.shutil.which",
         lambda command: str(uv if command == "uv" else pnpm),
     )
 
-    mounts, _links = _tool_mounts([{"command_id": "A_CHECK_BASELINE", "argv": ["uv"]}])
+    mounts, _links = _tool_mounts([{"command_id": leaf, "argv": ["uv"]}])
 
     assert {target.name for _source, target in mounts} == {"node", "pnpm", "uv"}
 
 
+@pytest.mark.parametrize("version", [1, 2])
 def test_namespace_reuses_home_created_by_preparation(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, version: int
 ) -> None:
     scratch = tmp_path / "scratch"
     (scratch / "home").mkdir(parents=True)
@@ -110,10 +114,14 @@ def test_namespace_reuses_home_created_by_preparation(
     monkeypatch.setattr(
         review_workspace, "_prepared_python_environment", lambda _: python.parent.parent
     )
-    monkeypatch.setattr(review_workspace, "build_bubblewrap_argv", lambda *_args, **_kwargs: [])
+    brokers = []
     monkeypatch.setattr(
-        review_workspace.subprocess,
-        "Popen",
+        review_workspace,
+        "build_bubblewrap_argv",
+        lambda _config, broker, **_kwargs: brokers.append(broker) or [],
+    )
+    monkeypatch.setattr(
+        "tools.prepare_review_workspace.subprocess.Popen",
         lambda *_args, **_kwargs: socket_path.write_text("") or Process(),
     )
     monkeypatch.setattr(
@@ -122,17 +130,30 @@ def test_namespace_reuses_home_created_by_preparation(
         lambda _pid: {"pid": 123, "start_ticks": "1", "namespaces": {}},
     )
 
-    result = _start_namespace(
-        {"scratch_root": str(scratch), "role": "IMPLEMENTATION_READINESS_REVIEWER"},
-        {
-            "authorization_id": "REVIEW-LAUNCH:" + "a" * 64,
-            "command_registry_sha256": "b" * 64,
-            "expires_at": "2030-01-01T00:00:00+00:00",
-        },
-    )
+    config: dict[str, Any] = {
+        "scratch_root": str(scratch),
+        "role": "IMPLEMENTATION_READINESS_REVIEWER",
+        "schema_version": f"review-config/v{version}",
+    }
+    directory = tmp_path / "review-config"
+    directory.mkdir()
+    (directory / f"review-a.v{version}.json").write_text(json.dumps(config))
+    monkeypatch.setattr(review_workspace, "RUNTIME_ROOT", tmp_path)
+    launch: dict[str, Any] = {
+        "schema_version": f"review-launch-authorization/v{version}",
+        "authorization_id": "REVIEW-LAUNCH:" + "a" * 64,
+        "command_registry_sha256": "b" * 64,
+        "expires_at": "2030-01-01T00:00:00+00:00",
+    }
+    if version == 2:
+        with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+            _start_namespace({**config, "schema_version": "review-config/v1"}, launch)
+        assert not (scratch / "control").exists()
+    result = _start_namespace(config, launch)
 
     assert result["pid"] == 123
     assert (scratch / "tmp").is_dir()
+    assert str(directory / f"review-a.v{version}.json") in brokers[0]["argv"]
 
 
 def test_namespace_client_uses_short_proc_fd_socket_path(
@@ -161,7 +182,7 @@ def test_namespace_client_uses_short_proc_fd_socket_path(
         def recv(self, _size: int) -> bytes:
             return b'{"exit_code":0,"stdout":"","stderr":""}'
 
-    monkeypatch.setattr(review_workspace.socket, "socket", lambda *_args: Connection())
+    monkeypatch.setattr("tools.prepare_review_workspace.socket.socket", lambda *_args: Connection())
 
     result = _namespace_request(parent / "namespace.sock", {})
 
@@ -467,3 +488,145 @@ def test_finalizer_uses_jcs_hashes_for_the_bound_human_result() -> None:
     cast(list[dict[str, object]], attestation["preparation_commands"])[1]["argv"] = ["pnpm"]
     with pytest.raises(ValueError, match="E_REVIEW_FINALIZE_BINDING"):
         finalize_review(authorization, result, attestation, Ed25519PrivateKey.generate())
+
+
+def test_current_finalizer_binds_external_seal_and_human_workspace(
+    signed_current: dict[str, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from moj_discovery import review_authorization as auth_library
+    from tests.review.test_review_aggregation_and_self_review import IDENTITY, NOW
+    from tools import finalize_review as finalizer
+
+    monkeypatch.setattr(finalizer, "RUNTIME_ROOT", auth_library.RUNTIME_ROOT)
+    launch, result = signed_current["launches"][0], signed_current["reviews"][0]
+    template = signed_current["receipts"][0]
+    attestation = {
+        key: template[key]
+        for key in (
+            "workspace_root",
+            "allowed_changed_paths",
+            "unexpected_changed_paths",
+            "commands_executed_root",
+            "started_at",
+            "finished_at",
+            "authorization_consumed_at",
+            "fresh_session_attestation",
+        )
+    }
+    attestation["preparation_commands"] = [
+        {
+            "command_id": command_id,
+            "argv": argv,
+            "cwd": "/test-only/preparation",
+            "environment": {},
+            "exit_code": 0,
+            "stdout_sha256": "a" * 64,
+            "stderr_sha256": "b" * 64,
+        }
+        for command_id, argv in (
+            ("A_INSTALL_PYTHON", ["uv", "sync", "--frozen", "--offline"]),
+            (
+                "A_INSTALL_NODE",
+                ["pnpm", "install", "--frozen-lockfile", "--offline", "--ignore-scripts"],
+            ),
+        )
+    ]
+    attestation["preparation_commands_root"] = _preparation_root(
+        attestation["preparation_commands"]
+    )
+    seal = {
+        **IDENTITY,
+        "schema_version": "external-seal-attestation/v7",
+        "artifact_type": "RUNTIME_PACK",
+        "zip_sha256": launch["pack_zip_sha256"],
+        "manifest_sha256": launch["pack_manifest_sha256"],
+    }
+    receipt = finalize_review(
+        launch, result, attestation, signed_current["private"], now=NOW, external_seal=seal
+    )
+    assert receipt["schema_version"] == "review-execution-receipt/v2"
+    auth_library.verify_review_execution_receipt(
+        receipt,
+        launch,
+        signed_current["private"].public_key(),
+        result_sha256=receipt["result_sha256"],
+        now=NOW,
+    )
+    for mutation in (
+        "absent-seal",
+        "workspace-as-seal",
+        "seal-identity",
+        "workspace",
+        "false-human",
+        "missing-human",
+    ):
+        changed, changed_seal = deepcopy(attestation), deepcopy(seal)
+        if mutation == "absent-seal":
+            changed_seal = None
+        elif mutation == "workspace-as-seal":
+            changed_seal = deepcopy(attestation)
+        elif mutation == "seal-identity":
+            changed_seal["repository_commit_oid"] = "f" * 40
+        elif mutation == "workspace":
+            changed["workspace_root"] = "/test-only/wrong-workspace"
+        elif mutation == "false-human":
+            changed["fresh_session_attestation"]["attested"] = False
+        else:
+            del changed["fresh_session_attestation"]
+        with pytest.raises(ValueError, match="E_REVIEW_FINALIZE_BINDING"):
+            finalize_review(
+                launch,
+                result,
+                changed,
+                signed_current["private"],
+                now=NOW,
+                external_seal=changed_seal,
+            )
+
+
+@pytest.mark.parametrize("execute", [False, True])
+def test_current_consume_rejects_unmeasured_inputs_before_state(
+    signed_current: dict[str, Any], tmp_path: Path, monkeypatch: pytest.MonkeyPatch, execute: bool
+) -> None:
+    from cryptography.hazmat.primitives import serialization
+
+    from moj_discovery.review_authorization import sign_review_launch_authorization
+
+    private = signed_current["private"]
+    public_path = tmp_path / "test-only-public.json"
+    raw = private.public_key().public_bytes(
+        serialization.Encoding.Raw, serialization.PublicFormat.Raw
+    )
+    public_path.write_text(
+        json.dumps(
+            {
+                "public_key_b64url": base64.urlsafe_b64encode(raw).decode().rstrip("="),
+                "trust_epoch": 0,
+            }
+        )
+    )
+    authority = tmp_path / "test-only-authority.json"
+    authority.write_text(json.dumps({"public_key_path": str(public_path)}))
+    launch = deepcopy(signed_current["launches"][0])
+    now = datetime.now(UTC)
+    launch.update(
+        issued_at=now.isoformat(),
+        not_before=now.isoformat(),
+        expires_at=(now + timedelta(seconds=14400)).isoformat(),
+        host_boot_id=Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+    )
+    launch = sign_review_launch_authorization(launch, private)
+    config: dict[str, Any] = {
+        "schema_version": "review-config/v2",
+        "authority_config": str(authority),
+        "role": launch["review_role"],
+        "workspace_root": launch["workspace_root"],
+    }
+
+    def forbidden(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("unmeasured current input reached serial/state/preparation")
+
+    monkeypatch.setattr(review_workspace, "_authority_state", forbidden)
+    monkeypatch.setattr(review_workspace, "prepare_review_workspace", forbidden)
+    with pytest.raises(ValueError, match="E_REVIEW_LAUNCH_INPUT"):
+        review_workspace._consume(config, launch, execute=execute)

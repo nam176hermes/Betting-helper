@@ -1,4 +1,5 @@
 """Run only the frozen implementation-readiness review leaf commands."""
+
 from __future__ import annotations
 
 import argparse
@@ -6,8 +7,9 @@ import hashlib
 import json
 import os
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, cast
+from typing import Any, cast
 
 import rfc8785
 
@@ -30,14 +32,23 @@ def _command_map(registry: dict[str, object]) -> dict[str, dict[str, object]]:
 
 
 def run_review_a_checks(
-    config: dict[str, object], registry: dict[str, object], *, execute: Callable[..., Any] = subprocess.run
+    config: dict[str, object],
+    registry: dict[str, object],
+    *,
+    execute: Callable[..., Any] = subprocess.run,
 ) -> dict[str, object]:
     command_ids = config.get("mechanical_command_ids")
+    expected_ids = (
+        ("A_CHECK_SOURCE", "A_CHECK_EVIDENCE", "A_CHECK_DESCENDANT")
+        if config.get("schema_version") == "review-config/v2"
+        else EXPECTED_IDS
+    )
     if (
         config.get("role") != "IMPLEMENTATION_READINESS_REVIEWER"
         or config.get("network") != "DENY"
         or not isinstance(command_ids, list)
-        or tuple(command_ids) != EXPECTED_IDS
+        or config.get("schema_version") not in {None, "review-config/v1", "review-config/v2"}
+        or tuple(command_ids) != expected_ids
     ):
         raise ValueError("E_REVIEW_A_CONFIG")
     environment = config.get("environment")
@@ -47,7 +58,7 @@ def run_review_a_checks(
         raise ValueError("E_REVIEW_A_CONFIG")
     commands = _command_map(registry)
     records: list[dict[str, object]] = []
-    for command_id in EXPECTED_IDS:
+    for command_id in expected_ids:
         command = commands.get(command_id)
         if (
             command is None
@@ -58,7 +69,12 @@ def run_review_a_checks(
         ):
             raise ValueError("E_REVIEW_A_REGISTRY")
         argv, cwd = command.get("argv"), command.get("cwd")
-        if not isinstance(argv, list) or not argv or not isinstance(cwd, str) or not os.path.isabs(cwd):
+        if (
+            not isinstance(argv, list)
+            or not argv
+            or not isinstance(cwd, str)
+            or not os.path.isabs(cwd)
+        ):
             raise ValueError("E_REVIEW_A_REGISTRY")
         if not all(isinstance(token, str) and token for token in argv):
             raise ValueError("E_REVIEW_A_REGISTRY")
@@ -80,7 +96,8 @@ def run_review_a_checks(
             }
         )
     root = hashlib.sha256(
-        COMMAND_DOMAIN + rfc8785.dumps(cast(Any, sorted(records, key=lambda item: str(item["command_id"]))))
+        COMMAND_DOMAIN
+        + rfc8785.dumps(cast(Any, sorted(records, key=lambda item: str(item["command_id"]))))
     ).hexdigest()
     return {"result": "PASS", "commands": records, "commands_executed_root": root}
 
@@ -92,7 +109,9 @@ def main() -> None:
     args = parser.parse_args()
     print(
         json.dumps(
-            run_review_a_checks(json.loads(args.config.read_text()), json.loads(args.registry.read_text())),
+            run_review_a_checks(
+                json.loads(args.config.read_text()), json.loads(args.registry.read_text())
+            ),
             sort_keys=True,
         )
     )

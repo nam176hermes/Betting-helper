@@ -1,4 +1,5 @@
 """Domain-separated host review authorization and receipt verification."""
+
 from __future__ import annotations
 
 import base64
@@ -21,6 +22,39 @@ LAUNCH_SIGN_DOMAIN = b"HD636/REVIEW-LAUNCH/SIGN/v1\0"
 RECEIPT_ID_DOMAIN = b"HD636/REVIEW-RECEIPT/ID/v1\0"
 RECEIPT_SIGN_DOMAIN = b"HD636/REVIEW-RECEIPT/SIGN/v1\0"
 RUNTIME_ROOT = Path(__file__).resolve().parents[2]
+DESCENDANT_IDENTITY_FIELDS = (
+    "repository_qualification_receipt_sha256",
+    "repository_identity_kind",
+    "repository_commit_oid",
+    "repository_tree_oid",
+    "repository_file_tree_root_sha256",
+)
+
+
+def review_identity(value: dict[str, object]) -> dict[str, object]:
+    """Project the complete current identity; missing fields never compare as None."""
+    if value.get("repository_identity_kind") != "DESCENDANT" or any(
+        not isinstance(value.get(field), str) or not value[field]
+        for field in DESCENDANT_IDENTITY_FIELDS
+    ):
+        raise ValueError("E_REVIEW_IDENTITY")
+    return {field: value[field] for field in DESCENDANT_IDENTITY_FIELDS}
+
+
+def verify_review_result_binding(
+    result: dict[str, object], authorization: dict[str, object]
+) -> None:
+    current = authorization.get("schema_version") == "review-launch-authorization/v2"
+    if result.get("schema_version") != f"independent-review-result/v{2 if current else 1}" or any(
+        result.get(key) != authorization.get(key) or key not in result or key not in authorization
+        for key in ("review_role", "review_run_id", "pack_zip_sha256")
+    ):
+        raise ValueError("E_REVIEW_RESULT_BINDING")
+    if current:
+        if review_identity(result) != review_identity(authorization):
+            raise ValueError("E_REVIEW_IDENTITY")
+    elif result.get("repo0_receipt_sha256") != authorization.get("repo0_receipt_sha256"):
+        raise ValueError("E_REVIEW_RESULT_BINDING")
 
 
 def _b64decode(value: object) -> bytes:
@@ -80,9 +114,13 @@ def sign_review_launch_authorization(
     value["authorization_id"] = _identifier(
         value, prefix="REVIEW-LAUNCH:", domain=LAUNCH_ID_DOMAIN, derived="authorization_id"
     )
-    value["signature"] = base64.urlsafe_b64encode(
-        private_key.sign(LAUNCH_SIGN_DOMAIN + _projection(value, "signature"))
-    ).decode().rstrip("=")
+    value["signature"] = (
+        base64.urlsafe_b64encode(
+            private_key.sign(LAUNCH_SIGN_DOMAIN + _projection(value, "signature"))
+        )
+        .decode()
+        .rstrip("=")
+    )
     return value
 
 
@@ -96,9 +134,13 @@ def sign_review_execution_receipt(
     value["receipt_id"] = _identifier(
         value, prefix="REVIEW-RECEIPT:", domain=RECEIPT_ID_DOMAIN, derived="receipt_id"
     )
-    value["signature"] = base64.urlsafe_b64encode(
-        private_key.sign(RECEIPT_SIGN_DOMAIN + _projection(value, "signature"))
-    ).decode().rstrip("=")
+    value["signature"] = (
+        base64.urlsafe_b64encode(
+            private_key.sign(RECEIPT_SIGN_DOMAIN + _projection(value, "signature"))
+        )
+        .decode()
+        .rstrip("=")
+    )
     return value
 
 
@@ -151,10 +193,9 @@ def verify_review_launch_authorization(
     expected_id = _identifier(
         authorization, prefix="REVIEW-LAUNCH:", domain=LAUNCH_ID_DOMAIN, derived="authorization_id"
     )
-    if (
-        authorization.get("authorization_id") != expected_id
-        or authorization.get("issuer_key_id") != key_id(public_key)
-    ):
+    if authorization.get("authorization_id") != expected_id or authorization.get(
+        "issuer_key_id"
+    ) != key_id(public_key):
         raise ValueError("E_REVIEW_AUTH_BINDING")
     _verify_signature(authorization, public_key, LAUNCH_SIGN_DOMAIN)
     issued = _instant(authorization["issued_at"], "E_REVIEW_AUTH_EXPIRY")
@@ -224,6 +265,11 @@ def verify_review_execution_receipt(
     ):
         raise ValueError("E_REVIEW_RECEIPT_BINDING")
     _verify_signature(receipt, public_key, RECEIPT_SIGN_DOMAIN)
+    current = authorization["schema_version"] == "review-launch-authorization/v2"
+    if receipt["schema_version"] != f"review-execution-receipt/v{2 if current else 1}":
+        raise ValueError("E_REVIEW_IDENTITY")
+    if current and review_identity(receipt) != review_identity(authorization):
+        raise ValueError("E_REVIEW_IDENTITY")
     mounts = cast(list[dict[str, object]], authorization["input_mounts"])
     expected_roots = [mount["content_root_sha256"] for mount in mounts]
     fresh = receipt.get("fresh_session_attestation")

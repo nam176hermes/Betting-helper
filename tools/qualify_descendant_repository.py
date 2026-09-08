@@ -10,6 +10,7 @@ import re
 import shutil
 import stat
 import subprocess
+import sys
 from pathlib import Path
 from typing import NoReturn, cast
 
@@ -398,17 +399,57 @@ def verify_descendant_qualification_receipt(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--root", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--receipt", type=Path)
-    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--pack", type=Path)
+    parser.add_argument("--recorded-config")
+    parser.add_argument("--retained-manifest", type=Path)
+    parser.add_argument("--retained-root", type=Path)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--preflight", action="store_true")
     mode.add_argument("--issue", action="store_true")
     mode.add_argument("--check-only", action="store_true")
     args = parser.parse_args()
-    config = load_controller_config(args.config)
+    flags = [token.split("=", 1)[0] for token in sys.argv[1:] if token.startswith("--")]
+    transport = (args.pack, args.recorded_config, args.retained_manifest, args.retained_root)
+    if (
+        len(flags) != len(set(flags))
+        or (not args.check_only and args.output is None)
+        or ((args.issue or args.check_only) and args.receipt is None)
+        or (
+            any(value is not None for value in transport)
+            and (not args.check_only or not all(value is not None for value in transport))
+        )
+    ):
+        parser.error("invalid descendant operation/context")
+    artifacts = None
+    if args.pack is not None:
+        from tools.assemble_review_pack import load_sealed_assembly_context
+
+        config, artifacts = load_sealed_assembly_context(
+            args.pack,
+            args.config,
+            args.recorded_config,
+            args.retained_manifest,
+            args.retained_root,
+        )
+        named_receipt = args.pack / "docs/receipts/descendant-repository-qualification-receipt.json"
+        if config.descendant_repository_receipt is None:
+            _fail()
+        if (
+            args.root != config.current_checkout_root
+            or args.receipt != named_receipt
+            or named_receipt.is_symlink()
+            or not named_receipt.is_file()
+            or named_receipt.read_bytes()
+            != _read_bytes(config.descendant_repository_receipt, artifacts)
+        ):
+            _fail()
+    else:
+        config = load_controller_config(args.config)
     if args.issue:
         if args.receipt is None:
             _fail()
@@ -417,7 +458,13 @@ def main() -> None:
         if args.receipt is None:
             _fail()
         result = verify_descendant_qualification_receipt(
-            args.root, args.receipt, pack=config.governed_source_pack, config=config
+            args.root,
+            cast(Path, config.descendant_repository_receipt)
+            if artifacts is not None
+            else args.receipt,
+            pack=config.governed_source_pack,
+            config=config,
+            artifacts=artifacts,
         )
     else:
         result = {
@@ -427,9 +474,10 @@ def main() -> None:
             **descendant_repository_identity(args.root, cast(str, config.audited_runtime_ancestor)),
             "controller_binding": config.binding(),
         }
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open("x", encoding="utf-8") as stream:
-        stream.write(json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n")
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        with args.output.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n")
     print(json.dumps(result, sort_keys=True))
 
 

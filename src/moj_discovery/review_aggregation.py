@@ -1,4 +1,5 @@
 """Deterministic aggregation for the two isolated review roles."""
+
 from __future__ import annotations
 
 import hashlib
@@ -9,17 +10,29 @@ from typing import Any, cast
 import rfc8785
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
-from .review_authorization import verify_review_execution_receipt
+from .review_authorization import (
+    _schema_validate,
+    review_identity,
+    verify_review_execution_receipt,
+    verify_review_result_binding,
+)
 
 RESULT_DOMAIN = b"HD636/REVIEW-RESULT/v1\0"
 _IMPLEMENTATION_FLAGS = (
-    "REPO0_BASELINE_VALID", "SAFE_TO_IMPLEMENT_R0", "SAFE_TO_IMPLEMENT_F0A",
-    "SAFE_TO_IMPLEMENT_SEC0", "SAFE_TO_IMPLEMENT_E0", "SAFE_TO_IMPLEMENT_D0",
+    "REPO0_BASELINE_VALID",
+    "SAFE_TO_IMPLEMENT_R0",
+    "SAFE_TO_IMPLEMENT_F0A",
+    "SAFE_TO_IMPLEMENT_SEC0",
+    "SAFE_TO_IMPLEMENT_E0",
+    "SAFE_TO_IMPLEMENT_D0",
 )
 _SECURITY_FLAGS = (
-    "CYBERSECURITY_REVIEW_COMPLETE", "CHROME_CAPABILITY_BOUNDARY_PASS",
-    "AUTHORIZATION_TRUST_PASS", "CREDENTIAL_EVIDENCE_BOUNDARY_PASS",
-    "HASHING_CRYPTOGRAPHY_PASS", "CUSTODY_ISOLATION_PASS",
+    "CYBERSECURITY_REVIEW_COMPLETE",
+    "CHROME_CAPABILITY_BOUNDARY_PASS",
+    "AUTHORIZATION_TRUST_PASS",
+    "CREDENTIAL_EVIDENCE_BOUNDARY_PASS",
+    "HASHING_CRYPTOGRAPHY_PASS",
+    "CUSTODY_ISOLATION_PASS",
 )
 _SEVERITY = {"CRITICAL": 0, "IMPORTANT": 1, "MINOR": 2}
 
@@ -30,7 +43,10 @@ def _digest(value: object) -> str:
 
 def review_content_hash(value: dict[str, object]) -> str:
     return hashlib.sha256(
-        RESULT_DOMAIN + rfc8785.dumps(cast(Any, {key: item for key, item in value.items() if key != "content_hash"}))
+        RESULT_DOMAIN
+        + rfc8785.dumps(
+            cast(Any, {key: item for key, item in value.items() if key != "content_hash"})
+        )
     ).hexdigest()
 
 
@@ -46,9 +62,20 @@ def _instant(value: object) -> datetime:
 
 def _complete_receipt(receipt: dict[str, object], role: str) -> None:
     required = {
-        "authorization_id", "review_role", "review_run_id", "workspace_root", "input_content_roots",
-        "result_sha256", "commands_executed_root", "finished_at", "fresh_session_attestation",
-        "production_authority", "signature_algorithm", "signature", "host_boot_id", "trust_epoch",
+        "authorization_id",
+        "review_role",
+        "review_run_id",
+        "workspace_root",
+        "input_content_roots",
+        "result_sha256",
+        "commands_executed_root",
+        "finished_at",
+        "fresh_session_attestation",
+        "production_authority",
+        "signature_algorithm",
+        "signature",
+        "host_boot_id",
+        "trust_epoch",
         "preparation_commands_root",
     }
     if not required <= set(receipt) or receipt.get("review_role") != role:
@@ -68,9 +95,18 @@ def _complete_receipt(receipt: dict[str, object], role: str) -> None:
         raise ValueError("E_REVIEW_RECEIPT")
 
 
-def _review_is_well_formed(review: dict[str, object], role: str) -> None:
+def _review_is_well_formed(review: dict[str, object], role: str, *, current: bool) -> None:
+    if current:
+        _schema_validate(
+            review,
+            "review-result.schema.json",
+            {
+                "IMPLEMENTATION_READINESS_REVIEWER": "DescendantImplementationReviewResult",
+                "CYBERSECURITY_REVIEWER": "DescendantCybersecurityReviewResult",
+            }[role],
+        )
     if (
-        review.get("schema_version") != "independent-review-result/v1"
+        review.get("schema_version") != f"independent-review-result/v{2 if current else 1}"
         or review.get("review_role") != role
         or review.get("authorized_production_phases") != "NONE"
         or review.get("content_hash") != review_content_hash(review)
@@ -100,11 +136,35 @@ def aggregate_independent_reviews(
     expected_host_boot_id: str,
     expected_trust_epoch: int,
     now: datetime | None = None,
+    external_seal: dict[str, object] | None = None,
 ) -> dict[str, object]:
     if config.get("authorized_production_phases") != "NONE":
         raise ValueError("E_REVIEW_AUTHORITY")
-    _review_is_well_formed(implementation, "IMPLEMENTATION_READINESS_REVIEWER")
-    _review_is_well_formed(cybersecurity, "CYBERSECURITY_REVIEWER")
+    current = config.get("schema_version") == "review-aggregation-config/v2"
+    if config.get("schema_version") not in {
+        None,
+        "review-aggregation-config/v1",
+        "review-aggregation-config/v2",
+    }:
+        raise ValueError("E_REVIEW_RESULT")
+    _review_is_well_formed(implementation, "IMPLEMENTATION_READINESS_REVIEWER", current=current)
+    _review_is_well_formed(cybersecurity, "CYBERSECURITY_REVIEWER", current=current)
+    verify_review_result_binding(implementation, implementation_authorization)
+    verify_review_result_binding(cybersecurity, cybersecurity_authorization)
+    if current and review_identity(implementation) != review_identity(cybersecurity):
+        raise ValueError("E_REVIEW_IDENTITY")
+    if current and (
+        external_seal is None
+        or external_seal.get("schema_version") != "external-seal-attestation/v7"
+        or external_seal.get("artifact_type") != "RUNTIME_PACK"
+        or review_identity(external_seal) != review_identity(implementation)
+        or external_seal.get("zip_sha256") != implementation["pack_zip_sha256"]
+        or any(
+            external_seal.get("manifest_sha256") != auth.get("pack_manifest_sha256")
+            for auth in (implementation_authorization, cybersecurity_authorization)
+        )
+    ):
+        raise ValueError("E_REVIEW_IDENTITY")
     verify_review_execution_receipt(
         implementation_receipt,
         implementation_authorization,
@@ -131,20 +191,23 @@ def aggregate_independent_reviews(
         or implementation_receipt["workspace_root"] == cybersecurity_receipt["workspace_root"]
         or implementation_receipt["authorization_id"] == cybersecurity_receipt["authorization_id"]
         or implementation_receipt["review_run_id"] == cybersecurity_receipt["review_run_id"]
-        or implementation_receipt["input_content_roots"] != cybersecurity_receipt["input_content_roots"]
+        or implementation_receipt["input_content_roots"]
+        != cybersecurity_receipt["input_content_roots"]
         or implementation_authorization.get("one_use_serial")
         == cybersecurity_authorization.get("one_use_serial")
         or implementation_authorization.get("allowed_output_root")
         == cybersecurity_authorization.get("allowed_output_root")
     ):
         raise ValueError("E_REVIEW_INDEPENDENCE")
-    if (
-        implementation_receipt["result_sha256"] != _digest(implementation)
-        or cybersecurity_receipt["result_sha256"] != _digest(cybersecurity)
-    ):
+    if implementation_receipt["result_sha256"] != _digest(implementation) or cybersecurity_receipt[
+        "result_sha256"
+    ] != _digest(cybersecurity):
         raise ValueError("E_REVIEW_RECEIPT")
     aggregate_at = (now or datetime.now(UTC)).astimezone(UTC)
-    latest_finish = max(_instant(implementation_receipt["finished_at"]), _instant(cybersecurity_receipt["finished_at"]))
+    latest_finish = max(
+        _instant(implementation_receipt["finished_at"]),
+        _instant(cybersecurity_receipt["finished_at"]),
+    )
     delay = config.get("maximum_aggregate_delay_seconds")
     if not isinstance(delay, int) or isinstance(delay, bool):
         raise ValueError("E_REVIEW_FRESHNESS")
@@ -153,10 +216,20 @@ def aggregate_independent_reviews(
     implementation_verdicts = implementation["verdicts"]
     cybersecurity_verdicts = cybersecurity["verdicts"]
     assert isinstance(implementation_verdicts, dict) and isinstance(cybersecurity_verdicts, dict)
-    if implementation_verdicts.get("AUTHORIZED_PRODUCTION_PHASES") != "NONE" or cybersecurity_verdicts.get("AUTHORIZED_PRODUCTION_PHASES") != "NONE":
+    if (
+        implementation_verdicts.get("AUTHORIZED_PRODUCTION_PHASES") != "NONE"
+        or cybersecurity_verdicts.get("AUTHORIZED_PRODUCTION_PHASES") != "NONE"
+    ):
         raise ValueError("E_REVIEW_AUTHORITY")
     ready = implementation_verdicts.get("READY_TO_IMPLEMENT_DISCOVERY_PACK")
-    if ready == "YES" and any(implementation_verdicts.get(flag) != "YES" for flag in _IMPLEMENTATION_FLAGS):
+    implementation_flags = (
+        ("DESCENDANT_REPOSITORY_VALID", *_IMPLEMENTATION_FLAGS[1:])
+        if current
+        else _IMPLEMENTATION_FLAGS
+    )
+    if ready == "YES" and any(
+        implementation_verdicts.get(flag) != "YES" for flag in implementation_flags
+    ):
         raise ValueError("E_REVIEW_PREREQUISITES")
     security_complete = all(cybersecurity_verdicts.get(flag) == "YES" for flag in _SECURITY_FLAGS)
     passed = (
@@ -177,27 +250,38 @@ def aggregate_independent_reviews(
     ids = [str(item.get("finding_id")) for item in finding_rows]
     if len(ids) != len(set(ids)):
         raise ValueError("E_REVIEW_FINDINGS")
-    finding_rows.sort(key=lambda item: (_SEVERITY.get(str(item.get("severity")), 99), str(item.get("finding_id"))))
+    finding_rows.sort(
+        key=lambda item: (_SEVERITY.get(str(item.get("severity")), 99), str(item.get("finding_id")))
+    )
     result_hashes = [
-        _digest(implementation), _digest(cybersecurity), _digest(implementation_receipt), _digest(cybersecurity_receipt)
+        _digest(implementation),
+        _digest(cybersecurity),
+        _digest(implementation_receipt),
+        _digest(cybersecurity_receipt),
     ]
     aggregate_name = hashlib.sha256(
         b"".join(bytes.fromhex(value) for value in result_hashes)
     ).hexdigest()
     aggregate: dict[str, object] = {
-        "schema_version": "independent-review-result/v1",
+        "schema_version": "review-aggregate-result/v2"
+        if current
+        else "independent-review-result/v1",
         "review_role": "AGGREGATE_REVIEWER",
         "review_outcome": "PASS" if passed else "HOLD",
         "findings": finding_rows,
         "pack_zip_sha256": implementation["pack_zip_sha256"],
-        "repo0_receipt_sha256": implementation["repo0_receipt_sha256"],
+        **(
+            review_identity(implementation)
+            if current
+            else {"repo0_receipt_sha256": implementation["repo0_receipt_sha256"]}
+        ),
         "review_run_id": str(uuid.uuid5(uuid.NAMESPACE_URL, "hd634:" + aggregate_name)),
         "implementation_review_sha256": result_hashes[0],
         "cybersecurity_review_sha256": result_hashes[1],
         "implementation_receipt_sha256": result_hashes[2],
         "cybersecurity_receipt_sha256": result_hashes[3],
         "verdicts": {
-            **{flag: implementation_verdicts.get(flag, "NO") for flag in _IMPLEMENTATION_FLAGS},
+            **{flag: implementation_verdicts.get(flag, "NO") for flag in implementation_flags},
             "READY_TO_IMPLEMENT_DISCOVERY_PACK": "YES" if passed else "NO",
             "SAFE_TO_FREEZE_SCOPE0": implementation_verdicts.get("SAFE_TO_FREEZE_SCOPE0", "NO"),
             "AUTHORIZED_PRODUCTION_PHASES": "NONE",
@@ -205,16 +289,29 @@ def aggregate_independent_reviews(
         "authorized_production_phases": "NONE",
     }
     aggregate["content_hash"] = review_content_hash(aggregate)
+    if current:
+        _schema_validate(aggregate, "review-result.schema.json", "DescendantAggregateReviewResult")
     return aggregate
 
 
 def build_plan_self_review(record: dict[str, object]) -> dict[str, object]:
     forbidden = {"zip_sha256", "zip", "sidecar", "manifest_sha256", "final_manifest_sha256"}
     required = {
-        "schema_version", "governed_content_root", "task_manifest_sha256", "checks", "test_exit_code",
-        "test_output_sha256", "independent_plan_review", "runtime_implementation_ready", "authorized_production_phases",
+        "schema_version",
+        "governed_content_root",
+        "task_manifest_sha256",
+        "checks",
+        "test_exit_code",
+        "test_output_sha256",
+        "independent_plan_review",
+        "runtime_implementation_ready",
+        "authorized_production_phases",
     }
-    if set(record) != required or forbidden & set(record) or record.get("schema_version") != "plan-self-review/v1":
+    if (
+        set(record) != required
+        or forbidden & set(record)
+        or record.get("schema_version") != "plan-self-review/v1"
+    ):
         raise ValueError("E_SELF_REVIEW_BINDING")
     if (
         record.get("test_exit_code") != 0

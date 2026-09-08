@@ -27,6 +27,12 @@ import rfc8785
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 from moj_discovery.review_authorization import verify_review_launch_authorization
+from tools.issue_review_launch_authorization import (
+    measure_review_context,
+    recheck_review_context,
+    review_config_for_role,
+    review_public_key,
+)
 from tools.run_review_a_checks import run_review_a_checks
 from tools.run_review_b_checks import run_review_b_checks
 
@@ -77,37 +83,15 @@ def prepare_review_workspace(config: dict[str, object]) -> dict[str, object]:
     return {"result": "PASS", "workspace_root": str(workspace), "output_root": str(output)}
 
 
-def _config_for_role(role: str) -> dict[str, object]:
-    names = {
-        "IMPLEMENTATION_READINESS_REVIEWER": "review-a.v1.json",
-        "CYBERSECURITY_REVIEWER": "review-b.v1.json",
-    }
-    name = names.get(role)
-    if name is None:
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    return cast(dict[str, object], json.loads((RUNTIME_ROOT / "review-config" / name).read_text()))
+def _config_for_role(role: str, version: int = 1) -> dict[str, object]:
+    return review_config_for_role(role, version, runtime_root=RUNTIME_ROOT)
 
 
 def _public_key(authority_config: dict[str, object]) -> tuple[Ed25519PublicKey, int]:
-    record_path = Path(cast(str, authority_config["public_key_path"]))
-    _regular(record_path)
-    record = json.loads(record_path.read_text())
-    encoded = record.get("public_key_b64url") if isinstance(record, dict) else None
-    epoch = record.get("trust_epoch") if isinstance(record, dict) else None
-    if (
-        not isinstance(encoded, str)
-        or not isinstance(epoch, int)
-        or isinstance(epoch, bool)
-        or epoch < 0
-    ):
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     try:
-        raw = base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4))
-    except ValueError as error:
+        return review_public_key(authority_config)
+    except (OSError, ValueError) as error:
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION") from error
-    if len(raw) != 32 or base64.urlsafe_b64encode(raw).decode().rstrip("=") != encoded:
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    return Ed25519PublicKey.from_public_bytes(raw), epoch
 
 
 def _authority_state(
@@ -394,7 +378,10 @@ def _tool_mounts(
     commands: list[dict[str, object]],
 ) -> tuple[list[tuple[Path, Path]], list[tuple[str, str]]]:
     names = {cast(list[str], command["argv"])[0] for command in commands}
-    if any(command.get("command_id") == "A_CHECK_BASELINE" for command in commands):
+    if any(
+        command.get("command_id") in {"A_CHECK_BASELINE", "A_CHECK_DESCENDANT"}
+        for command in commands
+    ):
         names.update({"node", "pnpm"})
     mounts: list[tuple[Path, Path]] = []
     links: list[tuple[str, str]] = []
@@ -560,6 +547,9 @@ def _write_json(path: Path, value: dict[str, object]) -> None:
 def _start_namespace(
     config: dict[str, object], authorization: dict[str, object]
 ) -> dict[str, object]:
+    version = 2 if authorization.get("schema_version") == "review-launch-authorization/v2" else 1
+    if version == 2 and _config_for_role(cast(str, config["role"]), version) != config:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     commands = _registered_leaf_commands(config, authorization)
     scratch = Path(cast(str, config["scratch_root"]))
     control, home, temporary = scratch / "control", scratch / "home", scratch / "tmp"
@@ -569,11 +559,8 @@ def _start_namespace(
         _directory(path)
     python = _prepared_python_environment(config) / "bin/python"
     socket_path = temporary / "namespace.sock"
-    config_name = (
-        "review-a.v1.json"
-        if config["role"] == "IMPLEMENTATION_READINESS_REVIEWER"
-        else "review-b.v1.json"
-    )
+    label = "a" if config["role"] == "IMPLEMENTATION_READINESS_REVIEWER" else "b"
+    config_name = f"review-{label}.v{version}.json"
     broker: dict[str, object] = {
         "argv": [
             str(python),
@@ -801,6 +788,13 @@ def _consume(
         expected_host_boot_id=Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
         expected_trust_epoch=trust_epoch,
     )
+    context = None
+    if (
+        authorization.get("schema_version") == "review-launch-authorization/v2"
+        or config.get("schema_version") == "review-config/v2"
+    ):
+        context = measure_review_context(config, authorization)
+        recheck_review_context(context)
     _authority_state(authorization, cast(dict[str, object], authority), consume=not execute)
     output = Path(cast(str, config["output_root"]))
     attestation_path = output / "workspace-attestation.json"
@@ -874,7 +868,10 @@ def main() -> None:
     elif args.authorization is not None and args.config is None:
         authorization = json.loads(args.authorization.read_text())
         result = _consume(
-            _config_for_role(cast(str, authorization["review_role"])),
+            _config_for_role(
+                cast(str, authorization["review_role"]),
+                2 if authorization.get("schema_version") == "review-launch-authorization/v2" else 1,
+            ),
             authorization,
             execute=args.execute,
         )
