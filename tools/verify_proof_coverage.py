@@ -6,11 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import shutil
 import sys
-from datetime import datetime
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -94,6 +91,34 @@ def verify_proof_coverage_matrix(
         or (stage == "SEALED" and artifacts is None)
     ):
         raise ValueError("E_PROOF_COVERAGE")
+    if stage == "SEALED":
+        from tools.assemble_review_pack import load_sealed_assembly_context
+
+        assert evidence_root is not None and config is not None and artifacts is not None
+        pack = evidence_root.parent
+        try:
+            checked, copied = load_sealed_assembly_context(
+                pack,
+                pack / "docs/configs/full-verifier-controller.v2.json",
+                str(config.source_path),
+                pack / "evidence/retained-artifact-manifest.json",
+                pack / "evidence/retained",
+            )
+            if (
+                evidence_root != pack / "evidence"
+                or checked != config
+                or copied != artifacts
+                or json.dumps(matrix, sort_keys=True)
+                != json.dumps(
+                    json.loads(
+                        (pack / "docs/registries/proof-coverage-matrix.v1.json").read_bytes(),
+                    ),
+                    sort_keys=True,
+                )
+            ):
+                raise ValueError("E_PROOF_COVERAGE")
+        except (OSError, ValueError, TypeError) as error:
+            raise ValueError("E_PROOF_COVERAGE") from error
     entries = matrix.get("entries")
     if not isinstance(entries, list) or len(entries) != 18:
         raise ValueError("E_PROOF_COVERAGE")
@@ -149,16 +174,26 @@ def verify_proof_coverage_matrix(
                     raise ValueError("E_PROOF_COVERAGE")
                 path = evidence_root.parent / sealed
             try:
-                raw = (
-                    artifacts.read_bytes(
-                        str(path),
-                        recorded_boundary=artifacts.recorded_boundary(str(path)),
+                if stage == "SEALED":
+                    assert artifacts is not None
+                    raw = path.read_bytes()
+                    recorded = entry["evidence_artifact"]
+                    if raw != artifacts.read_bytes(
+                        recorded,
+                        recorded_boundary=artifacts.recorded_boundary(recorded),
+                    ):
+                        raise ValueError("E_PROOF_COVERAGE")
+                else:
+                    raw = (
+                        artifacts.read_bytes(
+                            str(path),
+                            recorded_boundary=artifacts.recorded_boundary(str(path)),
+                        )
+                        if artifacts is not None
+                        else path.read_bytes()
                     )
-                    if artifacts is not None
-                    else path.read_bytes()
-                )
                 evidence = json.loads(raw)
-            except (OSError, json.JSONDecodeError) as error:
+            except (OSError, ValueError) as error:
                 raise ValueError("E_PROOF_COVERAGE") from error
             if (
                 not isinstance(evidence, dict)
@@ -187,43 +222,32 @@ def verify_proof_coverage_matrix(
 
 
 def _verify_sealed_inputs(
-    matrix: Path, attestation_path: Path, zip_path: Path, sidecar: Path
+    matrix: Path,
+    attestation_path: Path,
+    zip_path: Path,
+    sidecar: Path,
+    *,
+    config_path: Path | None = None,
+    recorded_config_locator: str | None = None,
+    retained_manifest: Path | None = None,
+    retained_root: Path | None = None,
 ) -> None:
-    from tools.compute_governed_content_root import compute_governed_content_root
-    from tools.seal_review_pack import seal_review_pack
+    from tools.seal_review_pack import verify_sealed_review_pack
 
     pack = matrix.parents[2]
     try:
-        attestation = json.loads(attestation_path.read_text())
-        digest = hashlib.sha256(zip_path.read_bytes()).hexdigest()
-        if (
-            not isinstance(attestation, dict)
-            or attestation.get("schema_version") != "external-seal-attestation/v6"
-            or attestation.get("artifact_type") != "RUNTIME_PACK"
-            or attestation.get("authorized_production_phases") != "NONE"
-            or attestation.get("zip_sha256") != digest
-            or sidecar.read_text() != f"{digest}  {zip_path.name}\n"
-        ):
+        if matrix != pack / "docs/registries/proof-coverage-matrix.v1.json":
             raise ValueError("E_PROOF_COVERAGE")
-        datetime.fromisoformat(str(attestation["created_at"]).replace("Z", "+00:00"))
-        with TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            rebuilt_pack = root / pack.name
-            shutil.copytree(pack, rebuilt_pack)
-            compute_governed_content_root(
-                rebuilt_pack, rebuilt_pack / "docs/registries/seal-exclusions.v1.json"
-            )
-            rebuilt_zip = root / zip_path.name
-            rebuilt_attestation = root / attestation_path.name
-            expected = seal_review_pack(
-                rebuilt_pack,
-                rebuilt_zip,
-                root / sidecar.name,
-                rebuilt_attestation,
-            )
-            expected["created_at"] = attestation["created_at"]
-            if expected != attestation or rebuilt_zip.read_bytes() != zip_path.read_bytes():
-                raise ValueError("E_PROOF_COVERAGE")
+        verify_sealed_review_pack(
+            pack,
+            zip_path,
+            sidecar,
+            attestation_path,
+            config_path=config_path,
+            recorded_config_locator=recorded_config_locator,
+            retained_manifest=retained_manifest,
+            retained_root=retained_root,
+        )
     except (KeyError, OSError, ValueError, json.JSONDecodeError) as error:
         raise ValueError("E_PROOF_COVERAGE") from error
 
@@ -237,21 +261,46 @@ def main() -> None:
     parser.add_argument("--zip", dest="zip_path", type=Path)
     parser.add_argument("--sidecar", type=Path)
     parser.add_argument("--config", type=Path)
+    parser.add_argument("--recorded-config")
+    parser.add_argument("--retained-manifest", type=Path)
+    parser.add_argument("--retained-root", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    config = load_controller_config(args.config) if args.config else None
-    if args.stage == "CANDIDATE" and (config is None or args.output is None):
-        raise ValueError("E_PROOF_COVERAGE")
-    result = verify_proof_coverage_matrix(
-        json.loads(args.matrix.read_text()), args.evidence_root, args.stage, config
-    )
+    context = (args.config, args.recorded_config, args.retained_manifest, args.retained_root)
+    config, artifacts = None, None
     seal_inputs = (args.attestation, args.zip_path, args.sidecar)
     if args.stage == "SEALED":
-        if not all(value is not None for value in seal_inputs):
+        if not all(value is not None for value in (*context, *seal_inputs)):
             raise ValueError("E_PROOF_COVERAGE")
-        _verify_sealed_inputs(args.matrix, args.attestation, args.zip_path, args.sidecar)
-    elif any(value is not None for value in seal_inputs):
-        raise ValueError("E_PROOF_COVERAGE")
+        from tools.assemble_review_pack import load_sealed_assembly_context
+
+        try:
+            config, artifacts = load_sealed_assembly_context(args.matrix.parents[2], *context)
+        except (OSError, ValueError) as error:
+            raise ValueError("E_PROOF_COVERAGE") from error
+        _verify_sealed_inputs(
+            args.matrix,
+            args.attestation,
+            args.zip_path,
+            args.sidecar,
+            config_path=args.config,
+            recorded_config_locator=args.recorded_config,
+            retained_manifest=args.retained_manifest,
+            retained_root=args.retained_root,
+        )
+    else:
+        if any(value is not None for value in (*context[1:], *seal_inputs)):
+            raise ValueError("E_PROOF_COVERAGE")
+        config = load_controller_config(args.config) if args.config else None
+        if args.stage == "CANDIDATE" and (config is None or args.output is None):
+            raise ValueError("E_PROOF_COVERAGE")
+    result = verify_proof_coverage_matrix(
+        json.loads(args.matrix.read_text()),
+        args.evidence_root,
+        args.stage,
+        config,
+        artifacts=artifacts,
+    )
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with args.output.open("x", encoding="utf-8") as stream:
