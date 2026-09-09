@@ -19,3 +19,5 @@ OS-12 DONE: verified static synthetic diagnostic. Explicit offline suite 107 pas
 OS-13 DONE: network-free live preflight and future runbook. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.
 
 OS-14 DONE: 107 offline tests passed; portable compiler/registry/85 repair tests/repair collection all exit 0. Read-only review findings fixed; worker no longer imports parent oracle on startup (red then 9 focused green tests). Formal independent security NOT_RUN, legacy full qualification HOLD. Detailed static limitations: `docs/repairs/offline-slice-review.md`.
+
+OS-15 implementation frozen: handoff and CLI complete; final acceptance and independent verification now run on the resulting HEAD. Actual completion remains in the ignored execution checkpoint and source-bound result, not a self-referential documentation claim.
