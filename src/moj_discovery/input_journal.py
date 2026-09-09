@@ -64,7 +64,7 @@ class InputJournal:
         self._verified_bytes = b""
         self._verified_rows: list[dict[str, Any]] = []
 
-    def _rows(self) -> list[dict[str, Any]]:
+    def _rows(self, *, complete_prefix: bool = False) -> list[dict[str, Any]]:
         if any(path.is_symlink() for path in (self.root, *self.root.parents, self.root / "raw")):
             raise ValueError("E_OFFLINE_RUN_PATH")
         if not self.path.exists() and not self.path.is_symlink():
@@ -72,6 +72,8 @@ class InputJournal:
                 raise ValueError("E_OFFLINE_JOURNAL_INTEGRITY")
             return []
         data = _read(self.path)
+        if complete_prefix:
+            data = data[: data.rfind(b"\n") + 1]
         # Re-read every byte; same-size or restored-mtime tampering invalidates reuse.
         if data == self._verified_bytes:
             return self._verified_rows
@@ -306,8 +308,10 @@ class InputJournal:
             }
         )
 
-    def iter_operations(self) -> Iterator[dict[str, Any]]:
-        for row in self._rows():
+    def iter_operations(
+        self, *, start: int = 0, complete_prefix: bool = False
+    ) -> Iterator[dict[str, Any]]:
+        for row in self._rows(complete_prefix=complete_prefix)[start:]:
             if row["kind"] == "RECEIVED":
                 data = _read(self.root / "raw" / (row["raw_hash"] + ".json"), 65536)
                 raw = validate_synthetic_observation(data, self.context)

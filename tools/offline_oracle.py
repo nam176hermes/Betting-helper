@@ -1,17 +1,27 @@
 """Parent-only expectations. Never imported by browser, receiver, or storage readers."""
 
+import base64
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
 
+import rfc8785
+
+from moj_discovery.canonical import canonical_content_hash
 from moj_discovery.input_journal import InputJournal
 from moj_discovery.offline_projection import semantic_projection
+from moj_discovery.store import VENDOR
+from moj_discovery.synthetic_source import load_synthetic_observations
+from tools.offline_harness import poison_inputs
 
 
 def assert_case(case_id: str, run_dir: Path) -> dict[str, Any]:
     if not __debug__:
         raise RuntimeError("E_OFFLINE_OPTIMIZED_EXECUTION")
     directory = run_dir.parent
+    timing = json.loads((directory / "timings.json").read_text())
+    assert timing["execution_and_replay_seconds"] <= (120 if case_id == "OFF-19" else 30)
     observed = json.loads((directory / "readback.json").read_text())
     reader = observed["reader"]
     assert reader["status"] == "OK"
@@ -86,6 +96,46 @@ def assert_case(case_id: str, run_dir: Path) -> dict[str, Any]:
             "OFF-26": "E_SPOOL_SCHEMA",
         }[case_id]
         assert any(item.get("status") == "REJECTED" and item.get("code") == code for item in writer)
+    if case_id == "OFF-11":
+        rejected = [r for r in writer if r.get("status") == "REJECTED"]
+        assert len(rejected) == 5 and all(r["code"] == "E_OFFLINE_SCHEMA" for r in rejected)
+        assert reader["retained"] == [] and reader["state"]["nextSequence"] == "1"
+        raw = load_synthetic_observations(directory / "scenario.json")[0]
+        needles: set[bytes] = set()
+        for poisoned in poison_inputs(raw):
+            key = next(key for key in poisoned if key not in raw)
+            value = poisoned[key].encode()
+            needles.update(
+                [
+                    value,
+                    base64.b64encode(value),
+                    value.hex().encode(),
+                    hashlib.sha256(value).hexdigest().encode(),
+                ]
+            )
+            for data in [
+                rfc8785.dumps(poisoned),
+                json.dumps(poisoned, separators=(",", ":")).encode(),
+            ]:
+                needles.add(hashlib.sha256(data).hexdigest().encode())
+            needles.add(
+                canonical_content_hash(
+                    "RawObservation",
+                    poisoned,
+                    registry_path=VENDOR / "registries/canonical-hash-domains.v1.json",
+                ).encode()
+            )
+        overlap = max(map(len, needles)) - 1
+        for path in directory.rglob("*"):
+            if path.is_file():
+                with path.open("rb") as stream:
+                    tail = b""
+                    while chunk := stream.read(1048576):
+                        block = tail + chunk
+                        assert not any(needle in block for needle in needles), (
+                            "E_OFFLINE_POISON_LEAK"
+                        )
+                        tail = block[-overlap:]
     if case_id == "OFF-18":
         assert 0 < len(reader["retained"]) < 3
         assert int(reader["state"]["nextSequence"]) == len(reader["retained"]) + 1
@@ -100,6 +150,25 @@ def assert_case(case_id: str, run_dir: Path) -> dict[str, Any]:
         assert checkpoints[-1]["stage"] == "BEFORE_IDB_COMMIT"
         assert checkpoints[-1]["workerId"] != reader["workerId"]
         assert reader["retained"] == [] and reader["state"]["nextSequence"] == "1"
+    if case_id == "OFF-06":
+        restarts = [r for r in writer if r.get("operation") == "RESTART_WORKER"]
+        assert len(restarts) == 2 and all(r["status"] == "WORKER_TERMINATED" for r in restarts)
+        initializations = [r for r in writer if r.get("operation") == "INIT"]
+        assert len(initializations) == 3
+        assert len({r["workerId"] for r in initializations}) == 3
+        for resumed in initializations[1:]:
+            assert resumed["state"]["nextSequence"] == "2"
+            assert resumed["state"]["ackSequence"] == "0"
+            assert resumed["state"]["pendingCount"] == 1
+        points = [
+            p
+            for r in writer
+            for p in r.get("checkpoints", [])
+            if p.get("stage") == "AFTER_ACK_BEFORE_LOCAL_PERSIST"
+        ]
+        assert points and points[-1]["workerId"] == initializations[1]["workerId"]
+        assert points[-1]["sequence"] == "1"
+        assert points[-1]["cursorHash"] == actual["ack_outbox"][0]["cursor_hash"]
     if case_id in {"OFF-04", "OFF-24"}:
         checkpoint = json.loads((run_dir / "checkpoint.json").read_text())
         killed = json.loads((directory / "backend.json").read_text())
@@ -118,7 +187,7 @@ def assert_case(case_id: str, run_dir: Path) -> dict[str, Any]:
     else:
         replay = json.loads((directory / "replay/replay-result.json").read_text())
         assert replay["equal"] is True
-        if case_id in {"OFF-02", "OFF-03"}:
+        if case_id in {"OFF-02", "OFF-03", "OFF-06"}:
             assert replay["deliveries"] == count + 1
         if case_id == "OFF-17":
             before = (directory / "readback.json").read_bytes()

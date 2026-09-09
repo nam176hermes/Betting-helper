@@ -129,6 +129,8 @@ def verify_offline_slice(result_path: Path) -> dict[str, Any]:
             "--browser-binary",
             str(browser_path),
         ]
+        if not 0 < command["elapsed_seconds"] <= (120 if case == "OFF-19" else 30):
+            raise ValueError("E_OFFLINE_CASE_TIMEOUT")
         if (
             command["exit"] != 0
             or command["pid"] <= 0

@@ -47,6 +47,8 @@ def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
 
 def _validate_unicode(value: object) -> None:
     if isinstance(value, str):
+        if str.isascii(value):
+            return
         if (
             any(0xD800 <= ord(char) <= 0xDFFF for char in value)
             or unicodedata.normalize("NFC", value) != value

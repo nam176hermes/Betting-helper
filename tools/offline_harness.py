@@ -22,6 +22,18 @@ from tools.offline_browser import ROOT, OfflineBrowser, prepare_offline_extensio
 from tools.offline_wire import run_wire_case
 
 
+def poison_inputs(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    prefix = "synthetic-poison-" + raw["discovery_run_id"] + "-"
+    values = {
+        "cookie": prefix + "cookie",
+        "token": prefix + "token",
+        "raw_url": "https://example.invalid/" + prefix + "raw_url",
+        "script": "<script>" + prefix + "script</script>",
+        "unknown_command": prefix + "unknown_command",
+    }
+    return [{**raw, key: value} for key, value in values.items()]
+
+
 def process_group_sample(group: int) -> dict[str, Any]:
     ticks = resident = count = 0
     for entry in Path("/proc").iterdir():
@@ -258,7 +270,27 @@ class SliceHarness:
         }.get(case_id)
         backend = Backend(store.db_path.parent, directory / "backend.json", backend_fault)
         browser = None
+        replay_process = None
+        replay_log = None
+        writer_closed = directory / "writer-closed"
         try:
+            if case_id == "OFF-19":
+                replay_started = monotonic()
+                replay_log = (directory / "replay-process.log").open("xb")
+                replay_process = subprocess.Popen(  # noqa: S603 -- owned local replay, no oracle inputs
+                    [
+                        sys.executable,
+                        "-m",
+                        "moj_discovery.replay",
+                        str(store.db_path.parent),
+                        str(directory / "replay"),
+                        "--writer-closed",
+                        str(writer_closed),
+                    ],
+                    cwd=ROOT,
+                    stdout=replay_log,
+                    stderr=replay_log,
+                )
             credentials = backend.register()
             browser = OfflineBrowser(
                 directory / "browser",
@@ -303,7 +335,10 @@ class SliceHarness:
                 command("RESTART_WORKER")
                 observations.append(browser.collect(pending))
                 command("INIT", context=context, credentials=backend.register())
-            elif case_id in {"OFF-11", "OFF-12", "OFF-26"}:
+            elif case_id == "OFF-11":
+                for poisoned in poison_inputs(rows[0]):
+                    command("APPEND", observations=[poisoned])
+            elif case_id in {"OFF-12", "OFF-26"}:
                 poisoned = dict(rows[0])
                 if case_id == "OFF-12":
                     poisoned["discovery_run_id"] = str(uuid4())
@@ -339,6 +374,21 @@ class SliceHarness:
                     command("INIT", context=context, credentials=backend.register())
                 if case_id == "OFF-06":
                     command("RESTART_WORKER")
+                    command("INIT", context=context, credentials=backend.register())
+                    pending = browser.submit({"operation": "FLUSH_PREACK"})
+                    deadline = monotonic() + 10
+                    while True:
+                        checkpoint = command("READ_CHECKPOINTS")
+                        if any(
+                            p.get("stage") == "AFTER_ACK_BEFORE_LOCAL_PERSIST"
+                            for p in checkpoint.get("checkpoints", [])
+                        ):
+                            break
+                        if monotonic() > deadline:
+                            raise RuntimeError("E_OFFLINE_CHECKPOINT_TIMEOUT")
+                        sleep(0.02)
+                    command("RESTART_WORKER")
+                    observations.append(browser.collect(pending))
                     command("INIT", context=context, credentials=backend.register())
                 if case_id == "OFF-07":
                     browser.close()
@@ -387,17 +437,35 @@ class SliceHarness:
                 )
             )
         finally:
-            if browser is not None:
-                browser.close()
-            backend.close()
+            try:
+                try:
+                    if browser is not None:
+                        browser.close()
+                finally:
+                    backend.close()
+                workload_finished = monotonic()
+                if replay_process is not None:
+                    writer_closed.touch(exist_ok=False)
+                    if replay_process.wait(timeout=max(1, 120 - (monotonic() - case_started))) != 0:
+                        raise RuntimeError("E_OFFLINE_REPLAY_PROCESS")
+            finally:
+                if replay_process is not None and replay_process.poll() is None:
+                    replay_process.terminate()
+                    try:
+                        replay_process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        replay_process.kill()
+                        replay_process.wait()
+                if replay_log is not None:
+                    replay_log.close()
         if case_id == "OFF-16":
             retained = store.db_path.parent / "raw" / (rows[0]["content_hash"] + ".json")
             retained.rename(retained.with_suffix(".removed-by-negative-control"))
-        workload_finished = monotonic()
         readback = json.loads((directory / "readback.json").read_text())
         readback["elapsed_seconds"] = workload_finished - started
         (directory / "readback.json").write_text(json.dumps(readback, indent=2))
-        replay_started = monotonic()
+        if replay_process is None:
+            replay_started = monotonic()
         if case_id == "OFF-16":
             try:
                 verify_replay_equivalence(store.db_path.parent, directory / "replay")
@@ -405,7 +473,7 @@ class SliceHarness:
                 (directory / "replay-rejected.json").write_text('{"rejected":true}')
             else:
                 raise ValueError("E_OFFLINE_NEGATIVE_CONTROL_ACCEPTED")
-        else:
+        elif replay_process is None:
             verify_replay_equivalence(store.db_path.parent, directory / "replay")
         finished = monotonic()
         (directory / "timings.json").write_text(
@@ -415,7 +483,8 @@ class SliceHarness:
                     "workload_and_cold_readback_seconds": workload_finished - started,
                     "replay_verification_seconds": finished - replay_started,
                     "execution_and_replay_seconds": finished - case_started,
-                    "target_scope": "INITIALIZED_WORKLOAD_THROUGH_COLD_READBACK_AND_OWNED_SHUTDOWN",
+                    "target_scope": "FULL_CASE_SETUP_WORKLOAD_COLD_READBACK_REPLAY_AND_SHUTDOWN",
+                    "replay_overlapped_writer": replay_process is not None,
                     "replay_verification_is_mandatory": True,
                 },
                 indent=2,

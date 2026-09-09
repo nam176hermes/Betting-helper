@@ -35,10 +35,46 @@ def _plain_json(value: object) -> bool:
     return False
 
 
+@lru_cache(maxsize=16)
+def _selected_schema(schema: bytes, kind: str) -> bytes:
+    """Prune only branches proven impossible by distinct mandatory const constraints."""
+    root = json.loads(schema)
+    if (
+        not isinstance(root, dict)
+        or root.get("$id") != "urn:hybrid-discovery:v6.2:raw-observation:v1"
+    ):
+        return schema
+    selected: dict[str, object] = {}
+    try:
+        for branch in root["oneOf"]:
+            if set(branch) != {"$ref"} or not branch["$ref"].startswith("#/$defs/"):
+                return schema
+            definition = root["$defs"][branch["$ref"][len("#/$defs/") :]]
+            constants = [
+                clause["properties"]["observation_kind"]["const"]
+                for clause in definition["allOf"]
+                if isinstance(clause, dict)
+                and isinstance(clause.get("properties"), dict)
+                and isinstance(clause["properties"].get("observation_kind"), dict)
+                and "const" in clause["properties"]["observation_kind"]
+            ]
+            if len(constants) != 1 or not isinstance(constants[0], str) or constants[0] in selected:
+                return schema
+            selected[constants[0]] = branch
+    except (KeyError, TypeError):
+        return schema
+    if kind not in selected:
+        return schema
+    return json.dumps({**root, "oneOf": [selected[kind]]}).encode()
+
+
 @lru_cache(maxsize=32)
 def _validated_json(data: str, schema: bytes, resources: tuple[bytes, ...]) -> None:
     # Only successful proofs of complete immutable JSON and schema bytes are reusable.
-    _compiled(schema, resources).validate(json.loads(data))
+    value = json.loads(data)
+    if isinstance(value, dict) and isinstance(value.get("observation_kind"), str):
+        schema = _selected_schema(schema, value["observation_kind"])
+    _compiled(schema, resources).validate(value)
 
 
 def validate_artifact(

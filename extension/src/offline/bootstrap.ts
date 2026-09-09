@@ -136,6 +136,14 @@ if (typeof document === "undefined") {
           const input = await projectBeforePersistence(request.observations[0], active.projection);
           await Promise.all([active.spool.append(input), active.spool.persistVerifiedAck(
             last.position.generation_key.generation, last.position.sequence, last.cursor_hash)]);
+        } else if (request.operation === "FLUSH_PREACK" && active) {
+          active.spool.persistVerifiedAck = (generation, sequence, cursorHash): Promise<void> => {
+            self.postMessage({status: "CHECKPOINT", stage: "AFTER_ACK_BEFORE_LOCAL_PERSIST",
+              workerId, runId: active?.projection.runId, origin: location.origin,
+              generation, sequence, cursorHash});
+            for (;;) { /* Owned worker dies after actual ACK delivery, before local persistence. */ }
+          };
+          await active.client.flushPending();
         } else if (request.operation === "FLUSH" && active) {
           await active.client.flushPending();
         } else if (request.operation === "TAMPER_REGISTRY" && active) {

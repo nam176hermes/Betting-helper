@@ -265,10 +265,16 @@ def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
 def read_journal(
     connection: sqlite3.Connection, *, ordered: bool = True
 ) -> dict[str, list[dict[str, Any]]]:
-    result = {
-        table: [dict(row) for row in connection.execute(f"SELECT * FROM {table}")]  # noqa: S608 -- fixed allowlist
-        for table in TABLES
-    }
+    result: dict[str, list[dict[str, Any]]] = {}
+    cursor = connection.cursor()
+    cursor.row_factory = None
+    try:
+        for table in TABLES:
+            cursor.execute(f"SELECT * FROM {table}")  # noqa: S608 -- fixed allowlist
+            columns = [column[0] for column in cursor.description]
+            result[table] = [dict(zip(columns, row, strict=True)) for row in cursor]
+    finally:
+        cursor.close()
     if ordered:
         for rows in result.values():
             rows.sort(key=lambda row: json.dumps(row, sort_keys=True))

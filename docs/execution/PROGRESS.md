@@ -21,3 +21,14 @@ OS-13 DONE: network-free live preflight and future runbook. Explicit offline sui
 OS-14 DONE: 107 offline tests passed; portable compiler/registry/85 repair tests/repair collection all exit 0. Read-only review findings fixed; worker no longer imports parent oracle on startup (red then 9 focused green tests). Formal independent security NOT_RUN, legacy full qualification HOLD. Detailed static limitations: `docs/repairs/offline-slice-review.md`.
 
 OS-15 implementation frozen: handoff and CLI complete; final acceptance and independent verification now run on the resulting HEAD. Actual completion remains in the ignored execution checkpoint and source-bound result, not a self-referential documentation claim.
+
+Post-merge audit repair: the earlier OS-10 workload-only timing interpretation
+is superseded. The acceptance gate now requires the whole OFF-19 case within
+120 seconds, including replay. Added ACK-before-local-persist restart evidence,
+all five poison classes and persisted-byte/fingerprint rejection, strict worker
+identity/restart assertions, bounded reconnect with uniform injectable jitter,
+and main-push portable CI. Replay overlaps actual writer journal production
+using the shared Ingestor, then strictly reopens the finished source; the separate
+verifier still reconstructs a fresh replay. No legacy or live authority changes.
+Fresh full regression, acceptance and verifier outcomes belong to the ignored
+execution checkpoint and source-bound artifacts, not the historical PASS above.

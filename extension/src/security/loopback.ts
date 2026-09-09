@@ -7,9 +7,16 @@ import type {Spool} from "../spool.js";
 export type OfflineClientOptions = {
   context: OfflineRunContext; spool: Spool;
   batchSize?: 1 | 32;
+  reconnectJitter?: () => number;
   credentials: () => Promise<{sessionId: string; key: Uint8Array}>;
   validateContext: (value: unknown) => void; validateFrame: (value: unknown) => void;
 };
+
+function uniformJitter(): number {
+  const bytes = new Uint8Array(1);
+  do { crypto.getRandomValues(bytes); } while ((bytes[0] ?? 255) >= 202);
+  return (bytes[0] ?? 0) % 101;
+}
 
 export class AuthenticatedLoopback {
   readonly taskId = "SEC0-T06";
@@ -62,7 +69,13 @@ export class AuthenticatedLoopback {
     }
     this.socket.send(await this.state.send(type, body, this.key));
   }
-  private async connect(): Promise<void> {
+  private async connect(budget = 30000): Promise<void> {
+    const deadline = performance.now() + budget;
+    const remaining = () => {
+      const value = deadline - performance.now();
+      if (value <= 0) throw new Error("E_OFFLINE_TRANSPORT");
+      return Math.min(5000, value);
+    };
     this.socket?.close();
     this.key?.fill(0);
     this.inbox = []; this.failure = undefined;
@@ -87,16 +100,16 @@ export class AuthenticatedLoopback {
       if (this.socket === socket && !this.failure) this.fail("E_OFFLINE_TRANSPORT");
     };
     await new Promise<void>((resolve, reject) => {
-      const timer = setTimeout(() => {socket.close(); reject(new Error("E_OFFLINE_TRANSPORT"));}, 5000);
+      const timer = setTimeout(() => {socket.close(); reject(new Error("E_OFFLINE_TRANSPORT"));}, remaining());
       socket.onopen = () => {clearTimeout(timer); resolve();};
       socket.addEventListener("error", () => {clearTimeout(timer); reject(new Error("E_OFFLINE_TRANSPORT"));}, {once: true});
     });
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
       .replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
     await this.send("HELLO", {run_id: context.run_id, client_nonce: nonce});
-    const welcome = await this.receive(5000);
+    const welcome = await this.receive(remaining());
     await this.send("READY", welcome.body);
-    await this.receive(5000);
+    await this.receive(remaining());
   }
   private serial(work: () => Promise<void>): Promise<void> {
     const result = this.queue.then(async () => {
@@ -114,8 +127,12 @@ export class AuthenticatedLoopback {
       let retryStarted: number | undefined, retry = 0;
       for (;;) {
         if (performance.now() - this.started > 600000) throw new Error("E_OFFLINE_STOPPED");
+        retryStarted ??= performance.now();
+        const attemptStarted = retryStarted;
+        const remaining = 30000 - (performance.now() - attemptStarted);
+        if (remaining <= 0) throw new Error("E_OFFLINE_RECONNECT_TIMEOUT");
         try {
-          if (!this.state?.ready || this.socket?.readyState !== WebSocket.OPEN) await this.connect();
+          if (!this.state?.ready || this.socket?.readyState !== WebSocket.OPEN) await this.connect(remaining);
           const pending = await spool.readPendingObservations(this.options.batchSize ?? 1);
           if (!pending.length) return;
           const identity = {batch_id: crypto.randomUUID(), run_id: context.run_id,
@@ -126,7 +143,7 @@ export class AuthenticatedLoopback {
           const first = head.record.position.sequence, last = tail.record.position.sequence;
           await this.send("BATCH", {...identity, first_sequence: first, last_sequence: last,
             observations: pending.map(row => parseStrictJson(row.canonicalSanitizedBytes))});
-          const frame = await this.receive();
+          const frame = await this.receive(Math.max(0, 30000 - (performance.now() - attemptStarted)));
           if (Object.entries(identity).some(([name, value]) => frame.body[name] !== value)) throw new Error("E_OFFLINE_ACK_IDENTITY");
           if (frame.message_type === "NACK") throw new Error("E_OFFLINE_NACK");
           const sequence = frame.body.highest_contiguous_sequence;
@@ -134,7 +151,7 @@ export class AuthenticatedLoopback {
               BigInt(sequence) < BigInt(first) || BigInt(sequence) > BigInt(last)) throw new Error("E_OFFLINE_ACK_RANGE");
           await spool.persistVerifiedAck(context.generation, sequence, frame.body.cursor_hash as string);
           if (sequence !== last) {
-            const nack = await this.receive();
+            const nack = await this.receive(Math.max(0, 30000 - (performance.now() - attemptStarted)));
             if (nack.message_type !== "NACK" || Object.entries(identity).some(([name, value]) => nack.body[name] !== value)) {
               throw new Error("E_OFFLINE_NACK_IDENTITY");
             }
@@ -143,9 +160,10 @@ export class AuthenticatedLoopback {
           retryStarted = undefined; retry = 0;
         } catch (error) {
           if (!(error instanceof Error) || error.message !== "E_OFFLINE_TRANSPORT") throw error;
-          retryStarted ??= performance.now();
-          const delay = Math.min(250 * 2 ** retry++, 4000) + (crypto.getRandomValues(new Uint8Array(1))[0] ?? 0) % 101;
-          if (performance.now() - retryStarted + delay > 30000) throw new Error("E_OFFLINE_RECONNECT_TIMEOUT", {cause: error});
+          const jitter = (this.options.reconnectJitter ?? uniformJitter)();
+          if (!Number.isInteger(jitter) || jitter < 0 || jitter > 100) throw new Error("E_OFFLINE_JITTER", {cause: error});
+          const delay = Math.min(250 * 2 ** retry++, 4000) + jitter;
+          if (performance.now() - attemptStarted + delay > 30000) throw new Error("E_OFFLINE_RECONNECT_TIMEOUT", {cause: error});
           await new Promise(resolve => setTimeout(resolve, delay));
           this.state = undefined;
         }

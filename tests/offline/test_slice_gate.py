@@ -43,6 +43,26 @@ def test_forged_inventory_artifacts_and_stale_source_are_rejected(tmp_path: Path
         target.write_text(json.dumps(poisoned))
         with pytest.raises(ValueError):
             verify_offline_slice(target)
+    # Rebind the modified artifact hash: rejection must be the timeout gate itself.
+    from tools.offline_results import reference
+
+    command = output / "commands/OFF-01.json"
+    original_command = command.read_bytes()
+    try:
+        value = json.loads(original_command)
+        value["elapsed_seconds"] = 31
+        command.write_text(json.dumps(value))
+        poisoned = copy.deepcopy(baseline)
+        poisoned["records"][0]["artifacts"] = [
+            reference(command, output) if ref["relative_path"] == "commands/OFF-01.json" else ref
+            for ref in poisoned["records"][0]["artifacts"]
+        ]
+        target = output / "timeout.json"
+        target.write_text(json.dumps(poisoned))
+        with pytest.raises(ValueError, match="E_OFFLINE_CASE_TIMEOUT"):
+            verify_offline_slice(target)
+    finally:
+        command.write_bytes(original_command)
     source = ROOT / "config/live.example.json"
     previous = source.read_bytes()
     try:

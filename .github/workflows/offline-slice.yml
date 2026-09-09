@@ -2,7 +2,12 @@
   "name": "Offline slice (legacy authoring-tests qualification remains separate)",
   "on": {
     "pull_request": {},
-    "workflow_dispatch": {}
+    "workflow_dispatch": {},
+    "push": {
+      "branches": [
+        "main"
+      ]
+    }
   },
   "permissions": {
     "contents": "read"
@@ -36,7 +41,7 @@
         },
         {
           "name": "Compile all test targets and run explicit offline units",
-          "run": "pnpm --dir extension exec tsc -p tsconfig.test.json\nuv run --frozen --offline pytest -q tests/offline/test_contracts.py tests/offline/test_protocol.py tests/offline/test_synthetic_source.py tests/offline/test_input_journal.py tests/offline/test_receiver.py tests/offline/test_schema_cache.py tests/offline/test_diagnostic_view.py tests/offline/test_live_preflight.py tests/offline/test_test_inventory.py"
+          "run": "pnpm --dir extension exec tsc -p tsconfig.test.json\nuv run --frozen --offline pytest -q tests/offline/test_contracts.py tests/offline/test_protocol.py tests/offline/test_synthetic_source.py tests/offline/test_input_journal.py tests/offline/test_receiver.py tests/offline/test_schema_cache.py tests/offline/test_diagnostic_view.py tests/offline/test_live_preflight.py tests/offline/test_test_inventory.py tests/offline/test_retry_deadline.py tests/offline/test_follow_replay.py"
         }
       ]
     },

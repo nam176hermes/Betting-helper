@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 from pathlib import Path
+from time import monotonic
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,11 +54,12 @@ def run_required_cases(
             (commands / (case + ".stdout")).open("xb") as out,
             (commands / (case + ".stderr")).open("xb") as err,
         ):
+            started = monotonic()
             process = subprocess.Popen(  # noqa: S603 -- fixed owned worker, no shell
                 command, cwd=ROOT, stdout=out, stderr=err
             )
             try:
-                code = process.wait(timeout=600)
+                code = process.wait(timeout=120 if case == "OFF-19" else 30)
             except subprocess.TimeoutExpired:
                 process.terminate()
                 try:
@@ -68,7 +70,14 @@ def run_required_cases(
                     raise RuntimeError("E_OFFLINE_OWNED_CLEANUP_TIMEOUT") from None
                 code = process.returncode
         (commands / (case + ".json")).write_text(
-            json.dumps({"command": command, "exit": code, "pid": process.pid})
+            json.dumps(
+                {
+                    "command": command,
+                    "exit": code,
+                    "pid": process.pid,
+                    "elapsed_seconds": monotonic() - started,
+                }
+            )
         )
         status, reason = "FAIL", "E_OFFLINE_CASE_EXECUTION"
         observed = {"case_id": case, "reason": reason}
