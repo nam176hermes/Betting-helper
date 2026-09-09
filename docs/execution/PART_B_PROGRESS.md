@@ -6,8 +6,8 @@ Exact current HEAD, file/evidence hashes, command exits and failed attempts are 
 `.local/part-b/execution-state.json` and `.local/part-b/task-evidence/`.
 This tracked pointer avoids a commit/report self-hash cycle.
 
-Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06.
-Next ready task: PB-07.
+Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06, PB-07.
+Next ready task: PB-08.
 
 - Current Part A acceptance must be rerun on final candidate; inherited verifier rejects absolute command binding in relocated checkout
 
