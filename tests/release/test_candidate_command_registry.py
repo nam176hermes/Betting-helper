@@ -85,7 +85,7 @@ def test_generated_output_inventory_is_closed_and_binds_all_actual_files(
     tmp_path: Path,
 ) -> None:
     rows = registry_runner.collect_generated_outputs(Path.cwd())
-    assert len(rows) == 78
+    assert len(rows) == 79
     assert [row["path"] for row in rows] == sorted(
         (row["path"] for row in rows), key=str.encode
     )

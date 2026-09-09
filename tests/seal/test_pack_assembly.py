@@ -80,6 +80,10 @@ def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
         if original_row["stage"] == "CANDIDATE":
             paths[original_row["evidence_artifact"]] = derived_row["evidence_artifact"]
     manifest_source = json.loads((source / "docs/tasks/task-manifest.v6.3.6.json").read_bytes())
+    assembly_inputs = next(
+        task["inputs"] for task in manifest_source["tasks"]
+        if task["task_id"] == "V636-P09-T01"
+    )
     for task in manifest_source["tasks"]:
         if task["task_id"] not in {
             "V636-BOOT0-T01",
@@ -90,7 +94,7 @@ def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
         }:
             continue
         for value in task["exact_files"]:
-            if not value.startswith("/"):
+            if not value.startswith("/") or value not in assembly_inputs:
                 continue
             if value not in paths:
                 paths[value] = str(tmp_path / "inert" / str(len(inert)) / Path(value).name)

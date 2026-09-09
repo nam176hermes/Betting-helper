@@ -150,7 +150,7 @@ def _runtime_with_current_registry(tmp_path: Path) -> Path:
     return root
 
 
-def test_full_registry_replays_in_actual_committed_repository(tmp_path: Path) -> None:
+def test_current_replay_mapping_rejects_historical_and_tampered_commands(tmp_path: Path) -> None:
     root = _runtime_with_current_registry(tmp_path)
     registry = tmp_path / "pack/docs/registries/baseline-replay-command-registry.v1.json"
     registry.parent.mkdir(parents=True)
@@ -163,6 +163,23 @@ def test_full_registry_replays_in_actual_committed_repository(tmp_path: Path) ->
         .replace(FINAL_ROOT, str(root))
     )
 
+    # Historical replay operands must not qualify the newer candidate commands.
+    with pytest.raises(ValueError, match="E_ZERO_PARENT_BASELINE"):
+        _registry(registry, root)
+
+    # TEST_ONLY mapping fixture: validate argv structure, never execute or issue a baseline.
+    replay = json.loads(registry.read_text())
+    current = candidate_commands(validate_registry(root / "task-command-registry.json"))
+    for source, target in zip(current, replay["commands"], strict=True):
+        assert target["command_id"] == f"BASELINE__{source['command_id']}"
+        target["argv"] = [
+            token.replace(source["cwd"], str(root)).replace(
+                "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack",
+                "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+            )
+            for token in source["argv"]
+        ]
+    registry.write_text(json.dumps(replay))
     commands = _registry(registry, root)
 
     assert len(commands) == 45
@@ -175,7 +192,10 @@ def test_full_registry_replays_in_actual_committed_repository(tmp_path: Path) ->
         command for command in commands
         if command["command_id"] == "BASELINE__QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS"
     )
-    assert "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6" in normative["argv"]
+    assert (
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6"
+        in normative["argv"]
+    )
     assert [command["command_id"] for command in commands] == [
         f"BASELINE__{command['command_id']}"
         for command in candidate_commands(validate_registry(root / "task-command-registry.json"))

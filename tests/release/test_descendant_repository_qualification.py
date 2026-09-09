@@ -168,11 +168,13 @@ def actual_matrix_candidate_chain(
     _git(root, "commit", "-m", "disposable current inventory")
     pnpm = shutil.which("pnpm")
     assert pnpm is not None
-    subprocess.run(  # noqa: S603 -- official compiler, disposable fixture output only.
-        [pnpm, "--dir", str(ROOT / "extension"), "exec", "tsc", "-p", "tsconfig.test.json",
-         "--outDir", str(root / "extension/.test-build")],
-        cwd=ROOT, check=True, capture_output=True,
-    )
+    for project, output in (("tsconfig.test.json", ".test-build"),
+                            ("tsconfig.build.json", "dist")):
+        subprocess.run(  # noqa: S603 -- official compiler, disposable fixture output only.
+            [pnpm, "--dir", str(ROOT / "extension"), "exec", "tsc", "-p", project,
+             "--outDir", str(root / "extension" / output)],
+            cwd=ROOT, check=True, capture_output=True,
+        )
     print(f"fixture tracked_files={len(tracked)} copied_bytes={copied_bytes}")
     config = _config(tmp_path, root, ancestor)
     source_pack = SOURCE_CONFIG.parents[2]
