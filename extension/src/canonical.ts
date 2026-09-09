@@ -68,7 +68,7 @@ class StrictJsonParser {
       this.whitespace();
       if (this.source[this.offset] !== ":") throw new Error("MALFORMED_UTF8_OR_JSON");
       this.offset += 1;
-      result[key] = this.value();
+      Object.defineProperty(result, key, { value: this.value(), enumerable: true, writable: true, configurable: true });
       this.whitespace();
       const delimiter = this.source[this.offset];
       if (delimiter === "}") {
