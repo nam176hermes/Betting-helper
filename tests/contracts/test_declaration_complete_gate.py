@@ -18,9 +18,9 @@ def test_materialized_contracts_valid_gate_passes() -> None:
     assert receipt["gate"] == "MATERIALIZED_CONTRACTS_VALID"
     assert receipt["result"] == "PASS"
     assert receipt["task_count"] == 62
-    assert receipt["artifact_count"] == 917
-    assert receipt["command_count"] == 215
-    assert receipt["schema_reference_count"] == 11
+    assert receipt["artifact_count"] == 987
+    assert receipt["command_count"] == 219
+    assert receipt["schema_reference_count"] == 13
     assert receipt["authorized_production_phases"] == "NONE"
 
 
