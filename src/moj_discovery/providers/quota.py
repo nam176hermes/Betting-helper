@@ -218,27 +218,48 @@ class QuotaLedger:
             return Denied("QUOTA_UNKNOWN" if known is None else "QUOTA_RECONCILIATION_REQUIRED")
         if latest and latest["result_code"] in QUOTA_ERRORS and purpose != "STATUS":
             return Denied("QUOTA_RECONCILIATION_REQUIRED")
-        debt = self.db.execute(
-            "SELECT count(*) FROM quota_reservations WHERE rowid>?", (known["ordinal"],)
-        ).fetchone()[0]
-        floor = (known["observed_daily_limit"] + 4) // 5
-        if known["observed_daily_remaining"] - debt <= floor:
-            return Denied("PROVIDER_DAILY_RESERVE")
-        observed_mono = known["reserved_mono_us"] + int(
-            (
-                datetime.fromisoformat(known["observed_at_utc"])
-                - datetime.fromisoformat(known["reserved_at_utc"])
-            ).total_seconds()
-            * 1_000_000
+        last_ordinal = self.db.execute("SELECT max(rowid) FROM quota_reservations").fetchone()[0]
+        start = (
+            self.db.execute(
+                "SELECT max(r.rowid) FROM quota_reservations r "
+                "JOIN quota_outcomes o USING(attempt_id) "
+                "WHERE r.utc_day=? AND r.purpose='STATUS' AND o.observed_daily_limit IS NOT NULL",
+                (day,),
+            ).fetchone()[0]
+            or 0
         )
+        receipts = self.db.execute(
+            "SELECT r.rowid AS ordinal,r.*,o.* FROM quota_reservations r JOIN quota_outcomes o "
+            "USING(attempt_id) WHERE r.rowid>=? AND r.utc_day=? AND r.boot_id=? "
+            "AND o.observed_daily_limit IS NOT NULL",
+            (start, day, self.boot_id),
+        ).fetchall()
+        # Preserve observed headers literally. Ordinal gaps only overcount debt; rows never delete.
+        remaining = min(
+            row["observed_daily_remaining"] - (last_ordinal - row["ordinal"]) for row in receipts
+        )
+        floor = (known["observed_daily_limit"] + 4) // 5
+        if remaining <= floor:
+            return Denied("PROVIDER_DAILY_RESERVE")
         rolling = self.db.execute(
             "SELECT count(*) FROM quota_reservations WHERE boot_id=? AND reserved_mono_us>?",
             (self.boot_id, mono_us - 60_000_000),
         ).fetchone()[0]
         if rolling >= known["observed_minute_limit"]:
             return Denied("PROVIDER_MINUTE_BUDGET")
-        if mono_us - observed_mono < 60_000_000 and known["observed_minute_remaining"] - debt <= 0:
-            return Denied("PROVIDER_MINUTE_BUDGET")
+        for row in receipts:
+            observed_mono = row["reserved_mono_us"] + int(
+                (
+                    datetime.fromisoformat(row["observed_at_utc"])
+                    - datetime.fromisoformat(row["reserved_at_utc"])
+                ).total_seconds()
+                * 1_000_000
+            )
+            if (
+                mono_us - observed_mono < 60_000_000
+                and row["observed_minute_remaining"] - (last_ordinal - row["ordinal"]) <= 0
+            ):
+                return Denied("PROVIDER_MINUTE_BUDGET")
         return None
 
     def reserve_attempt(
@@ -350,19 +371,13 @@ class QuotaLedger:
                 and limit is not None
                 and old["utc_day"] == pending.reserved_at_utc[:10]
                 and pending.purpose != "STATUS"
-            ):
-                if (
+                and (
                     limit != old["observed_daily_limit"]
                     or remaining > old["observed_daily_remaining"]
-                ):
-                    limit = remaining = minute_limit = minute_remaining = None
-                    result = "QUOTA_INCONSISTENT"
-                else:
-                    debt = self.db.execute(
-                        "SELECT count(*) FROM quota_reservations WHERE rowid>?",
-                        (old["ordinal"],),
-                    ).fetchone()[0]
-                    remaining = min(remaining, max(0, old["observed_daily_remaining"] - debt))
+                )
+            ):
+                limit = remaining = minute_limit = minute_remaining = None
+                result = "QUOTA_INCONSISTENT"
             if outcome == "AUTH_FAILED":
                 result = outcome
             observed = (

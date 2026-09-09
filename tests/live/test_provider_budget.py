@@ -213,3 +213,24 @@ def test_auth_failure_never_becomes_quota_retry(tmp_path, fake_clock):
         )
         fake_clock.advance(60)
         assert reserve(q, fake_clock, "STATUS").code == "AUTH_FAILED"
+
+
+def test_unchanged_headers_do_not_refill_available_balance(tmp_path, fake_clock):
+    headers = {
+        **HEADERS,
+        "x-ratelimit-requests-limit": "100",
+        "x-ratelimit-requests-remaining": "22",
+    }
+    with ledger(tmp_path) as q:
+        a = reserve(q, fake_clock, "STATUS")
+        q.finalize_attempt(a.attempt_id, "SUCCESS", headers)
+        for _ in range(2):
+            fake_clock.advance(10)
+            a = reserve(q, fake_clock)
+            assert not isinstance(a, Denied)
+            q.finalize_attempt(a.attempt_id, "SUCCESS", headers)
+        fake_clock.advance(10)
+        assert reserve(q, fake_clock).code == "PROVIDER_DAILY_RESERVE"
+        assert {
+            r[0] for r in q.db.execute("SELECT observed_daily_remaining FROM quota_outcomes")
+        } == {22}
