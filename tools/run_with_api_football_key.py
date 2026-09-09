@@ -1,0 +1,125 @@
+"""User-terminal entry only. No automatic provider permission follows from a key."""
+
+# ruff: noqa: E402
+import argparse
+import importlib
+import os
+import sys
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any, Never
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT), str(ROOT / "src")]
+
+from moj_discovery.live_config import LiveConfig, load_live_config
+from moj_discovery.secrets_local import KEY_NAME, controlling_tty, obtain_api_football_key
+
+PHRASES = {"probe": "ALLOW PROVIDER PROBE", "live-readonly": "START READ ONLY"}
+STAGES = {"probe": "PROVIDER_PROBE", "live-readonly": "LIVE_READ_ONLY"}
+
+
+class SafeParser(argparse.ArgumentParser):
+    def error(self, message: str) -> Never:
+        # argparse's ordinary message may quote arbitrary user input.
+        raise ValueError("E_KEY_LAUNCHER_ARGUMENTS")
+
+
+def _load_action(
+    action: str,
+    config: LiveConfig,
+    path: Path,
+) -> tuple[Any, Callable[..., Any], Callable[..., Any]]:
+    intents = importlib.import_module("moj_discovery.live_intent")
+    intent = intents.load_run_intent(path, config, STAGES[action])
+    if action == "probe":
+        dispatch = importlib.import_module("tools.probe_football_provider").run_probe
+    else:
+        dispatch = importlib.import_module("tools.run_live_readonly").run_live_session
+    return intent, intents.consume_user_intent, dispatch
+
+
+def _failure(started: bool) -> None:
+    print("KEY_CHECK: NOT_CHECKED")
+    print("SUBSCRIPTION_CHECK: UNKNOWN")
+    print("PROBE_RESULT: FAIL")
+    print("REQUEST_ATTEMPTS: " + ("UNKNOWN" if started else "0"))
+    print("MISSING_CAPABILITIES: USER_CONFIRMATION_OR_RUNTIME_GATE")
+
+
+def _report(result: dict[str, Any]) -> None:
+    selected = {}
+    enums = {
+        "KEY_CHECK": {"AUTHENTICATED", "FAILED", "NOT_CHECKED"},
+        "SUBSCRIPTION_CHECK": {"CONFIRMED", "INSUFFICIENT", "UNKNOWN"},
+        "PROBE_RESULT": {"PASS", "PARTIAL", "FAIL"},
+    }
+    for key, allowed in enums.items():
+        if result.get(key) not in allowed:
+            raise ValueError("E_KEY_LAUNCHER_RESULT")
+        selected[key] = result[key]
+    attempts = result.get("REQUEST_ATTEMPTS")
+    if type(attempts) is not int or not 0 <= attempts <= 600:
+        raise ValueError("E_KEY_LAUNCHER_RESULT")
+    codes = result.get("MISSING_CAPABILITIES")
+    allowed_codes = {
+        "AUTH_FAILED",
+        "QUOTA_UNKNOWN",
+        "QUOTA_INSUFFICIENT",
+        "COVERAGE_UNKNOWN",
+        "BUNDLE_MISSING",
+        "EVENTS_UNKNOWN",
+        "TIME_LIMIT",
+        "BUDGET_LIMIT",
+        "SOURCE_MISMATCH",
+        "PROVIDER_UNAVAILABLE",
+        "REVIEW_REQUIRED",
+    }
+    if type(codes) is not list or any(type(c) is not str or c not in allowed_codes for c in codes):
+        raise ValueError("E_KEY_LAUNCHER_RESULT")
+    for key, value in selected.items():
+        print(f"{key}: {value}")
+    print(f"REQUEST_ATTEMPTS: {attempts}")
+    print("MISSING_CAPABILITIES: " + (", ".join(codes) or "NONE"))
+
+
+def main(argv: list[str] | None = None) -> int:
+    started = False
+    secret = None
+    try:
+        parser = SafeParser(description=__doc__, allow_abbrev=False)
+        parser.add_argument("--action", choices=tuple(PHRASES), required=True)
+        parser.add_argument("--config", type=Path, required=True)
+        parser.add_argument("--intent", type=Path, required=True)
+        args = parser.parse_args(argv)
+        config = load_live_config(args.config, require_enabled=args.action == "live-readonly")
+        intent, consume, dispatch = _load_action(args.action, config, args.intent)
+        preview = intent.public
+        print("STAGE: " + STAGES[args.action])
+        print("FIXTURE_IDS: " + ",".join(str(i) for i in preview["fixture_ids"]))
+        print(f"MAX_DURATION_SECONDS: {preview['max_duration_seconds']}")
+        print(f"MAX_HTTP_ATTEMPTS: {preview['max_http_attempts']}")
+        print("Type " + PHRASES[args.action] + " to confirm this exact scope:")
+        with controlling_tty() as terminal:
+            confirmation = terminal.readline(65).rstrip("\r\n")
+        if confirmation != PHRASES[args.action]:
+            _failure(False)
+            return 2
+        receipt = consume(intent, config, confirmation)
+        secret = obtain_api_football_key(interactive=True)
+        # Browser subprocesses must never inherit a credential supplied to this process.
+        os.environ.pop(KEY_NAME, None)
+        started = True
+        result = dispatch(config, secret, receipt)
+        _report(result)
+        return 0 if result["PROBE_RESULT"] == "PASS" else 2
+    except (Exception, KeyboardInterrupt):
+        _failure(started)
+        return 2
+    finally:
+        # Drop our reference; Python strings are not claimed to be securely zeroized.
+        secret = None
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
