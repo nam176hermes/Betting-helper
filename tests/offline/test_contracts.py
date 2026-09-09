@@ -96,18 +96,21 @@ def test_typescript_uses_same_local_schema_and_identity_checks(tmp_path: Path) -
     script = """
 import {readFileSync, readdirSync} from 'node:fs';
 import {validateOfflineFrame} from './extension/.test-build/src/offline/protocol.js';
+import {validateArtifact} from './extension/.test-build/src/schema-registry.js';
 const schemas = ['vendor/hybrid-discovery-v6.3.6/schemas','contracts/offline_slice/v1']
 .flatMap(dir => readdirSync(dir).filter(n => n.endsWith('.schema.json'))
 .map(n => JSON.parse(readFileSync(dir+'/'+n,'utf8'))));
 const frame=JSON.parse(readFileSync(process.argv[1],'utf8'));
-validateOfflineFrame(frame, schemas);
+validateOfflineFrame(frame, value =>
+ validateArtifact(value, "urn:betting-helper:offline-slice:frame:v1", schemas));
 frame.body.observations[0].stream_id=frame.body.run_id;
 let rejected=false;
-try {validateOfflineFrame(frame,schemas);} catch {rejected=true;}
+try {validateOfflineFrame(frame, value =>
+ validateArtifact(value, "urn:betting-helper:offline-slice:frame:v1", schemas));}
+catch {rejected=true;}
 if(!rejected) throw new Error('MIXED_STREAM_ACCEPTED');
 """
     subprocess.run(  # noqa: S603,S607 -- installed Node, fixed program, owned fixture path
-
         ["node", "--input-type=module", "-e", script, str(frame_path)],  # noqa: S607 -- pinned Node
         cwd=ROOT,
         check=True,

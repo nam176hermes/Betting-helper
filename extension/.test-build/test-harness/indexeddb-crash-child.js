@@ -1,5 +1,4 @@
 /** Test-only owned Worker; never receives an expected state. */
-import { validateRaw } from "../src/offline/validators.js";
 import { Spool } from "../src/spool.js";
 // The registered legacy Node executor remains unqualified for browser evidence.
 export const contractNotImplemented = () => {
@@ -60,6 +59,7 @@ globalThis.onmessage = (event) => {
         const evidence = { ...request.identity, worker_id: workerId, module_url: moduleUrl,
             module_sha256: Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join(""),
             origin: location.origin, protocol: location.protocol };
+        const { validateRaw } = await import("../src/offline/validators.js");
         const spool = new Spool({ ...request.options,
             ...(request.normal_byte_limit === undefined ? {} : { normalByteLimit: BigInt(request.normal_byte_limit) }), validateRaw: (value) => {
                 if (!validateRaw(value))
