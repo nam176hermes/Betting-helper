@@ -34,7 +34,7 @@ def semantic_projection(db_path: Path) -> dict[str, list[dict[str, Any]]]:
     with closing(sqlite3.connect(db_path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
         db.row_factory = sqlite3.Row
         verify_database(db)
-        validate_journal(read_journal(db))
+        validate_journal(read_journal(db, ordered=False))
         tables = [row[0] for row in db.execute("SELECT name FROM sqlite_schema WHERE type='table'")]
         if not set(exclusions).issubset(tables):
             raise ValueError("E_OFFLINE_PROJECTION_TABLE")

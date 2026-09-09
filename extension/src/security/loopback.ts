@@ -41,8 +41,8 @@ export class AuthenticatedLoopback {
     this.failure = new Error(code);
     this.wake?.();
   }
-  private async receive(): Promise<OfflineFrame> {
-    const deadline = performance.now() + 5000;
+  private async receive(timeout = 30000): Promise<OfflineFrame> {
+    const deadline = performance.now() + timeout;
     while (!this.inbox.length) {
       if (this.failure) throw this.failure;
       const remaining = deadline - performance.now();
@@ -94,9 +94,9 @@ export class AuthenticatedLoopback {
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
       .replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
     await this.send("HELLO", {run_id: context.run_id, client_nonce: nonce});
-    const welcome = await this.receive();
+    const welcome = await this.receive(5000);
     await this.send("READY", welcome.body);
-    await this.receive();
+    await this.receive(5000);
   }
   private serial(work: () => Promise<void>): Promise<void> {
     const result = this.queue.then(async () => {

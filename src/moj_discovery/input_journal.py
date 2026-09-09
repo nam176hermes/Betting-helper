@@ -1,11 +1,12 @@
 """Durable sanitized delivery evidence alongside the shared ingest journal."""
 
+import copy
 import hashlib
 import os
 import re
 import sqlite3
 import stat
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import closing
 from pathlib import Path
 from typing import Any, cast
@@ -47,7 +48,8 @@ def _sync(directory: Path) -> None:
 
 
 class InputJournal:
-    def __init__(self, run_dir: Path):
+    def __init__(self, run_dir: Path, observer: Callable[[str, int], None] | None = None):
+        self.observer = observer
         if any(path.is_symlink() for path in (run_dir, *run_dir.parents)):
             raise ValueError("E_OFFLINE_RUN_PATH")
         self.root = run_dir.absolute()
@@ -59,13 +61,22 @@ class InputJournal:
         validate_context(self.context)
         self.path = self.root / "receive.jsonl"
         self.store = RunStore(self.root / "run.sqlite3")
+        self._verified_bytes = b""
+        self._verified_rows: list[dict[str, Any]] = []
 
     def _rows(self) -> list[dict[str, Any]]:
         if any(path.is_symlink() for path in (self.root, *self.root.parents, self.root / "raw")):
             raise ValueError("E_OFFLINE_RUN_PATH")
         if not self.path.exists() and not self.path.is_symlink():
+            if self._verified_bytes:
+                raise ValueError("E_OFFLINE_JOURNAL_INTEGRITY")
             return []
         data = _read(self.path)
+        # Re-read every byte; same-size or restored-mtime tampering invalidates reuse.
+        if data == self._verified_bytes:
+            return self._verified_rows
+        if not data.startswith(self._verified_bytes):
+            raise ValueError("E_OFFLINE_JOURNAL_INTEGRITY")
         if data and not data.endswith(b"\n"):
             raise ValueError("E_OFFLINE_JOURNAL_PARTIAL_TAIL")
         rows = []
@@ -120,6 +131,7 @@ class InputJournal:
                 raise ValueError("E_OFFLINE_JOURNAL_INTEGRITY")
             rows.append(row)
             previous = digest
+        self._verified_bytes, self._verified_rows = data, rows
         return rows
 
     def _append(self, value: dict[str, Any]) -> None:
@@ -135,12 +147,19 @@ class InputJournal:
         )
         with os.fdopen(descriptor, "ab") as output:
             info = os.fstat(output.fileno())
-            if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+            if (
+                not stat.S_ISREG(info.st_mode)
+                or info.st_nlink != 1
+                or info.st_size != len(self._verified_bytes)
+            ):
                 raise ValueError("E_OFFLINE_FILE_INTEGRITY")
-            output.write(rfc8785.dumps(row) + b"\n")
+            encoded = rfc8785.dumps(row) + b"\n"
+            output.write(encoded)
             output.flush()
             os.fsync(output.fileno())
         _sync(self.root)
+        self._verified_bytes += encoded
+        self._verified_rows = [*rows, copy.deepcopy(row)]
 
     def record_received(self, raw_bytes: bytes, batch_id: str) -> int:
         if not UUID.fullmatch(batch_id):
@@ -177,6 +196,14 @@ class InputJournal:
         return receive_index
 
     def record_outcome(self, receive_index: int, outcome: dict[str, Any]) -> None:
+        self._record_outcome(receive_index, outcome)
+
+    def _record_outcome(
+        self,
+        receive_index: int,
+        outcome: dict[str, Any],
+        applied_raw: dict[str, Any] | None = None,
+    ) -> None:
         rows = self._rows()
         received = [
             r
@@ -196,24 +223,38 @@ class InputJournal:
             return
         if outcome.get("status") == "APPLIED" and set(outcome) == {"status", "ack"}:
             ack = outcome["ack"]
-            with closing(self.store.connect()) as connection:
-                validate_journal(read_journal(connection))
-                raw_row = connection.execute(
-                    "SELECT raw_observation_content_hash FROM raw_commits WHERE raw_commit_id=?",
-                    (ack.get("raw_commit_id"),),
-                ).fetchone()
-                actual = connection.execute(
-                    "SELECT * FROM ack_outbox WHERE ack_outbox_id=?", (ack.get("ack_outbox_id"),)
-                ).fetchone()
-            if (
-                actual is None
-                or raw_row is None
-                or raw_row[0] != received[0]["raw_hash"]
-                or dict(actual) != ack
-                or str(ack["generation"]) != received[0]["generation"]
-                or str(ack["highest_contiguous_sequence"]) != received[0]["sequence"]
-            ):
-                raise ValueError("E_OFFLINE_OUTCOME_BINDING")
+            if applied_raw is not None:
+                # Same synchronous invocation of real Ingestor.apply, after its commit.
+                # No caller-supplied outcome or fault observer may use this proof.
+                if (
+                    applied_raw["content_hash"] != received[0]["raw_hash"]
+                    or applied_raw["generation"] != received[0]["generation"]
+                    or applied_raw["sequence"] != received[0]["sequence"]
+                    or str(ack["generation"]) != received[0]["generation"]
+                    or str(ack["highest_contiguous_sequence"]) != received[0]["sequence"]
+                ):
+                    raise ValueError("E_OFFLINE_OUTCOME_BINDING")
+            else:
+                with closing(self.store.connect()) as connection:
+                    validate_journal(read_journal(connection, ordered=False))
+                    raw_row = connection.execute(
+                        "SELECT raw_observation_content_hash FROM raw_commits "
+                        "WHERE raw_commit_id=?",
+                        (ack.get("raw_commit_id"),),
+                    ).fetchone()
+                    actual = connection.execute(
+                        "SELECT * FROM ack_outbox WHERE ack_outbox_id=?",
+                        (ack.get("ack_outbox_id"),),
+                    ).fetchone()
+                if (
+                    actual is None
+                    or raw_row is None
+                    or raw_row[0] != received[0]["raw_hash"]
+                    or dict(actual) != ack
+                    or str(ack["generation"]) != received[0]["generation"]
+                    or str(ack["highest_contiguous_sequence"]) != received[0]["sequence"]
+                ):
+                    raise ValueError("E_OFFLINE_OUTCOME_BINDING")
         elif not (
             set(outcome) == {"status", "code"}
             and outcome["status"] == "REJECTED"
@@ -226,6 +267,8 @@ class InputJournal:
 
     def apply(self, raw_bytes: bytes, batch_id: str) -> dict[str, Any]:
         index = self.record_received(raw_bytes, batch_id)
+        if self.observer:
+            self.observer("AFTER_RECEIVED", index)
         raw = validate_synthetic_observation(raw_bytes, self.context)
         return self._apply_received(index, raw)
 
@@ -238,7 +281,9 @@ class InputJournal:
             outcome = {"status": "REJECTED", "code": ERRORS[str(error)]}
         except (sqlite3.Error, OSError):
             outcome = {"status": "REJECTED", "code": "STORAGE_FAILED"}
-        self.record_outcome(index, outcome)
+        if self.observer:
+            self.observer("AFTER_APPLY", index)
+        self._record_outcome(index, outcome, raw if self.observer is None else None)
         return outcome
 
     def record_ack_confirmation(self, generation: str, sequence: str, cursor_hash: str) -> None:
@@ -283,7 +328,7 @@ class InputJournal:
                         != row["artifact_sha256"]
                     ):
                         raise ValueError("E_OFFLINE_JOURNAL_INTEGRITY")
-                yield row
+                yield copy.deepcopy(row)
 
     def reconcile(self, store: RunStore) -> dict[str, int]:
         if store.db_path.absolute() != self.store.db_path:
@@ -316,7 +361,7 @@ class InputJournal:
         for row in operations:
             if row["kind"] == "RECEIVED" and row["reference_receive_index"] not in completed:
                 with closing(store.connect()) as connection:
-                    validate_journal(read_journal(connection))
+                    validate_journal(read_journal(connection, ordered=False))
                     gap = connection.execute(
                         "SELECT * FROM gap_records WHERE gap_id=?", ("gap:" + row["raw_hash"],)
                     ).fetchone()

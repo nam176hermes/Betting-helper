@@ -36,6 +36,21 @@ def test_committed_input_is_available_after_restart(tmp_path: Path) -> None:
     assert operations[1]["outcome"] == result
 
 
+def test_cached_journal_checks_bytes_and_returns_copies(tmp_path: Path) -> None:
+    store, rows = prepared(tmp_path)
+    journal = InputJournal(store.db_path.parent)
+    actual = journal.apply(rfc8785.dumps(rows[0]), str(uuid4()))
+    exported = list(journal.iter_operations())
+    exported[1]["outcome"]["ack"]["cursor_hash"] = "f" * 64
+    assert list(journal.iter_operations())[1]["outcome"] == actual
+    info = journal.path.stat()
+    data = journal.path.read_bytes()
+    journal.path.write_bytes(data.replace(b"APPLIED", b"INVALID"))
+    os.utime(journal.path, ns=(info.st_atime_ns, info.st_mtime_ns))
+    with pytest.raises(ValueError, match="E_OFFLINE_JOURNAL_INTEGRITY"):
+        list(journal.iter_operations())
+
+
 @pytest.mark.parametrize("after_commit", [False, True])
 def test_pending_input_reconciles_actual_database(tmp_path: Path, after_commit: bool) -> None:
     store, rows = prepared(tmp_path)

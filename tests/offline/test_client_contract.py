@@ -89,7 +89,9 @@ def test_real_extension_flush_and_restart(
             assert reopened["state"]["ackSequence"] == ("0" if rejected else "3")
             assert [json.loads(row) for row in reopened["retained"]] == rows
             with closing(store.connect()) as db:
-                assert len(db.execute("SELECT * FROM raw_commits").fetchall()) == (1 if rejected else 3)
+                assert len(db.execute("SELECT * FROM raw_commits").fetchall()) == (
+                    1 if rejected else 3
+                )
             assert dropped == (fault == "ack-loss")
             # Scan retained bytes, including CDP transcripts, for every actual ephemeral secret.
             for path in tmp_path.rglob("*"):

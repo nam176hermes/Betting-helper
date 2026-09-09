@@ -101,6 +101,7 @@ child.on("exit", code => fail(new Error("E_PIPE_BROWSER_EXIT:" + code)));
       if (request.operation === "FINISH") break;
       const expression = request.operation === "RESTART_WORKER"
         ? "globalThis.offlineProbe.restartWorker()"
+        : request.operation === "READ_CHECKPOINTS" ? "({checkpoints:globalThis.offlineProbe.checkpoints})"
         : `globalThis.offlineProbe.command(${JSON.stringify(request)})`;
       if (running.size >= 2) throw new Error("E_OFFLINE_CONTROL_CAPACITY");
       const resultIndex = ++index;

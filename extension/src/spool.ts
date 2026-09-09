@@ -83,6 +83,16 @@ type Entry = Readonly<{
 }>;
 const same = (left: unknown, right: unknown): boolean =>
   JSON.stringify(left) === JSON.stringify(right);
+const identicalEntry = (left: unknown, right: unknown): boolean => {
+  if (left === right) return true;
+  if (left === null || right === null || typeof left !== "object" || typeof right !== "object") return false;
+  const prototype: unknown = Object.getPrototypeOf(left);
+  if ((prototype !== Object.prototype && prototype !== Array.prototype) || Object.getPrototypeOf(right) !== prototype) return false;
+  if (Array.isArray(left) && Array.isArray(right) && left.length !== right.length) return false;
+  const keys = Object.keys(left);
+  return keys.length === Object.keys(right).length && keys.every(key => Object.hasOwn(right, key) &&
+    identicalEntry((left as Record<string, unknown>)[key], (right as Record<string, unknown>)[key]));
+};
 const requestValue = <T>(request: IDBRequest<T>): Promise<T> => new Promise((resolve, reject) => {
   request.onsuccess = () => { resolve(request.result); };
   request.onerror = () => { reject(request.error ?? new Error("E_SPOOL_REQUEST")); };
@@ -95,7 +105,18 @@ const completion = (transaction: IDBTransaction): Promise<void> => new Promise((
 
 /** Offline durable sink. Only the still-gated projector may construct its input. */
 export class Spool {
+  // Reuse hash proofs only for byte-identical full entries read again from IndexedDB.
+  // State, schema, ordering and predecessor bindings are still checked on every snapshot.
+  private readonly verifiedEntries = new Map<string, Entry>();
+  private verifiedRegistry: unknown;
+  private writes: Promise<void> = Promise.resolve();
   constructor(private readonly options?: Options) {}
+
+  private serializeWrite<T>(work: () => Promise<T>): Promise<T> {
+    const result = this.writes.then(work);
+    this.writes = result.then(() => undefined, () => undefined);
+    return result;
+  }
 
   private configuration(): Options {
     const value = this.options;
@@ -157,34 +178,32 @@ export class Spool {
   }
 
   private async snapshot(): Promise<{ state: State; entries: Entry[] }> {
-    // ponytail: scan retained rows to verify the chain; add verified checkpoints only if run size demands it.
+    // Read every retained row and key in one native batch; preserve full chain verification.
     const database = await this.open();
     try {
       const transaction = database.transaction(stores, "readonly");
       const done = completion(transaction);
       const stateRequest = requestValue(transaction.objectStore(stores[0]).get(this.key()) as IDBRequest<State | undefined>);
-      const entries: Entry[] = [];
       const rows = transaction.objectStore(stores[1]);
-      const cursor = rows.openCursor(IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false), "next");
-      cursor.onsuccess = () => {
-        if (cursor.result) {
-          const entry = cursor.result.value as Entry;
-          if (!same(cursor.result.key, this.key(entry.spool_record.position.sequence))) {
-            transaction.abort();
-            return;
-          }
-          entries.push(entry);
-          cursor.result.continue();
-        }
-      };
+      const range = IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false);
+      const entriesRequest = requestValue(rows.getAll(range) as IDBRequest<Entry[]>);
+      const keysRequest = requestValue(rows.getAllKeys(range));
       const state = await stateRequest ?? this.initial();
+      const entries = await entriesRequest, keys = await keysRequest;
       await done;
+      if (entries.length !== keys.length || entries.some((entry, index) =>
+        !same(keys[index], this.key(entry.spool_record.position.sequence)))) throw new Error("E_SPOOL_CHAIN");
       await this.validate(state, entries);
       return { state, entries };
     } finally { database.close(); }
   }
 
   private async validate(state: State, entries: Entry[]): Promise<void> {
+    const registry = this.configuration().registry;
+    if (!identicalEntry(this.verifiedRegistry, registry)) {
+      this.verifiedEntries.clear();
+      this.verifiedRegistry = structuredClone(registry);
+    }
     const initial = this.initial();
     if (!same(Object.keys(state).sort(), Object.keys(initial).sort()) ||
         state.storage_schema_version !== initial.storage_schema_version ||
@@ -202,17 +221,21 @@ export class Spool {
       const config = this.configuration();
       if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
           raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
-          raw.sequence !== row.position.sequence || decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength) ||
+          raw.sequence !== row.position.sequence ||
           decimal(row.payload_size_bytes) > 65536n) throw new Error("E_SPOOL_OBSERVATION_BINDING");
       if (!same(Object.keys(entry).sort(), ["sanitized_observation", "spool_record", "storage_schema_version"]) ||
           entry.storage_schema_version !== "browser-spool-entry/v1" ||
           row.position.sequence !== String(index + 1) || row.previous_cursor_hash !== previous ||
           row.raw_observation_id !== raw.raw_observation_id || row.raw_observation_content_hash !== raw.content_hash ||
-          !same(row.position.generation_key, this.generationKey()) ||
-          row.cursor_hash !== await this.cursor(raw, previous) ||
-          row.content_hash !== await this.hash("SpoolRecord", row) ||
-          raw.content_hash !== await this.hash("RawObservation", raw)) {
+          !same(row.position.generation_key, this.generationKey())) {
         throw new Error("E_SPOOL_CHAIN");
+      }
+      if (!identicalEntry(this.verifiedEntries.get(row.position.sequence), entry)) {
+        if (decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength)) throw new Error("E_SPOOL_OBSERVATION_BINDING");
+        if (row.cursor_hash !== await this.cursor(raw, previous) ||
+            row.content_hash !== await this.hash("SpoolRecord", row) ||
+            raw.content_hash !== await this.hash("RawObservation", raw)) throw new Error("E_SPOOL_CHAIN");
+        this.verifiedEntries.set(row.position.sequence, structuredClone(entry));
       }
       previous = row.cursor_hash;
       bytes += decimal(row.payload_size_bytes);
@@ -269,7 +292,11 @@ export class Spool {
     } finally { database.close(); }
   }
 
-  async append(value: PersistableSanitizedObservationV1): Promise<SpoolRecord> {
+  append(value: PersistableSanitizedObservationV1): Promise<SpoolRecord> {
+    return this.serializeWrite(() => this.appendRecord(value));
+  }
+
+  private async appendRecord(value: PersistableSanitizedObservationV1): Promise<SpoolRecord> {
     const input = value as { canonicalSanitizedBytes?: unknown;
       validatedRawObservation?: { canonicalBytes?: unknown } } | undefined;
     if (!(input?.canonicalSanitizedBytes instanceof Uint8Array) ||
@@ -350,7 +377,11 @@ export class Spool {
       pendingCount: entries.length - Number(decimal(state.ack_sequence))});
   }
 
-  async persistVerifiedAck(generation: string, sequence: string, cursorHash: string): Promise<void> {
+  persistVerifiedAck(generation: string, sequence: string, cursorHash: string): Promise<void> {
+    return this.serializeWrite(() => this.persistAck(generation, sequence, cursorHash));
+  }
+
+  private async persistAck(generation: string, sequence: string, cursorHash: string): Promise<void> {
     const { state, entries } = await this.snapshot();
     const number = decimal(sequence);
     if (generation !== state.active_generation || number < decimal(state.ack_sequence) ||

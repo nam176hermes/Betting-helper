@@ -34,8 +34,8 @@ export class AuthenticatedLoopback {
         this.failure = new Error(code);
         this.wake?.();
     }
-    async receive() {
-        const deadline = performance.now() + 5000;
+    async receive(timeout = 30000) {
+        const deadline = performance.now() + timeout;
         while (!this.inbox.length) {
             if (this.failure)
                 throw this.failure;
@@ -96,9 +96,9 @@ export class AuthenticatedLoopback {
         const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
             .replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
         await this.send("HELLO", { run_id: context.run_id, client_nonce: nonce });
-        const welcome = await this.receive();
+        const welcome = await this.receive(5000);
         await this.send("READY", welcome.body);
-        await this.receive();
+        await this.receive(5000);
     }
     serial(work) {
         const result = this.queue.then(async () => {

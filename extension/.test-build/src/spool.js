@@ -10,6 +10,20 @@ const decimal = (value) => {
     return BigInt(value);
 };
 const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+const identicalEntry = (left, right) => {
+    if (left === right)
+        return true;
+    if (left === null || right === null || typeof left !== "object" || typeof right !== "object")
+        return false;
+    const prototype = Object.getPrototypeOf(left);
+    if ((prototype !== Object.prototype && prototype !== Array.prototype) || Object.getPrototypeOf(right) !== prototype)
+        return false;
+    if (Array.isArray(left) && Array.isArray(right) && left.length !== right.length)
+        return false;
+    const keys = Object.keys(left);
+    return keys.length === Object.keys(right).length && keys.every(key => Object.hasOwn(right, key) &&
+        identicalEntry(left[key], right[key]));
+};
 const requestValue = (request) => new Promise((resolve, reject) => {
     request.onsuccess = () => { resolve(request.result); };
     request.onerror = () => { reject(request.error ?? new Error("E_SPOOL_REQUEST")); };
@@ -22,8 +36,18 @@ const completion = (transaction) => new Promise((resolve, reject) => {
 /** Offline durable sink. Only the still-gated projector may construct its input. */
 export class Spool {
     options;
+    // Reuse hash proofs only for byte-identical full entries read again from IndexedDB.
+    // State, schema, ordering and predecessor bindings are still checked on every snapshot.
+    verifiedEntries = new Map();
+    verifiedRegistry;
+    writes = Promise.resolve();
     constructor(options) {
         this.options = options;
+    }
+    serializeWrite(work) {
+        const result = this.writes.then(work);
+        this.writes = result.then(() => undefined, () => undefined);
+        return result;
     }
     configuration() {
         const value = this.options;
@@ -83,28 +107,21 @@ export class Spool {
         });
     }
     async snapshot() {
-        // ponytail: scan retained rows to verify the chain; add verified checkpoints only if run size demands it.
+        // Read every retained row and key in one native batch; preserve full chain verification.
         const database = await this.open();
         try {
             const transaction = database.transaction(stores, "readonly");
             const done = completion(transaction);
             const stateRequest = requestValue(transaction.objectStore(stores[0]).get(this.key()));
-            const entries = [];
             const rows = transaction.objectStore(stores[1]);
-            const cursor = rows.openCursor(IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false), "next");
-            cursor.onsuccess = () => {
-                if (cursor.result) {
-                    const entry = cursor.result.value;
-                    if (!same(cursor.result.key, this.key(entry.spool_record.position.sequence))) {
-                        transaction.abort();
-                        return;
-                    }
-                    entries.push(entry);
-                    cursor.result.continue();
-                }
-            };
+            const range = IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false);
+            const entriesRequest = requestValue(rows.getAll(range));
+            const keysRequest = requestValue(rows.getAllKeys(range));
             const state = await stateRequest ?? this.initial();
+            const entries = await entriesRequest, keys = await keysRequest;
             await done;
+            if (entries.length !== keys.length || entries.some((entry, index) => !same(keys[index], this.key(entry.spool_record.position.sequence))))
+                throw new Error("E_SPOOL_CHAIN");
             await this.validate(state, entries);
             return { state, entries };
         }
@@ -113,6 +130,11 @@ export class Spool {
         }
     }
     async validate(state, entries) {
+        const registry = this.configuration().registry;
+        if (!identicalEntry(this.verifiedRegistry, registry)) {
+            this.verifiedEntries.clear();
+            this.verifiedRegistry = structuredClone(registry);
+        }
         const initial = this.initial();
         if (!same(Object.keys(state).sort(), Object.keys(initial).sort()) ||
             state.storage_schema_version !== initial.storage_schema_version ||
@@ -130,18 +152,24 @@ export class Spool {
             const config = this.configuration();
             if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
                 raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
-                raw.sequence !== row.position.sequence || decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength) ||
+                raw.sequence !== row.position.sequence ||
                 decimal(row.payload_size_bytes) > 65536n)
                 throw new Error("E_SPOOL_OBSERVATION_BINDING");
             if (!same(Object.keys(entry).sort(), ["sanitized_observation", "spool_record", "storage_schema_version"]) ||
                 entry.storage_schema_version !== "browser-spool-entry/v1" ||
                 row.position.sequence !== String(index + 1) || row.previous_cursor_hash !== previous ||
                 row.raw_observation_id !== raw.raw_observation_id || row.raw_observation_content_hash !== raw.content_hash ||
-                !same(row.position.generation_key, this.generationKey()) ||
-                row.cursor_hash !== await this.cursor(raw, previous) ||
-                row.content_hash !== await this.hash("SpoolRecord", row) ||
-                raw.content_hash !== await this.hash("RawObservation", raw)) {
+                !same(row.position.generation_key, this.generationKey())) {
                 throw new Error("E_SPOOL_CHAIN");
+            }
+            if (!identicalEntry(this.verifiedEntries.get(row.position.sequence), entry)) {
+                if (decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength))
+                    throw new Error("E_SPOOL_OBSERVATION_BINDING");
+                if (row.cursor_hash !== await this.cursor(raw, previous) ||
+                    row.content_hash !== await this.hash("SpoolRecord", row) ||
+                    raw.content_hash !== await this.hash("RawObservation", raw))
+                    throw new Error("E_SPOOL_CHAIN");
+                this.verifiedEntries.set(row.position.sequence, structuredClone(entry));
             }
             previous = row.cursor_hash;
             bytes += decimal(row.payload_size_bytes);
@@ -200,7 +228,10 @@ export class Spool {
             database.close();
         }
     }
-    async append(value) {
+    append(value) {
+        return this.serializeWrite(() => this.appendRecord(value));
+    }
+    async appendRecord(value) {
         const input = value;
         if (!(input?.canonicalSanitizedBytes instanceof Uint8Array) ||
             !(input.validatedRawObservation?.canonicalBytes instanceof Uint8Array) ||
@@ -277,7 +308,10 @@ export class Spool {
             ackSequence: state.ack_sequence, ackCursorHash: state.ack_cursor_hash,
             pendingCount: entries.length - Number(decimal(state.ack_sequence)) });
     }
-    async persistVerifiedAck(generation, sequence, cursorHash) {
+    persistVerifiedAck(generation, sequence, cursorHash) {
+        return this.serializeWrite(() => this.persistAck(generation, sequence, cursorHash));
+    }
+    async persistAck(generation, sequence, cursorHash) {
         const { state, entries } = await this.snapshot();
         const number = decimal(sequence);
         if (generation !== state.active_generation || number < decimal(state.ack_sequence) ||

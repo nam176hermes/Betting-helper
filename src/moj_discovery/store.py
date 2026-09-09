@@ -4,6 +4,7 @@ import hashlib
 import json
 import sqlite3
 from contextlib import closing
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -23,6 +24,17 @@ def verified_ddl() -> str:
     return content.decode("utf-8")
 
 
+@lru_cache(maxsize=8)
+def _schema_objects(ddl: str) -> tuple[tuple[Any, ...], ...]:
+    with closing(sqlite3.connect(":memory:")) as reference:
+        reference.executescript(ddl)
+        return tuple(
+            reference.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_schema ORDER BY type,name"
+            ).fetchall()
+        )
+
+
 def verify_database(connection: sqlite3.Connection) -> None:
     """Compare complete schema objects, including constraints and all triggers."""
     if connection.execute("PRAGMA user_version").fetchone()[0] != 1:
@@ -32,10 +44,8 @@ def verify_database(connection: sqlite3.Connection) -> None:
     if connection.execute("PRAGMA foreign_key_check").fetchall():
         raise ValueError("E_STORE_FOREIGN_KEY")
     query = "SELECT type,name,tbl_name,sql FROM sqlite_schema ORDER BY type,name"
-    with closing(sqlite3.connect(":memory:")) as reference:
-        reference.executescript(verified_ddl())
-        expected = reference.execute(query).fetchall()
-    if [tuple(row) for row in connection.execute(query)] != expected:
+    expected = _schema_objects(verified_ddl())
+    if tuple(tuple(row) for row in connection.execute(query)) != expected:
         raise ValueError("E_STORE_SCHEMA")
 
 
@@ -135,32 +145,52 @@ TABLES = (
 KEY = ("run_id", "browser_run_id", "producer_id", "stream_id", "generation")
 
 
+@lru_cache(maxsize=4096)
+def _cursor_digest(position: tuple[Any, ...], registry_bytes: bytes) -> str:
+    # Immutable complete input and source bytes: changed storage or registry cannot reuse a proof.
+    run, browser, producer, stream, generation, sequence, raw_hash, previous = position
+    return canonical_content_hash(
+        "CursorStep",
+        {
+            "schema_version": "cursor-step/v1",
+            "discovery_run_id": run,
+            "browser_run_id": browser,
+            "producer_id": producer,
+            "stream_id": stream,
+            "generation": str(generation),
+            "sequence": str(sequence),
+            "raw_observation_hash": raw_hash,
+            "previous_cursor_hash": previous,
+        },
+        registry_bytes=registry_bytes,
+    )
+
+
 def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
-    # ponytail: quadratic scan for bounded offline runs; index by position if runs grow.
     schema = json.loads((VENDOR / "schemas/durability-records.schema.json").read_text())
+    registry_bytes = (VENDOR / "registries/canonical-hash-domains.v1.json").read_bytes()
     h0 = schema["$defs"]["CursorChainContract"]["properties"]["seed_hash_h0"]["const"]
     applied = [row for row in tables["raw_commits"] if row["disposition"] == "APPLIED"]
     chains: dict[tuple[Any, ...], tuple[int, str]] = {}
     linked_tables = ("application_records", "derived_revisions", "reducer_cursors", "ack_outbox")
     if any(len(tables[name]) != len(applied) for name in linked_tables):
         raise ValueError("E_STORE_DURABLE_CHAIN")
+    positions: dict[str, dict[tuple[Any, ...], dict[str, Any]]] = {}
+    for name in linked_tables:
+        positions[name] = {}
+        for row in tables[name]:
+            position = (
+                *tuple(row[field] for field in KEY),
+                row.get("sequence", row.get("highest_contiguous_sequence")),
+            )
+            if position in positions[name]:
+                raise ValueError("E_STORE_DURABLE_CHAIN")
+            positions[name][position] = row
     for raw in sorted(applied, key=lambda row: tuple(row[field] for field in (*KEY, "sequence"))):
         key = tuple(raw[field] for field in KEY)
         sequence, prior = chains.get(key, (0, h0))
-        digest = canonical_content_hash(
-            "CursorStep",
-            {
-                "schema_version": "cursor-step/v1",
-                "discovery_run_id": raw["run_id"],
-                "browser_run_id": raw["browser_run_id"],
-                "producer_id": raw["producer_id"],
-                "stream_id": raw["stream_id"],
-                "generation": str(raw["generation"]),
-                "sequence": str(raw["sequence"]),
-                "raw_observation_hash": raw["raw_observation_content_hash"],
-                "previous_cursor_hash": prior,
-            },
-            registry_path=VENDOR / "registries/canonical-hash-domains.v1.json",
+        digest = _cursor_digest(
+            (*key, raw["sequence"], raw["raw_observation_content_hash"], prior), registry_bytes
         )
         if (raw["sequence"], raw["previous_cursor_hash"], raw["cursor_hash"]) != (
             sequence + 1,
@@ -170,15 +200,10 @@ def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
             raise ValueError("E_STORE_DURABLE_CHAIN")
         records: dict[str, dict[str, Any]] = {}
         for name in linked_tables:
-            matches = [
-                row
-                for row in tables[name]
-                if tuple(row[field] for field in KEY) == key
-                and row.get("sequence", row.get("highest_contiguous_sequence")) == sequence + 1
-            ]
-            if len(matches) != 1:
+            match = positions[name].get((*key, sequence + 1))
+            if match is None:
                 raise ValueError("E_STORE_DURABLE_CHAIN")
-            records[name] = matches[0]
+            records[name] = match
         app, revision, cursor, ack = (records[name] for name in linked_tables)
         if not (
             app["raw_commit_id"]
@@ -227,23 +252,24 @@ def validate_journal(tables: dict[str, list[dict[str, Any]]]) -> None:
                     previous is None
                     or previous["highest_contiguous_sequence"] < ack["highest_contiguous_sequence"]
                 )
-                and any(
-                    tuple(row[field] for field in KEY) == key
-                    and row["highest_contiguous_sequence"] == ack["highest_contiguous_sequence"]
-                    and row["cursor_hash"] == ack["cursor_hash"]
-                    for row in tables["ack_outbox"]
-                )
+                and positions["ack_outbox"]
+                .get((*key, ack["highest_contiguous_sequence"]), {})
+                .get("cursor_hash")
+                == ack["cursor_hash"]
             )
         if not valid:
             raise ValueError("E_STORE_ACK_CHAIN")
         histories[owner_key] = ack
 
 
-def read_journal(connection: sqlite3.Connection) -> dict[str, list[dict[str, Any]]]:
-    return {
-        table: sorted(
-            (dict(row) for row in connection.execute(f"SELECT * FROM {table}")),  # noqa: S608 -- fixed allowlist
-            key=lambda row: json.dumps(row, sort_keys=True),
-        )
+def read_journal(
+    connection: sqlite3.Connection, *, ordered: bool = True
+) -> dict[str, list[dict[str, Any]]]:
+    result = {
+        table: [dict(row) for row in connection.execute(f"SELECT * FROM {table}")]  # noqa: S608 -- fixed allowlist
         for table in TABLES
     }
+    if ordered:
+        for rows in result.values():
+            rows.sort(key=lambda row: json.dumps(row, sort_keys=True))
+    return result

@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import json
 import unicodedata
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, cast
 
@@ -61,10 +62,16 @@ def _validate_unicode(value: object) -> None:
 
 
 def canonical_content_hash(
-    artifact_type: str, value: object, *, registry_path: Path | None = None
+    artifact_type: str,
+    value: object,
+    *,
+    registry_path: Path | None = None,
+    registry_bytes: bytes | None = None,
 ) -> str:
     return hashlib.sha256(
-        canonical_preimage(artifact_type, value, registry_path=registry_path)
+        canonical_preimage(
+            artifact_type, value, registry_path=registry_path, registry_bytes=registry_bytes
+        )
     ).hexdigest()
 
 
@@ -81,13 +88,10 @@ def verify_canonical_content_hash(
     return True
 
 
-def canonical_preimage(
-    artifact_type: str, value: object, *, registry_path: Path | None = None
-) -> bytes:
-    registry_path = registry_path or Path(
-        "vendor/hybrid-discovery-v6.3.6/registries/canonical-hash-domains.v1.json"
-    )
-    registry = parse_strict_json(registry_path.read_bytes())
+@lru_cache(maxsize=8)
+def _domain(registry_bytes: bytes, artifact_type: str) -> tuple[str, tuple[str, ...]]:
+    # Cache immutable results by complete source bytes, never pathname or mtime.
+    registry = parse_strict_json(registry_bytes)
     assert isinstance(registry, dict)
     matches = [entry for entry in registry["domains"] if entry["artifact_type"] == artifact_type]
     if len(matches) != 1:
@@ -98,10 +102,29 @@ def canonical_preimage(
         cast(list[str], entry["excluded_json_pointers"]),
         cast(dict[str, Any], registry),
     )
+    domain = entry["domain"]
+    if not isinstance(domain, str):
+        raise CanonicalError("SCHEMA_INVALID")
+    return domain, tuple(entry["excluded_json_pointers"])
+
+
+def canonical_preimage(
+    artifact_type: str,
+    value: object,
+    *,
+    registry_path: Path | None = None,
+    registry_bytes: bytes | None = None,
+) -> bytes:
+    registry_path = registry_path or Path(
+        "vendor/hybrid-discovery-v6.3.6/registries/canonical-hash-domains.v1.json"
+    )
+    domain, exclusions = _domain(
+        registry_path.read_bytes() if registry_bytes is None else registry_bytes, artifact_type
+    )
     projected = copy.deepcopy(value)
     if not isinstance(projected, dict):
         raise CanonicalError("SCHEMA_INVALID")
-    for pointer in entry["excluded_json_pointers"]:
+    for pointer in exclusions:
         if pointer.count("/") != 1:
             raise CanonicalError("UNREGISTERED_HASH_EXCLUSION")
         key = pointer[1:].replace("~1", "/").replace("~0", "~")
@@ -111,9 +134,6 @@ def canonical_preimage(
     _validate_unicode(projected)
     canonical = rfc8785.dumps(projected)
     assert isinstance(canonical, bytes)
-    domain = entry["domain"]
-    if not isinstance(domain, str):
-        raise CanonicalError("SCHEMA_INVALID")
     return domain.encode() + canonical
 
 

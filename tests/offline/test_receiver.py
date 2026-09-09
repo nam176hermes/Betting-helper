@@ -220,3 +220,51 @@ def test_rejected_wire_never_writes(tmp_path: Path, attack: str) -> None:
             await receiver.close()
 
     asyncio.run(check())
+
+
+def test_duplicate_ack_revalidates_chain_after_apply(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from moj_discovery.offline_receiver import OfflineReceiver
+
+    async def check() -> None:
+        ctx = context()
+        store = create_offline_run(tmp_path / "run", ctx)
+        journal = InputJournal(store.db_path.parent)
+        receiver = OfflineReceiver(ctx, lambda _: None, journal.store, journal)
+        rows = load_synthetic_observations(scenario(tmp_path / "scenario.json", ctx))
+        body = {
+            name: ctx[name]
+            for name in ["run_id", "browser_run_id", "producer_id", "stream_id", "generation"]
+        }
+        body.update(
+            batch_id=str(uuid4()), first_sequence="1", last_sequence="1", observations=rows[:1]
+        )
+        frame = {
+            "protocol": "BH_OFFLINE_WIRE_V1",
+            "session_id": str(uuid4()),
+            "direction": "CLIENT_TO_BACKEND",
+            "counter": "3",
+            "message_type": "BATCH",
+            "body": body,
+            "mac": "0" * 64,
+        }
+        assert (await receiver.process_batch(frame))[0][0] == "ACK"
+        apply = journal.apply
+
+        def altered(data: bytes, batch_id: str) -> dict[str, Any]:
+            outcome = apply(data, batch_id)
+            with closing(sqlite3.connect(store.db_path)) as db, db:
+                trigger = db.execute(
+                    "SELECT sql FROM sqlite_schema WHERE name='ack_cursors_no_update'"
+                ).fetchone()[0]
+                db.execute("DROP TRIGGER ack_cursors_no_update")
+                db.execute("UPDATE ack_cursors SET cursor_hash=?", ("0" * 64,))
+                db.execute(trigger)
+            return outcome
+
+        monkeypatch.setattr(journal, "apply", altered)
+        with pytest.raises(ValueError, match="E_STORE_ACK_CHAIN"):
+            await receiver.process_batch(frame)
+
+    asyncio.run(check())

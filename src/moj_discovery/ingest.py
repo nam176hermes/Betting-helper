@@ -47,7 +47,7 @@ class Ingestor:
         ack: dict[str, Any] = {}
         with closing(self.store.connect()) as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
-            validate_journal(read_journal(connection))
+            validate_journal(read_journal(connection, ordered=False))
             meta = connection.execute("SELECT * FROM run_meta").fetchall()
             if len(meta) != 1 or (
                 meta[0]["run_id"] != run
@@ -225,7 +225,7 @@ class Ingestor:
         """Persist an idempotent confirmation only for the exact durable outbox ACK."""
         with closing(self.store.connect()) as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
-            validate_journal(read_journal(connection))
+            validate_journal(read_journal(connection, ordered=False))
             durable = connection.execute(
                 "SELECT * FROM ack_outbox WHERE ack_outbox_id=?", (ack.get("ack_outbox_id"),)
             ).fetchone()
@@ -290,7 +290,7 @@ class Ingestor:
         now = time_ns() // 1000
         with closing(self.store.connect()) as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
-            validate_journal(read_journal(connection))
+            validate_journal(read_journal(connection, ordered=False))
             meta = connection.execute("SELECT * FROM run_meta").fetchall()
             if len(meta) != 1 or (
                 meta[0]["run_id"] != run

@@ -3,7 +3,7 @@
 import asyncio
 import logging
 import secrets
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from contextlib import closing
 from http import HTTPStatus
 from time import monotonic
@@ -19,7 +19,7 @@ from websockets.typing import Origin
 from .canonical import parse_strict_json
 from .input_journal import InputJournal
 from .offline_protocol import SessionState, validate_context, validate_frame, verify_frame
-from .store import RunStore
+from .store import RunStore, read_journal, validate_journal
 from .synthetic_source import validate_synthetic_observation
 
 
@@ -45,6 +45,9 @@ class OfflineReceiver:
         self._active: ServerConnection | None = None
         self.started = monotonic()
         self.rejections: list[str] = []
+        self.before_send: (
+            Callable[[ServerConnection, str, dict[str, Any]], Awaitable[bool]] | None
+        ) = None
 
     async def start(self) -> None:
         logger = logging.Logger("offline-wire", level=logging.CRITICAL)
@@ -137,6 +140,10 @@ class OfflineReceiver:
                         raise ValueError("E_OFFLINE_SESSION_REPLACED")
                     responses = await self.process_batch(frame)
                 for message_type, response in responses:
+                    if self.before_send and not await self.before_send(
+                        socket, message_type, response
+                    ):
+                        return
                     await socket.send(state.send(message_type, response, key).decode())
                 if any(kind == "NACK" for kind, _ in responses):
                     await socket.close(1008, "E_OFFLINE_BATCH_REJECTED")
@@ -192,6 +199,14 @@ class OfflineReceiver:
                 confirmed = db.execute(
                     "SELECT MAX(highest_contiguous_sequence) FROM ack_cursors WHERE owner='BACKEND'"
                 ).fetchone()[0]
+                if confirmed is not None and sequence <= confirmed:
+                    validate_journal(read_journal(db, ordered=False))
+                    actual = db.execute(
+                        "SELECT * FROM ack_outbox WHERE ack_outbox_id=?",
+                        (ack["ack_outbox_id"],),
+                    ).fetchone()
+                    if actual is None or dict(actual) != ack:
+                        raise ValueError("E_OFFLINE_ACK_BINDING")
             if confirmed is None or sequence > confirmed:
                 self.journal.record_ack_confirmation(
                     body["generation"], str(sequence), ack["cursor_hash"]

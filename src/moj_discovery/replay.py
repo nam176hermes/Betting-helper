@@ -6,7 +6,8 @@ from typing import Any
 
 import rfc8785
 
-from .input_journal import InputJournal
+from .input_journal import InputJournal, _read
+from .offline_faults import WriteDeniedStore
 from .offline_projection import semantic_projection
 from .offline_run import create_offline_run
 
@@ -18,6 +19,10 @@ def verify_replay_equivalence(run_dir: Path, replay_dir: Path) -> dict[str, Any]
     expected_actual = semantic_projection(original.store.db_path)
     replay_store = create_offline_run(replay_dir, original.context)
     replay = InputJournal(replay_dir)
+    fault_path = run_dir / "sqlite-faults.jsonl"
+    if fault_path.exists():
+        # Replay the recorded SQLite fault mechanism, never a supplied outcome string.
+        replay.store = WriteDeniedStore(replay_store.db_path, replay_dir / "sqlite-faults.jsonl")
     applied: dict[int, dict[str, Any]] = {}
     for operation in operations:
         kind = operation["kind"]
@@ -46,6 +51,8 @@ def verify_replay_equivalence(run_dir: Path, replay_dir: Path) -> dict[str, Any]
         elif kind != "PARTIAL_TAIL":
             raise ValueError("E_OFFLINE_REPLAY_OPERATION")
     actual = semantic_projection(replay_store.db_path)
+    if fault_path.exists() and _read(fault_path) != _read(replay_dir / "sqlite-faults.jsonl"):
+        raise ValueError("E_OFFLINE_REPLAY_FAULT")
     if actual != expected_actual:
         raise ValueError("E_OFFLINE_REPLAY_MISMATCH")
     result: dict[str, Any] = {

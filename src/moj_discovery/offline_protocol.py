@@ -7,24 +7,36 @@ from typing import Any, cast
 
 import rfc8785
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
-from referencing import Registry, Resource
 
-from .schema_formats import STRICT_FORMAT_CHECKER
+from .schema_registry import _compiled, validate_artifact
 from .store import VENDOR
 
 CONTRACTS = VENDOR.parents[1] / "contracts/offline_slice/v1"
 MAX_INTEGER = 9223372036854775807
 
 
-@lru_cache(maxsize=3)
 def _validator(name: str) -> Draft202012Validator:
-    resources = [json.loads(p.read_text()) for p in (VENDOR / "schemas").glob("*.json")]
-    resources += [json.loads(p.read_text()) for p in CONTRACTS.glob("*.schema.json")]
-    registry = Registry().with_resources((s["$id"], Resource.from_contents(s)) for s in resources)
-    return Draft202012Validator(
-        json.loads((CONTRACTS / name).read_text()),
-        registry=registry,
-        format_checker=STRICT_FORMAT_CHECKER,
+    return _compiled((CONTRACTS / name).read_bytes(), _resources())
+
+
+def _resources() -> tuple[bytes, ...]:
+    return tuple(p.read_bytes() for p in sorted((VENDOR / "schemas").glob("*.json"))) + tuple(
+        p.read_bytes() for p in sorted(CONTRACTS.glob("*.schema.json"))
+    )
+
+
+@lru_cache(maxsize=8)
+def _envelope(schema_bytes: bytes, resources: tuple[bytes, ...]) -> Draft202012Validator:
+    schema = json.loads(schema_bytes)
+    observations = schema["$defs"]["BATCH"]["properties"]["observations"]
+    if observations["items"] != {"$ref": "urn:hybrid-discovery:v6.2:raw-observation:v1"}:
+        raise ValueError("E_OFFLINE_SCHEMA_CONTRACT")
+    # Equivalent conjunction: closed envelope AND every complete raw schema below.
+    # Separate raw proofs can be reused by the journal/ingestor, with exact source bytes.
+    observations["items"] = True
+    encoded = json.dumps(schema).encode()
+    return _compiled(
+        encoded, tuple(encoded if data == schema_bytes else data for data in resources)
     )
 
 
@@ -41,7 +53,7 @@ def validate_context(value: dict[str, Any]) -> None:
 
 def validate_frame(value: dict[str, Any]) -> None:
     try:
-        _validator("frame.schema.json").validate(value)
+        _envelope((CONTRACTS / "frame.schema.json").read_bytes(), _resources()).validate(value)
         if int(value["counter"]) > MAX_INTEGER:
             raise ValueError()
         if value["message_type"] == "BATCH":
@@ -54,6 +66,9 @@ def validate_frame(value: dict[str, Any]) -> None:
             if int(body["generation"]) > MAX_INTEGER:
                 raise ValueError()
             for sequence, raw in enumerate(body["observations"], first):
+                validate_artifact(
+                    raw, "raw-observation.schema.json", bootstrap_only=True, vendor=VENDOR
+                )
                 if (
                     raw["discovery_run_id"] != body["run_id"]
                     or raw["context"]["browser_run_id"] != body["browser_run_id"]

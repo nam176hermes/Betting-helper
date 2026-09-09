@@ -120,6 +120,7 @@ process.stdout.write(await encodeFrame(frame,key,validate));
 
 def test_valid_mac_does_not_authorize_wrong_handshake_nonce() -> None:
     import secrets
+
     sid, run = str(uuid4()), str(uuid4())
     client, backend = SessionState(sid, run, "CLIENT"), SessionState(sid, run, "BACKEND")
     hello = {"run_id": run, "client_nonce": secrets.token_urlsafe(32)}
