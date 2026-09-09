@@ -493,6 +493,11 @@ def _prepare_test_extension(repository_root: Path, workspace: Path) -> tuple[Pat
     shutil.copy2(required["html"], extension / "repair-probe.html")
     shutil.copy2(required["probe"], extension / "repair-probe.js")
     shutil.copy2(required["spool"], extension / "src/spool.js")
+    (extension / "src/offline").mkdir()
+    run(  # noqa: S603 -- pinned local generator and owned output path
+        ["node", str(repository_root / "tools/build_offline_validators.cjs"),  # noqa: S607
+
+         str(extension / "src/offline/validators.js")], check=True, timeout=30)
     shutil.copy2(required["errors"], extension / "src/errors.js")
     # Resolve the installed ESM dependency inside this isolated test extension.
     canonical = (build_root / "src/canonical.js").read_text()

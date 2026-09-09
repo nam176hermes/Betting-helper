@@ -318,9 +318,11 @@ def test_arbitrary_rehashed_retained_browser_graph_is_rejected(tmp_path: Path) -
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/offline/validators.js",
     }
     for name in names:
         path = extension / name
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(
             'import value from "./canonicalize.js";' if name == "src/canonical.js" else name
         )
@@ -669,6 +671,11 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         ROOT / "extension/node_modules/canonicalize/lib/canonicalize.js",
         extension / "src/canonicalize.js",
     )
+    subprocess.run(  # noqa: S603 -- pinned generator and owned fixture path
+        [str(evidence_gate._resolved_node_executable()),
+         str(ROOT / "tools/build_offline_validators.cjs"),
+         str(extension / "src/offline/validators.js")], check=True, timeout=30,
+    )
     names = {
         "indexeddb-crash-child.js",
         "repair-probe.js",
@@ -676,6 +683,7 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/offline/validators.js",
     }
     modules = {
         name: hashlib.sha256((extension / name).read_bytes()).hexdigest()
@@ -756,6 +764,7 @@ def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collis
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/offline/validators.js",
     }
 
     def row(scope: str, case: str, character: str) -> dict[str, Any]:
@@ -793,7 +802,9 @@ def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collis
         retained_boundaries=("/recorded",),
         live_roots=(),
     )
-    assert len(declarations) == 24
+    legacy = [row for row in declarations if not row[0].endswith("/src/offline/validators.js")]
+    assert len(legacy) == 24
+    assert len([row for row in declarations if row[0].endswith("/src/offline/validators.js")]) == 4
     assert set(declarations) == {
         (f"/recorded/{owner}/test-extension/{name}", "/recorded", character * 64)
         for owner, character in (

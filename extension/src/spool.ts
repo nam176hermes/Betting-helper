@@ -1,4 +1,4 @@
-import { canonicalContentHash, parseStrictJson, type CanonicalRegistry } from "./canonical.js";
+import { canonicalBytes, canonicalContentHash, parseStrictJson, type CanonicalRegistry } from "./canonical.js";
 import type { PersistableSanitizedObservationV1 } from "./security/redaction.js";
 
 export type SpoolRecord = Readonly<{
@@ -50,6 +50,8 @@ type Options = Readonly<{
   stream_id: string;
   generation: string;
   registry: CanonicalRegistry;
+  validateRaw: (value: unknown) => void;
+  normalByteLimit?: bigint;
 }>;
 type Observation = Readonly<{
   raw_observation_id: string;
@@ -101,6 +103,9 @@ export class Spool {
       throw new Error("E_SPOOL_BINDING");
     }
     decimal(value.generation);
+    if (typeof value.validateRaw !== "function") throw new Error("E_SPOOL_BINDING");
+    const limit = value.normalByteLimit ?? 133169152n;
+    if (typeof limit !== "bigint" || limit < 1024n || limit > 133169152n) throw new Error("E_SPOOL_CAPACITY");
     return value;
   }
 
@@ -193,6 +198,12 @@ export class Spool {
     for (const [index, entry] of entries.entries()) {
       const row = entry.spool_record;
       const raw = entry.sanitized_observation;
+      this.validateRaw(raw);
+      const config = this.configuration();
+      if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
+          raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
+          raw.sequence !== row.position.sequence || decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength) ||
+          decimal(row.payload_size_bytes) > 65536n) throw new Error("E_SPOOL_OBSERVATION_BINDING");
       if (!same(Object.keys(entry).sort(), ["sanitized_observation", "spool_record", "storage_schema_version"]) ||
           entry.storage_schema_version !== "browser-spool-entry/v1" ||
           row.position.sequence !== String(index + 1) || row.previous_cursor_hash !== previous ||
@@ -213,6 +224,11 @@ export class Spool {
         state.ack_cursor_hash !== (ack === 0n ? H0 : entries[Number(ack - 1n)]?.spool_record.cursor_hash)) {
       throw new Error("E_SPOOL_CHAIN");
     }
+  }
+
+  private validateRaw(value: unknown): void {
+    try { this.configuration().validateRaw(value); }
+    catch { throw new Error("E_SPOOL_SCHEMA"); }
   }
 
   private generationKey(): SpoolRecord["position"]["generation_key"] {
@@ -261,8 +277,9 @@ export class Spool {
         !same(Array.from(input.canonicalSanitizedBytes), Array.from(input.validatedRawObservation.canonicalBytes))) {
       throw new Error("E_SPOOL_UNVALIDATED");
     }
-    // The opaque envelope has already passed the governed RawObservation schema.
+    if (value.canonicalSanitizedBytes.byteLength > 65536) throw new Error("E_SPOOL_SCHEMA");
     const raw = parseStrictJson(value.canonicalSanitizedBytes) as Observation;
+    this.validateRaw(raw);
     const config = this.configuration();
     if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
         raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
@@ -277,7 +294,7 @@ export class Spool {
     }
     const size = BigInt(value.canonicalSanitizedBytes.byteLength);
     if (raw.sequence !== state.next_sequence || decimal(state.next_sequence) === maximum) throw new Error("E_SPOOL_SEQUENCE");
-    if (decimal(state.normal_bytes_used) + size > 133169152n) throw new Error("E_SPOOL_CAPACITY");
+    if (decimal(state.normal_bytes_used) + size > (config.normalByteLimit ?? 133169152n)) throw new Error("E_SPOOL_CAPACITY");
     const cursor = await this.cursor(raw, state.last_cursor_hash);
     const record: SpoolRecord = {
       record_type: "SpoolRecord", schema_version: "1", content_hash: "0".repeat(64),
@@ -307,6 +324,30 @@ export class Spool {
     const { state, entries } = await this.snapshot();
     return entries.filter(entry => decimal(entry.spool_record.position.sequence) > decimal(state.ack_sequence))
       .map(entry => entry.spool_record);
+  }
+
+  async readPendingObservations(limit: number): Promise<readonly Readonly<{
+    record: SpoolRecord; canonicalSanitizedBytes: Uint8Array;
+  }>[]> {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 32) throw new Error("E_SPOOL_LIMIT");
+    const {state, entries} = await this.snapshot();
+    return entries.filter(entry => decimal(entry.spool_record.position.sequence) > decimal(state.ack_sequence))
+      .slice(0, limit).map(entry => ({record: structuredClone(entry.spool_record),
+        canonicalSanitizedBytes: canonicalBytes(entry.sanitized_observation)}));
+  }
+
+  async exportRetainedObservations(): Promise<readonly Uint8Array[]> {
+    const {entries} = await this.snapshot();
+    return entries.map(entry => canonicalBytes(entry.sanitized_observation));
+  }
+
+  async readVerifiedStreamState(): Promise<Readonly<{
+    generation: string; nextSequence: string; ackSequence: string; ackCursorHash: string; pendingCount: number;
+  }>> {
+    const {state, entries} = await this.snapshot();
+    return Object.freeze({generation: state.active_generation, nextSequence: state.next_sequence,
+      ackSequence: state.ack_sequence, ackCursorHash: state.ack_cursor_hash,
+      pendingCount: entries.length - Number(decimal(state.ack_sequence))});
   }
 
   async persistVerifiedAck(generation: string, sequence: string, cursorHash: string): Promise<void> {

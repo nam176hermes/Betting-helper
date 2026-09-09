@@ -268,3 +268,6 @@ const validateRegisteredExclusions = (
     throw new Error("UNREGISTERED_HASH_EXCLUSION");
   }
 };
+
+/** Canonical bytes for an already schema-validated local value. */
+export const canonicalBytes = (value: unknown): Uint8Array => new TextEncoder().encode(canonicalize(value));

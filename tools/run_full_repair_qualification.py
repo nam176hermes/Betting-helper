@@ -24,6 +24,7 @@ _BROWSER_MODULES = {
     "src/canonicalize.js",
     "src/errors.js",
     "src/spool.js",
+    "src/offline/validators.js",
 }
 _GRAPH_OWNER_SCOPES = {
     "BROWSER_LOOPBACK_ACK",

@@ -1,4 +1,5 @@
 /** Test-only owned Worker; never receives an expected state. */
+import { validateRaw } from "../src/offline/validators.js";
 import { Spool } from "../src/spool.js";
 // The registered legacy Node executor remains unqualified for browser evidence.
 export const contractNotImplemented = () => {
@@ -59,7 +60,35 @@ globalThis.onmessage = (event) => {
         const evidence = { ...request.identity, worker_id: workerId, module_url: moduleUrl,
             module_sha256: Array.from(digest, byte => byte.toString(16).padStart(2, "0")).join(""),
             origin: location.origin, protocol: location.protocol };
-        const spool = new Spool(request.options);
+        const spool = new Spool({ ...request.options,
+            ...(request.normal_byte_limit === undefined ? {} : { normalByteLimit: BigInt(request.normal_byte_limit) }), validateRaw: (value) => {
+                if (!validateRaw(value))
+                    throw new Error("E_SPOOL_SCHEMA");
+            } });
+        if (request.operation === "offline-spool") {
+            const appendErrors = [];
+            for (const raw of request.observations) {
+                try {
+                    await spool.append(envelope(raw));
+                }
+                catch (error) {
+                    appendErrors.push(error instanceof Error ? error.message : "E_TEST_APPEND");
+                    break;
+                }
+            }
+            const pending = await spool.readPendingObservations(32);
+            const original = pending[0];
+            if (original)
+                original.canonicalSanitizedBytes.fill(0);
+            const reread = await spool.readPendingObservations(32);
+            const first = reread[0];
+            if (first)
+                await spool.persistVerifiedAck(request.options.generation, first.record.position.sequence, first.record.cursor_hash);
+            reply({ ...evidence, appendErrors, payloads: reread.map(row => new TextDecoder().decode(row.canonicalSanitizedBytes)),
+                retained: (await spool.exportRetainedObservations()).map(bytes => new TextDecoder().decode(bytes)),
+                verified: await spool.readVerifiedStreamState(), ...await actualRows(request) });
+            return;
+        }
         if (request.operation === "initialize") {
             await spool.enumeratePending();
             reply({ ...evidence, ...await actualRows(request) });

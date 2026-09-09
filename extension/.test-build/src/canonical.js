@@ -52,7 +52,7 @@ class StrictJsonParser {
             if (this.source[this.offset] !== ":")
                 throw new Error("MALFORMED_UTF8_OR_JSON");
             this.offset += 1;
-            result[key] = this.value();
+            Object.defineProperty(result, key, { value: this.value(), enumerable: true, writable: true, configurable: true });
             this.whitespace();
             const delimiter = this.source[this.offset];
             if (delimiter === "}") {
@@ -233,3 +233,5 @@ const validateRegisteredExclusions = (artifactType, exclusions, registry) => {
         throw new Error("UNREGISTERED_HASH_EXCLUSION");
     }
 };
+/** Canonical bytes for an already schema-validated local value. */
+export const canonicalBytes = (value) => new TextEncoder().encode(canonicalize(value));

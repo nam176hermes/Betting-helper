@@ -154,7 +154,7 @@ def capture_binding() -> dict[str, Any]:
     ).stdout.strip()
     sources = [p for directory, suffix in (
         ("src", ".py"), ("tools", ".py"), ("tools", ".cjs"), ("extension/src", ".ts"),
-        ("extension/test-harness", ".ts"),
+        ("extension/test-harness", ".ts"), ("contracts/offline_slice", ".json"),
     ) for p in (ROOT / directory).rglob("*" + suffix)]
     sources += [ROOT / name for name in (
         "pyproject.toml", "extension/package.json",
@@ -1034,6 +1034,11 @@ def _compiled_typescript_module_hashes(input_binding: str, graph: str) -> dict[s
             "src/errors.js": output / "src/errors.js",
             "src/spool.js": output / "src/spool.js",
         }
+        generated = output / "src/offline/validators.js"
+        run(  # noqa: S603 -- bound local Node, registered generator, owned output
+            [str(node), str(ROOT / "tools/build_offline_validators.cjs"), str(generated)],
+            check=True, capture_output=True, timeout=30)
+        sources["src/offline/validators.js"] = generated
         hashes = {name: _sha(path) for name, path in sources.items()}
         canonical = (output / "src/canonical.js").read_text().replace(
             'from "canonicalize"', 'from "./canonicalize.js"'
@@ -1086,6 +1091,7 @@ def _verify_retained_typescript_graph(
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/offline/validators.js",
     }
     artifacts = _RETAINED_ARTIFACTS.get()
     actual_names = (
