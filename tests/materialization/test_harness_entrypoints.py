@@ -1,5 +1,7 @@
 import ast
 import json
+import subprocess
+import sys
 from pathlib import Path, PurePosixPath
 
 import pytest
@@ -9,6 +11,12 @@ from moj_discovery.vendor import pack_root
 ROOT = Path(__file__).parents[2]
 PACK = pack_root(ROOT)
 ERROR = "E_CONTRACT_NOT_IMPLEMENTED:V636-P01-T04"
+MISSING_INPUT = {
+    "LOOPBACK_ACK": (1, "E_CRASH_SCENARIO_REQUIRED"),
+    "SQLITE_TRANSACTION": (1, "E_CRASH_SCENARIO_REQUIRED"),
+    "GAP_GENERATION_COHERENCE": (1, "E_GAP_SCENARIO"),
+    "WHOLE_RUN_DESTRUCTION": (2, "the following arguments are required"),
+}
 CHILDREN = {
     (
         "CHROME_INDEXEDDB",
@@ -40,7 +48,9 @@ def _safe_source(entrypoint: str) -> Path:
     return source
 
 
-def test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked() -> None:
+def test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked(
+    tmp_path: Path,
+) -> None:
     children = json.loads(
         (PACK / "docs/registries/crash-child-command-registry.v1.json").read_text()
     )["entries"]
@@ -58,21 +68,32 @@ def test_registered_harness_entrypoints_compile_and_unowned_entries_stay_blocked
         entrypoint = child["entrypoint"]
         source = _safe_source(entrypoint)
         source_text = source.read_text()
-        if child["harness"] == "GAP_GENERATION_COHERENCE":
-            assert "_new_shock_pending" in source_text
-            assert "Ingestor(store)" in source_text
-        else:
-            assert ERROR in source_text
         if source.suffix == ".py":
             ast.parse(source_text)
-            assert "def main" in source_text
+            command = [sys.executable, "-I", "-B", str(source)]
+            help_result = subprocess.run(  # noqa: S603 -- exact allowlisted child, help only.
+                [*command, "--help"], cwd=tmp_path, capture_output=True, text=True, timeout=15,
+            )
+            assert help_result.returncode == 0, help_result.stderr
+            assert "usage:" in help_result.stdout.lower()
+            expected_exit, expected_error = MISSING_INPUT[child["harness"]]
         else:
-            assert "export const contractNotImplemented" in source_text
+            # Node is still not a browser owner: never qualify it as IndexedDB evidence.
+            command = ["node", str(ROOT / entrypoint)]
+            expected_exit, expected_error = 1, ERROR
+        rejected = subprocess.run(  # noqa: S603 -- allowlisted child without execution inputs.
+            command, cwd=tmp_path, capture_output=True, text=True, timeout=15,
+        )
+        assert rejected.returncode == expected_exit, rejected.stderr
+        assert expected_error in rejected.stderr
+        assert list(tmp_path.iterdir()) == []  # No store/checkpoint/ready file without inputs.
 
     with pytest.raises(AssertionError):
         _safe_source("/absolute/path")
     with pytest.raises(AssertionError):
         _safe_source("../escape")
+    with pytest.raises(AssertionError):
+        _safe_source("tools/unregistered_child.py")
 
     ownership_entries = json.loads(
         (PACK / "docs/registries/artifact-ownership.v1.json").read_text()
