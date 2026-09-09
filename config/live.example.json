@@ -1,0 +1,38 @@
+{
+  "schema_version": "bh-live-readonly-config/v1",
+  "mode": "LIVE_READ_ONLY",
+  "enabled": false,
+  "provider": {
+    "id": "API_FOOTBALL_V3",
+    "base_url": "https://v3.football.api-sports.io",
+    "api_key_env": "API_FOOTBALL_KEY",
+    "fixture_ids": [],
+    "poll_fixture_seconds": 30,
+    "poll_events_seconds": 30,
+    "max_requests_per_run": 500,
+    "max_requests_per_minute": 8
+  },
+  "operator": {
+    "capture_profile_path": null,
+    "profile_evidence_hash": null,
+    "user_session_present": false,
+    "allowed_fixture_bindings": []
+  },
+  "runtime": {
+    "host": "127.0.0.1",
+    "port": 8765,
+    "max_matches": 1,
+    "max_run_minutes": 120,
+    "platform_qualification_path": null
+  },
+  "gates": {
+    "offline_result_path": ".local/offline-slice/acceptance/result.json",
+    "security_review_path": null,
+    "provider_feasibility_path": null,
+    "live_run_authorization_path": null
+  },
+  "model_enabled": false,
+  "paper_enabled": false,
+  "money_enabled": false,
+  "cashout_submission_enabled": false
+}

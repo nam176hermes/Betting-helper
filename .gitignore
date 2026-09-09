@@ -11,3 +11,4 @@ extension/dist/
 extension/node_modules/
 node_modules/
 .local/
+config/live.local.json

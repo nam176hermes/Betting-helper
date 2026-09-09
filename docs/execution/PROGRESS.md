@@ -15,3 +15,5 @@ OS-10 DONE: real offline faults and bounded load recovery. Explicit offline suit
 OS-11 DONE: source-bound gate and explicit discovery. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.
 
 OS-12 DONE: verified static synthetic diagnostic. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.
+
+OS-13 DONE: network-free live preflight and future runbook. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.
