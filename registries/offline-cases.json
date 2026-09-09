@@ -1,0 +1,223 @@
+{
+  "schema_version": "offline-acceptance-cases/v1",
+  "scope": "BH_S01_TO_S04_OFFLINE_ONLY",
+  "required": true,
+  "cases": [
+    {
+      "case_id": "OFF-01",
+      "name": "three-record-happy-path",
+      "expected_behavior": "ACCEPT",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "Three RawObservation accounting rows; seq1..3; real DB applied3, client ack3, no gap; replay equal.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-02",
+      "name": "duplicate-resend",
+      "expected_behavior": "ACCEPT",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "Deliver q1 twice with identical bytes then q2/q3; applied3 not4; identical q1 cursor; duplicate accounted.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-03",
+      "name": "ack-lost-after-commit",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "Drop server ACK after q1 committed; new authenticated session resends q1; applied1 and client ack1.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-04",
+      "name": "backend-kill-after-commit-before-ack",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "OWNED_PROCESS_SQLITE",
+      "oracle": "Kill owned backend at post-commit checkpoint; restart same run with fresh session/key; q1 idempotent and actual ACK survives.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-05",
+      "name": "worker-abort-before-idb-commit",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "REAL_EXTENSION_INDEXEDDB",
+      "oracle": "Terminate owned writer before commit; successor reads zero rows and reusable nextSequence1.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-06",
+      "name": "worker-kill-after-idb-commit",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "REAL_EXTENSION_INDEXEDDB",
+      "oracle": "Terminate after completion event; successor reads q1, nextSequence2, ack0 then resend succeeds.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-07",
+      "name": "browser-restart-retained-spool",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "REAL_BROWSER_PROCESS",
+      "oracle": "Kill/restart isolated browser profile; new reader finds q1; fresh session; no context-free live continuity claim.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-08",
+      "name": "replayed-frame-counter",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_WEBSOCKET",
+      "oracle": "Resend authenticated frame with same counter in same session; connection rejected and no second DB apply.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-09",
+      "name": "wrong-mac",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_WEBSOCKET",
+      "oracle": "Mutate MAC; reject before raw journal or database write.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-10",
+      "name": "wrong-origin-path",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_WEBSOCKET",
+      "oracle": "Connection with wrong Origin or wrong path rejected before handshake; no records.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-11",
+      "name": "secret-command-payload",
+      "expected_behavior": "REJECT",
+      "execution_kind": "PROJECTOR_AND_SINK",
+      "oracle": "Inject cookie/token/raw URL/script/unknown command field; no sensitive bytes or fingerprints in any persisted logs/raw/store.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-12",
+      "name": "schema-identity-mismatch",
+      "expected_behavior": "REJECT",
+      "execution_kind": "PROJECTOR_AND_SINK",
+      "oracle": "Unknown schema version or wrong run/browser/stream/producer; no journal/apply/ACK.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-13",
+      "name": "forward-sequence-gap",
+      "expected_behavior": "REJECT",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "Commit q1 then receive q3 without q2; retain gap evidence, close predecessor, no ACK past1; replay same rejection.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-14",
+      "name": "conflicting-duplicate",
+      "expected_behavior": "REJECT",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "q1 committed then different schema-valid q1 payload/hash; conflict closes generation and does not ACK conflicting bytes.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-15",
+      "name": "fake-or-regressing-ack",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_EXTENSION_INDEXEDDB",
+      "oracle": "Wrong cursor/generation or ACK beyond stored highwater rejected; local acknowledged cursor unchanged.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-16",
+      "name": "raw-file-missing-or-corrupt",
+      "expected_behavior": "REJECT",
+      "execution_kind": "ACTUAL_REPLAY",
+      "oracle": "Remove/mutate actual retained raw bytes; replay/gate fails, no loading original fixture as replacement.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-17",
+      "name": "wrong-expected-state",
+      "expected_behavior": "FAIL_ORACLE",
+      "execution_kind": "ACTUAL_REPLAY",
+      "oracle": "After actual execution replace parent expectation with999999; comparator fails; original observed artifact unchanged.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-18",
+      "name": "capacity-bounded",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_EXTENSION_INDEXEDDB",
+      "oracle": "Use a legitimate lower configured byte cap>=1024 and<=133169152; append actual valid rows until next row exceeds that cap. Reject next append without partial sequence mutation; retain prior rows. Never fill 127MiB solely to run this test or mock IndexedDB quota.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-19",
+      "name": "bounded-load-1000",
+      "expected_behavior": "ACCEPT",
+      "execution_kind": "BROWSER_WIRE_SQLITE",
+      "oracle": "1000 actual inputs; contiguous unique rows and ACK1000; correct duplicate accounting; bounded queue/storage; complete within120s or fail target explicitly.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-20",
+      "name": "diagnostic-xss",
+      "expected_behavior": "REPORT",
+      "execution_kind": "DIAGNOSTIC",
+      "oracle": "Escaped unsafe text and absent data shown honestly; no remote scripts/assets and no invented probabilities.",
+      "owner": "OS-12"
+    },
+    {
+      "case_id": "OFF-21",
+      "name": "missing-live-inputs",
+      "expected_behavior": "REPORT",
+      "execution_kind": "PREFLIGHT",
+      "oracle": "No key/profile/review: preflight says pending; mocked sockets demonstrate zero network attempts.",
+      "owner": "OS-13"
+    },
+    {
+      "case_id": "OFF-22",
+      "name": "gate-tampered-or-missing-evidence",
+      "expected_behavior": "REJECT",
+      "execution_kind": "GATE",
+      "oracle": "Remove/alter executed artifact or duplicate caseID; gate rejects regardless of supplied PASS.",
+      "owner": "OS-11"
+    },
+    {
+      "case_id": "OFF-23",
+      "name": "handshake-nonce-and-reconnect",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_WEBSOCKET",
+      "oracle": "Wrong nonce/direction, READY bypass or reused session/key counter reset cannot ingest; valid fresh session positivecontrol succeeds.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-24",
+      "name": "journal-pending-recovery",
+      "expected_behavior": "RECOVER",
+      "execution_kind": "OWNED_PROCESS_SQLITE",
+      "oracle": "Kill after raw/receive journal durable but before outcome append; resolve from DB/idempotent apply, preserve order and do not fabricate outcome.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-25",
+      "name": "source-change-invalidates-gate",
+      "expected_behavior": "REJECT",
+      "execution_kind": "GATE",
+      "oracle": "Change implementation/config/lock after execution; evidence is stale, gate rejects, original report retained.",
+      "owner": "OS-11"
+    },
+    {
+      "case_id": "OFF-26",
+      "name": "sink-rejects-forged-brand",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_EXTENSION_INDEXEDDB",
+      "oracle": "Directly forge opaque input wrapper with equal bytes but invalid raw schema; Spool refuses before write.",
+      "owner": "OS-10"
+    },
+    {
+      "case_id": "OFF-27",
+      "name": "partial-batch-prefix",
+      "expected_behavior": "REJECT",
+      "execution_kind": "REAL_WEBSOCKET",
+      "oracle": "One validated BATCH q1,q2,q3. Inject a real database-write failure during q3 before its commit; q1/q2 remain committed. Send ACK2 with actual cursor plus NACK STORAGE_FAILED, never ACK3; replay records the failed attempt and committed prefix.",
+      "owner": "OS-10"
+    }
+  ]
+}

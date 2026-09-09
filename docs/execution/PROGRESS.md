@@ -11,3 +11,5 @@ Checkpoint: `.local/offline-slice/execution-state.json`; package: `.local/offlin
 OS-10 DONE: real fault matrix, 1,000-input load, durable duplicate ACK guards, source-byte-bound caches and serialized Spool writes. Red/green logs: `.local/offline-slice/os10-*.log`. Integration attempt1: 27/27 and gate exit 0 before final source freeze. OFF-19 workload/cold readback 104.120s; mandatory replay 116.490s; total 241.833s. Total is not claimed under 120s.
 
 OS-10 DONE: real offline faults and bounded load recovery. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.
+
+OS-11 DONE: source-bound gate and explicit discovery. Explicit offline suite 107 passed in 524.69s (`.local/offline-slice/full-offline-suite1.log`); compiler and TS lint passed. Final frozen acceptance pending.

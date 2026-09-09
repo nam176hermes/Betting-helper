@@ -5,23 +5,57 @@ import argparse
 import json
 import os
 import sys
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
-from tools.offline_harness import SliceHarness
+from moj_discovery.diagnostic import render_diagnostic
+from tools.offline_results import build_result, gate_view, reference
+from tools.run_offline_faults import run_required_cases
+from tools.verify_offline_slice import verify_offline_slice
+
+
+def write_result(
+    output: Path,
+    scenario_id: str,
+    records: list[dict[str, Any]],
+    observations: list[dict[str, Any]],
+    *,
+    name: str,
+    diagnostic_name: str,
+) -> Path:
+    diagnostic = output / diagnostic_name
+    with diagnostic.open("x") as stream:
+        stream.write("")
+    value = build_result(output, scenario_id, records, diagnostic_name)
+    diagnostic.write_text(render_diagnostic(gate_view(value, observations)))
+    value["diagnostic"] = reference(diagnostic, output)
+    result = output / name
+    with result.open("x") as stream:
+        json.dump(value, stream, indent=2)
+    return result
 
 
 def run_scenario(scenario_id: str, output: Path, browser_binary: Path) -> dict[str, Any]:
-    if scenario_id != "single-stream":
-        raise ValueError("E_OFFLINE_ACCEPTANCE_NOT_IMPLEMENTED")
-    harness = SliceHarness(output, browser_binary)
-    result = asdict(harness.run_case("OFF-01"))
-    result["run_dir"] = str(result["run_dir"])
-    (output / "single-stream.json").write_text(json.dumps(result, indent=2))
-    return result
+    if scenario_id not in {"single-stream", "acceptance"}:
+        raise ValueError("E_OFFLINE_SCENARIO")
+    output = output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    records, observations = run_required_cases(
+        output, browser_binary, ["OFF-01"] if scenario_id == "single-stream" else None
+    )
+    candidate = write_result(
+        output,
+        scenario_id,
+        records,
+        observations,
+        name="candidate.json",
+        diagnostic_name="diagnostic.html",
+    )
+    verified = verify_offline_slice(candidate)
+    candidate.rename(output / "result.json")
+    return verified
 
 
 def main() -> int:

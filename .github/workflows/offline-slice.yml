@@ -1,0 +1,65 @@
+{
+  "name": "Offline slice (legacy authoring-tests qualification remains separate)",
+  "on": {
+    "pull_request": {},
+    "workflow_dispatch": {}
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "portable-unit": {
+      "runs-on": "ubuntu-24.04",
+      "steps": [
+        {
+          "name": "Checkout (actions/checkout v4.4.0)",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "name": "Set up Node (actions/setup-node v4.4.0)",
+          "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "with": {
+            "node-version": "22.23.0"
+          }
+        },
+        {
+          "name": "Set up uv (astral-sh/setup-uv v7.6.0)",
+          "uses": "astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78",
+          "with": {
+            "version": "0.11.7",
+            "enable-cache": true
+          }
+        },
+        {
+          "name": "Provision locked dependencies",
+          "run": "uv python install 3.12.3\nuv sync --frozen\ncorepack enable\ncorepack prepare pnpm@10.33.2 --activate\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Compile all test targets and run explicit offline units",
+          "run": "pnpm --dir extension exec tsc -p tsconfig.test.json\nuv run --frozen --offline pytest -q tests/offline/test_contracts.py tests/offline/test_protocol.py tests/offline/test_synthetic_source.py tests/offline/test_input_journal.py tests/offline/test_receiver.py tests/offline/test_schema_cache.py tests/offline/test_diagnostic_view.py tests/offline/test_live_preflight.py tests/offline/test_test_inventory.py"
+        }
+      ]
+    },
+    "browser-integration": {
+      "if": "github.event_name == 'workflow_dispatch'",
+      "needs": "portable-unit",
+      "runs-on": [
+        "self-hosted",
+        "offline-slice-approved-browser"
+      ],
+      "steps": [
+        {
+          "name": "Checkout (actions/checkout v4.4.0)",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+        },
+        {
+          "name": "Use provisioned locked environment and approved isolated browser",
+          "env": {
+            "BH_CHROME_BINARY": "/opt/google/chrome/chrome"
+          },
+          "run": "uv run --frozen --offline python tools/run_offline_slice.py --scenario acceptance --output .local/offline-slice/acceptance\nuv run --frozen --offline python tools/verify_offline_slice.py --input .local/offline-slice/acceptance/result.json"
+        }
+      ]
+    }
+  }
+}
