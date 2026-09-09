@@ -429,6 +429,10 @@ class ApiFootballClient:
                     self._stopped = failure.code
                 if failure.code == "USER_STOP":
                     raise KeyboardInterrupt from None
+                if failure.code == "HTTP_429":
+                    self._next_start = max(
+                        self._next_start, self._mono() + (failure.retry_after or 60)
+                    )
                 if failure.code not in {"HTTP_429", "HTTP_5XX", "TIMEOUT"} or index == 2:
                     if failure.code in {
                         "SCHEMA_ERROR",
