@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:offline-slice:context:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "offline-run-context/v1"
+    },
+    "source_kind": {
+      "const": "SYNTHETIC_TEST"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "browser_run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "producer_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "stream_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "generation": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "backend_url": {
+      "const": "ws://127.0.0.1:8765/offline"
+    },
+    "allowed_extension_origin": {
+      "type": "string",
+      "pattern": "^chrome-extension://[a-p]{32}$"
+    },
+    "max_duration_seconds": {
+      "const": 600
+    },
+    "max_frame_bytes": {
+      "const": 262144
+    },
+    "max_raw_bytes": {
+      "const": 65536
+    },
+    "max_batch_records": {
+      "const": 32
+    },
+    "code_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "vendor_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "schema_lock_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scenario_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "live_authority": {
+      "const": false
+    },
+    "provider_authority": {
+      "const": false
+    },
+    "money_authority": {
+      "const": false
+    },
+    "normal_spool_limit_bytes": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_kind",
+    "run_id",
+    "browser_run_id",
+    "producer_id",
+    "stream_id",
+    "generation",
+    "backend_url",
+    "allowed_extension_origin",
+    "max_duration_seconds",
+    "max_frame_bytes",
+    "max_raw_bytes",
+    "max_batch_records",
+    "code_sha256",
+    "vendor_sha256",
+    "schema_lock_sha256",
+    "scenario_sha256",
+    "live_authority",
+    "provider_authority",
+    "money_authority",
+    "normal_spool_limit_bytes"
+  ],
+  "$comment": "Semantic validator enforces 1024 <= normal_spool_limit_bytes <= 133169152, numeric string comparison via BigInt/int, never lexicographic."
+}

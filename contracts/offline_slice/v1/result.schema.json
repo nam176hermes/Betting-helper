@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:offline-slice:result:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "offline-slice-result/v1"
+    },
+    "source_kind": {
+      "const": "SYNTHETIC_TEST"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "OFFLINE_SLICE_PASS": {
+      "enum": [
+        "YES",
+        "NO"
+      ]
+    },
+    "LIVE_PREFLIGHT_IMPLEMENTED": {
+      "enum": [
+        "YES",
+        "NO"
+      ]
+    },
+    "LIVE_READ_ONLY_READY": {
+      "const": "PENDING_REAL_INPUTS_AND_LIVE_REVIEW"
+    },
+    "MONEY_READY": {
+      "const": "NO"
+    },
+    "LEGACY_FULL_QUALIFICATION": {
+      "enum": [
+        "NOT_EVALUATED",
+        "HOLD",
+        "FAIL",
+        "PASS_WITH_SEPARATE_EVIDENCE"
+      ]
+    },
+    "INDEPENDENT_SECURITY_REVIEW": {
+      "enum": [
+        "NOT_RUN",
+        "SELF_ONLY",
+        "PASSED_SEPARATE_SCOPED_REVIEW",
+        "FAILED"
+      ]
+    },
+    "provenance": {
+      "$ref": "urn:betting-helper:offline-slice:provenance:v1"
+    },
+    "required_case_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^OFF-[0-9]{2}$"
+      }
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "pattern": "^OFF-[0-9]{2}$"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED_ENVIRONMENT",
+              "NOT_IMPLEMENTED",
+              "NOT_EXECUTED"
+            ]
+          },
+          "executed": {
+            "type": "boolean"
+          },
+          "expected_behavior": {
+            "enum": [
+              "ACCEPT",
+              "REJECT",
+              "RECOVER",
+              "REPORT",
+              "FAIL_ORACLE"
+            ]
+          },
+          "actual_code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{0,95}$"
+          },
+          "command_exit": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "relative_path": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "relative_path",
+                "sha256",
+                "bytes"
+              ]
+            }
+          },
+          "reason_code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{0,95}$"
+          }
+        },
+        "required": [
+          "case_id",
+          "status",
+          "executed",
+          "expected_behavior",
+          "actual_code",
+          "command_exit",
+          "artifacts",
+          "reason_code"
+        ]
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relative_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "relative_path",
+        "sha256",
+        "bytes"
+      ]
+    },
+    "production_authority": {
+      "const": "NONE"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_kind",
+    "run_id",
+    "OFFLINE_SLICE_PASS",
+    "LIVE_PREFLIGHT_IMPLEMENTED",
+    "LIVE_READ_ONLY_READY",
+    "MONEY_READY",
+    "LEGACY_FULL_QUALIFICATION",
+    "INDEPENDENT_SECURITY_REVIEW",
+    "provenance",
+    "required_case_ids",
+    "records",
+    "diagnostic",
+    "production_authority"
+  ],
+  "$comment": "Gate reopens every evidence artifact and matches exact case set/current source/lock/vendor/browser. PASS requires executed rows, expected rejection codes as appropriate, actual browser cases and verified artifacts. A JSON PASS literal does not authorize anything."
+}

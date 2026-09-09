@@ -1,0 +1,67 @@
+{
+  "schema_version": "offline-replay-projection/v1",
+  "ordering": "table name then primary-key tuple",
+  "equal_fields": "ALL_COLUMNS_EXCEPT_LISTED_PHYSICAL_TIMES",
+  "table_time_exclusions": {
+    "run_meta": [
+      "created_at_us",
+      "closed_at_us"
+    ],
+    "raw_commits": [
+      "committed_at_us"
+    ],
+    "raw_conflicts": [
+      "detected_at_us"
+    ],
+    "application_records": [
+      "applied_at_us"
+    ],
+    "derived_revisions": [
+      "created_at_us"
+    ],
+    "reducer_cursors": [
+      "advanced_at_us"
+    ],
+    "ack_outbox": [
+      "committed_at_us"
+    ],
+    "ack_cursors": [
+      "recorded_at_us"
+    ],
+    "stream_generations": [
+      "opened_at_us",
+      "closed_at_us"
+    ],
+    "gap_records": [
+      "created_at_us"
+    ],
+    "gap_epoch_bindings": [
+      "bound_at_us"
+    ],
+    "generation_transitions": [
+      "transitioned_at_us"
+    ],
+    "coherence_epochs": [
+      "opened_at_us"
+    ],
+    "coherence_controllers": [
+      "updated_at_us"
+    ],
+    "coherence_transitions": [
+      "transitioned_at_us"
+    ],
+    "shock_observations": [
+      "created_at_us",
+      "shock_lower_bound_us",
+      "shock_upper_bound_us"
+    ]
+  },
+  "notes": [
+    "All names were checked against the pinned DDL. OS-09 validates exact presence; source drift requires an explicit narrow amendment, not implicit dropping of extra columns.",
+    "Only generated backend clock values are removed. Raw observation payload event timing is retained byte-for-byte. The shock bounds excluded here belong solely to backend-generated SEQUENCE_GAP/SCHEMA_CONFLICT of this offline journal; no live GOAL/time-coherence proof is made by this projection.",
+    "Replay recorded ACK confirmations, not a synthesized final ACK. Identical physical timestamps are not required; all logical IDs/columns not in this list remain compared.",
+    "Require tables outside this allowlisted projection to be empty or exactly match initialized synthetic seed; never silently ignore unexpected nonempty tables.",
+    "Read each table with fixed SQL names from this file; sort rows by complete canonical logical row, not write wall time. No arbitrary SQL from a scenario."
+  ],
+  "ddl_git_blob": "39955025a550abc646531eb34e3aef923f7e2e68"
+}

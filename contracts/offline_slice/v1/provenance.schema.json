@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:offline-slice:provenance:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "offline-provenance/v1"
+    },
+    "source_kind": {
+      "const": "SYNTHETIC_TEST"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "scenario_id": {
+      "enum": [
+        "single-stream",
+        "acceptance"
+      ]
+    },
+    "code_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "source_tree_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "vendor_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "python_lock_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "node_lock_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scenario_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "browser_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "browser_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "extension_origin": {
+      "type": "string",
+      "pattern": "^chrome-extension://[a-p]{32}$"
+    },
+    "termination_kind": {
+      "enum": [
+        "OWNED_POSIX_PROCESS",
+        "OWNED_WINDOWS_PROCESS",
+        "OWNED_WORKER",
+        "NONE"
+      ]
+    },
+    "power_loss_qualified": {
+      "const": false
+    },
+    "production_authority": {
+      "const": "NONE"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source_kind",
+    "run_id",
+    "scenario_id",
+    "code_revision",
+    "source_tree_sha256",
+    "vendor_sha256",
+    "python_lock_sha256",
+    "node_lock_sha256",
+    "scenario_sha256",
+    "browser_sha256",
+    "browser_version",
+    "extension_origin",
+    "termination_kind",
+    "power_loss_qualified",
+    "production_authority"
+  ]
+}

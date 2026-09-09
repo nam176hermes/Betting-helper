@@ -1,0 +1,698 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:offline-slice:frame:v1",
+  "$defs": {
+    "HELLO": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      },
+      "required": [
+        "run_id",
+        "client_nonce"
+      ]
+    },
+    "WELCOME": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "server_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      },
+      "required": [
+        "run_id",
+        "client_nonce",
+        "server_nonce"
+      ]
+    },
+    "READY": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "server_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      },
+      "required": [
+        "run_id",
+        "client_nonce",
+        "server_nonce"
+      ]
+    },
+    "READY_ACK": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "server_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      },
+      "required": [
+        "run_id",
+        "client_nonce",
+        "server_nonce"
+      ]
+    },
+    "BATCH": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "first_sequence": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "last_sequence": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+          }
+        }
+      },
+      "required": [
+        "batch_id",
+        "run_id",
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "first_sequence",
+        "last_sequence",
+        "observations"
+      ]
+    },
+    "ACK": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "highest_contiguous_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "batch_id",
+        "run_id",
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "highest_contiguous_sequence",
+        "cursor_hash"
+      ]
+    },
+    "NACK": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "code": {
+          "enum": [
+            "INVALID_INPUT",
+            "GAP",
+            "CONFLICT",
+            "CLOSED_GENERATION",
+            "CAPACITY",
+            "IDENTITY_MISMATCH",
+            "STORAGE_FAILED"
+          ]
+        }
+      },
+      "required": [
+        "batch_id",
+        "run_id",
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "code"
+      ]
+    },
+    "PING": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "monotonic_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        }
+      },
+      "required": [
+        "nonce",
+        "monotonic_us"
+      ]
+    },
+    "PONG": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "monotonic_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        }
+      },
+      "required": [
+        "nonce",
+        "monotonic_us"
+      ]
+    },
+    "STOP": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "reason": {
+          "enum": [
+            "SCENARIO_COMPLETE",
+            "MANUAL_OFFLINE_STOP",
+            "SAFETY_STOP"
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "reason"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "CLIENT_TO_BACKEND"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "HELLO"
+        },
+        "body": {
+          "$ref": "#/$defs/HELLO"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "BACKEND_TO_CLIENT"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "WELCOME"
+        },
+        "body": {
+          "$ref": "#/$defs/WELCOME"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "CLIENT_TO_BACKEND"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "READY"
+        },
+        "body": {
+          "$ref": "#/$defs/READY"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "BACKEND_TO_CLIENT"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "READY_ACK"
+        },
+        "body": {
+          "$ref": "#/$defs/READY_ACK"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "CLIENT_TO_BACKEND"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "BATCH"
+        },
+        "body": {
+          "$ref": "#/$defs/BATCH"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "BACKEND_TO_CLIENT"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "ACK"
+        },
+        "body": {
+          "$ref": "#/$defs/ACK"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "BACKEND_TO_CLIENT"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "NACK"
+        },
+        "body": {
+          "$ref": "#/$defs/NACK"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "CLIENT_TO_BACKEND"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "PING"
+        },
+        "body": {
+          "$ref": "#/$defs/PING"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "BACKEND_TO_CLIENT"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "PONG"
+        },
+        "body": {
+          "$ref": "#/$defs/PONG"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protocol": {
+          "const": "BH_OFFLINE_WIRE_V1"
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "direction": {
+          "const": "CLIENT_TO_BACKEND"
+        },
+        "counter": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "message_type": {
+          "const": "STOP"
+        },
+        "body": {
+          "$ref": "#/$defs/STOP"
+        },
+        "mac": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "protocol",
+        "session_id",
+        "direction",
+        "counter",
+        "message_type",
+        "body",
+        "mac"
+      ]
+    }
+  ],
+  "$comment": "Only local offline entrypoint. Schema validity is necessary, not sufficient: verify MAC, exact counters, active handshake/session, byte limits, identity and full BATCH endpoint/length invariants before persistence. Resolve RawObservation offline from pinned vendor."
+}
