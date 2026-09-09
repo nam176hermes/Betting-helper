@@ -6,6 +6,7 @@ import type {Spool} from "../spool.js";
 
 export type OfflineClientOptions = {
   context: OfflineRunContext; spool: Spool;
+  batchSize?: 1 | 32;
   credentials: () => Promise<{sessionId: string; key: Uint8Array}>;
   validateContext: (value: unknown) => void; validateFrame: (value: unknown) => void;
 };
@@ -115,7 +116,7 @@ export class AuthenticatedLoopback {
         if (performance.now() - this.started > 600000) throw new Error("E_OFFLINE_STOPPED");
         try {
           if (!this.state?.ready || this.socket?.readyState !== WebSocket.OPEN) await this.connect();
-          const pending = await spool.readPendingObservations(32);
+          const pending = await spool.readPendingObservations(this.options.batchSize ?? 1);
           if (!pending.length) return;
           const identity = {batch_id: crypto.randomUUID(), run_id: context.run_id,
             browser_run_id: context.browser_run_id, producer_id: context.producer_id,

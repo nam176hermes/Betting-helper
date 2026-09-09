@@ -23,33 +23,33 @@ child.stdio[4].on("data", chunk => {
   let end;
   while ((end = buffer.indexOf("\0")) >= 0) {
     const raw = buffer.slice(0, end); buffer = buffer.slice(end + 1);
-    record({ direction: "receive", raw });
     try {
       const value = JSON.parse(raw), waiter = pending.get(value.id);
+      record(waiter?.private ? {direction: "receive", id: value.id, private: true} : { direction: "receive", raw });
       if (waiter) {
         clearTimeout(waiter.timer); pending.delete(value.id);
-        if (value.error) waiter.reject(new Error("E_PIPE_API:" + raw));
+        if (value.error) waiter.reject(new Error(waiter.private ? "E_PIPE_PRIVATE_API" : "E_PIPE_API:" + raw));
         else waiter.resolve(value.result);
       }
     } catch (error) { fail(error); }
   }
 });
-const call = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
+const call = (method, params = {}, sessionId, privateCall = false) => new Promise((resolve, reject) => {
   const id = ++sequence;
   const request = { id, method, params, ...(sessionId ? { sessionId } : {}) };
   const timer = setTimeout(() => {
     pending.delete(id); reject(new Error("E_PIPE_TIMEOUT:" + method));
-  }, 15000);
-  pending.set(id, { resolve, reject, timer });
-  record({ direction: "send", request });
+  }, privateCall ? 125000 : 15000);
+  pending.set(id, { resolve, reject, timer, private: privateCall });
+  record(privateCall ? {direction: "send", id, method, private: true} : { direction: "send", request });
   child.stdio[3].write(JSON.stringify(request) + "\0");
 });
-const evaluate = async (sessionId, expression) => {
+const evaluate = async (sessionId, expression, privateCall = false) => {
   const response = await call("Runtime.evaluate", {
     expression, awaitPromise: true, returnByValue: true,
-  }, sessionId);
+  }, sessionId, privateCall);
   if (response.exceptionDetails || !response.result || !("value" in response.result)) {
-    throw new Error("E_PIPE_EVALUATE:" + JSON.stringify(response));
+    throw new Error(privateCall ? "E_PIPE_PRIVATE_EVALUATE" : "E_PIPE_EVALUATE:" + JSON.stringify(response));
   }
   return response.result.value;
 };
@@ -59,7 +59,8 @@ function fail(error) {
   failed = true;
   save("pipe-error.json", { error: String(error), pid: child.pid, node_pid: process.pid });
   process.stderr.write(String(error));
-  process.exit(1); // The outer owner retains and terminates its whole job/group.
+  if (config.offline) setInterval(() => {}, 1000); // Keep ownership alive for verified group cleanup.
+  else process.exit(1);
 }
 child.on("error", fail);
 child.on("exit", code => fail(new Error("E_PIPE_BROWSER_EXIT:" + code)));
@@ -77,10 +78,10 @@ child.on("exit", code => fail(new Error("E_PIPE_BROWSER_EXIT:" + code)));
   if (!loaded || config.origin !== "chrome-extension://" + loaded.id) {
     throw new Error("E_PIPE_EXTENSION_ID");
   }
-  const target = await call("Target.createTarget", { url: config.origin + "/repair-probe.html" });
+  const target = await call("Target.createTarget", { url: config.origin + (config.offline ? "/src/offline/page.html" : "/repair-probe.html") });
   const attached = await call("Target.attachToTarget", { targetId: target.targetId, flatten: true });
   let document;
-  const documentExpression = "({origin:location.origin,protocol:location.protocol,probe:Boolean(globalThis.repairProbe),extensionId:globalThis.chrome?.runtime?.id??null})";
+  const documentExpression = `({origin:location.origin,protocol:location.protocol,probe:Boolean(globalThis.${config.offline ? "offlineProbe" : "repairProbe"}),extensionId:globalThis.chrome?.runtime?.id??null})`;
   for (let attempt = 0; attempt < 100; attempt++) {
     document = await evaluate(attached.sessionId, documentExpression);
     if (document.origin === config.origin && document.extensionId === loaded.id && document.probe === true) break;
@@ -88,6 +89,31 @@ child.on("exit", code => fail(new Error("E_PIPE_BROWSER_EXIT:" + code)));
   }
   if (document.origin !== config.origin || document.protocol !== "chrome-extension:" || document.probe !== true) {
     throw new Error("E_PIPE_EXTENSION_ORIGIN");
+  }
+  if (config.offline) {
+    save("offline-ready.json", {pid: child.pid, node_pid: process.pid, version, loaded, document});
+    const lines = require("node:readline").createInterface({input: process.stdin});
+    let index = 0;
+    const running = new Set();
+    for await (const line of lines) {
+      if (line.length > 4194304) throw new Error("E_OFFLINE_CONTROL_SIZE");
+      const request = JSON.parse(line);
+      if (request.operation === "FINISH") break;
+      const expression = request.operation === "RESTART_WORKER"
+        ? "globalThis.offlineProbe.restartWorker()"
+        : `globalThis.offlineProbe.command(${JSON.stringify(request)})`;
+      if (running.size >= 2) throw new Error("E_OFFLINE_CONTROL_CAPACITY");
+      const resultIndex = ++index;
+      const task = evaluate(attached.sessionId, expression, true).then(result => {
+        save(`offline-result-${resultIndex}.json`, {pid: child.pid, node_pid: process.pid, result});
+      }).catch(() => {
+        save(`offline-result-${resultIndex}.json`, {pid: child.pid, node_pid: process.pid,
+          result: {status: "REJECTED", code: "E_OFFLINE_PRIVATE_COMMAND"}});
+      }).finally(() => running.delete(task));
+      running.add(task);
+    }
+    setInterval(() => {}, 1000);
+    return;
   }
   const sentinel = await evaluate(attached.sessionId, work.sentinel_expression);
   const worker = work.worker_expression === null ? null : await evaluate(attached.sessionId, work.worker_expression);

@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {"noEmit": false, "outDir": "../.local/offline-slice/build", "rootDir": ".", "sourceMap": false},
+  "include": ["src/offline/bootstrap.ts", "src/offline/validators.d.ts"]
+}

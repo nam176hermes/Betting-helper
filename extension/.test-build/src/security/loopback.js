@@ -127,7 +127,7 @@ export class AuthenticatedLoopback {
                 try {
                     if (!this.state?.ready || this.socket?.readyState !== WebSocket.OPEN)
                         await this.connect();
-                    const pending = await spool.readPendingObservations(32);
+                    const pending = await spool.readPendingObservations(this.options.batchSize ?? 1);
                     if (!pending.length)
                         return;
                     const identity = { batch_id: crypto.randomUUID(), run_id: context.run_id,
