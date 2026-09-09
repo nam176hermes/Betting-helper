@@ -1,0 +1,409 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:live-config:v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "mode",
+    "enabled",
+    "provider",
+    "operator",
+    "runtime",
+    "gates",
+    "model_enabled",
+    "paper_enabled",
+    "money_enabled",
+    "cashout_submission_enabled"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "bh-live-readonly-config/v2"
+    },
+    "mode": {
+      "const": "LIVE_READ_ONLY"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "base_url",
+        "api_key_env",
+        "account_slot",
+        "league_id",
+        "season",
+        "fixture_ids",
+        "polling_strategy",
+        "batch_api_limit",
+        "live_poll_seconds",
+        "halftime_poll_seconds",
+        "prematch_poll_seconds",
+        "near_kickoff_poll_seconds",
+        "terminal_confirmation_offsets_seconds",
+        "events_fallback_enabled",
+        "events_fallback_fixture_ids",
+        "events_fallback_poll_seconds",
+        "daily_soft_cap",
+        "max_requests_per_run",
+        "max_requests_per_minute",
+        "min_request_gap_seconds",
+        "max_in_flight",
+        "retry_reserve_fraction"
+      ],
+      "properties": {
+        "id": {
+          "const": "API_FOOTBALL_V3"
+        },
+        "base_url": {
+          "const": "https://v3.football.api-sports.io"
+        },
+        "api_key_env": {
+          "const": "API_FOOTBALL_KEY"
+        },
+        "account_slot": {
+          "const": "api-football-primary"
+        },
+        "league_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "season": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 2000,
+          "maximum": 2100
+        },
+        "fixture_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "uniqueItems": true,
+          "maxItems": 5
+        },
+        "polling_strategy": {
+          "const": "BATCH_FASTEST_ACTIVE"
+        },
+        "batch_api_limit": {
+          "const": 20
+        },
+        "live_poll_seconds": {
+          "const": 15
+        },
+        "halftime_poll_seconds": {
+          "const": 60
+        },
+        "prematch_poll_seconds": {
+          "const": 60
+        },
+        "near_kickoff_poll_seconds": {
+          "const": 30
+        },
+        "terminal_confirmation_offsets_seconds": {
+          "const": [
+            30,
+            120
+          ]
+        },
+        "events_fallback_enabled": {
+          "type": "boolean"
+        },
+        "events_fallback_fixture_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "uniqueItems": true,
+          "maxItems": 5
+        },
+        "events_fallback_poll_seconds": {
+          "const": 60
+        },
+        "daily_soft_cap": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6000
+        },
+        "max_requests_per_run": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600
+        },
+        "max_requests_per_minute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "min_request_gap_seconds": {
+          "const": 10
+        },
+        "max_in_flight": {
+          "const": 1
+        },
+        "retry_reserve_fraction": {
+          "const": "0.20"
+        }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capture_strategy",
+        "capture_profile_path",
+        "profile_evidence_hash",
+        "watchdog_seconds",
+        "allowed_fixture_bindings"
+      ],
+      "properties": {
+        "capture_strategy": {
+          "const": "FIXED_DOM_READONLY"
+        },
+        "capture_profile_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "profile_evidence_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "watchdog_seconds": {
+          "const": 30
+        },
+        "allowed_fixture_bindings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "uniqueItems": true,
+          "maxItems": 5
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "host",
+        "port",
+        "platform",
+        "max_matches",
+        "max_run_minutes",
+        "run_output_dir",
+        "platform_qualification_path"
+      ],
+      "properties": {
+        "host": {
+          "const": "127.0.0.1"
+        },
+        "port": {
+          "const": 8765
+        },
+        "platform": {
+          "enum": [
+            "WINDOWS_CHROME_WSL2",
+            "LINUX_CHROME"
+          ]
+        },
+        "max_matches": {
+          "enum": [
+            1,
+            3,
+            5
+          ]
+        },
+        "max_run_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        },
+        "run_output_dir": {
+          "type": "string",
+          "pattern": "^\\.local/part-b/[A-Za-z0-9_-]+$"
+        },
+        "platform_qualification_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "offline_result_path",
+        "provider_feasibility_path",
+        "capture_review_path",
+        "security_review_path",
+        "live_intent_path"
+      ],
+      "properties": {
+        "offline_result_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "provider_feasibility_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "capture_review_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "security_review_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "live_intent_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      }
+    },
+    "model_enabled": {
+      "const": false
+    },
+    "paper_enabled": {
+      "const": false
+    },
+    "money_enabled": {
+      "const": false
+    },
+    "cashout_submission_enabled": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "enabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "provider": {
+            "properties": {
+              "league_id": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "season": {
+                "type": "integer",
+                "minimum": 2000,
+                "maximum": 2100
+              },
+              "fixture_ids": {
+                "minItems": 1
+              }
+            }
+          },
+          "operator": {
+            "properties": {
+              "capture_profile_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "profile_evidence_hash": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "allowed_fixture_bindings": {
+                "minItems": 1
+              }
+            }
+          },
+          "runtime": {
+            "properties": {
+              "platform_qualification_path": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "gates": {
+            "properties": {
+              "offline_result_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider_feasibility_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "capture_review_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "security_review_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "live_intent_path": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
