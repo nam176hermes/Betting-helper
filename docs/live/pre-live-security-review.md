@@ -96,3 +96,21 @@ Review is rechecked before plan delivery and before evidence persistence.
 The sample result is never a live-wire MarketBook, CAPTURE_PROFILE review or
 permission to poll providers. Tests with an injected review seam are SYNTHETIC
 and cannot satisfy the real host review gate.
+
+## Discovery tool repair candidate
+
+Prior isolated source analysis on bf1ba38 found the selector bootstrap dependency,
+hidden descendant text and unavailable discovery Stop. The repair adds a bounded
+selected-region candidate map, rejects hidden descendants before text extraction,
+and routes discovery cancellation outside the live command queue. Both mapped
+and selector-based results remain unadmitted; no actual profile or fixture binding
+is inferred. Synthetic Chrome/loopback tests exercise these seams and cannot grant
+operator or host authority. Current commands, exits and hashes are in the private
+execution checkpoint and candidate manifest.
+
+Host review must assess the selected-region scope explicitly, including untrusted
+page-controlled selection, root/selector limits, visibility limitations, cancellation
+races and the unchanged consent/host-receipt verifier. Existing review-b.v2 config
+still references the older v6.3.6 runtime and seal. A source candidate ZIP is not a
+controller-sealed host pack. Do not repoint generated registries, reuse old receipts,
+initialize a signer, or claim host launch eligibility from this implementation.

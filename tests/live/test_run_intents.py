@@ -60,6 +60,31 @@ def test_discovery_scope_needs_no_accepted_profile_but_review_precedes_io(
     ):
         with pytest.raises(ValueError):
             live_intent.discovery_field_map(bad)
+    selected_region = {"selection_mode": "USER_SELECTED_REGION_V1"}
+    assert live_intent.discovery_field_map(selected_region) == selected_region
+    mapped_scope = live_intent.discovery_review_scope(
+        intent, config, selected_region, "TEST_ONLY_PROFILE", scope["expires_at"]
+    )
+    assert mapped_scope["selectors"] == selected_region and mapped_scope != scope
+    candidate = {
+        "match_root_selector": "#TEST_ONLY_MATCH",
+        "candidates": [{"selector": "#price", "text": "2.10", "market_id": None}],
+    }
+    live_intent.validate_selection_map(candidate)
+    for bad in (
+        {**candidate, "match_root_selector": "body"},
+        {**candidate, "candidates": candidate["candidates"] * 2},
+        {
+            **candidate,
+            "candidates": [{"selector": "#account", "text": "TEST_ONLY", "market_id": None}],
+        },
+        {**candidate, "candidates": [{"selector": "#price", "text": None, "market_id": None}]},
+        {**candidate, "candidates": [{"selector": "#price", "text": "x" * 257, "market_id": None}]},
+        {**candidate, "html": "FORBIDDEN"},
+    ):
+        with pytest.raises(ValueError):
+            live_intent.validate_selection_map(bad)
+
     partial = {k: None if k != "match_root" else v for k, v in selectors.items()}
     assert live_intent.discovery_field_map(partial) == partial
     monkeypatch.setattr(live_intent, "controlling_tty", contextlib.nullcontext)
@@ -82,8 +107,9 @@ def test_discovery_scope_needs_no_accepted_profile_but_review_precedes_io(
 @pytest.mark.parametrize(
     ("tamper", "write_failure"), [(False, False), (True, False), (False, True)]
 )
+@pytest.mark.parametrize("mapping", [False, True])
 def test_discovery_loopback_exchange_and_tamper_with_synthetic_review_seam(
-    tmp_path: Any, monkeypatch: Any, tamper: bool, write_failure: bool
+    tmp_path: Any, monkeypatch: Any, tamper: bool, write_failure: bool, mapping: bool
 ) -> None:
     """Real loopback I/O, SYNTHETIC review/DOM; does not prove operator or host review."""
     import asyncio
@@ -96,6 +122,11 @@ def test_discovery_loopback_exchange_and_tamper_with_synthetic_review_seam(
     from tools.qualify_chrome_indexeddb import _extension_id
 
     intent, config, selectors, scope = make_discovery_intent(tmp_path, monkeypatch)
+    if mapping:
+        selectors = {"selection_mode": "USER_SELECTED_REGION_V1"}
+        scope = live_intent.discovery_review_scope(
+            intent, config, selectors, "TEST_ONLY_PROFILE", scope["expires_at"]
+        )
     monkeypatch.setattr(live_intent, "controlling_tty", contextlib.nullcontext)
     monkeypatch.setattr(live_preflight_batched, "verify_external_review", lambda *args: None)
     receipt = live_intent.consume_user_intent(intent, config, "ALLOW OPERATOR OBSERVATION")
@@ -150,7 +181,14 @@ def test_discovery_loopback_exchange_and_tamper_with_synthetic_review_seam(
                     tab_id=7,
                     document_id="TEST_ONLY_DOCUMENT",
                     document_epoch=str(uuid4()),
-                    fields={k: None for k in selectors if k != "match_root"},
+                    fields=(
+                        dict(
+                            match_root_selector="#TEST_ONLY_MATCH",
+                            candidates=[dict(selector="#price", text="2.10", market_id=None)],
+                        )
+                        if mapping
+                        else {k: None for k in selectors if k != "match_root"}
+                    ),
                     observed_at_utc=datetime.now(UTC).isoformat(),
                     browser_mono_us="1000000",
                     profile_accepted=False,

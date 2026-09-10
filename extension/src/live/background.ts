@@ -78,6 +78,7 @@ export function startLiveWorkspace(verifiedValidators: Validators): void {
   let maxMatches: number | undefined;
   let operations: Promise<void> = Promise.resolve(), queued = 0;
   let captureWrites: Promise<void> = Promise.resolve(), captureQueued = 0;
+  let discovery: AbortController | undefined;
   let deadlineTimer: ReturnType<typeof setTimeout> | undefined;
   const broadcast = (): void => {
     const view: SharedView = {matches: Array.from(matches.values(), ({value, received}) => {
@@ -100,7 +101,7 @@ export function startLiveWorkspace(verifiedValidators: Validators): void {
   };
   const stopReaders = (): void => { for (const capture of captures.values()) void capture.stop(); captures.clear(); };
   const close = (): void => {
-    clearTimeout(deadlineTimer); stopReaders(); connection = "DISCONNECTED";
+    discovery?.abort(); clearTimeout(deadlineTimer); stopReaders(); connection = "DISCONNECTED";
     const oldUi = ui, oldProducer = producer; ui = undefined; producer = undefined;
     oldUi?.close(); oldProducer?.close(); broadcast();
   };
@@ -139,9 +140,10 @@ export function startLiveWorkspace(verifiedValidators: Validators): void {
       if (discoveryTabId === undefined) throw Error("E_DISCOVERY_SELECT_TAB");
       const tabId = discoveryTabId; discoveryTabId = undefined;
       connection = "DISCOVERY"; notice = "Read-only sample; profile remains unadmitted"; broadcast();
-      try { await runDiscoveryTicket(ticket, tabId); notice = "UNADMITTED_SAMPLE_SAVED"; }
-      catch { notice = "DISCOVERY_REJECTED"; }
-      finally { connection = "DISCONNECTED"; broadcast(); }
+      discovery = new AbortController();
+      try { await runDiscoveryTicket(ticket, tabId, discovery.signal); notice = "UNADMITTED_SAMPLE_SAVED"; }
+      catch { notice = discovery.signal.aborted ? "DISCOVERY_STOPPED" : "DISCOVERY_REJECTED"; }
+      finally { discovery = undefined; connection = "DISCONNECTED"; broadcast(); }
       return;
     }
     const [uiTicket, producerTicket] = parsePairingTicket(ticket);
@@ -236,7 +238,9 @@ export function startLiveWorkspace(verifiedValidators: Validators): void {
         const ticket = m["ticket"]; enqueue(() => pair(ticket));
       } else if (Object.keys(m).sort().join() === "bindingId,operation" && typeof m["bindingId"] === "string" && typeof m["operation"] === "string" &&
         ["START_CAPTURE", "WATCHLIST_ADD", "WATCHLIST_REMOVE", "SELECT_ACTIVE", "REFRESH", "STOP_SESSION", "OPEN_OPERATOR", "OPEN_LIVESCORE"].includes(m["operation"])) {
-        const operation = m["operation"] as Command, id = m["bindingId"]; enqueue(() => command(operation, id));
+        const operation = m["operation"] as Command, id = m["bindingId"];
+        if (operation === "STOP_SESSION" && discovery) { discovery.abort(); return; }
+        enqueue(() => command(operation, id));
       }
     });
   });

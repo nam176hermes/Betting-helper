@@ -124,7 +124,7 @@ export function mountWorkspace(watchlist: (view: SharedView, target: HTMLElement
     controls.replaceChildren(start, button(m?.display?.selected ? "Pause / Remove fixture" : "Add approved fixture", () => {
       command(m?.display?.selected ? "WATCHLIST_REMOVE" : "WATCHLIST_ADD", id);
     }, !ready), button("Refresh", () => { command("REFRESH", id); }, !ready),
-    button("Stop session", () => { command("STOP_SESSION", id); }, !ready),
+    button("Stop session", () => { command("STOP_SESSION", id); }, !ready && view.connection !== "DISCOVERY"),
     button("Open Mise-o-jeu match", () => { command("OPEN_OPERATOR", id); }, !ready || !exactLink(m.binding.operator_match_url)),
     button("Open LiveScore match", () => { command("OPEN_LIVESCORE", id); }, !ready || !exactLink(m.binding.livescore_match_url)));
   };

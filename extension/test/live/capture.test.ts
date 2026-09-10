@@ -71,7 +71,7 @@ void test("complete stable book maps only observed labels; ambiguous content fai
 void test("discovery reads unadmitted fields without an accepted profile and always stops", async () => {
   const module = await import("../../src/live/capture.js") as unknown as Record<string, unknown>;
   assert.equal(typeof module["takeDiscoverySample"], "function", "first-observation executor is missing");
-  const take = module["takeDiscoverySample"] as (p: unknown) => Promise<Record<string, unknown>>;
+  const take = module["takeDiscoverySample"] as (p: unknown, signal?: AbortSignal) => Promise<Record<string, unknown>>;
   const selectors = Object.fromEntries(["match_root", ...Object.keys(fields)].map(k => [k, `#${k}`]));
   const discovery = {tabId: 7, exactUrl: plan.exactUrl, sourceKind: "SYNTHETIC_TEST",
     fieldMapHash: "a".repeat(64), expiresAt: "2099-01-01T00:00:00Z", leaseMs: 600000, selectors};
@@ -106,6 +106,23 @@ void test("discovery reads unadmitted fields without an accepted profile and alw
       await assert.rejects(() => take({...discovery, ...mutation}));
     }
     assert.equal(injections, 1, "invalid scopes must reject before script injection");
+    const cancelled = new AbortController(); cancelled.abort();
+    await assert.rejects(() => take(discovery, cancelled.signal), /E_DISCOVERY_CANCELLED/);
+    assert.equal(injections, 1, "cancelled discovery must not inject");
+    const pending = new AbortController();
+    const oldSend = chrome.tabs.sendMessage;
+    Object.assign(chrome.tabs, {sendMessage: (_tab: number, message: {operation: string}) => {
+      operations.push(message.operation);
+      if (message.operation === "READ") {
+        pending.abort(); return new Promise(() => undefined);
+      }
+      return Promise.resolve({status: message.operation === "STOP" ? "STOPPED" : "READY"});
+    }});
+    try {
+      await assert.rejects(() => take(discovery, pending.signal), /E_DISCOVERY_CANCELLED/);
+      assert.equal(operations.at(-1), "STOP", "cancelling an in-flight read must stop its reader");
+    } finally { Object.assign(chrome.tabs, {sendMessage: oldSend}); }
+
   } finally { Object.assign(globalThis, {chrome: prior}); }
 });
 
@@ -131,6 +148,23 @@ void test("discovery rejects a connection already closed before receiver registr
       timer = setTimeout(() => { resolve("STUCK_WAITING_FOR_CLOSED_SOCKET"); }, 1000);
     })]);
     assert.equal(result, "E_DISCOVERY_CONNECTION");
+    const originalImport = crypto.subtle.importKey.bind(crypto.subtle);
+    const imported = await originalImport.call(crypto.subtle, "raw", new Uint8Array(32),
+      {name: "HMAC", hash: "SHA-256"}, false, ["sign", "verify"]);
+    let release: (() => void) | undefined;
+    Object.assign(crypto.subtle, {importKey: () => new Promise<CryptoKey>(resolve => {
+      release = (): void => { resolve(imported); };
+    })});
+    try {
+      const controller = new AbortController(), before = connections.length;
+      const pending = runDiscoveryTicket(JSON.stringify({kind: "OPERATOR_DISCOVERY", runId: active.captureId,
+        key: "A".repeat(43)}), 7, controller.signal);
+      controller.abort();
+      assert.ok(release); release();
+      await assert.rejects(pending, /E_DISCOVERY_CANCELLED/);
+      assert.equal(connections.length, before, "Stop during key import must not open a socket");
+    } finally { Object.assign(crypto.subtle, {importKey: originalImport}); }
+
   } finally {
     clearTimeout(timer);
     connections[0]?.onclose?.(); // Release the deliberately broken pre-fix implementation.

@@ -29,13 +29,16 @@ External gates:
   approval follows from readiness alone.
   The first-observation executor is implemented separately from accepted-profile
   capture. Current checks and source hashes are in the private checkpoint.
-  Observed selector mapping, external tool review and separate observation
-  permission remain pending; profile name Betting-Helper is user supplied.
+  The repair adds bounded selected-region mapping without prior selectors,
+  rejects hidden descendant text and enables discovery Stop outside the queue.
+  Actual mapping, external tool review and separate observation permission
+  remain pending; profile name Betting-Helper is user supplied.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.
 - PB-20 WAITING_REVIEW: prior provider evidence passed; actual operator/profile
   evidence and current independent external host security receipts remain absent.
-  Part A's old receipt also needs a final refresh: its full tracked-input binding
-  changed with progress/feasibility documentation. Old receipts remain immutable.
+  The current repair campaign refreshes affected Part A and platform checks
+  against its frozen source; exact results are in the private checkpoint.
+  Old receipts remain immutable.
   Discovery implementation changes the current source hash. Earlier provider,
   platform and full mock PASS receipts remain historical until current admission
   and affected qualification have been refreshed; no new provider call is implied.

@@ -36,6 +36,8 @@ def discovery_field_map(value: Any) -> dict[str, Any]:
     """Bound selector data only; this does not assert the selectors were observed."""
     from .operator_profile import REQUIRED_CAPTURE, validate_selector
 
+    if type(value) is dict and value == {"selection_mode": "USER_SELECTED_REGION_V1"}:
+        return copy.deepcopy(value)
     if type(value) is not dict or set(value) != set(REQUIRED_CAPTURE) | {"score", "period"}:
         raise ValueError("E_DISCOVERY_FIELD_MAP")
     for name, selector in value.items():
@@ -265,9 +267,48 @@ async def serve_operator_discovery(
     return result
 
 
+def validate_selection_map(value: Any) -> None:
+    """Only observed candidate text/selectors; no semantic profile admission."""
+    import json
+    import unicodedata
+
+    from .operator_profile import validate_selector
+
+    if (
+        type(value) is not dict
+        or set(value) != {"match_root_selector", "candidates"}
+        or type(value["candidates"]) is not list
+        or not 1 <= len(value["candidates"]) <= 32
+        or len(json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode()) > 10000
+    ):
+        raise ValueError("E_DISCOVERY_MAP")
+    validate_selector(value["match_root_selector"])
+    if "#" not in value["match_root_selector"] and "[data-" not in value["match_root_selector"]:
+        raise ValueError("E_DISCOVERY_ROOT")
+    seen = set()
+    for row in value["candidates"]:
+        if type(row) is not dict or set(row) != {"selector", "text", "market_id"}:
+            raise ValueError("E_DISCOVERY_MAP")
+        validate_selector(row["selector"])
+        if row["selector"] in seen or row["text"] is None and row["market_id"] is None:
+            raise ValueError("E_DISCOVERY_MAP")
+        seen.add(row["selector"])
+        for text in (row["text"], row["market_id"]):
+            if text is not None and (
+                type(text) is not str
+                or not 1 <= len(text) <= 256
+                or text != unicodedata.normalize("NFC", text)
+                or any(ord(c) < 32 or ord(c) == 127 for c in text)
+            ):
+                raise ValueError("E_DISCOVERY_TEXT")
+
+
 def validate_discovery_sample(sample: Any, plan: dict[str, Any]) -> None:
     import unicodedata
 
+    mapping = discovery_field_map(plan["selectors"]) == {
+        "selection_mode": "USER_SELECTED_REGION_V1"
+    }
     fields = set(discovery_field_map(plan["selectors"])) - {"match_root"}
     if (
         type(sample) is not dict
@@ -294,9 +335,11 @@ def validate_discovery_sample(sample: Any, plan: dict[str, Any]) -> None:
         or sample["binding_verified"] is not False
     ):
         raise ValueError("E_DISCOVERY_SAMPLE_SCOPE")
-    if type(sample["fields"]) is not dict or set(sample["fields"]) != fields:
+    if mapping:
+        validate_selection_map(sample["fields"])
+    elif type(sample["fields"]) is not dict or set(sample["fields"]) != fields:
         raise ValueError("E_DISCOVERY_FIELDS")
-    for value in sample["fields"].values():
+    for value in [] if mapping else sample["fields"].values():
         if value is not None and (
             type(value) is not str
             or not 1 <= len(value) <= 256

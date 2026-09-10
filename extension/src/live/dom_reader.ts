@@ -12,6 +12,7 @@
   const compound = new RegExp(`^(?:(?:div|span|section|article|header|h[1-6]|p|strong|em|label)(?:${suffix})*|(?:${suffix})+)$`);
   type Scope = {captureId: string; profileHash: string; bindingRevision: string; documentEpoch: string;
     exactUrl: string; leaseMs: number; selectors: Record<string, string | null>};
+  let mapRange: Range | null = null;
   let scope: Scope | null = null;
   let root: Element | null = null;
   let observer: MutationObserver | null = null;
@@ -57,7 +58,60 @@
     for (let p: Element | null = node; p; p = p.parentElement) if (bad(p)) return true;
     const children = node.querySelectorAll("*");
     if (children.length > 256) return true;
-    return Array.from(children).some(bad);
+    return Array.from(children).some(p => bad(p) || !visible(p));
+  }
+  function selectedRegion(): boolean {
+    return !!mapRange;
+  }
+  function stableSelector(node: Element, within: Document | Element): string | null {
+    let cursor: Element | null = node, tail = "";
+    for (let depth = 0; cursor && cursor !== within && depth < 8; depth++, cursor = cursor.parentElement) {
+      const choices: string[] = [];
+      if (new RegExp(`^${identifier}$`).test(cursor.id)) choices.push("#" + cursor.id);
+      for (const name of ["testid", "role", "fixture-id", "market-id", "selection-id"]) {
+        const value = cursor.getAttribute("data-" + name);
+        if (value && /^[A-Za-z0-9_-]{1,128}$/.test(value)) choices.push(`[data-${name}="${value}"]`);
+      }
+      const tag = cursor.tagName.toLowerCase();
+      for (const name of cursor.classList) if (new RegExp(`^${identifier}$`).test(name)) choices.push(tag + "." + name);
+      choices.push(tag);
+      const valid = choices.filter(part => compound.test(part) && !excluded.test(part));
+      for (const part of valid) {
+        const selector = part + tail;
+        if (selector.length <= 512 && within.querySelectorAll(selector).length === 1 && within.querySelector(selector) === node) return selector;
+      }
+      const part = valid[0];
+      if (!part) return null;
+      tail = " > " + part + tail;
+    }
+    return null;
+  }
+  function readSelectionMap(): {status: string; fields?: Record<string, unknown>} {
+    if (!guarded() || !root || !scope || !mapRange || !visible(root) || unsafe(root)) return {status: "CAPTURE_UNSUPPORTED"};
+    const current = getSelection();
+    if (!current || current.rangeCount !== 1 || current.isCollapsed) return {status: "CAPTURE_REJECTED"};
+    const range = current.getRangeAt(0);
+    if (range.compareBoundaryPoints(Range.START_TO_START, mapRange) || range.compareBoundaryPoints(Range.END_TO_END, mapRange)) return {status: "CAPTURE_REJECTED"};
+    const candidates: {selector: string; text: string | null; market_id: string | null}[] = [];
+    for (const node of root.querySelectorAll("*")) {
+      if (node.childElementCount && !node.hasAttribute("data-market-id")) continue;
+      const texts = Array.from(node.childNodes).filter((child): child is Text => child instanceof Text);
+      const first = node.childElementCount ? undefined : texts[0], last = node.childElementCount ? undefined : texts.at(-1);
+      if (range.comparePoint(first ?? node, 0) !== 0 ||
+          range.comparePoint(last ?? node, last?.length ?? node.childNodes.length) !== 0) continue;
+      if (!visible(node) || unsafe(node)) return {status: "CAPTURE_UNSUPPORTED"};
+      const selector = stableSelector(node, root);
+      if (!selector) continue;
+      const text = node.childElementCount ? null : node.textContent.trim() || null;
+      const market_id = node.getAttribute("data-market-id");
+      if (text === null && market_id === null) continue;
+      for (const value of [text, market_id]) if (value !== null && (!value || value.length > 256 || value !== value.normalize("NFC") || Array.from(value).some(c => c.charCodeAt(0) < 32 || c.charCodeAt(0) === 127))) return {status: "CAPTURE_UNSUPPORTED"};
+      candidates.push({selector, text, market_id});
+      if (candidates.length > 32) return {status: "CAPTURE_UNSUPPORTED"};
+    }
+    const fields = {match_root_selector: scope.selectors["match_root"], candidates};
+    if (!candidates.length || new TextEncoder().encode(JSON.stringify(fields)).length > 10000) return {status: "CAPTURE_UNSUPPORTED"};
+    return {status: "OK", fields};
   }
   function readVisibleBook(): {status: string; fields?: Record<string, string | null>} {
     if (!guarded() || !root || !scope) return {status: "NOT_VISIBLE"};
@@ -92,7 +146,21 @@
   }
   function init(value: unknown, isDiscovery = false): void {
     if (!value || typeof value !== "object") throw Error();
-    const s = value as Scope;
+    const s = structuredClone(value) as Scope;
+    let selection: Range | null = null;
+    if (isDiscovery && Object.keys(s.selectors).join() === "selection_mode" && s.selectors["selection_mode"] === "USER_SELECTED_REGION_V1") {
+      const selected = getSelection();
+      if (!selected || selected.isCollapsed || selected.rangeCount !== 1) throw Error();
+      selection = selected.getRangeAt(0).cloneRange();
+      const common = selection.commonAncestorContainer;
+      const element = common instanceof Element ? common : common.parentElement;
+      // Never climb from the user's selected subtree into a broader page region.
+      if (!element || !visible(element) || unsafe(element)) throw Error();
+      const selector = stableSelector(element, document);
+      if (!selector || (!selector.includes("#") && !selector.includes("[data-"))) throw Error();
+      s.selectors = Object.fromEntries(fields.map(name => [name, null]));
+      s.selectors["match_root"] = selector;
+    }
     if (Object.keys(s).sort().join() !== ["captureId", "profileHash", "bindingRevision", "documentEpoch", "exactUrl", "leaseMs", "selectors"].sort().join() ||
         !/^[0-9a-f-]{36}$/.test(s.captureId) || !/^[0-9a-f]{64}$/.test(s.profileHash) ||
         !/^(0|[1-9][0-9]{0,18})$/.test(s.bindingRevision) || !/^[0-9a-f-]{36}$/.test(s.documentEpoch) ||
@@ -107,7 +175,7 @@
     }
     const selector = s.selectors["match_root"] ?? "";
     if (!selector.includes("#") && !selector.includes("[data-")) throw Error();
-    stop(); discovery = isDiscovery; scope = structuredClone(s); root = document.querySelector(selector);
+    stop(); mapRange = selection; discovery = isDiscovery; scope = structuredClone(s); root = document.querySelector(selector);
     stopped = false; startWall = Date.now(); deadline = performance.now() + s.leaseMs;
     if (!guarded() || !root) throw Error();
     observer = new MutationObserver(schedule);
@@ -125,10 +193,10 @@
     try {
       for (let attempt = 0; attempt < 3; attempt++) {
         const firstMono = Math.ceil(performance.now() * 1000);
-        const first = readVisibleBook();
+        const first = selectedRegion() ? readSelectionMap() : readVisibleBook();
         if (first.status !== "OK") return first;
         await new Promise<void>(resolve => setTimeout(resolve, 100));
-        const second = readVisibleBook();
+        const second = selectedRegion() ? readSelectionMap() : readVisibleBook();
         const mono = Math.ceil(performance.now() * 1000);
         if (scope !== owner || stopped) return {status: "CAPTURE_REJECTED"};
         if (second.status !== "OK") return second;

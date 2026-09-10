@@ -102,7 +102,9 @@ def execute_discovery(argv: list[str]) -> int:
         parser = SafeParser(allow_abbrev=False)
         parser.add_argument("--config", required=True, type=Path)
         parser.add_argument("--intent", required=True, type=Path)
-        parser.add_argument("--selectors", required=True, type=Path)
+        mode = parser.add_mutually_exclusive_group(required=True)
+        mode.add_argument("--selectors", type=Path)
+        mode.add_argument("--selected-region", action="store_true")
         parser.add_argument("--review", required=True, type=Path)
         parser.add_argument("--profile-name", required=True)
         args = parser.parse_args(argv)
@@ -119,7 +121,12 @@ def execute_discovery(argv: list[str]) -> int:
                 raise ValueError()
             return value
 
-        selectors, review = read(args.selectors), read(args.review)
+        selectors = (
+            {"selection_mode": "USER_SELECTED_REGION_V1"}
+            if args.selected_region
+            else read(args.selectors)
+        )
+        review = read(args.review)
         scope = discovery_review_scope(
             intent,
             config,
@@ -135,6 +142,10 @@ def execute_discovery(argv: list[str]) -> int:
         print("MAX_DURATION_SECONDS: " + str(scope["max_duration_seconds"]))
         print("MAX_PROVIDER_REQUESTS: 0")
         print("PROFILE_ACCEPTED: false")
+        if args.selected_region:
+            print(
+                "MAPPING: Selected visible match region only; <=32 candidates; unadmitted."
+            )
         print("Type ALLOW OPERATOR OBSERVATION to confirm this exact scope:")
         with controlling_tty() as terminal:
             confirmation = terminal.readline(65).rstrip("\r\n")
@@ -145,6 +156,10 @@ def execute_discovery(argv: list[str]) -> int:
         )
         print("DISCOVERY_RESULT: " + result["status"])
         print("PROFILE_ACCEPTED: false")
+        if args.selected_region:
+            print(
+                "MAPPING: Selected visible match region only; <=32 candidates; unadmitted."
+            )
         return 0 if result["status"] == "UNADMITTED_SAMPLE_SAVED" else 2
     except (Exception, KeyboardInterrupt):
         print("DISCOVERY_NOT_STARTED_OR_REJECTED: CHECK_SCOPE_REVIEW_AND_TERMINAL")

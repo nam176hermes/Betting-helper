@@ -34,7 +34,8 @@ Do not request another API key for this operator step. The existing
 OPERATOR_DISCOVERY intent declaration remains inert until the keyless launcher
 verifies real host review and consumes terminal consent. No real selectors are
 available yet: the field map must come from observed mapping, never guessed IDs.
-Review and field mapping remain external inputs before real observation.
+Real host tool review and separate bounded observation consent remain external inputs.
+An observed field map is no longer required for the selected-region mapping mode.
 
 The exchange uses only `ws://127.0.0.1:8765/operator-discovery`, the pinned
 extension Origin, an ephemeral pairing ticket and a fresh challenge. AUTH, PLAN,
@@ -49,9 +50,10 @@ with profile_accepted=false and binding_verified=false, never a MarketBook or
 an accepted extraction profile. A later actual sample/profile review is required.
 
 The entry point is `tools/prepare_part_b_intent.py execute-discovery` with
-`--config`, `--intent`, `--selectors`, `--review`, and `--profile-name`.
+`--config`, `--intent`, `--review`, `--profile-name`, and exactly one of
+`--selectors` or `--selected-region`.
 These paths must name actual private inputs; there is no ready real-run command
-while the observed field map and external review are absent. It verifies review
+while current external host review is absent. It verifies review
 before asking for ALLOW OPERATOR OBSERVATION and never requests a provider key.
 
 Read only fixture identity/labels, participant orientation, horizon/settlement,
@@ -64,3 +66,36 @@ Once actual samples and external receipts exist, keep their bytes private under
 hashes only; `test_operator_profile_samples.py` reopens the samples and validates
 the existing host review and exact capture-source binding. No signer, host
 review launcher or self-approved receipt is provided by these tests.
+
+## Selected-region bootstrap candidate
+
+`--selected-region` binds the reviewed selector policy to the exact closed marker
+`{"selection_mode":"USER_SELECTED_REGION_V1"}`. It does not accept free-form code
+or silently reuse a selector-bound review. After the separately confirmed intent,
+the operator manually highlights only the visible match/market text in the chosen
+tab, clicks the extension action, and pairs in its panel. No automated market
+expansion or account interaction is provided.
+
+The fixed reader uses the selected range's common ancestor, never widens the
+capture root to its parents, requires a unique ID/data-attribute-anchored selector,
+and refuses body/document selection or excluded/hidden descendants. It emits at
+most 32 candidates wholly inside the selected range, at most 256 characters per
+value and 10,000 UTF-8 bytes for the map. Candidates contain only an observed
+restricted selector, leaf visible text, and the fixed `data-market-id` attribute.
+No HTML, arbitrary attributes, cookies or storage are read. No stable selector,
+empty selection, unprojectable root, changed selection or excessive size rejects.
+
+Candidate selectors are derived from observed permitted identifiers/classes and
+must pass the existing restricted CSS grammar again at the backend. They are not
+assigned semantic roles automatically. Page DOM and selection remain untrusted:
+the tool cannot certify that a script did not change a selection, nor infer
+HOME/AWAY, fixture binding or settlement from it. Review the actual candidate
+text and field mapping before creating a draft profile; a separate actual
+profile review is still required for acceptance. Unknown/inaccessible IDs remain
+unsupported. This candidate is not proof of feasibility on the actual operator.
+
+Stop is enabled during discovery and aborts outside the serialized live-command
+queue. It closes the socket and cancels pending browser reads, sending STOP to
+an initialized reader. Socket closure and the ten-minute ceiling also cancel;
+there is no automatic reconnect. Cancellation cannot retract an already saved
+unadmitted sample. Prior raw evidence and review HOLD findings remain immutable.

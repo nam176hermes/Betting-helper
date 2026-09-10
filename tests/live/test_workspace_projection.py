@@ -135,6 +135,7 @@ const observe=()=>Object.fromEntries(Object.keys(panes).map(n=>{
   focus:d.activeElement?.textContent,expanded:d.querySelector('details')?.open,input:d.querySelector('input').value}]}));
 globalThis.offlineProbe={command:async m=>{
  for(let i=0;i<80 && !doc('panel')?.querySelector('section');i++) await wait();
+ if(m.operation==='SELECT_DISCOVERY_TAB') return await chrome.runtime.sendMessage({operation:'TEST_ONLY_DISCOVERY_TAB'});
  if(m.operation==='INTENT') return {status:'OK',observed:(await chrome.storage.local.get('liveWatchlistIntent')).liveWatchlistIntent};
  if(m.operation==='PAIR') {doc('panel').querySelector('input').value=m.ticket;doc('panel').querySelector('form').requestSubmit();await wait();}
  else if(m.operation==='HORIZON') doc('panel').querySelector('[data-horizon="'+m.horizon+'"]').click();
@@ -170,6 +171,7 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
         "import * as schema from '../../live-validators.js';\n"
         + background.read_text()
         + "\nstartLiveWorkspace({record:(v,k)=>schema['validate'+k](v),frame:schema.validateFrame});\n"
+        + "chrome.runtime.onMessage.addListener((m,s,r)=>{if(m.operation==='TEST_ONLY_DISCOVERY_TAB' && s.id===chrome.runtime.id && s.url===chrome.runtime.getURL('src/offline/page.html') && s.tab?.id!==undefined){discoveryTabId=s.tab.id;r({status:'OK'});}return false;});\n"
     )
     (extension / "manifest.json").write_bytes((ROOT / "extension/manifest.live.json").read_bytes())
     (extension / "src/offline/page.js").write_text(PAGE)
@@ -330,10 +332,39 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
             await command("CLICK", label="Stop session")
             await command("WAIT")
             assert service._reason == "USER_STOP"
+            await service.close("USER_STOP")
+            from websockets.asyncio.server import serve
+
+            closed = asyncio.Event()
+
+            async def discovery_peer(ws: Any) -> None:
+                # Deliberately withhold greeting: Stop must not wait behind pairing.
+                await ws.wait_closed()
+                closed.set()
+
+            async with serve(discovery_peer, "127.0.0.1", 8765, origins=[origin]):
+                selected = await asyncio.to_thread(
+                    browser.command, {"operation": "SELECT_DISCOVERY_TAB"}
+                )
+                assert selected["status"] == "OK"
+                ticket = {
+                    "kind": "OPERATOR_DISCOVERY",
+                    "runId": service.admitted.run_id,
+                    "key": "A" * 43,
+                }
+                observed = await command("PAIR", ticket=json.dumps(ticket))
+                assert "DISCOVERY" in observed["panel"]["text"], observed
+                stop = next(b for b in observed["panel"]["buttons"] if b["text"] == "Stop session")
+                assert stop["disabled"] is False
+                await command("CLICK", label="Stop session")
+                await asyncio.wait_for(closed.wait(), 3)
+                observed = await command("OBSERVE")
+                assert "DISCOVERY_STOPPED" in observed["panel"]["text"], observed
         finally:
             if browser is not None:
                 browser.close()
-            await service.close("USER_STOP")
+            if not service._closed:
+                await service.close("USER_STOP")
             (tmp_path / "actual-browser-observations.json").write_text(
                 json.dumps(outputs, indent=2)
             )

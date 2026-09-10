@@ -39,6 +39,13 @@ chrome.runtime.onMessage.addListener((m,s,reply)=>{
    await new Promise(r=>setTimeout(r,2100));
    await testRunDiscoveryTicket(m.ticket,tabId);
    return {status:'OK'};
+  } else if(m.operation==='MAPPING') {
+   await capture.stop();
+   await new Promise(r=>setTimeout(r,2100));
+   await chrome.scripting.executeScript({target:{tabId,frameIds:[0]},files:[m.invalid?'test-select-body.js':m.partial?'test-select-partial.js':'test-select-match.js'],world:'ISOLATED'});
+   const p=m.plan;
+   return {status:'OK',sample:await takeDiscoverySample({tabId,exactUrl:p.exactUrl,sourceKind:'SYNTHETIC_TEST',
+     fieldMapHash:p.profileHash,expiresAt:p.expiresAt,leaseMs:10000,selectors:{selection_mode:'USER_SELECTED_REGION_V1'}})};
   } else if(m.operation==='DISCOVERY') {
    await capture.stop();
    await new Promise(r=>setTimeout(r,2100));
@@ -49,7 +56,7 @@ chrome.runtime.onMessage.addListener((m,s,reply)=>{
    return {status:'OK',sample};
   } else if(m.operation==='READ') {await capture.request(m.challenge);}
   else if(m.operation==='FAULT') {
-   if(!['hidden','missing','secret','unstable','root','route','context','swapped'].includes(m.fault)) throw Error();
+   if(!['hidden','missing','secret','hidden_descendant','unstable','root','route','context','swapped'].includes(m.fault)) throw Error();
    await chrome.scripting.executeScript({target:{tabId,frameIds:[0]},files:['test-'+m.fault+'.js'],world:'ISOLATED'});
    await new Promise(r=>setTimeout(r,350));
   } else if(m.operation==='HIDE') {await chrome.tabs.create({url:'about:blank',active:true});await new Promise(r=>setTimeout(r,100));}
@@ -63,6 +70,7 @@ chrome.runtime.onMessage.addListener((m,s,reply)=>{
 FAULTS = {
     "hidden": "document.querySelector('#draw-odds').style.display='none';",
     "missing": "document.querySelector('#draw-selection').remove();",
+    "hidden_descendant": "const n=document.createElement('span');n.hidden=true;n.textContent='TEST_ONLY_HIDDEN_CANARY';document.querySelector('#home-odds').append(n);",
     "secret": "const n=document.createElement('input');n.type='password';n.value='TEST_ONLY_INNER_SECRET';document.querySelector('#home-odds').append(n);",
     "unstable": "let n=0;setInterval(()=>{document.querySelector('#home-odds').textContent=String(2+(++n)/1000)},20);",
     "root": "const r=document.querySelector('#TEST_ONLY_MATCH');r.replaceWith(r.cloneNode(true));",
@@ -113,6 +121,27 @@ def make_graph(tmp_path: Any) -> Any:
     (extension / "test-sender.js").write_text(
         "chrome.runtime.onMessage.addListener((m,s,r)=>{if(m.kind==='PB10_TEST_SENDER'){r({id:s.id,url:s.url??null,tabId:s.tab?.id??null});}return false;});"
     )
+    for label, selector in (
+        ("match", "#TEST_ONLY_MATCH"),
+        ("partial", "#TEST_ONLY_MATCH"),
+        ("body", "body"),
+    ):
+        (extension / ("test-select-" + label + ".js")).write_text(
+            "{const r=document.createRange();r.selectNodeContents(document.querySelector("
+            + json.dumps(selector)
+            + "));"
+            + (
+                "r.setStart(document.querySelector('#fixture-id').firstChild,0);const end=document.querySelector('#market-status').firstChild;r.setEnd(end,end.length);"
+                if label != "body"
+                else ""
+            )
+            + (
+                "r.setStart(document.querySelector('#fixture-id').firstChild,1);"
+                if label == "partial"
+                else ""
+            )
+            + "const s=getSelection();s.removeAllRanges();s.addRange(r);}"
+        )
     for name, text in FAULTS.items():
         (extension / ("test-" + name + ".js")).write_text(text)
     (tmp_path / "capture-source-modules.json").write_text(json.dumps(hashes, indent=2))
@@ -320,6 +349,33 @@ def test_real_fixed_dom_complete_book_and_rejections(tmp_path: Any, monkeypatch:
                     assert len(recaptured["books"]) == before + 2
                     assert recaptured["books"][-1]["book"]["source_updated_at"] is None
                     observations.append({"watchdog_visible": recaptured})
+                    mapped = browser.command(dict(operation="MAPPING", plan=plan))
+                    observations.append({"mapping": mapped})
+                    assert mapped["status"] == "OK", mapped
+                    candidates = mapped["sample"]["fields"]
+                    assert candidates["match_root_selector"] == "#TEST_ONLY_MATCH"
+                    assert any(
+                        row["selector"] == "#fixture-id" and row["text"] == "SYNTHETIC-101"
+                        for row in candidates["candidates"]
+                    )
+                    assert any(
+                        row["selector"] == "#market-status" and row["text"] == "OPEN"
+                        for row in candidates["candidates"]
+                    )
+                    assert any(
+                        row["selector"] == "#draw-odds" and row["text"] == "3.20"
+                        for row in candidates["candidates"]
+                    )
+                    assert "TEST_ONLY_EXCLUSION_CANARY" not in json.dumps(mapped)
+                    assert mapped["sample"]["profile_accepted"] is False
+                    partial = browser.command(dict(operation="MAPPING", plan=plan, partial=True))
+                    assert partial["status"] == "OK", partial
+                    assert not any(
+                        row["selector"] == "#fixture-id"
+                        for row in partial["sample"]["fields"]["candidates"]
+                    )
+                    denied = browser.command(dict(operation="MAPPING", plan=plan, invalid=True))
+                    assert denied["status"] == "REJECTED", denied
             else:
                 assert len(observed["books"]) == before, observed
             if fault == "HIDE":
@@ -331,7 +387,7 @@ def test_real_fixed_dom_complete_book_and_rejections(tmp_path: Any, monkeypatch:
                 observations.append({"watchdog_hidden": waiting})
             assert "TEST_ONLY_INNER_SECRET" not in json.dumps(observed)
             assert "TEST_ONLY_EXCLUSION_CANARY" not in json.dumps(observed)
-            if fault in {None, "missing", "secret", "HIDE"}:
+            if fault in {None, "missing", "secret", "hidden_descendant", "HIDE"}:
                 discovery = browser.command(dict(operation="DISCOVERY", plan=plan))
                 observations.append({"discovery_fault": fault, "observed": discovery})
                 if fault == "HIDE":
@@ -346,12 +402,13 @@ def test_real_fixed_dom_complete_book_and_rejections(tmp_path: Any, monkeypatch:
                     assert candidate["fields"]["home_id"] is None
                     assert candidate["fields"]["away_id"] is None
                     assert candidate["fields"]["home_odds"] == (
-                        None if fault == "secret" else "2.10"
+                        None if fault in {"secret", "hidden_descendant"} else "2.10"
                     )
                     assert candidate["fields"]["draw_selection"] == (
                         None if fault == "missing" else "SYNTHETIC-DRAW"
                     )
                 assert "TEST_ONLY_INNER_SECRET" not in json.dumps(discovery)
+                assert "TEST_ONLY_HIDDEN_CANARY" not in json.dumps(discovery)
                 assert "TEST_ONLY_EXCLUSION_CANARY" not in json.dumps(discovery)
                 if fault is None:
                     observations.append(
