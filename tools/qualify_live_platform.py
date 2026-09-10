@@ -230,7 +230,7 @@ def native_owner(configuration: Path) -> None:
 class WindowsBrowser:
     """Fixed native profile, private stdin and a bounded handle-owning controller."""
 
-    def __init__(self, extension: Path, origin: str, driver: Path):
+    def __init__(self, extension: Path, origin: str, driver: Path, profile: Path | None = None):
         from tools.qualify_chrome_indexeddb import _pipe_browser_command
         from tools.run_environment_qualification import winpath
 
@@ -241,11 +241,24 @@ class WindowsBrowser:
         copied = self.workspace / "extension"
         shutil.copytree(extension, copied)
         shutil.copy2(driver, self.workspace / "chrome_pipe.cjs")
-        profile = self.workspace / "profile"
-        profile.mkdir()
-        (profile / ".part-b-owned.json").write_text(
-            json.dumps({"origin": origin, "source": str(extension)})
-        )
+        owned_binding = {"origin": origin, "source": str(extension.resolve())}
+        if profile is None:
+            profile = self.workspace / "profile"
+            profile.mkdir()
+            (profile / ".part-b-owned.json").write_text(json.dumps(owned_binding))
+        elif (
+            profile.name != "profile"
+            or profile.parent.parent != WINDOWS_PARENT
+            or not profile.parent.name.startswith("part-b-platform-")
+            or any(p.is_symlink() for p in (profile, *profile.parents))
+            or json.loads((profile / ".part-b-owned.json").read_text()) != owned_binding
+            or json.loads((profile.parent / "termination.json").read_text())[
+                "all_observed_handles_signaled"
+            ]
+            is not True
+        ):
+            raise ValueError("E_PLATFORM_PROFILE_OWNERSHIP")
+        self.profile = profile
         node = NATIVE.parent.parent / "node/bin/node.exe"
         command = _pipe_browser_command(CHROME, profile)
         command[0] = winpath(CHROME)

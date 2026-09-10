@@ -9,6 +9,11 @@ This tracked pointer avoids a commit/report self-hash cycle.
 Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06, PB-07, PB-08, PB-09, PB-10, PB-11, PB-12, PB-13, PB-14, PB-15, PB-16.
 Next ready task: PB-17.
 
+PB-17 implementation is ready for the final source-bound mock campaign. Its
+observed result, completion checkpoint and next ready task are recorded in the
+ignored execution state after this commit is frozen. This pointer does not
+predeclare a PASS; the full gate must execute on the committed candidate bytes.
+
 - Full-source mypy: 25 pre-existing errors in three unchanged governance files, reproduced on starting HEAD; .local/part-b/PB-11-preexisting-static.json. No full-static PASS claimed.
 
 PART_B_MOCK_PASS: NOT_RUN (full batch gate pending).

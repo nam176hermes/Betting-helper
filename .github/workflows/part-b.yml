@@ -1,0 +1,73 @@
+{
+  "name": "Part B source checks (no live authority)",
+  "on": {
+    "pull_request": {},
+    "push": {
+      "branches": [
+        "main"
+      ]
+    },
+    "workflow_dispatch": {}
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "jobs": {
+    "portable-unit": {
+      "runs-on": "ubuntu-24.04",
+      "steps": [
+        {
+          "name": "Checkout (actions/checkout v4.4.0)",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "fetch-depth": 0
+          }
+        },
+        {
+          "name": "Set up Node (actions/setup-node v4.4.0)",
+          "uses": "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+          "with": {
+            "node-version": "22.23.0"
+          }
+        },
+        {
+          "name": "Set up uv (astral-sh/setup-uv v7.6.0)",
+          "uses": "astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78",
+          "with": {
+            "version": "0.11.7",
+            "enable-cache": true
+          }
+        },
+        {
+          "name": "Provision locked dependencies",
+          "run": "uv python install 3.12.3\nuv sync --frozen\ncorepack enable\ncorepack prepare pnpm@10.33.2 --activate\npnpm install --frozen-lockfile --ignore-scripts"
+        },
+        {
+          "name": "Portable units and static checks (not the full browser gate)",
+          "run": "uv run --frozen --offline python tools/verify_part_b.py --profile portable --output .local/part-b/portable"
+        }
+      ]
+    },
+    "selected-browser": {
+      "if": "github.event_name == 'workflow_dispatch'",
+      "needs": "portable-unit",
+      "runs-on": [
+        "self-hosted",
+        "part-b-approved-windows-wsl2"
+      ],
+      "steps": [
+        {
+          "name": "Checkout (actions/checkout v4.4.0)",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "fetch-depth": 0
+          }
+        },
+        {
+          "name": "Full synthetic gate on provisioned isolated Windows Chrome and WSL2",
+          "run": "uv run --frozen --offline python tools/verify_part_b.py --profile mock --output .local/part-b/mock"
+        }
+      ]
+    }
+  }
+}

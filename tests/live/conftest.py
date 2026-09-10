@@ -1,11 +1,67 @@
 """Synthetic-only test inputs. No real credentials, identifiers or browser authority."""
 
 import json
+import os
+import shutil
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import pytest
+
+
+@pytest.fixture(autouse=True)
+def selected_browser_platform(request: Any, monkeypatch: Any) -> None:
+    """The complete mock gate runs its browser-required cases on the selected platform."""
+    if os.environ.get("PB_BROWSER_PLATFORM") != "WINDOWS_CHROME_WSL2":
+        return
+    from tools import offline_browser
+    from tools.qualify_live_platform import WindowsBrowser
+
+    class SelectedWindowsBrowser:
+        def __init__(
+            self, workspace: Path, extension: Path, origin: str, *, profile: Path | None = None
+        ):
+            self.workspace = workspace
+            workspace.mkdir(parents=True, exist_ok=False)
+            alias = profile / "windows-owned-profile.json" if profile is not None else None
+            retained = (
+                Path(json.loads(alias.read_text())["profile"])
+                if alias is not None and alias.exists()
+                else None
+            )
+            self.native = WindowsBrowser(
+                extension, origin, offline_browser.ROOT / "tools/chrome_pipe.cjs", profile=retained
+            )
+            self.ready = self.native.ready
+            if alias is not None and not alias.exists():
+                alias.parent.mkdir(parents=True, exist_ok=False)
+                alias.write_text(json.dumps({"profile": str(self.native.profile)}))
+
+        def command(self, value: dict[str, Any]) -> dict[str, Any]:
+            return self.native.command(value)
+
+        def close(self) -> None:
+            try:
+                self.native.close()
+            finally:
+                # Retain native observation/termination/pipe records with the case; no profile copy.
+                for path in self.native.workspace.iterdir():
+                    if path.is_file() and path.suffix in {
+                        ".json",
+                        ".ndjson",
+                        ".stdout",
+                        ".stderr",
+                        ".png",
+                    }:
+                        shutil.copy2(path, self.workspace / path.name)
+                (self.workspace / "native-workspace.json").write_text(
+                    json.dumps({"path": str(self.native.workspace)})
+                )
+
+    monkeypatch.setattr(offline_browser, "OfflineBrowser", SelectedWindowsBrowser)
+    if hasattr(request.module, "OfflineBrowser"):
+        monkeypatch.setattr(request.module, "OfflineBrowser", SelectedWindowsBrowser)
 
 
 @pytest.fixture
