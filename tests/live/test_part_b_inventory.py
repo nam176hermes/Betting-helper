@@ -11,6 +11,56 @@ import pytest
 
 REQUIRED_MOCK_IDS = tuple(f"BCASE-{i:02d}" for i in range(1, 40))
 
+
+def test_release_preserves_external_holds_and_exact_mock_revision(
+    tmp_path: Any,
+    monkeypatch: Any,
+) -> None:
+    """Exercise report assembly only; patched checks are not browser/live evidence."""
+    from types import SimpleNamespace
+
+    from moj_discovery import live_preflight_batched
+    from tools import qualify_live_platform
+    from tools import verify_part_b as verifier
+
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config/live-batched.example.json").write_bytes(
+        Path("config/live-batched.example.json").read_bytes()
+    )
+
+    def mock_campaign(profile: str, output: Path) -> Any:
+        assert profile == "mock"
+        output.mkdir()
+        result = dict(PART_B_MOCK_PASS=True, source_revision="a" * 40, source_tree_sha256="b" * 64)
+        (output / "result.json").write_text(json.dumps(result))
+        return result
+
+    def platform_check(config: Any, output: Path) -> Any:
+        assert not config.enabled
+        output.mkdir()
+        result = {"status": "PASS"}
+        (output / "result.json").write_text(json.dumps(result))
+        return result
+
+    monkeypatch.setattr(verifier, "ROOT", tmp_path)
+    monkeypatch.setattr(verifier, "verify_profile", mock_campaign)
+    monkeypatch.setattr(verifier, "source_tree_hash", lambda *_: "b" * 64)
+    monkeypatch.setattr(qualify_live_platform, "qualify_platform", platform_check)
+    monkeypatch.setattr(
+        live_preflight_batched,
+        "load_evidence",
+        lambda *_: SimpleNamespace(checks=frozenset(), profile=None),
+    )
+    result = verifier.verify_release(tmp_path / "release")
+    assert result["source_revision"] == "a" * 40
+    assert result["PART_B_MOCK_PASS"] and result["status"] == "HOLD"
+    assert result["verdicts"]["LIVE_READ_ONLY_PASS_ONE"] == "NOT_EXECUTED"  # noqa: S105 -- verdict.
+    assert result["verdicts"]["INDEPENDENT_LIVE_SECURITY_REVIEW"] == "WAITING_REVIEW"
+    assert result["MODEL_ENABLED"] is False and result["MONEY_READY"] == "NO"
+    monkeypatch.setattr(verifier, "source_tree_hash", lambda *_: "c" * 64)
+    assert not verifier.verify_release(tmp_path / "changed")["PART_B_MOCK_PASS"]
+
+
 # Names identify executed Python assertions, including their parameterized variants.
 CASE_TESTS = {
     1: ["test_part_b_inventory::test_existing_descendant_and_immutable_baseline"],

@@ -47,9 +47,11 @@ PART_B_PYTHON = [
     "src/moj_discovery/operator_profile.py",
     "src/moj_discovery/secrets_local.py",
     "src/moj_discovery/workspace_projection.py",
+    "src/moj_discovery/data_manifest.py",
     "tools/configure_live_batched.py",
     "tools/prepare_part_b_intent.py",
     "tools/qualify_live_platform.py",
+    "tools/qualify_live_readonly.py",
     "tools/live_preflight_batched.py",
     "tools/probe_football_provider.py",
     "tools/run_live_readonly.py",
@@ -132,6 +134,8 @@ def run_check(
 
 
 def verify_profile(profile: str, output: Path) -> VerificationResult:
+    if profile == "release":
+        return verify_release(output)
     if profile not in {"mock", "security", "portable"}:
         raise ValueError("E_PART_B_PROFILE")
     if not __debug__:
@@ -319,6 +323,9 @@ def verify_profile(profile: str, output: Path) -> VerificationResult:
         "profile": profile,
         "status": "PASS" if not missing else "HOLD",
         "source_tree_sha256": source,
+        "source_revision": subprocess.check_output(
+            ["/usr/bin/git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+        ).strip(),
         "test_source_hashes": test_sources,
         "command_records": records,
         "executed_tests": tests,
@@ -338,9 +345,119 @@ def verify_profile(profile: str, output: Path) -> VerificationResult:
     return result
 
 
+def verify_release(output: Path) -> VerificationResult:
+    """Run the current mock campaign; report each external capability separately."""
+    from moj_discovery.canonical import parse_strict_json
+    from moj_discovery.data_manifest import freeze_dataset_manifest
+    from moj_discovery.live_config import load_live_config, private_path
+    from moj_discovery.live_preflight_batched import load_evidence
+    from tools.qualify_live_platform import qualify_platform
+    from tools.qualify_live_readonly import qualify_recorded_run
+
+    output = output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    mock = verify_profile("mock", output / "mock")
+    config_path = ROOT / "config/live.local.json"
+    if not config_path.exists():
+        config_path = ROOT / "config/live-batched.example.json"
+    config = load_live_config(config_path)
+    platform = qualify_platform(config, output / "platform")
+    verified = load_evidence(config)
+    statuses = {
+        "PART_B_MOCK_PASS": "PASS" if mock["PART_B_MOCK_PASS"] else "HOLD",
+        "PLATFORM_BRIDGE_PASS": "PASS" if platform["status"] == "PASS" else "WAITING_PLATFORM",
+        "PROVIDER_PROBE_PASS": "PASS"
+        if "provider" in verified.checks
+        else "NOT_EXECUTED_OR_NOT_CURRENT",
+        "OPERATOR_PROFILE_ACCEPTED": "PASS"
+        if "capture" in verified.checks
+        else "WAITING_OPERATOR_SAMPLE",
+        "INDEPENDENT_LIVE_SECURITY_REVIEW": "PASS"
+        if "security" in verified.checks
+        else "WAITING_REVIEW",
+    }
+    live = {}
+    for size, name in ((1, "ONE"), (3, "THREE"), (5, "FIVE")):
+        run = ROOT / ".local/part-b" / ("live-" + name.lower())
+        status = "NOT_EXECUTED"
+        if run.exists():
+            try:
+                live[name] = qualify_recorded_run(run, expected_scope=size)
+                status = "PASS" if live[name]["LIVE_READ_ONLY_PASS"] else "HOLD"
+            except (ValueError, OSError):
+                status = "NOT_QUALIFIED"
+        statuses["LIVE_READ_ONLY_PASS_" + name] = status
+    quality: dict[str, Any] = {
+        "selection_basis": "DATA_QUALITY_ONLY",
+        "historical_data": "NOT_SUPPLIED",
+        "chronological_partitions": [],
+    }
+    runs: list[Path] = []
+    data_input = ROOT / ".local/part-b/data-manifest-input.json"
+    if data_input.exists():
+        try:
+            checked = private_path(str(data_input.relative_to(ROOT)), root=ROOT, must_exist=True)
+            if checked.stat().st_size > 65536:
+                raise ValueError()
+            value = parse_strict_json(checked.read_bytes())
+            if type(value) is not dict or set(value) != {"run_dirs", "quality_view"}:
+                raise ValueError()
+            runs = [private_path(p, root=ROOT) for p in value["run_dirs"]]
+            quality = value["quality_view"]
+        except (ValueError, TypeError, OSError):
+            runs = []
+    try:
+        dataset = freeze_dataset_manifest(runs, quality)
+    except (ValueError, TypeError, OSError):
+        dataset = {"SCOPE0_READY_FOR_REVIEW": False, "error": "DATA_INPUT_NOT_VERIFIED"}
+    (output / "data-manifest.json").write_text(json.dumps(dataset, indent=2))
+    statuses["SCOPE0_READY_FOR_REVIEW"] = (
+        "PASS" if dataset["SCOPE0_READY_FOR_REVIEW"] else "WAITING_DATA_AND_RIGHTS_REVIEW"
+    )
+    if mock["source_tree_sha256"] != source_tree_hash(ROOT):
+        statuses["PART_B_MOCK_PASS"] = "SOURCE_CHANGED"  # noqa: S105 -- verdict, not credential.
+        statuses["PLATFORM_BRIDGE_PASS"] = "SOURCE_CHANGED"  # noqa: S105 -- verdict.
+    result = {
+        "schema_version": "part-b-release/v1",
+        "profile": "release",
+        "status": "PASS" if all(v == "PASS" for v in statuses.values()) else "HOLD",
+        "source_revision": mock["source_revision"],
+        "source_tree_sha256": mock["source_tree_sha256"],
+        "config_sha256": config.sha256,
+        "profile_sha256": verified.profile.profile_hash if verified.profile else None,
+        "verdicts": statuses,
+        "PART_B_MOCK_PASS": statuses["PART_B_MOCK_PASS"] == "PASS",  # noqa: S105 -- verdict.
+        "missing_inputs": [k + ":" + v for k, v in statuses.items() if v != "PASS"],
+        "evidence_refs": {
+            str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in (
+                output / "mock/result.json",
+                output / "platform/result.json",
+                output / "data-manifest.json",
+            )
+        },
+        "live": live,
+        "real_provider_attempts_in_release_checks": 0,
+        "operator_observed_in_release_checks": False,
+        "MODEL_ENABLED": False,
+        "MONEY_READY": "NO",
+        "production_authority": "NONE",
+        "limitations": [
+            "Physical sleep/power loss and native Side Panel toolbar NOT_OBSERVED.",
+            "No authenticated provider or operator session is started by this verifier.",
+            "Full-source mypy has 25 pre-existing errors in unchanged governance files.",
+            "Historical data, settled target labels and access-review inputs NOT_SUPPLIED.",
+        ],
+    }
+    (output / "result.json").write_text(json.dumps(result, indent=2))
+    return result
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--profile", choices=["mock", "security", "portable"], required=True)
+    parser.add_argument(
+        "--profile", choices=["mock", "security", "portable", "release"], required=True
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     result = verify_profile(args.profile, args.output)

@@ -2,24 +2,40 @@
 
 Batch: PB-00 through PB-24. Branch: `codex/part-b-batched`.
 Starting HEAD: `39b92966c2db6694b31507526b339206f4db2b0d`.
-Exact current HEAD, file/evidence hashes, command exits and failed attempts are in
-`.local/part-b/execution-state.json` and `.local/part-b/task-evidence/`.
-This tracked pointer avoids a commit/report self-hash cycle.
+Exact current HEAD, task/evidence/config hashes, commands and exits live in
+`.local/part-b/execution-state.json`, `.local/part-b/task-evidence/` and the current
+private release report. This tracked pointer avoids a commit/report hash cycle.
 
-Completed local tasks: PB-00 through PB-17.
-PB-18: WAITING_FOR_USER_SECRET and exact nonsecret league/season/fixture selection.
-PB-19: WAITING_OPERATOR_SAMPLE and separate bounded observation/review authority.
-Continue independent code in PB-20 through PB-24; their real acceptance remains gated.
+PB-00 through PB-17 completed local implementation and mock qualification at
+`180da4b19beae2c10bc2adc06cc98fdc181a94d3`. Its old result remains immutable.
+Later shared code changes require a new final source-bound campaign.
+PB-18 now includes a tested, bounded date lookup before an exact fixture probe.
+PB-21/PB-22 recording, manual FT comparisons and prior-scope replay checks are
+implemented and locally tested; no real run is claimed. PB-23 release/report
+and PB-24 performance-blind manifest code are implemented. The current private
+checkpoint records whether final verification has completed on the frozen bytes.
 
-PB-17 passed 39 required cases, 356 Python tests, seven TypeScript tests and
-27 Part A cases plus separate replay verification at commit
-`180da4b19beae2c10bc2adc06cc98fdc181a94d3`. Evidence:
-`.local/part-b/mock/result.json`. Later source changes require fresh final evidence.
+External gates:
 
-- Full-source mypy: 25 pre-existing errors in three unchanged governance files, reproduced on starting HEAD; .local/part-b/PB-11-preexisting-static.json. No full-static PASS claimed.
+- PB-18 WAITING_FOR_USER_SECRET: Champions League 2026/27, Bayern München –
+  Bodø/Glimt, 2026-09-10 selected. Lookup config is disabled, league 2/season 2026;
+  actual provider fixture ID, own-terminal confirmation and key entry remain.
+- PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
+  profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
+  No real selectors, IDs or settlement are guessed; the admitted index is empty.
+- PB-20 WAITING_REVIEW: actual provider/profile evidence and current independent
+  external host security receipts are absent. No reviewer signature is invented.
+- PB-21/PB-22 WAITING_MATCH_WINDOW: accepted prior inputs and separate bounded
+  one/three/five confirmations remain. No real session has executed.
+- PB-24 WAITING_DATA_AND_RIGHTS_REVIEW: no real research dataset, settled target
+  labels or access-review evidence supplied. No SCOPE0 or Part C activation.
 
-PART_B_MOCK_PASS: PASS_AT_PB17_COMMIT; final changed candidate requires a rerun.
-Real provider attempts: 0. Real operator capture: NOT_RUN.
+Windows Chrome -> WSL2 is the selected isolated platform. Synthetic browser,
+IndexedDB and SQLite observations are separate from real operator/provider proof.
+Physical sleep/power loss and the native Side Panel toolbar are NOT_OBSERVED.
+Full-source mypy retains 25 pre-existing errors in three unchanged governance
+files, reproduced at the starting commit; scoped Part B checks are separate.
+
+Real provider attempts by this worker: 0. Real operator captures: 0.
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
-
-PB-21/PB-22 recording, manual comparisons and staged replay qualification code tested locally. Real one/three/five acceptance remains WAITING_REVIEW / WAITING_MATCH_WINDOW. Fresh final source-bound campaign pending.
+No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.

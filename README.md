@@ -1,5 +1,12 @@
 # Hybrid Discovery v6.3.6 REPO0 runtime
 
+The separately authorized Part B v2 read-only implementation is documented in
+[PART_B_HANDOFF](docs/live/PART_B_HANDOFF.md) and the
+[startup/shutdown runbook](docs/runbooks/START_LIVE_READ_ONLY.md). Its mock,
+platform, provider, operator and real-session verdicts remain separate. The
+legacy synthetic RawObservation contract is unchanged; no Part C or money
+authority follows from local implementation or tests.
+
 This checkout is the v6.3.6 authoring/governance runtime. Its `6.2.0` Python
 and extension package versions identify compatibility with the inherited v6.2
 data/schema contract; they are not the runtime release name.
