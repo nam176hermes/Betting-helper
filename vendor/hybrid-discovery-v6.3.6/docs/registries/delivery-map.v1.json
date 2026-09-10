@@ -185,6 +185,11 @@
       "source": "authoring-fixtures/part-b-review-predecessor.json",
       "destination": "pack/authoring-source/authoring-fixtures/part-b-review-predecessor.json",
       "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-compiler-inputs.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-compiler-inputs.json",
+      "owner": "V636-P09-T01"
     }
   ],
   "runtime_source_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",

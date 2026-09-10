@@ -20,6 +20,23 @@ from tools.run_full_repair_qualification import write_closed_inventory
 CONFIG = Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json")
 
 
+def test_part_b_compiler_input_binding_and_exact_output_inventory() -> None:
+    root = Path.cwd()
+    ownership = json.loads((root / (
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json"
+    )).read_text())["entries"]
+    sources = [row for row in ownership if row["classification"] == "EXTERNAL_INPUT"
+               and row["source"]["binding"].startswith("PART_B_SOURCE_COMMIT:")]
+    assert len(sources) == 23
+    for row in sources:
+        path = root / row["path"].removeprefix("runtime/")
+        assert row["source"]["path"] == str(path)
+        assert row["source"]["binding"].endswith(
+            ":sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+        )
+    assert run_command_registry.collect_generated_outputs(root)
+
+
 def test_historical_three_argument_api_is_strict_and_cannot_downgrade_current_source(
     tmp_path: Path,
 ) -> None:

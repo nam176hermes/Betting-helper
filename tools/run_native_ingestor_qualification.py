@@ -27,7 +27,7 @@ from tools.verify_repair_evidence import _validate_sqlite_state, capture_binding
 if TYPE_CHECKING:
     from tools.retained_artifact_io import RetainedArtifactIO
 
-DEPENDENCIES = WINDOWS_PARENT / "native-dependency-closure-b82739f5-1369-4d01-a701-b39a1a8e228b"
+DEPENDENCIES = WINDOWS_PARENT / "native-dependency-closure-ab0f612d-1f27-4349-921a-76f05780578a"
 SCRIPT = ROOT / "tools/native_ingestor_probe.py"
 MODES = ("setup", "write", "reopen", "read", "replay", "replay-again", "final-read")
 
@@ -86,7 +86,7 @@ def verify_loaded_dependencies(value: dict[str, Any], dependency: dict[str, Any]
     imported = json.loads((DEPENDENCIES / "native-import.json").read_text())
     if (
         artifact(DEPENDENCIES / "native-import.json")["sha256"]
-        != "2b39a0ac9095c1e93dfe301f194d3681ffdc105d4a01f20b3bccec74093d1c7a"
+        != "7f33919edbec6678ecf6ef7c7f4f9c97176aa78627d0673fe227e341227749a6"
     ):
         raise ValueError("E_NATIVE_DEPENDENCY_IMPORT_REFERENCE")
     expected = {

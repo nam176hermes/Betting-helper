@@ -17,6 +17,24 @@ def owner() -> Any:
     return importlib.import_module(name)
 
 
+def test_current_native_dependency_lock_matches(
+    owner: Any, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import hashlib
+
+    binding = owner.dependency_binding()
+    assert binding["lock"]["sha256"] == hashlib.sha256(
+        (owner.ROOT / "uv.lock").read_bytes()
+    ).hexdigest()
+    assert len(binding["wheels"]) == 6
+    artifact = owner.artifact
+    monkeypatch.setattr(owner, "artifact", lambda path: (
+        {**artifact(path), "sha256": "0" * 64} if path == owner.ROOT / "uv.lock" else artifact(path)
+    ))
+    with pytest.raises(ValueError, match="E_NATIVE_DEPENDENCY_LOCK"):
+        owner.dependency_binding()
+
+
 @pytest.fixture(scope="module")
 def report(owner: Any, tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
     return cast(

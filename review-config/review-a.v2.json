@@ -119,7 +119,7 @@
     "wsl_distro": "Ubuntu",
     "runtime_unc": "\\\\wsl.localhost\\Ubuntu\\home\\thenam176\\betting-helper\\discovery-runtime-part-b-review",
     "path_translation_sha256": "9b2be781d42bdd73e8887366698e2c56d03c815a9be6f8d47dfeac22e0104fb7",
-    "native_dependency_root": "/mnt/c/Users/thenam/Documents/BettingHelper-Repair-Chrome/native-dependency-closure-b82739f5-1369-4d01-a701-b39a1a8e228b",
+    "native_dependency_root": "/mnt/c/Users/thenam/Documents/BettingHelper-Repair-Chrome/native-dependency-closure-ab0f612d-1f27-4349-921a-76f05780578a",
     "live_files": [
       "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
       "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",

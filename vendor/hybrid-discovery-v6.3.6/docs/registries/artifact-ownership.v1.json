@@ -61,7 +61,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P04-T04",
       "modifying_tasks": [],
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -134,7 +134,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T01",
       "modifying_tasks": [],
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -193,7 +193,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -245,7 +245,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -258,7 +258,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -13842,6 +13842,1007 @@
       "consumers": [
         "V636-MIG0-T08",
         "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-fixtures/part-b-compiler-inputs.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/background.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/background.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:7adb03a1bff89574480af93f399175444fbd0bda8949b6d51991ed8adc7b682a"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/background.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/background.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/background.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/background.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/capture.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/capture.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:1ebcbd0778d6f1f6ddd48bb0acf96c1d935ec5270dbfbe753b3da93ecaccc350"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/capture.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/capture.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/capture.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/capture.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/contracts.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/contracts.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:9258e23e652dcd6e89e608b64f580314594e5ed60b3102d49840e042fa0a65d3"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/contracts.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/contracts.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/contracts.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/contracts.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/dom_reader.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/dom_reader.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:a098ea436c5afd310bc57872bc8d902baf2d5e491333dab2db1ba180f04ceeb7"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/dom_reader.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/dom_reader.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/dom_reader.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/dom_reader.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/panel.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/panel.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:d71e260d13af9e6c7fceda929937c4801b4f770dc7b57d1d0111945d986240c3"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/panel.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/panel.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/panel.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/panel.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/protocol.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/protocol.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:e96ba336f902a3982eaf768d517607d8675995f10ef4d5a0c7d1398a3808401a"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/protocol.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/protocol.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/protocol.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/protocol.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/spool.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/spool.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:132e31d46ad6d04a2a00e3786166ad65b626229c210c90b37da1bda2d57db8e9"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/spool.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/spool.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/spool.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/spool.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/transport.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/transport.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:bc291f177311e051c4bc20e245ed3832cd42e945dec6f0af2ae51443a0d36ed5"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/transport.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/transport.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/transport.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/transport.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/workspace.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/live/workspace.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:f45509015870bdeba191d9feab7a442de3bcedf0d55db82cfa94bd0e47a1837f"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/live/workspace.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/workspace.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/live/workspace.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/live/workspace.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/offline/bootstrap.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/offline/bootstrap.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:72c2e908904db7b52625db2ae3409aead98e043691b32cdba3e134be553e6c60"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/offline/bootstrap.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/bootstrap.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/offline/bootstrap.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/bootstrap.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/offline/context.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/offline/context.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:9c402d3b37f40efc2315f4315a3478e5f489026e7688dc7ccd51b1d01bdf7b69"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/offline/context.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/context.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/offline/context.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/context.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/offline/protocol.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/offline/protocol.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:47901ca26dcf6c843e679c898746074110cd0af13939b236efb02fb2fa56638c"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/offline/protocol.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/protocol.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/offline/protocol.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/protocol.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/offline/session.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/offline/session.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:a2c903971545674a6c8d05d40b72e2b629317ef9ce3d4cd01e1d374f5b2123db"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/offline/session.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/session.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/offline/session.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/offline/session.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/storage/durable_idb.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/src/storage/durable_idb.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:5e8e21f8eda59fe7ba362d9be0743932e478ba757c4ec8f7c8dda93379cd2fa2"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/src/storage/durable_idb.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/storage/durable_idb.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/dist/storage/durable_idb.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/src/storage/durable_idb.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P07-T01",
+        "V636-P08-T01",
+        "V636-P08-T03",
+        "V636-P10-T02"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/live/capture.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/live/capture.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:c9c760b4504761cda6978367a17c667bde4305c93ecaea1b0a281528a99aea4e"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/live/capture.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/live/capture.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/live/panel.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/live/panel.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:76b457c462c9706c5e4d002174370be53046d19da90e4893a8eadade611f385d"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/live/panel.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/live/panel.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/live/spool.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/live/spool.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:d826c874d9fa359f2edac0cc4410b1609bc90d1382d7bb1b394ef96ffefd8654"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/live/spool.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/live/spool.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/live/wire.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/live/wire.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:9a68349ab9900c5a53e547fcadcf5819f8fbd598f1f373f5964729a91c28e242"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/live/wire.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/live/wire.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/offline/fixtures.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/offline/fixtures.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:2f719c07873e923e7c8659ea89a78fc28fe01b4c0aef969f272279c0c299b654"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/offline/fixtures.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/offline/fixtures.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/offline/loopback.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/offline/loopback.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:e76ef800c5dd13cdaa847a885edf465c0ef69852d3a5d46d7952cacaaf55d6df"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/offline/loopback.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/offline/loopback.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/offline/protocol.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/offline/protocol.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:ab7168b74f3db39ed77950bf533209c1ca11d8522245010e85927fb4facacc55"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/offline/protocol.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/offline/protocol.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/offline/redaction.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/offline/redaction.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:89142352c623e83271eb30d847c7e0fce4a8710384d1dd930afb0b321281aeea"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/offline/redaction.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/offline/redaction.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/test/offline/spool-payload.test.ts",
+      "classification": "EXTERNAL_INPUT",
+      "creation_owner": null,
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/test/offline/spool-payload.test.ts",
+        "binding": "PART_B_SOURCE_COMMIT:62150ea25feb1049e453a92b473320e1998b8e60:sha256:542469ce6b2c3bbcddb95a2a5c685dc64d00301fc7416c78891b98f789653cf8"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P04-T03",
+        "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "runtime/extension/.test-build/test/offline/spool-payload.test.js",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-P04-T03",
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
+      "materialization_required": false,
+      "source": {
+        "path": "runtime/extension/test/offline/spool-payload.test.ts"
+      },
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09"
       ]
     }
   ]

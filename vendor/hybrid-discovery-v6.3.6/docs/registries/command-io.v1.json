@@ -67,9 +67,56 @@
         "V636-P04-T03"
       ],
       "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
+        "runtime/extension/test/live/capture.test.ts",
+        "runtime/extension/test/live/panel.test.ts",
+        "runtime/extension/test/live/spool.test.ts",
+        "runtime/extension/test/live/wire.test.ts",
+        "runtime/extension/test/offline/fixtures.ts",
+        "runtime/extension/test/offline/loopback.test.ts",
+        "runtime/extension/test/offline/protocol.test.ts",
+        "runtime/extension/test/offline/redaction.test.ts",
+        "runtime/extension/test/offline/spool-payload.test.ts",
         "runtime/extension/tsconfig.test.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "runtime/extension/.test-build/src/live/background.js",
+        "runtime/extension/.test-build/src/live/capture.js",
+        "runtime/extension/.test-build/src/live/contracts.js",
+        "runtime/extension/.test-build/src/live/dom_reader.js",
+        "runtime/extension/.test-build/src/live/panel.js",
+        "runtime/extension/.test-build/src/live/protocol.js",
+        "runtime/extension/.test-build/src/live/spool.js",
+        "runtime/extension/.test-build/src/live/transport.js",
+        "runtime/extension/.test-build/src/live/workspace.js",
+        "runtime/extension/.test-build/src/offline/bootstrap.js",
+        "runtime/extension/.test-build/src/offline/context.js",
+        "runtime/extension/.test-build/src/offline/protocol.js",
+        "runtime/extension/.test-build/src/offline/session.js",
+        "runtime/extension/.test-build/src/storage/durable_idb.js",
+        "runtime/extension/.test-build/test/live/capture.test.js",
+        "runtime/extension/.test-build/test/live/panel.test.js",
+        "runtime/extension/.test-build/test/live/spool.test.js",
+        "runtime/extension/.test-build/test/live/wire.test.js",
+        "runtime/extension/.test-build/test/offline/fixtures.js",
+        "runtime/extension/.test-build/test/offline/loopback.test.js",
+        "runtime/extension/.test-build/test/offline/protocol.test.js",
+        "runtime/extension/.test-build/test/offline/redaction.test.js",
+        "runtime/extension/.test-build/test/offline/spool-payload.test.js"
+      ],
       "input_directories": []
     },
     {
@@ -816,9 +863,9 @@
         "pack/docs/configs/full-verifier-controller.v2.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json"
       ],
       "input_directories": []
     },
@@ -853,12 +900,12 @@
         "runtime/tools/verify_full_repair_qualification.py",
         "runtime/tools/retained_artifact_io.py",
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json"
       ],
       "input_directories": []
     },
@@ -1158,7 +1205,7 @@
         "runtime/tools/run_command_registry.py"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json"
       ],
       "input_directories": []
     },
@@ -1168,14 +1215,14 @@
         "V636-P07-T02"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/registries/proof-coverage-matrix.v1.json",
         "runtime/tools/verify_proof_coverage.py",
         "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json"
       ],
       "input_directories": []
     },
@@ -1186,13 +1233,13 @@
       ],
       "inputs": [
         "runtime/tools/build_candidate_qualification_receipt.py",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
         "pack/docs/configs/full-verifier-controller.v2.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json"
       ],
       "input_directories": []
     },
@@ -1205,19 +1252,19 @@
         "runtime/tools/qualify_descendant_repository.py",
         "runtime/tools/retained_artifact_io.py",
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json"
       ],
       "input_directories": []
     },
@@ -1230,20 +1277,20 @@
         "runtime/tools/qualify_descendant_repository.py",
         "runtime/tools/retained_artifact_io.py",
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json"
       ],
       "input_directories": []
     },
@@ -1256,20 +1303,20 @@
         "runtime/tools/qualify_descendant_repository.py",
         "runtime/tools/retained_artifact_io.py",
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T03.json"
       ],
       "input_directories": []
     },
@@ -1281,30 +1328,31 @@
       "inputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/DESCENDANT_REPOSITORY_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-MIG0-T06.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P00-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P02-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P05-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P05-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P05-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P05-T09.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P06-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
         "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
         "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
+        "authoring-fixtures/part-b-compiler-inputs.json",
         "authoring-fixtures/part-b-review-predecessor.json",
         "authoring-tests/test_part_b_review_inputs.py",
         "authoring-tools/prepare_part_b_review_inputs.py",
@@ -1367,10 +1415,10 @@
         "V636-P09-T03"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
         "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
@@ -1648,9 +1696,56 @@
         "V636-P05-T09"
       ],
       "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
+        "runtime/extension/test/live/capture.test.ts",
+        "runtime/extension/test/live/panel.test.ts",
+        "runtime/extension/test/live/spool.test.ts",
+        "runtime/extension/test/live/wire.test.ts",
+        "runtime/extension/test/offline/fixtures.ts",
+        "runtime/extension/test/offline/loopback.test.ts",
+        "runtime/extension/test/offline/protocol.test.ts",
+        "runtime/extension/test/offline/redaction.test.ts",
+        "runtime/extension/test/offline/spool-payload.test.ts",
         "runtime/extension/tsconfig.test.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "runtime/extension/.test-build/src/live/background.js",
+        "runtime/extension/.test-build/src/live/capture.js",
+        "runtime/extension/.test-build/src/live/contracts.js",
+        "runtime/extension/.test-build/src/live/dom_reader.js",
+        "runtime/extension/.test-build/src/live/panel.js",
+        "runtime/extension/.test-build/src/live/protocol.js",
+        "runtime/extension/.test-build/src/live/spool.js",
+        "runtime/extension/.test-build/src/live/transport.js",
+        "runtime/extension/.test-build/src/live/workspace.js",
+        "runtime/extension/.test-build/src/offline/bootstrap.js",
+        "runtime/extension/.test-build/src/offline/context.js",
+        "runtime/extension/.test-build/src/offline/protocol.js",
+        "runtime/extension/.test-build/src/offline/session.js",
+        "runtime/extension/.test-build/src/storage/durable_idb.js",
+        "runtime/extension/.test-build/test/live/capture.test.js",
+        "runtime/extension/.test-build/test/live/panel.test.js",
+        "runtime/extension/.test-build/test/live/spool.test.js",
+        "runtime/extension/.test-build/test/live/wire.test.js",
+        "runtime/extension/.test-build/test/offline/fixtures.js",
+        "runtime/extension/.test-build/test/offline/loopback.test.js",
+        "runtime/extension/.test-build/test/offline/protocol.test.js",
+        "runtime/extension/.test-build/test/offline/redaction.test.js",
+        "runtime/extension/.test-build/test/offline/spool-payload.test.js"
+      ],
       "input_directories": []
     },
     {
@@ -1887,9 +1982,38 @@
         "V636-P05-T09"
       ],
       "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
         "runtime/extension/tsconfig.build.json"
       ],
-      "outputs": [],
+      "outputs": [
+        "runtime/extension/dist/live/background.js",
+        "runtime/extension/dist/live/capture.js",
+        "runtime/extension/dist/live/contracts.js",
+        "runtime/extension/dist/live/dom_reader.js",
+        "runtime/extension/dist/live/panel.js",
+        "runtime/extension/dist/live/protocol.js",
+        "runtime/extension/dist/live/spool.js",
+        "runtime/extension/dist/live/transport.js",
+        "runtime/extension/dist/live/workspace.js",
+        "runtime/extension/dist/offline/bootstrap.js",
+        "runtime/extension/dist/offline/context.js",
+        "runtime/extension/dist/offline/protocol.js",
+        "runtime/extension/dist/offline/session.js",
+        "runtime/extension/dist/storage/durable_idb.js"
+      ],
       "input_directories": []
     },
     {
@@ -2869,7 +2993,7 @@
         "authoring-tools/issue_current_authoring_repository_receipt.py"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v2.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json"
       ],
       "input_directories": []
     },
@@ -2918,8 +3042,8 @@
         "pack/docs/configs/full-verifier-controller.v2.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json"
       ],
       "input_directories": []
     }
