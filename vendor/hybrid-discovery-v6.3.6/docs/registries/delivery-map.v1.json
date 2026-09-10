@@ -170,9 +170,24 @@
       "source": "plan-input/bootstrap/verify_extracted_plan.py",
       "destination": "pack/authoring-source/bootstrap/verify_extracted_plan.py",
       "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/prepare_part_b_review_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/prepare_part_b_review_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_part_b_review_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_part_b_review_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-review-predecessor.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-review-predecessor.json",
+      "owner": "V636-P09-T01"
     }
   ],
-  "runtime_source_root": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
-  "final_runtime_root": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+  "runtime_source_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+  "final_runtime_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
   "rule": "Sealed-review reference resolution maps historic authoring source paths through this exact source export; runtime references resolve in final runtime. No authoring workspace mount is needed."
 }

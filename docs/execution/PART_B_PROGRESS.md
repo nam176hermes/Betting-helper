@@ -57,3 +57,32 @@ Real provider attempts by this worker: 0. Real operator captures: 0.
 Observed user-terminal attempt counts and run hashes are in the current private checkpoint.
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.
+
+Current review-input amendment (isolated descendant of 62150ea):
+
+- Runtime checkout: `/home/thenam176/betting-helper/discovery-runtime-part-b-review`.
+  Authoring checkout: `/home/thenam176/betting-helper/authoring-part-b-review-inputs`,
+  committed at `3c4f896168d10db53e5a4963a6f0206ad961b032`.
+- The hash-guarded authoring generator binds current controller/reviewer configs,
+  source exports, registries and task cards to these isolated roots. Official
+  materializers generated vendor and root registry outputs. Legacy v1/BOOT0
+  inputs and the original Part B checkout remain unchanged.
+- Fresh authoring checks: 68 tests and 117 subtests PASS. Runtime controller:
+  32 tests PASS; focused materialization/security: 5 tests PASS. Registry and
+  pack checks, changed-test lint, build and test compilation PASS. All nine
+  controller prerequisites PASS, including the source-authoring Git receipt.
+- Qualification remains HOLD. The real TEST_ONLY namespace suite passed 16
+  tests and failed one at `E_NATIVE_DEPENDENCY_LOCK`: the retained Windows
+  dependency preparation belongs to a different lock hash. Keep it immutable.
+- Candidate-receipt tests passed three tests before failing at
+  `E_COMMAND_REGISTRY:GENERATED_OUTPUTS`: 37 actual compiler outputs from Part A
+  and Part B have no declaration in the inherited generated-output ownership.
+  Resolve through governed authoring inputs, never by deleting those outputs or
+  weakening the inventory validator. Remaining release cases were not executed.
+- Evidence: `/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs`.
+  The external report/checkpoint holds current commit, configuration, source,
+  evidence hashes and exact command exits. Earlier exploratory failures remain
+  retained and are not qualification evidence.
+- No final seal, descendant qualification, independent host receipt, human fresh
+  review session, operator sample or live run has been created by this amendment.
+  Status: WAITING_PLATFORM / WAITING_REVIEW. Models and money remain disabled.

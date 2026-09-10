@@ -3,7 +3,7 @@
   "commands": [
     {
       "command_id": "SEC_CAPABILITY_MANIFEST",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -23,7 +23,7 @@
     },
     {
       "command_id": "SEC_CDP_REACHABILITY",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/cdp-reachability.test.js"
@@ -39,7 +39,7 @@
     },
     {
       "command_id": "SEC_DYNAMIC_DISPATCH",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/dynamic-dispatch.test.js"
@@ -55,7 +55,7 @@
     },
     {
       "command_id": "SEC_TARGET_ESCAPE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/target-escape.test.js"
@@ -71,7 +71,7 @@
     },
     {
       "command_id": "SEC_MESSAGE_SMUGGLING",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/message-smuggling.test.js"
@@ -87,7 +87,7 @@
     },
     {
       "command_id": "SEC_OUTBOUND_NETWORK",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/outbound-network.test.js"
@@ -103,7 +103,7 @@
     },
     {
       "command_id": "SEC_AUTHORIZATION_TRUST",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -123,7 +123,7 @@
     },
     {
       "command_id": "SEC_REPLAY_REVOCATION",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -143,7 +143,7 @@
     },
     {
       "command_id": "SEC_CREDENTIAL_EVIDENCE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -163,7 +163,7 @@
     },
     {
       "command_id": "SEC_CANONICAL_HASHING",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -183,7 +183,7 @@
     },
     {
       "command_id": "SEC_NO_ARCHIVE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -203,7 +203,7 @@
     },
     {
       "command_id": "SEC_BUBBLEWRAP_ISOLATION",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -223,7 +223,7 @@
     },
     {
       "command_id": "SEC_SUPPLY_CHAIN",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "uv",
         "run",
@@ -243,7 +243,7 @@
     },
     {
       "command_id": "SEC_PRODUCTION_BUILD_EXCLUSION",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
       "argv": [
         "node",
         "extension/.test-build/test/security/production-build-exclusion.test.js"

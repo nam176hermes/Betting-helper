@@ -61,7 +61,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/DESCENDANT_REPOSITORY_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P03-T07.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P03-T07.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P04-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P04-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P04-T04",
       "modifying_tasks": [],
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -134,7 +134,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P07-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T01",
       "modifying_tasks": [],
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P08-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/V636-P08-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -193,7 +193,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/environment-aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/environment-aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -245,7 +245,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/environment/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/environment/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -258,7 +258,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/full-repair/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-inputs/full-repair/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -935,7 +935,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv",
+      "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/.venv",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -947,7 +947,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/extension/node_modules",
+      "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -959,7 +959,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/node_modules",
+      "path": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -1014,7 +1014,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1028,7 +1028,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1042,7 +1042,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P09-T04",
       "modifying_tasks": [],
@@ -1057,7 +1057,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P09-T04",
       "modifying_tasks": [],
@@ -1072,7 +1072,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P09-T04",
       "modifying_tasks": [],
@@ -1087,7 +1087,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/extension/node_modules",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/extension/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1099,7 +1099,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/extension/package.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/extension/package.json",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1111,7 +1111,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/node_modules",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1123,7 +1123,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/package.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/package.json",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1135,7 +1135,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/pnpm-lock.yaml",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/pnpm-lock.yaml",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1147,7 +1147,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project/pnpm-workspace.yaml",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/pnpm-workspace.yaml",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1159,7 +1159,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/python-env",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/python-env",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1171,7 +1171,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/extension/node_modules",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/extension/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1183,7 +1183,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/extension/package.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/extension/package.json",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1195,7 +1195,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/node_modules",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/node_modules",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1207,7 +1207,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/package.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/package.json",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1219,7 +1219,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/pnpm-lock.yaml",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/pnpm-lock.yaml",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1231,7 +1231,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project/pnpm-workspace.yaml",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/pnpm-workspace.yaml",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1243,7 +1243,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/python-env",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/python-env",
       "classification": "GENERATED_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -1255,7 +1255,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/aggregate/result.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/aggregate/result.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T04",
       "modifying_tasks": [],
@@ -1267,7 +1267,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-a/execution-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T03",
       "modifying_tasks": [],
@@ -1280,7 +1280,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-a/result.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T03",
       "modifying_tasks": [],
@@ -1293,7 +1293,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/workspace-attestation.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-a/workspace-attestation.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T01",
       "modifying_tasks": [],
@@ -1305,7 +1305,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-b/execution-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T03",
       "modifying_tasks": [],
@@ -1318,7 +1318,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-b/result.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T03",
       "modifying_tasks": [],
@@ -1331,7 +1331,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/workspace-attestation.json",
+      "path": "/home/thenam176/betting-helper/part-b-review-host/results/review-b/workspace-attestation.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P10-T02",
       "modifying_tasks": [],
@@ -13804,6 +13804,45 @@
       },
       "qualification_owner": "V636-MIG0-T08",
       "consumers": []
+    },
+    {
+      "path": "authoring-tools/prepare_part_b_review_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_part_b_review_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-fixtures/part-b-review-predecessor.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
     }
   ]
 }

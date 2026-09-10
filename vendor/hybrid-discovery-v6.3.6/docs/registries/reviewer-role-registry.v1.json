@@ -5,13 +5,13 @@
       "role": "IMPLEMENTATION_READINESS_REVIEWER",
       "prompt": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
       "command_registry": "docs/registries/review-command-registry.v1.json",
-      "output_root": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a"
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host/results/review-a"
     },
     {
       "role": "CYBERSECURITY_REVIEWER",
       "prompt": "docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
       "command_registry": "docs/registries/cybersecurity-command-registry.v1.json",
-      "output_root": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b"
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host/results/review-b"
     }
   ],
   "mechanical_independence": "REQUIRED",
@@ -21,6 +21,6 @@
   "authority_config": "docs/configs/review-authority.v1.json",
   "maximum_launch_age_seconds": 14400,
   "maximum_aggregate_delay_seconds": 3600,
-  "workspace_root_prefix": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6",
-  "authoring_root_excluded": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring"
+  "workspace_root_prefix": "/home/thenam176/betting-helper/part-b-review-host/workspaces",
+  "authoring_root_excluded": "/home/thenam176/betting-helper/authoring-part-b-review-inputs"
 }

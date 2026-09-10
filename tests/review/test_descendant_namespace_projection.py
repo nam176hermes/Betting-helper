@@ -83,6 +83,10 @@ def cache_projection(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
 ) -> tuple[dict[str, Any], Path]:
     config = json.loads((ROOT / "review-config/review-a.v2.json").read_text())
+    # TEST_ONLY preparation consumes the source registry before a final seal exists.
+    config["command_registry_path"] = str(
+        ROOT / "vendor/hybrid-discovery-v6.3.6/docs/registries/review-command-registry.v1.json"
+    )
     old_scratch = config["scratch_root"]
     scratch = tmp_path / "TEST_ONLY-cache-scratch"
     config = json.loads(json.dumps(config).replace(old_scratch, str(scratch)))
@@ -217,6 +221,9 @@ def test_real_test_only_namespace_preserves_descendant_producer_identity(
     with TemporaryDirectory(prefix="test-only-namespace-", dir=ROOT / ".local") as temporary:
         owned = Path(temporary)
         config = json.loads((ROOT / "review-config/review-a.v2.json").read_text())
+        config["command_registry_path"] = str(
+            ROOT / "vendor/hybrid-discovery-v6.3.6/docs/registries/review-command-registry.v1.json"
+        )
         old_scratch = config["scratch_root"]
         scratch = owned / "scratch"
         config = json.loads(json.dumps(config).replace(old_scratch, str(scratch)))

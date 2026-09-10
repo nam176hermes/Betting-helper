@@ -16,13 +16,14 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE_CONFIG = (
     ROOT / "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json"
 )
-SOURCE_CONFIG_V2 = Path(
-    "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack/docs/configs/full-verifier-controller.v2.json"
+SOURCE_CONFIG_V2 = (
+    ROOT / "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json"
 )
 
 
 def test_source_owned_controller_config_is_strict_and_fully_consumed() -> None:
-    config = load_controller_config(SOURCE_CONFIG)
+    legacy = load_controller_config(SOURCE_CONFIG)
+    config = load_controller_config(SOURCE_CONFIG_V2)
     assert config.current_checkout_root == ROOT
     assert config.production_authority == "NONE"
     current = load_controller_config(SOURCE_CONFIG_V2)
@@ -34,7 +35,7 @@ def test_source_owned_controller_config_is_strict_and_fully_consumed() -> None:
     )
     with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
         verify_local._validate_authoring_tests(
-            current.external_authoring_tests, config.external_authoring_source_sha256
+            current.external_authoring_tests, legacy.external_authoring_source_sha256
         )
     with pytest.raises(ValueError, match="E_EXTERNAL_AUTHORING_TESTS"):
         verify_local._validate_authoring_tests(config.external_authoring_tests, "0" * 64)
@@ -294,7 +295,7 @@ def test_external_authoring_suite_is_executed_with_declared_argv_and_cwd(
 def test_candidate_receipt_is_postcondition_not_preflight_prerequisite(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    config = load_controller_config(SOURCE_CONFIG)
+    config = load_controller_config(SOURCE_CONFIG_V2)
     seen: list[Path] = []
 
     def configured(identifier: str, path: Path | None, *, directory: bool) -> dict[str, object]:

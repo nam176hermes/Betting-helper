@@ -17,7 +17,7 @@ from tools.full_verifier_config import load_controller_config
 from tools.retained_artifact_io import RetainedArtifactIO
 from tools.run_full_repair_qualification import write_closed_inventory
 
-CONFIG = Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json")
+CONFIG = Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json")
 
 
 def test_historical_three_argument_api_is_strict_and_cannot_downgrade_current_source(
@@ -300,10 +300,7 @@ def test_proof_coverage_rejects_forged_empty_rows(tmp_path: Path) -> None:
 def test_recorded_candidate_proof_replays_from_sanctioned_sealed_map(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    source_config = Path(
-        "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack/"
-        "docs/configs/full-verifier-controller.v2.json"
-    )
+    source_config = CONFIG
     original = load_controller_config(source_config)
     recorded_pack = Path("/recorded/authoring/pack")
     recorded_evidence = Path("/recorded/evidence")

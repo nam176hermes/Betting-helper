@@ -19,10 +19,9 @@ import pytest
 from tools.qualify_descendant_repository import descendant_repository_identity
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE_CONFIG = Path(
-    "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack/"
-    "docs/configs/full-verifier-controller.v2.json"
-)
+SOURCE_CONFIG = Path(json.loads((
+    ROOT / "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json"
+).read_text())["governed_source_pack"]) / "docs/configs/full-verifier-controller.v2.json"
 
 
 def _git(root: Path, *args: str) -> str:

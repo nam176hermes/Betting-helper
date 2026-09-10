@@ -1,7 +1,7 @@
 {
   "schema_version": "schema-lock/v1",
   "vendor_path": "vendor/hybrid-discovery-v6.3.6",
-  "vendor_tree_sha256": "2b3d917522e6f7fb2ab57e4704a22d7aa48497cb62a1c5f57a18336e2d52bc2f",
+  "vendor_tree_sha256": "ba43dc674af65653d5d7799402e5724a446a652724333e008239bc860d7ef46c",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -20,8 +20,8 @@
     },
     {
       "path": "docs/configs/full-verifier-controller.v2.json",
-      "size_bytes": 3518,
-      "sha256": "c466876d13634ccef8a31db07194cefeb10c561f7fe813c55f4ca7ee7a9dee5f"
+      "size_bytes": 3323,
+      "sha256": "2d117aeb87e1fa9bc894e2f755a65e982c7e1a211edcafb5f853b8936d893fc5"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -30,8 +30,8 @@
     },
     {
       "path": "docs/configs/review-a.v2.json",
-      "size_bytes": 8628,
-      "sha256": "4bc7a304d9af1f357fc8037ce543ce76bf11d1aebeeed49d9b1c617c15cd554b"
+      "size_bytes": 8395,
+      "sha256": "6873417c47f2fc1b353443c0c9dbf2e84db6dca3bb8087852f8724917c7f1c61"
     },
     {
       "path": "docs/configs/review-aggregation.v1.json",
@@ -40,8 +40,8 @@
     },
     {
       "path": "docs/configs/review-aggregation.v2.json",
-      "size_bytes": 695,
-      "sha256": "5bb6902686b44586b6f8dbed091828567ab40619837a1a21ea234ec208c2d6d6"
+      "size_bytes": 682,
+      "sha256": "563fb0b04236ed0b3c1a1baaae4aba8afb7a06139c30fe144fe36afb1fbbcc18"
     },
     {
       "path": "docs/configs/review-authority.v1.json",
@@ -55,8 +55,8 @@
     },
     {
       "path": "docs/configs/review-b.v2.json",
-      "size_bytes": 5609,
-      "sha256": "dde8007b798630daadc62f011ae4e813e17664498bbfa6447ceef057725bbc7f"
+      "size_bytes": 5348,
+      "sha256": "bfd67813f3c132f97f78f1823917bf3f397983b531d4a0c28780ab01cce3be77"
     },
     {
       "path": "docs/configs/runtime-pyproject.toml",
@@ -170,8 +170,8 @@
     },
     {
       "path": "docs/registries/artifact-ownership.v1.json",
-      "size_bytes": 435676,
-      "sha256": "0dbd4a02e1af249c08ccc333744de601266dc4f3708e6ec960b409cece23a325"
+      "size_bytes": 436308,
+      "sha256": "293b8a7ca00e44599e0803e7d01e6ca49190c2207f4e551fe67a94f7ff4106eb"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -195,8 +195,8 @@
     },
     {
       "path": "docs/registries/command-io.v1.json",
-      "size_bytes": 93115,
-      "sha256": "ed9cc04273bd90766d6ecf78a516a346da5f63077e3b6726fee6797200ead7f4"
+      "size_bytes": 91461,
+      "sha256": "755b91717edb6fca24c7fc980af85a78101117f3bb0350065ec3c67f5fef8348"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -220,13 +220,13 @@
     },
     {
       "path": "docs/registries/cybersecurity-command-registry.v1.json",
-      "size_bytes": 7497,
-      "sha256": "c2009100f4df8cd3e8d1daa4abb901641dd0c1fc5b83162f78188342a541fa5d"
+      "size_bytes": 7595,
+      "sha256": "c7f809d53ea4eef7ae1b679ca2c3dd2566eba90fa3992ecc9935f46183dc1fc4"
     },
     {
       "path": "docs/registries/delivery-map.v1.json",
-      "size_bytes": 7251,
-      "sha256": "3cbcc4d5889661adbc27471ed7740e281770519d4d32a5aa3d628e39c4f92a50"
+      "size_bytes": 7858,
+      "sha256": "69e35c05ab35916729a6968579efe62eeff134a4d7c24db1086638f210fcd0de"
     },
     {
       "path": "docs/registries/inherited-baseline-qualification.v1.json",
@@ -245,23 +245,23 @@
     },
     {
       "path": "docs/registries/path-registry.v1.json",
-      "size_bytes": 1152,
-      "sha256": "63441317f4e1ee352a38a4131ca83f0f1cffb0b827eb0f63d45f3c28d501fb84"
+      "size_bytes": 1113,
+      "sha256": "30e6a69db7cf4c753f308f1f6fbb5f5fc6952a9a747bab41f426fd6e339ad55a"
     },
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
-      "size_bytes": 16021,
-      "sha256": "48750b54a2db4bcb3218720ea9e613ee367cf788467ead02708e8346bfccd621"
+      "size_bytes": 15779,
+      "sha256": "a264946ef49e16eb4c7268a814b102b46c0ca74132cbc01164f0b437aa46f94b"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
-      "size_bytes": 13345,
-      "sha256": "359dbe0f0087a46c79dcd9ef5077897906829c40bf04b25de44f04363382465a"
+      "size_bytes": 13072,
+      "sha256": "ced095c41a30f55f9e9416f968907f2a6397aa8a168bbff4c71a1cd1ee20ab19"
     },
     {
       "path": "docs/registries/reviewer-role-registry.v1.json",
-      "size_bytes": 1243,
-      "sha256": "6a1317508f1968f6740d5cccebda4d478eb18e0bf9633874e9c86ffd98e698b0"
+      "size_bytes": 1218,
+      "sha256": "f4a2cfa7017e854fa750f920663672924e4432a4288c3c23a5af7d60c1dc12f2"
     },
     {
       "path": "docs/registries/schema-pointer-normalization.v1.json",
@@ -290,8 +290,8 @@
     },
     {
       "path": "docs/registries/task-command-registry.v1.json",
-      "size_bytes": 105486,
-      "sha256": "48523735c9012b462d3132aa209244dfca8d75004529476d03c83656d54dacb8"
+      "size_bytes": 105144,
+      "sha256": "6ffb8f05ca552ce65b7d488b556006de6934069fd8e77dca92981dfbbb4260d5"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -365,13 +365,13 @@
     },
     {
       "path": "docs/security/review-trust-root.v1.json",
-      "size_bytes": 635,
-      "sha256": "223958d13bc07c8640aeae565bbf878ff7a360017aa6db905f27fc3e548439ee"
+      "size_bytes": 626,
+      "sha256": "555aa30938ba3a8e4dbbe58fc61a6fccf9b4a6b42c25fa8d24d5552f51cb8669"
     },
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
-      "size_bytes": 270504,
-      "sha256": "3567cf65d5aeb8f7d70263a81c89644455f84240cd62e66246138bead318be6d"
+      "size_bytes": 269318,
+      "sha256": "2af9a1afd072922d85ae67e59cbd76f8ef2bb327e3b39f5996a666c574a03653"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",
