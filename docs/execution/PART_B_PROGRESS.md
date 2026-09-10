@@ -17,12 +17,12 @@ checkpoint records whether final verification has completed on the frozen bytes.
 
 External gates:
 
-- PB-18 WAITING_FOR_USER_SECRET: user-terminal probes each stopped after one
-  STATUS request; the latest diagnostic is STATUS_RESULT_COUNT. The status object
-  parser and timestamp expiry handling are repaired and locally tested; actual
-  provider validation needs a fresh confirmed terminal run. Key validity remains
-  NOT_CHECKED until that run succeeds.
-  Lookup remains league 2/season 2026/date 2026-09-10; fixture ID is unverified.
+- PB-18 WAITING_FOR_USER_SECRET: lookup authenticated the key and found the selected
+  Bayern München - Bodo/Glimt fixture 1635632 (league 2, season 2026,
+  2026-09-10T19:00:00Z), using two successful requests. Lookup remains PARTIAL;
+  exact-fixture coverage/bundle/quota feasibility requires a fresh user-terminal
+  confirmation and hidden key entry. The disabled config now selects that one ID;
+  all other settings and quotas are preserved.
 - PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.

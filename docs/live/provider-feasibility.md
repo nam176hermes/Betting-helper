@@ -1,12 +1,14 @@
 # Provider feasibility — PB-18
 
-Status: WAITING_FOR_USER_SECRET for a fresh user-terminal diagnostic probe;
-the provider fixture ID remains unverified. PROVIDER_PROBE_PASS: FAIL.
-User-confirmed runs stopped after STATUS with SCHEMA_ERROR. Actual attempt counts
-and immutable run references are in `.local/part-b/execution-state.json`.
-KEY_CHECK remains NOT_CHECKED, not FAILED; neither a bad credential nor a provider
-outage has been established. Recent runs identified STATUS_RESULT_COUNT; the
-exact count/type was not retained. Real attempts by this worker: 0.
+Status: WAITING_FOR_USER_SECRET for the separately confirmed exact-fixture probe.
+KEY_CHECK: AUTHENTICATED. Lookup PROBE_RESULT: PARTIAL; SUBSCRIPTION_CHECK: UNKNOWN.
+The successful user-terminal run used two attempts (STATUS and LOOKUP) and found
+the selected fixture 1635632, Bayern München - Bodo/Glimt, at 2026-09-10T19:00:00Z.
+League 2/season 2026 and the exact lookup date were scope-bound. The disabled
+local config now selects this one fixture; all other settings are preserved.
+PROVIDER_PROBE_PASS is not yet established: coverage, embedded sections and full
+session quota feasibility need the exact-fixture probe. Worker real attempts: 0.
+Actual cumulative counts and immutable references are in the private checkpoint.
 
 The status parser previously assumed results == 1. STATUS carries an object,
 so results is now checked as bounded nonnegative integer metadata; authentication
@@ -19,13 +21,13 @@ a third-party-hosted copy dated 2026-02-03, not current live-account evidence.
 
 Fixed PROVIDER_DIAGNOSTIC labels include no provider values, raw JSON, headers or
 exception text. Synthetic compatibility cases are distinct from the real failed
-response, whose raw bytes were not retained. Old observations remain immutable;
-a fresh intent and own-terminal confirmation are required to verify the repair
-against the actual provider. No real-source PASS is claimed from this patch.
+response, whose raw bytes were not retained. Old failures remain immutable. The
+later real lookup succeeded on the repaired client; this proves authenticated
+lookup only, not full provider feasibility or permission for a live session.
 
 User-selected scope: Champions League 2026/27, Bayern München – Bodø/Glimt,
-2026-09-10. Public API documentation identifies league 2 and season 2026;
-the fixture ID is not guessed. The tested lookup-only path in
+2026-09-10. Fixture ID 1635632 was observed in the authenticated provider lookup,
+not guessed. The tested lookup-only path in
 `docs/runbooks/START_LIVE_READ_ONLY.md` can obtain candidate IDs in the user's
 terminal after an exact league/season/date confirmation. It permits only STATUS
 and LOOKUP, never BUNDLE or events, and remains PARTIAL until a separately
@@ -36,19 +38,17 @@ PB-17's complete mock gate passed at commit
 `.local/part-b/mock/result.json`. This verifies code, synthetic Windows browser
 observations and Part A regressions, not account access or real source coverage.
 
-Before running a probe, choose the API-Football league ID, season and one fixture
-ID. Keep the Windows Chrome → WSL2 selection. In the user's own WSL terminal:
+The existing disabled config selects fixture 1635632 and Windows Chrome → WSL2.
+Create a fresh exact-fixture intent in the user's own WSL terminal:
 
 ```bash
 cd /home/thenam176/betting-helper/discovery-runtime-part-b
-uv run --frozen --offline python tools/configure_live_batched.py --platform WINDOWS_CHROME_WSL2 --output config/live.local.json
-uv run --frozen --offline python tools/prepare_part_b_intent.py --stage provider-probe --config config/live.local.json --output .local/part-b/intents/provider-probe.json
-uv run --frozen --offline python tools/run_with_api_football_key.py --action probe --config config/live.local.json --intent .local/part-b/intents/provider-probe.json
+probe_intent=".local/part-b/intents/fixture-1635632-$(date -u +%Y%m%dT%H%M%SZ).json"
+uv run --frozen --offline python tools/prepare_part_b_intent.py --stage provider-probe --config config/live.local.json --output "$probe_intent" &&
+uv run --frozen --offline python tools/run_with_api_football_key.py --action probe --config config/live.local.json --intent "$probe_intent"
 ```
 
-The configuration command asks only for the remaining nonsecret IDs. It creates
-a disabled configuration and refuses to overwrite one by default. The intent
-expires after 15 minutes, binds the current source/config bytes, and is consumed
+The intent expires after 15 minutes, binds the current source/config bytes, and is consumed
 once before I/O. Code changes require a fresh intent; do not reuse an old one.
 
 Phần code kiểm tra API đã sẵn sàng. Bạn mở dashboard API-Football, vào
@@ -71,6 +71,6 @@ events comparison has not been approved or executed. A successful small probe
 does not authorize operator observation or the separate live session. Insufficient
 quota or missing sections remain explicit PARTIAL results.
 
-The selected real account, fixture coverage, request timings and source latency
-have not been observed. The 15-second poll period is not a latency guarantee;
+Authentication and fixture identity have been observed; fixture coverage, full
+session feasibility and source latency remain unverified. The 15-second poll period is not a latency guarantee;
 unknown source-update age remains UNKNOWN, and fixture timestamp is kickoff.
