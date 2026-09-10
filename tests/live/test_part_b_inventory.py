@@ -228,7 +228,8 @@ def verify_executed_inventory(
         ):
             raise ValueError("E_PART_B_COMMAND_EVIDENCE")
     tap = (output / "node.log").read_text()
-    if not re.search(r"^# tests 7$", tap, re.M) or not all(
+    # Seven existing checks plus first-observation and closed-connection regressions.
+    if not re.search(r"^# tests 9$", tap, re.M) or not all(
         re.search("^# " + field + " 0$", tap, re.M) for field in ("fail", "cancelled", "skipped")
     ):
         raise ValueError("E_PART_B_NODE_EXECUTION")
