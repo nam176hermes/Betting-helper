@@ -1,14 +1,20 @@
 # Provider feasibility — PB-18
 
-Status: WAITING_FOR_USER_SECRET for the separately confirmed exact-fixture probe.
-KEY_CHECK: AUTHENTICATED. Lookup PROBE_RESULT: PARTIAL; SUBSCRIPTION_CHECK: UNKNOWN.
-The successful user-terminal run used two attempts (STATUS and LOOKUP) and found
-the selected fixture 1635632, Bayern München - Bodo/Glimt, at 2026-09-10T19:00:00Z.
-League 2/season 2026 and the exact lookup date were scope-bound. The disabled
-local config now selects this one fixture; all other settings are preserved.
-PROVIDER_PROBE_PASS is not yet established: coverage, embedded sections and full
-session quota feasibility need the exact-fixture probe. Worker real attempts: 0.
-Actual cumulative counts and immutable references are in the private checkpoint.
+Status: PROVIDER_PROBE_PASS. KEY_CHECK: AUTHENTICATED.
+SUBSCRIPTION_CHECK: CONFIRMED. Exact-fixture PROBE_RESULT: PASS.
+The user-confirmed run for fixture 1635632, Bayern München - Bodo/Glimt,
+completed STATUS, COVERAGE and two BUNDLE requests in four attempts within its
+300-second limit. Network-free evidence admission accepts the retained real
+observations against the current source and unchanged provider scope.
+The preceding two-request lookup supplied the exact fixture identity, league 2,
+season 2026 and kickoff 2026-09-10T19:00:00Z.
+
+The status projection observed an active PRO plan with limit 7500/day and 7499
+remaining at that observation. These are observed values, not a promise of quota
+remaining later. Provider acceptance is freshness-bound and is rechecked before
+live admission. Worker real attempts: 0. The local configuration remains disabled;
+operator observation and live sessions require their own gates and confirmations.
+Actual cumulative counts, hashes and immutable references are in the checkpoint.
 
 The status parser previously assumed results == 1. STATUS carries an object,
 so results is now checked as bounded nonnegative integer metadata; authentication
@@ -22,8 +28,8 @@ a third-party-hosted copy dated 2026-02-03, not current live-account evidence.
 Fixed PROVIDER_DIAGNOSTIC labels include no provider values, raw JSON, headers or
 exception text. Synthetic compatibility cases are distinct from the real failed
 response, whose raw bytes were not retained. Old failures remain immutable. The
-later real lookup succeeded on the repaired client; this proves authenticated
-lookup only, not full provider feasibility or permission for a live session.
+later real lookup and exact-fixture probe succeeded on the repaired client.
+Provider feasibility is accepted for this scope; no live session is authorized.
 
 User-selected scope: Champions League 2026/27, Bayern München – Bodø/Glimt,
 2026-09-10. Fixture ID 1635632 was observed in the authenticated provider lookup,
@@ -71,6 +77,7 @@ events comparison has not been approved or executed. A successful small probe
 does not authorize operator observation or the separate live session. Insufficient
 quota or missing sections remain explicit PARTIAL results.
 
-Authentication and fixture identity have been observed; fixture coverage, full
-session feasibility and source latency remain unverified. The 15-second poll period is not a latency guarantee;
+Authentication, fixture identity, declared coverage, two bundled observations and
+configured-session budget feasibility have been observed. Sustained polling,
+in-play transitions and source latency remain unverified. The 15-second poll period is not a latency guarantee;
 unknown source-update age remains UNKNOWN, and fixture timestamp is kickoff.

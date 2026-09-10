@@ -17,17 +17,17 @@ checkpoint records whether final verification has completed on the frozen bytes.
 
 External gates:
 
-- PB-18 WAITING_FOR_USER_SECRET: lookup authenticated the key and found the selected
-  Bayern München - Bodo/Glimt fixture 1635632 (league 2, season 2026,
-  2026-09-10T19:00:00Z), using two successful requests. Lookup remains PARTIAL;
-  exact-fixture coverage/bundle/quota feasibility requires a fresh user-terminal
-  confirmation and hidden key entry. The disabled config now selects that one ID;
-  all other settings and quotas are preserved.
+- PB-18 PROVIDER_PROBE_PASS: the user-confirmed exact-fixture run authenticated
+  the key, confirmed quota feasibility and passed coverage plus two bundle reads
+  for fixture 1635632 in four attempts. Network-free evidence admission accepts
+  the current source and provider scope. This grants no operator/live authority.
 - PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.
-- PB-20 WAITING_REVIEW: actual provider/profile evidence and current independent
-  external host security receipts are absent. No reviewer signature is invented.
+- PB-20 WAITING_REVIEW: provider evidence is accepted; actual operator/profile
+  evidence and current independent external host security receipts remain absent.
+  Part A's old receipt also needs a final refresh: its full tracked-input binding
+  changed with progress/feasibility documentation. Old receipts remain immutable.
 - PB-21/PB-22 WAITING_MATCH_WINDOW: accepted prior inputs and separate bounded
   one/three/five confirmations remain. No real session has executed.
 - PB-24 WAITING_DATA_AND_RIGHTS_REVIEW: no real research dataset, settled target

@@ -18,6 +18,13 @@ requires an already accepted profile. A reviewed discovery flow must be bound
 to the chosen tab and narrow observed fixture fields before real use; this
 bootstrap observation has not been executed or qualified.
 
+PB-18's exact-fixture provider probe is now accepted for fixture 1635632. The
+next missing user input is the public Mise-o-jeu match route in the dedicated
+profile. Do not request another API key for this operator step. The existing
+OPERATOR_DISCOVERY intent declaration is not itself an executable or reviewed
+bootstrap capture path. Its exact-tab execution/field map still needs preparation
+and external review before requesting observation permission or reading a tab.
+
 Read only fixture identity/labels, participant orientation, horizon/settlement,
 market and selection IDs, three displayed prices and permitted market context.
 Do not collect full HTML, account/balance/betslip areas, cookies or login data,
