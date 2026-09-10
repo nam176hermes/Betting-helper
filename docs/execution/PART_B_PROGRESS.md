@@ -6,16 +6,18 @@ Exact current HEAD, file/evidence hashes, command exits and failed attempts are 
 `.local/part-b/execution-state.json` and `.local/part-b/task-evidence/`.
 This tracked pointer avoids a commit/report self-hash cycle.
 
-Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06, PB-07, PB-08, PB-09, PB-10, PB-11, PB-12, PB-13, PB-14, PB-15, PB-16.
-Next ready task: PB-17.
+Completed local tasks: PB-00 through PB-17.
+PB-18: WAITING_FOR_USER_SECRET and exact nonsecret league/season/fixture selection.
+PB-19: WAITING_OPERATOR_SAMPLE and separate bounded observation/review authority.
+Continue independent code in PB-20 through PB-24; their real acceptance remains gated.
 
-PB-17 implementation is ready for the final source-bound mock campaign. Its
-observed result, completion checkpoint and next ready task are recorded in the
-ignored execution state after this commit is frozen. This pointer does not
-predeclare a PASS; the full gate must execute on the committed candidate bytes.
+PB-17 passed 39 required cases, 356 Python tests, seven TypeScript tests and
+27 Part A cases plus separate replay verification at commit
+`180da4b19beae2c10bc2adc06cc98fdc181a94d3`. Evidence:
+`.local/part-b/mock/result.json`. Later source changes require fresh final evidence.
 
 - Full-source mypy: 25 pre-existing errors in three unchanged governance files, reproduced on starting HEAD; .local/part-b/PB-11-preexisting-static.json. No full-static PASS claimed.
 
-PART_B_MOCK_PASS: NOT_RUN (full batch gate pending).
+PART_B_MOCK_PASS: PASS_AT_PB17_COMMIT; final changed candidate requires a rerun.
 Real provider attempts: 0. Real operator capture: NOT_RUN.
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.

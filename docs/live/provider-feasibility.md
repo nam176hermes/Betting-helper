@@ -1,0 +1,48 @@
+# Provider feasibility — PB-18
+
+Status: WAITING_FOR_USER_SECRET and selected nonsecret fixture scope.
+PROVIDER_PROBE_PASS: NOT_EXECUTED. Real provider attempts: 0.
+
+PB-17's complete mock gate passed at commit
+`180da4b19beae2c10bc2adc06cc98fdc181a94d3`; the immutable result is
+`.local/part-b/mock/result.json`. This verifies code, synthetic Windows browser
+observations and Part A regressions, not account access or real source coverage.
+
+Before running a probe, choose the API-Football league ID, season and one fixture
+ID. Keep the Windows Chrome → WSL2 selection. In the user's own WSL terminal:
+
+```bash
+cd /home/thenam176/betting-helper/discovery-runtime-part-b
+uv run --frozen --offline python tools/configure_live_batched.py --platform WINDOWS_CHROME_WSL2 --output config/live.local.json
+uv run --frozen --offline python tools/prepare_part_b_intent.py --stage provider-probe --config config/live.local.json --output .local/part-b/intents/provider-probe.json
+uv run --frozen --offline python tools/run_with_api_football_key.py --action probe --config config/live.local.json --intent .local/part-b/intents/provider-probe.json
+```
+
+The configuration command asks only for the remaining nonsecret IDs. It creates
+a disabled configuration and refuses to overwrite one by default. The intent
+expires after 15 minutes, binds the current source/config bytes, and is consumed
+once before I/O. Code changes require a fresh intent; do not reuse an old one.
+
+Phần code kiểm tra API đã sẵn sàng. Bạn mở dashboard API-Football, vào
+Account → My Access để lấy API key. Không gửi key vào cuộc trò chuyện. Mở
+terminal WSL của riêng bạn tại checkout Betting-helper và chạy lệnh bên trên.
+Công cụ sẽ hỏi key mà không hiển thị ký tự. Sau khi xong, chỉ gửi trạng thái
+KEY_CHECK/PROBE_RESULT, không gửi key, header hoặc toàn bộ `/status` response.
+
+The launcher previews the exact scope and requires `ALLOW PROVIDER PROBE` before
+reading the key. No TTY/no-echo means refusal. `uv --offline` prevents dependency
+downloads; it does not make the explicitly confirmed probe an offline operation.
+The probe is bounded to 20 attempts and 300 seconds, including reservations and
+retries. Authentication failure stops requests. No purchase or subscription
+upgrade is performed by the worker.
+
+The fixed sequence checks projected status/quota, selected league coverage and
+two fixture bundles. Its private evidence preserves normalized observations,
+section missingness, timing and safe request outcomes. Fallback is OFF; an
+events comparison has not been approved or executed. A successful small probe
+does not authorize operator observation or the separate live session. Insufficient
+quota or missing sections remain explicit PARTIAL results.
+
+The selected real account, fixture coverage, request timings and source latency
+have not been observed. The 15-second poll period is not a latency guarantee;
+unknown source-update age remains UNKNOWN, and fixture timestamp is kickoff.
