@@ -25,6 +25,8 @@ External gates:
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
   User selected operator event route 1361565 for provider fixture 1635632;
   this is scope input only, not an observed or accepted fixture binding.
+  The user reports the dedicated tab ready; no browser attachment or capture
+  approval follows from readiness alone.
   The first-observation executor remains an implementation gap; external tool
   review and separate observation permission are also pending.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.

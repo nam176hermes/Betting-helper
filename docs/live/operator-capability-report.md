@@ -23,7 +23,9 @@ user selected this public operator route:
 `https://miseojeuplus.espacejeux.com/sports/en/sports/event/1361565/soccer/european/uefa-champions-league/bodo-glimt-at-bayern-munich`.
 Event ID 1361565 is parsed from that user-supplied route, not observed DOM.
 Its binding to provider fixture 1635632, HOME/AWAY orientation and settlement
-remain unverified. The dedicated profile and chosen tab are not yet confirmed.
+remain unverified. The user reports the dedicated Chrome tab ready after the
+manual-login preparation instruction. The profile name and browser tab/document
+identity have not been observed; this readiness message is not capture approval.
 Do not request another API key for this operator step. The existing
 OPERATOR_DISCOVERY intent declaration is not itself an executable or reviewed
 bootstrap capture path. Its exact-tab execution/field map still needs preparation
