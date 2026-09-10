@@ -1,6 +1,7 @@
 /** One bound document, a fixed reader and a backend-issued freshness challenge. */
 import type {MarketBook, Period, Score} from "./contracts.js";
 import {handleCaptureMessage} from "./background.js";
+import {parseStrictJson} from "../canonical.js";
 
 export type ObservedMarket = {market_id: string; horizon: "H1" | "H2" | "FT";
   settlement_basis: "NORMAL_TIME_INCLUDING_STOPPAGE"; selections: Record<"HOME" | "DRAW" | "AWAY", string>;
@@ -15,6 +16,147 @@ export type CaptureIdentity = {tabId: number; documentId: string; exactUrl: stri
   profileHash: string; bindingRevision: string; documentEpoch: string};
 const rawFields = ["fixture_id", "home_team", "away_team", "home_id", "away_id", "market_root", "horizon_label",
   "home_selection", "draw_selection", "away_selection", "home_odds", "draw_odds", "away_odds", "market_status", "score", "period"];
+export type DiscoveryPlan = {tabId: number; exactUrl: string; sourceKind: "SYNTHETIC_TEST" | "OBSERVED_REAL";
+  fieldMapHash: string; expiresAt: string; leaseMs: number; selectors: Record<string, string | null>};
+
+/** Authenticated one-shot loopback exchange. No reconnect, URL input or provider key. */
+export async function runDiscoveryTicket(ticketText: string, tabId: number): Promise<void> {
+  const ticket = parseStrictJson(new TextEncoder().encode(ticketText)) as Record<string, unknown> | null;
+  if (!ticket || Object.keys(ticket).sort().join() !== "key,kind,runId" || ticket["kind"] !== "OPERATOR_DISCOVERY" ||
+      typeof ticket["runId"] !== "string" || !uuid.test(ticket["runId"]) ||
+      typeof ticket["key"] !== "string" || !/^[A-Za-z0-9_-]{43}$/.test(ticket["key"]) ||
+      !Number.isSafeInteger(tabId) || tabId < 0) throw Error("E_DISCOVERY_TICKET");
+  const bytes = Uint8Array.from(atob(ticket["key"].replaceAll("-", "+").replaceAll("_", "/") + "="), c => c.charCodeAt(0));
+  if (bytes.length !== 32) throw Error("E_DISCOVERY_TICKET");
+  const key = await crypto.subtle.importKey("raw", bytes, {name: "HMAC", hash: "SHA-256"}, false, ["sign", "verify"]);
+  bytes.fill(0);
+  const socket = new WebSocket("ws://127.0.0.1:8765/operator-discovery");
+  const timeout = setTimeout(() => { socket.close(); }, 600000);
+  let nonce = "";
+  const preimage = (kind: "AUTH" | "PLAN" | "SAMPLE" | "ACK", payload = ""): Uint8Array<ArrayBuffer> =>
+    new TextEncoder().encode(`BH-DISCOVERY/v1\0${kind}\0${String(ticket["runId"])}\0${nonce}\0${payload}`);
+  const mac = async (kind: "AUTH" | "SAMPLE", payload = ""): Promise<string> =>
+    Array.from(new Uint8Array(await crypto.subtle.sign("HMAC", key, preimage(kind, payload))), n => n.toString(16).padStart(2, "0")).join("");
+  const requireOpen = (): void => {
+    if (socket.readyState !== WebSocket.OPEN) throw Error("E_DISCOVERY_CONNECTION");
+  };
+  const receive = (): Promise<Record<string, unknown>> => new Promise((resolve, reject) => {
+    if (socket.readyState === WebSocket.CLOSING || socket.readyState === WebSocket.CLOSED) {
+      reject(Error("E_DISCOVERY_CONNECTION")); return;
+    }
+    socket.onclose = socket.onerror = () => { reject(Error("E_DISCOVERY_CONNECTION")); };
+    socket.onmessage = (event: MessageEvent<unknown>) => {
+      try {
+        if (typeof event.data !== "string" || new TextEncoder().encode(event.data).length > 16384) throw Error();
+        const value = parseStrictJson(new TextEncoder().encode(event.data)) as Record<string, unknown> | null;
+        if (!value || typeof value !== "object" || Array.isArray(value)) throw Error();
+        resolve(value);
+      } catch { reject(Error("E_DISCOVERY_MESSAGE")); }
+    };
+  });
+  const verified = async (kind: "PLAN" | "ACK"): Promise<Record<string, unknown>> => {
+    const frame = await receive();
+    if (Object.keys(frame).sort().join() !== "mac,payload" || typeof frame["payload"] !== "string" ||
+        typeof frame["mac"] !== "string" || !/^[a-f0-9]{64}$/.test(frame["mac"])) throw Error("E_DISCOVERY_FRAME");
+    const signature = Uint8Array.from(frame["mac"].match(/../g) ?? [], h => parseInt(h, 16));
+    if (!await crypto.subtle.verify("HMAC", key, signature, preimage(kind, frame["payload"]))) throw Error("E_DISCOVERY_MAC");
+    return parseStrictJson(new TextEncoder().encode(frame["payload"])) as Record<string, unknown>;
+  };
+  try {
+    // Install the first receiver before open, so the greeting cannot race registration.
+    const greeting = await receive();
+    if (Object.keys(greeting).sort().join() !== "nonce,run_id" || greeting["run_id"] !== ticket["runId"] ||
+        typeof greeting["nonce"] !== "string" || !/^[a-f0-9]{64}$/.test(greeting["nonce"])) throw Error("E_DISCOVERY_GREETING");
+    nonce = greeting["nonce"];
+    const planPromise = verified("PLAN"); void planPromise.catch(() => undefined);
+    const authMac = await mac("AUTH"); requireOpen();
+    socket.send(JSON.stringify({mac: authMac}));
+    const plan = await planPromise;
+    requireOpen();
+    if (Object.hasOwn(plan, "tabId")) throw Error("E_DISCOVERY_PLAN");
+    const sample = await takeDiscoverySample({...plan, tabId} as DiscoveryPlan);
+    const payload = JSON.stringify(sample), ackPromise = verified("ACK"); void ackPromise.catch(() => undefined);
+    const sampleMac = await mac("SAMPLE", payload); requireOpen();
+    socket.send(JSON.stringify({payload, mac: sampleMac}));
+    const ack = await ackPromise;
+    if (Object.keys(ack).join() !== "status" || ack["status"] !== "UNADMITTED_SAMPLE_SAVED") throw Error("E_DISCOVERY_ACK");
+  } finally { clearTimeout(timeout); socket.close(); }
+}
+
+/** One unadmitted sample. The caller must first obtain reviewed, user-confirmed scope.
+ * This is deliberately separate from accepted-profile capture and never creates a book. */
+export async function takeDiscoverySample(input: DiscoveryPlan): Promise<Record<string, unknown>> {
+  const plan = structuredClone(input), url = new URL(plan.exactUrl), start = performance.now(), wall = Date.now();
+  const selectors = plan.selectors as Record<string, string | null> | null;
+  if (Object.keys(plan).sort().join() !== "exactUrl,expiresAt,fieldMapHash,leaseMs,selectors,sourceKind,tabId" ||
+      !(plan.sourceKind === "SYNTHETIC_TEST" && url.protocol === "http:" && url.hostname === "127.0.0.1" ||
+        plan.sourceKind === "OBSERVED_REAL" && url.origin === "https://miseojeuplus.espacejeux.com") ||
+      url.username || url.password || url.search || url.hash || url.href !== plan.exactUrl ||
+      !Number.isSafeInteger(plan.tabId) || plan.tabId < 0 || !/^[a-f0-9]{64}$/.test(plan.fieldMapHash) ||
+      !Number.isFinite(Date.parse(plan.expiresAt)) || Date.parse(plan.expiresAt) <= wall ||
+      !Number.isSafeInteger(plan.leaseMs) || plan.leaseMs < 1 || plan.leaseMs > 600000 ||
+      !selectors || Object.keys(selectors).sort().join() !== [...rawFields, "match_root"].sort().join() ||
+      typeof selectors["match_root"] !== "string") throw Error("E_DISCOVERY_SCOPE");
+  for (const value of Object.values(plan.selectors)) {
+    if (value !== null && (typeof value !== "string" || value.length < 1 || value.length > 512 ||
+        /password|passwd|token|cookie|account|balance|betslip|cashout|login|email|username|wallet|form|input|textarea|iframe|contenteditable/i.test(value))) throw Error("E_DISCOVERY_SELECTOR");
+  }
+  const remaining = (): number => {
+    const ms = Math.floor(Math.min(plan.leaseMs - (performance.now() - start), Date.parse(plan.expiresAt) - Date.now()));
+    if (Date.now() < wall || ms <= 0) throw Error("E_DISCOVERY_EXPIRED");
+    return ms;
+  };
+  const bounded = async <T>(action: () => Promise<T>): Promise<T> => {
+    const ms = remaining(); let timer: ReturnType<typeof setTimeout> | undefined;
+    try { return await Promise.race([action(), new Promise<never>((_, reject) => {
+      timer = setTimeout(() => { reject(Error("E_DISCOVERY_EXPIRED")); }, ms);
+    })]); } finally { clearTimeout(timer); }
+  };
+  const tab = await bounded(() => chrome.tabs.get(plan.tabId));
+  if (tab.url !== plan.exactUrl || !tab.active || tab.discarded) throw Error("E_DISCOVERY_TAB");
+  const injection = await bounded(() => chrome.scripting.executeScript({target: {tabId: plan.tabId, frameIds: [0]},
+    files: ["src/live/dom_reader.js"], world: "ISOLATED"}));
+  const documentId = injection[0]?.documentId;
+  if (injection.length !== 1 || injection[0]?.frameId !== 0 || !documentId) throw Error("E_DISCOVERY_DOCUMENT");
+  const captureId = crypto.randomUUID(), documentEpoch = crypto.randomUUID();
+  let replaced = false;
+  const isReplaced = (): boolean => replaced;
+  const changed = (id: number, change: chrome.tabs.OnUpdatedInfo): void => {
+    if (id === plan.tabId && (change.status === "loading" || change.discarded === true || change.url !== undefined)) replaced = true;
+  };
+  const removed = (id: number): void => { if (id === plan.tabId) replaced = true; };
+  chrome.tabs.onUpdated.addListener(changed); chrome.tabs.onRemoved.addListener(removed);
+  const send = (operation: string, value: unknown): Promise<unknown> => chrome.tabs.sendMessage(plan.tabId,
+    {kind: "FIXED_DOM_READONLY", operation, value}, {documentId});
+  try {
+    const ready = await bounded(() => send("DISCOVERY_INIT", {captureId, profileHash: plan.fieldMapHash,
+      bindingRevision: "0", documentEpoch, exactUrl: plan.exactUrl, leaseMs: remaining(), selectors: plan.selectors}));
+    if (!ready || (ready as {status: string}).status !== "READY") throw Error("E_DISCOVERY_INIT");
+    const challenge = Array.from(crypto.getRandomValues(new Uint8Array(32)), n => n.toString(16).padStart(2, "0")).join("");
+    const reply = await bounded(() => send("READ", challenge)) as Record<string, unknown> | null;
+    if (!reply || Object.keys(reply).sort().join() !== "browserMonoUs,challenge,first,firstReadMonoUs,observedAtUtc,second,status" ||
+        reply["status"] !== "DISCOVERY_SAMPLE" || reply["challenge"] !== challenge) throw Error("E_DISCOVERY_SAMPLE");
+    const observed = [reply["first"], reply["second"]] as (Record<string, unknown> | null)[];
+    for (const fields of observed) {
+      if (!fields || Object.keys(fields).sort().join() !== [...rawFields].sort().join()) throw Error("E_DISCOVERY_FIELDS");
+      for (const value of Object.values(fields)) if (value !== null) text(value);
+    }
+    const interval = counter(reply["browserMonoUs"]) - counter(reply["firstReadMonoUs"]);
+    if (rawFields.some(name => observed[0]?.[name] !== observed[1]?.[name]) || interval < 100000n || interval > 1000000n ||
+        !Number.isFinite(Date.parse(text(reply["observedAtUtc"])))) throw Error("E_DISCOVERY_UNSTABLE");
+    const current = await bounded(() => chrome.tabs.get(plan.tabId));
+    remaining();
+    if (isReplaced() || current.url !== plan.exactUrl || !current.active || current.discarded) throw Error("E_DISCOVERY_TAB_CHANGED");
+    return {status: "UNADMITTED_SAMPLE", source_kind: plan.sourceKind, exact_url: plan.exactUrl,
+      field_map_hash: plan.fieldMapHash, tab_id: plan.tabId, document_id: documentId, document_epoch: documentEpoch,
+      fields: observed[1], observed_at_utc: reply["observedAtUtc"], browser_mono_us: reply["browserMonoUs"],
+      profile_accepted: false, binding_verified: false};
+  } finally {
+    chrome.tabs.onUpdated.removeListener(changed); chrome.tabs.onRemoved.removeListener(removed);
+    // A dead document cannot acknowledge STOP; its reader lease independently expires.
+    void send("STOP", captureId).catch(() => undefined);
+  }
+}
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const integer = /^(0|[1-9][0-9]{0,18})$/;
 function counter(value: unknown): bigint {

@@ -12,13 +12,15 @@ export function handleCaptureMessage(message: unknown, sender: chrome.runtime.Me
     m["bindingRevision"] === active.bindingRevision && m["documentEpoch"] === active.documentEpoch &&
     typeof m["code"] === "string" && ["DIRTY", "RECAPTURE", "NAVIGATED", "HIDDEN", "PROFILE_EXPIRED"].includes(m["code"]);
 }
+let discoveryTabId: number | undefined;
 if (typeof chrome !== "undefined") {
   chrome.action.onClicked.addListener(tab => {
+    discoveryTabId = tab.id;
     if (tab.id !== undefined) void chrome.sidePanel.open({tabId: tab.id}).catch(() => undefined);
   });
 }
 
-import {startReadOnlyCapture} from "./capture.js";
+import {startReadOnlyCapture, runDiscoveryTicket} from "./capture.js";
 import type {CapturePlan} from "./capture.js";
 import type {MarketBook, LiveEvent} from "./contracts.js";
 import {LiveCaptureSpool} from "./spool.js";
@@ -132,6 +134,16 @@ export function startLiveWorkspace(verifiedValidators: Validators): void {
   };
   const pair = async (ticket: string): Promise<void> => {
     if (ui || producer) throw Error("E_PAIRING_ALREADY_ACTIVE");
+    const candidate = parseStrictJson(new TextEncoder().encode(ticket)) as Record<string, unknown>;
+    if (candidate["kind"] === "OPERATOR_DISCOVERY") {
+      if (discoveryTabId === undefined) throw Error("E_DISCOVERY_SELECT_TAB");
+      const tabId = discoveryTabId; discoveryTabId = undefined;
+      connection = "DISCOVERY"; notice = "Read-only sample; profile remains unadmitted"; broadcast();
+      try { await runDiscoveryTicket(ticket, tabId); notice = "UNADMITTED_SAMPLE_SAVED"; }
+      catch { notice = "DISCOVERY_REJECTED"; }
+      finally { connection = "DISCONNECTED"; broadcast(); }
+      return;
+    }
     const [uiTicket, producerTicket] = parsePairingTicket(ticket);
     try {
       runId = uiTicket.runId; matches.clear(); active = null; maxMatches = undefined; connection = "PAIRING"; notice = "";

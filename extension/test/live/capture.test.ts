@@ -25,7 +25,7 @@ void test("only the bound top-frame document may invalidate its capture", () => 
   }
 });
 
-import {assembleCapture, validateCapturePlan} from "../../src/live/capture.js";
+import {assembleCapture, validateCapturePlan, runDiscoveryTicket} from "../../src/live/capture.js";
 import type {CapturePlan} from "../../src/live/capture.js";
 const plan: CapturePlan = {tabId: 7, exactUrl: "http://127.0.0.1:8888/match/101", sourceKind: "SYNTHETIC_TEST",
   profileStatus: "DRAFT", profileHash: active.profileHash, expiresAt: "2099-01-01T00:00:00Z", leaseMs: 600000,
@@ -66,4 +66,75 @@ void test("complete stable book maps only observed labels; ambiguous content fai
   assert.equal(unverified.market_status, "UNKNOWN");
   assert.throws(() => { validateCapturePlan({...plan, sourceKind: "OBSERVED_REAL"}); });
   assert.throws(() => { validateCapturePlan({...plan, exactUrl: "http://outside.invalid/match/101"}); });
+});
+
+void test("discovery reads unadmitted fields without an accepted profile and always stops", async () => {
+  const module = await import("../../src/live/capture.js") as unknown as Record<string, unknown>;
+  assert.equal(typeof module["takeDiscoverySample"], "function", "first-observation executor is missing");
+  const take = module["takeDiscoverySample"] as (p: unknown) => Promise<Record<string, unknown>>;
+  const selectors = Object.fromEntries(["match_root", ...Object.keys(fields)].map(k => [k, `#${k}`]));
+  const discovery = {tabId: 7, exactUrl: plan.exactUrl, sourceKind: "SYNTHETIC_TEST",
+    fieldMapHash: "a".repeat(64), expiresAt: "2099-01-01T00:00:00Z", leaseMs: 600000, selectors};
+  const operations: string[] = [];
+  let injections = 0;
+  const prior = globalThis.chrome;
+  Object.assign(globalThis, {chrome: {tabs: {
+    onUpdated: {addListener: () => undefined, removeListener: () => undefined},
+    onRemoved: {addListener: () => undefined, removeListener: () => undefined},
+    get: () => Promise.resolve({url: plan.exactUrl, active: true, discarded: false}),
+    sendMessage: (_tab: number, message: {operation: string; value: unknown}, target: {documentId: string}) => {
+      assert.equal(target.documentId, "document-a"); operations.push(message.operation);
+      if (message.operation === "DISCOVERY_INIT") return Promise.resolve({status: "READY"});
+      if (message.operation === "STOP") return Promise.resolve({status: "STOPPED"});
+      assert.equal(message.operation, "READ");
+      const partial = {...fields, home_id: null, away_id: null};
+      return Promise.resolve({...response(), status: "DISCOVERY_SAMPLE", challenge: message.value, first: partial, second: partial});
+    }}, scripting: {executeScript: (value: unknown) => {
+      assert.deepEqual(value, {target: {tabId: 7, frameIds: [0]}, files: ["src/live/dom_reader.js"], world: "ISOLATED"});
+      injections++; return Promise.resolve([{frameId: 0, documentId: "document-a"}]);
+    }}}});
+  try {
+    const sample = await take(discovery);
+    assert.equal(sample["status"], "UNADMITTED_SAMPLE");
+    assert.equal(sample["source_kind"], "SYNTHETIC_TEST");
+    assert.equal(sample["profile_accepted"], false);
+    assert.equal(sample["binding_verified"], false);
+    assert.deepEqual(sample["fields"], {...fields, home_id: null, away_id: null});
+    assert.deepEqual(operations, ["DISCOVERY_INIT", "READ", "STOP"]);
+    for (const mutation of [{leaseMs: 600001}, {exactUrl: "https://elsewhere.invalid/match/101"},
+      {sourceKind: "OBSERVED_REAL"}, {selectors: {...selectors, account: "#balance"}}, {script: "arbitrary"}]) {
+      await assert.rejects(() => take({...discovery, ...mutation}));
+    }
+    assert.equal(injections, 1, "invalid scopes must reject before script injection");
+  } finally { Object.assign(globalThis, {chrome: prior}); }
+});
+
+void test("discovery rejects a connection already closed before receiver registration", async () => {
+  const prior = globalThis.WebSocket;
+  const connections: ClosedSocket[] = [];
+  class ClosedSocket {
+    static readonly OPEN = 1;
+    static readonly CLOSING = 2;
+    static readonly CLOSED = 3;
+    readonly readyState = 3;
+    onclose: (() => void) | undefined;
+    constructor() { connections.push(this); }
+    close(): void { /* Already closed: the platform does not emit another close event. */ }
+  }
+  Object.assign(globalThis, {WebSocket: ClosedSocket});
+  const attempt = runDiscoveryTicket(JSON.stringify({kind: "OPERATOR_DISCOVERY", runId: active.captureId,
+    key: "A".repeat(43)}), 7).then(() => "UNEXPECTED_SUCCESS", (error: unknown) =>
+    error instanceof Error ? error.message : "UNKNOWN_REJECTION");
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const result = await Promise.race([attempt, new Promise<string>(resolve => {
+      timer = setTimeout(() => { resolve("STUCK_WAITING_FOR_CLOSED_SOCKET"); }, 1000);
+    })]);
+    assert.equal(result, "E_DISCOVERY_CONNECTION");
+  } finally {
+    clearTimeout(timer);
+    connections[0]?.onclose?.(); // Release the deliberately broken pre-fix implementation.
+    await attempt;
+    Object.assign(globalThis, {WebSocket: prior});
+  }
 });

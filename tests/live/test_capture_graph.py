@@ -21,7 +21,7 @@ from tools.offline_browser import OfflineBrowser
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKER = r"""
-import {startReadOnlyCapture as testStartReadOnlyCapture} from './capture.js';
+import {startReadOnlyCapture as testStartReadOnlyCapture, takeDiscoverySample, runDiscoveryTicket as testRunDiscoveryTicket} from './capture.js';
 let capture, tabId, senderObservation;
 const books=[], notices=[];
 chrome.runtime.onMessage.addListener((m,s,reply)=>{
@@ -34,6 +34,19 @@ chrome.runtime.onMessage.addListener((m,s,reply)=>{
    await chrome.scripting.executeScript({target:{tabId,frameIds:[0]},files:['test-sender.js'],world:'ISOLATED'});
    senderObservation=await chrome.tabs.sendMessage(tabId,{kind:'PB10_TEST_SENDER'});
    capture=await testStartReadOnlyCapture({...m.plan,tabId},{onBook:async(b,c)=>{books.push({book:b,challenge:c})},onInvalidation:c=>notices.push(c),onRecapture:()=>notices.push('RECAPTURE')});
+  } else if(m.operation==='DISCOVERY_TICKET') {
+   await capture.stop();
+   await new Promise(r=>setTimeout(r,2100));
+   await testRunDiscoveryTicket(m.ticket,tabId);
+   return {status:'OK'};
+  } else if(m.operation==='DISCOVERY') {
+   await capture.stop();
+   await new Promise(r=>setTimeout(r,2100));
+   const p=m.plan;
+   const sample=await takeDiscoverySample({tabId,exactUrl:p.exactUrl,sourceKind:'SYNTHETIC_TEST',
+     fieldMapHash:p.profileHash,expiresAt:p.expiresAt,leaseMs:600000,
+     selectors:{...p.selectors,home_id:null,away_id:null}});
+   return {status:'OK',sample};
   } else if(m.operation==='READ') {await capture.request(m.challenge);}
   else if(m.operation==='FAULT') {
    if(!['hidden','missing','secret','unstable','root','route','context','swapped'].includes(m.fault)) throw Error();
@@ -128,6 +141,7 @@ def make_plan(tmp_path: Any, port: int) -> Any:
     (tmp_path / "synthetic-capture-oracle.json").write_text(
         json.dumps({"profile": p, "markets": markets})
     )
+
     return dict(
         tabId=0,
         exactUrl=p["origin"] + "/match/101",
@@ -148,6 +162,94 @@ def make_plan(tmp_path: Any, port: int) -> Any:
         selectors=p["selectors"],
         markets=markets,
     )
+
+
+def discovery_wire_observation(browser: Any, plan: Any, origin: str) -> Any:
+    """SYNTHETIC peer, actual isolated Chrome reader and WebSocket crypto exchange."""
+    import asyncio
+    import base64
+
+    from websockets.asyncio.server import serve
+
+    from moj_discovery.live_intent import discovery_mac, validate_discovery_sample
+
+    key, run_id, nonce = b"D" * 32, str(uuid4()), "a" * 64
+    assert len(key) == 32
+    ready = threading.Event()
+    actual, failures = [], []
+    p = dict(
+        exactUrl=plan["exactUrl"],
+        sourceKind="SYNTHETIC_TEST",
+        fieldMapHash=plan["profileHash"],
+        expiresAt=plan["expiresAt"],
+        leaseMs=10000,
+        selectors={**plan["selectors"], "home_id": None, "away_id": None},
+    )
+
+    async def peer() -> None:
+        done = asyncio.Event()
+
+        async def exchange(ws: Any) -> None:
+            try:
+                await ws.send(json.dumps({"run_id": run_id, "nonce": nonce}))
+                auth = json.loads(await ws.recv())
+                assert auth == {"mac": discovery_mac(key, "AUTH", run_id, nonce)}
+                payload = json.dumps(p)
+                await ws.send(
+                    json.dumps(
+                        {
+                            "payload": payload,
+                            "mac": discovery_mac(key, "PLAN", run_id, nonce, payload),
+                        }
+                    )
+                )
+                frame = json.loads(await ws.recv())
+                assert frame["mac"] == discovery_mac(key, "SAMPLE", run_id, nonce, frame["payload"])
+                sample = json.loads(frame["payload"])
+                validate_discovery_sample(sample, p)
+                actual.append(sample)
+                payload = json.dumps({"status": "UNADMITTED_SAMPLE_SAVED"})
+                await ws.send(
+                    json.dumps(
+                        {
+                            "payload": payload,
+                            "mac": discovery_mac(key, "ACK", run_id, nonce, payload),
+                        }
+                    )
+                )
+            except Exception as exc:
+                failures.append(type(exc).__name__)
+            finally:
+                done.set()
+
+        async with serve(exchange, "127.0.0.1", 8765, origins=[origin], max_size=16384):
+            ready.set()
+            await asyncio.wait_for(done.wait(), 15)
+
+    def run() -> None:
+        try:
+            asyncio.run(peer())
+        except Exception as exc:
+            failures.append(type(exc).__name__)
+            ready.set()
+
+    worker = threading.Thread(target=run, daemon=True)
+    worker.start()
+    assert ready.wait(5) and not failures, failures
+    ticket = json.dumps(
+        dict(
+            kind="OPERATOR_DISCOVERY",
+            runId=run_id,
+            key=base64.urlsafe_b64encode(key).decode().rstrip("="),
+        )
+    )
+    result = browser.command(dict(operation="DISCOVERY_TICKET", ticket=ticket))
+    worker.join(timeout=20)
+    assert not worker.is_alive() and not failures and result["status"] == "OK", (failures, result)
+    assert len(actual) == 1
+    assert actual[0]["fields"]["draw_odds"] == "3.20"
+    assert actual[0]["source_kind"] == "SYNTHETIC_TEST" and actual[0]["profile_accepted"] is False
+    return actual[0]
 
 
 def test_real_fixed_dom_complete_book_and_rejections(tmp_path: Any, monkeypatch: Any) -> None:
@@ -229,6 +331,32 @@ def test_real_fixed_dom_complete_book_and_rejections(tmp_path: Any, monkeypatch:
                 observations.append({"watchdog_hidden": waiting})
             assert "TEST_ONLY_INNER_SECRET" not in json.dumps(observed)
             assert "TEST_ONLY_EXCLUSION_CANARY" not in json.dumps(observed)
+            if fault in {None, "missing", "secret", "HIDE"}:
+                discovery = browser.command(dict(operation="DISCOVERY", plan=plan))
+                observations.append({"discovery_fault": fault, "observed": discovery})
+                if fault == "HIDE":
+                    assert discovery["status"] == "REJECTED"
+                else:
+                    assert discovery["status"] == "OK", discovery
+                    candidate = discovery["sample"]
+                    assert candidate["status"] == "UNADMITTED_SAMPLE"
+                    assert candidate["source_kind"] == "SYNTHETIC_TEST"
+                    assert candidate["profile_accepted"] is False
+                    assert candidate["binding_verified"] is False
+                    assert candidate["fields"]["home_id"] is None
+                    assert candidate["fields"]["away_id"] is None
+                    assert candidate["fields"]["home_odds"] == (
+                        None if fault == "secret" else "2.10"
+                    )
+                    assert candidate["fields"]["draw_selection"] == (
+                        None if fault == "missing" else "SYNTHETIC-DRAW"
+                    )
+                assert "TEST_ONLY_INNER_SECRET" not in json.dumps(discovery)
+                assert "TEST_ONLY_EXCLUSION_CANARY" not in json.dumps(discovery)
+                if fault is None:
+                    observations.append(
+                        {"discovery_wire": discovery_wire_observation(browser, plan, origin)}
+                    )
         (tmp_path / "observed-capture.json").write_text(json.dumps(observations, indent=2))
     finally:
         browser.close()
@@ -272,7 +400,7 @@ def test_live_graph_has_fixed_injection_and_no_mutation_capability() -> None:
     import re
 
     for source, expected in [
-        (capture, {"./contracts.js", "./background.js"}),
+        (capture, {"./contracts.js", "./background.js", "../canonical.js"}),
         (
             background,
             {

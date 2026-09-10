@@ -19,21 +19,26 @@ External gates:
 
 - PB-18 PROVIDER_PROBE_PASS: the user-confirmed exact-fixture run authenticated
   the key, confirmed quota feasibility and passed coverage plus two bundle reads
-  for fixture 1635632 in four attempts. Network-free evidence admission accepts
-  the current source and provider scope. This grants no operator/live authority.
+  for fixture 1635632 in four attempts on the earlier source. Discovery changes
+  require fresh source-bound admission. This grants no operator/live authority.
 - PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
   User selected operator event route 1361565 for provider fixture 1635632;
   this is scope input only, not an observed or accepted fixture binding.
   The user reports the dedicated tab ready; no browser attachment or capture
   approval follows from readiness alone.
-  The first-observation executor remains an implementation gap; external tool
-  review and separate observation permission are also pending.
+  The first-observation executor is implemented separately from accepted-profile
+  capture. Current checks and source hashes are in the private checkpoint.
+  Observed selector mapping, external tool review and separate observation
+  permission remain pending; profile name Betting-Helper is user supplied.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.
-- PB-20 WAITING_REVIEW: provider evidence is accepted; actual operator/profile
+- PB-20 WAITING_REVIEW: prior provider evidence passed; actual operator/profile
   evidence and current independent external host security receipts remain absent.
   Part A's old receipt also needs a final refresh: its full tracked-input binding
   changed with progress/feasibility documentation. Old receipts remain immutable.
+  Discovery implementation changes the current source hash. Earlier provider,
+  platform and full mock PASS receipts remain historical until current admission
+  and affected qualification have been refreshed; no new provider call is implied.
 - PB-21/PB-22 WAITING_MATCH_WINDOW: accepted prior inputs and separate bounded
   one/three/five confirmations remain. No real session has executed.
 - PB-24 WAITING_DATA_AND_RIGHTS_REVIEW: no real research dataset, settled target

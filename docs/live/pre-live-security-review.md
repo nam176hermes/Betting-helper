@@ -70,8 +70,29 @@ artifacts, plus current host public trust/boot binding. Review authorization exp
 also bounds admission. An altered receiver Origin or stream cannot reuse the admission object.
 The backend still enforces quota and expiry independently.
 
-No real provider/profile/security evidence has been accepted during implementation.
+The private checkpoint distinguishes historical provider PASS from current
+source-bound admission. No real operator profile or independent live security
+review has been accepted.
 The Python tests that inject an internal verification seam exercise composition only;
 they are synthetic tests and cannot stand in for a host review. Full Part A receipts
 remain bound to their old bytes, and the final batch campaign must rerun affected
 checks. Physical sleep/power-loss and real-account crash evidence remain separate.
+
+## First-sample tool scope
+
+OPERATOR_DISCOVERY_TOOL uses the same existing external review verifier, without
+requiring an accepted profile or prior normalized operator samples. Its closed
+scope binds current source/capture/config hashes, one provider fixture, exact
+operator URL, restricted selector map, user-supplied profile name, <=600 seconds,
+zero provider attempts and finite expiry. This review approves a bounded read
+operation, not the correctness of the eventual profile or participant orientation.
+Missing actual mapping remains pending; synthetic selectors are not substituted.
+
+The keyless terminal launcher checks review before prompting, then consumes its
+one-use intent before opening the pinned loopback listener. The browser explicitly
+selects its tab through the extension action; a fixed isolated reader returns
+one unadmitted sample. Both sides reject extra fields and invalid scope/MACs.
+Review is rechecked before plan delivery and before evidence persistence.
+The sample result is never a live-wire MarketBook, CAPTURE_PROFILE review or
+permission to poll providers. Tests with an injected review seam are SYNTHETIC
+and cannot satisfy the real host review gate.

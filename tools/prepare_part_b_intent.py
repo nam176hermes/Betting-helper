@@ -6,6 +6,7 @@ import os
 import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -83,5 +84,74 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
 
+def execute_discovery(argv: list[str]) -> int:
+    """User-terminal execution only. No API key acquisition or browser attachment."""
+    import asyncio
+
+    from moj_discovery.canonical import parse_strict_json
+    from moj_discovery.live_intent import (
+        consume_user_intent,
+        discovery_review_scope,
+        load_run_intent,
+        serve_operator_discovery,
+    )
+    from moj_discovery.live_preflight_batched import verify_external_review
+    from moj_discovery.secrets_local import controlling_tty
+
+    try:
+        parser = SafeParser(allow_abbrev=False)
+        parser.add_argument("--config", required=True, type=Path)
+        parser.add_argument("--intent", required=True, type=Path)
+        parser.add_argument("--selectors", required=True, type=Path)
+        parser.add_argument("--review", required=True, type=Path)
+        parser.add_argument("--profile-name", required=True)
+        args = parser.parse_args(argv)
+        config = load_live_config(args.config)
+        intent = load_run_intent(args.intent, config, "OPERATOR_DISCOVERY", root=ROOT)
+
+        def read(path: Path) -> dict[str, Any]:
+            relative = str(path.relative_to(ROOT)) if path.is_absolute() else str(path)
+            checked = private_path(relative, root=ROOT, must_exist=True)
+            if checked.stat().st_size > 65536:
+                raise ValueError()
+            value = parse_strict_json(checked.read_bytes())
+            if type(value) is not dict:
+                raise ValueError()
+            return value
+
+        selectors, review = read(args.selectors), read(args.review)
+        scope = discovery_review_scope(
+            intent,
+            config,
+            selectors,
+            args.profile_name,
+            review.get("scope", {}).get("expires_at", ""),
+        )
+        # No prompt to grant capture until the real independent tool review verifies.
+        verify_external_review(review, scope, ROOT, datetime.now(UTC))
+        print("STAGE: OPERATOR_DISCOVERY")
+        print("PROFILE: " + args.profile_name)
+        print("EXACT_URL: " + scope["exact_url"])
+        print("MAX_DURATION_SECONDS: " + str(scope["max_duration_seconds"]))
+        print("MAX_PROVIDER_REQUESTS: 0")
+        print("PROFILE_ACCEPTED: false")
+        print("Type ALLOW OPERATOR OBSERVATION to confirm this exact scope:")
+        with controlling_tty() as terminal:
+            confirmation = terminal.readline(65).rstrip("\r\n")
+        receipt = consume_user_intent(intent, config, confirmation)
+        output = ROOT / ".local/part-b/operator-discovery" / receipt.run_id / "result.json"
+        result = asyncio.run(
+            serve_operator_discovery(receipt, selectors, args.profile_name, review, output)
+        )
+        print("DISCOVERY_RESULT: " + result["status"])
+        print("PROFILE_ACCEPTED: false")
+        return 0 if result["status"] == "UNADMITTED_SAMPLE_SAVED" else 2
+    except (Exception, KeyboardInterrupt):
+        print("DISCOVERY_NOT_STARTED_OR_REJECTED: CHECK_SCOPE_REVIEW_AND_TERMINAL")
+        return 2
+
+
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["execute-discovery"]:
+        raise SystemExit(execute_discovery(sys.argv[2:]))
     raise SystemExit(main())

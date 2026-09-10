@@ -19,7 +19,7 @@
   let debounce: ReturnType<typeof setTimeout> | undefined;
   let watchdog: ReturnType<typeof setInterval> | undefined;
   let lease: ReturnType<typeof setTimeout> | undefined;
-  let stopped = true, reading = false, lastEmit = -Infinity, startWall = 0, deadline = 0;
+  let stopped = true, reading = false, discovery = false, lastEmit = -Infinity, startWall = 0, deadline = 0;
   function notice(code: string): void {
     if (scope) void chrome.runtime.sendMessage({kind: "READER_NOTICE", captureId: scope.captureId,
       profileHash: scope.profileHash, bindingRevision: scope.bindingRevision,
@@ -64,11 +64,17 @@
     const values: Record<string, string | null> = {};
     for (const name of fields) {
       const selector = scope.selectors[name];
-      if (selector === null && (name === "score" || name === "period")) { values[name] = null; continue; }
+      if (selector === null && (discovery || name === "score" || name === "period")) { values[name] = null; continue; }
       const nodes = root.querySelectorAll(selector ?? "");
-      if (nodes.length !== 1 || !nodes[0] || !visible(nodes[0])) return {status: "NOT_VISIBLE"};
+      if (nodes.length !== 1 || !nodes[0] || !visible(nodes[0])) {
+        if (discovery) { values[name] = null; continue; }
+        return {status: "NOT_VISIBLE"};
+      }
       const node = nodes[0];
-      if (unsafe(node)) return {status: "CAPTURE_UNSUPPORTED"};
+      if (unsafe(node)) {
+        if (discovery) { values[name] = null; continue; }
+        return {status: "CAPTURE_UNSUPPORTED"};
+      }
       const value = name === "market_root" ? node.getAttribute("data-market-id") : node.textContent;
       if (value === null) return {status: "CAPTURE_UNSUPPORTED"};
       const clean = value.trim();
@@ -84,24 +90,24 @@
     clearTimeout(debounce);
     debounce = setTimeout(() => { if (guarded()) notice("RECAPTURE"); }, Math.max(250, 2000 - (performance.now() - lastEmit)));
   }
-  function init(value: unknown): void {
+  function init(value: unknown, isDiscovery = false): void {
     if (!value || typeof value !== "object") throw Error();
     const s = value as Scope;
     if (Object.keys(s).sort().join() !== ["captureId", "profileHash", "bindingRevision", "documentEpoch", "exactUrl", "leaseMs", "selectors"].sort().join() ||
         !/^[0-9a-f-]{36}$/.test(s.captureId) || !/^[0-9a-f]{64}$/.test(s.profileHash) ||
         !/^(0|[1-9][0-9]{0,18})$/.test(s.bindingRevision) || !/^[0-9a-f-]{36}$/.test(s.documentEpoch) ||
         typeof s.exactUrl !== "string" || s.exactUrl !== location.href ||
-        !Number.isSafeInteger(s.leaseMs) || s.leaseMs <= 0 || s.leaseMs > 7200000 ||
+        !Number.isSafeInteger(s.leaseMs) || s.leaseMs <= 0 || s.leaseMs > (isDiscovery ? 600000 : 7200000) ||
         typeof s.selectors !== "object" || Object.keys(s.selectors).sort().join() !== [...fields, "match_root"].sort().join()) throw Error();
     for (const [field, selector] of Object.entries(s.selectors)) {
-      if (selector === null && (field === "score" || field === "period")) continue;
+      if (selector === null && ((isDiscovery && field !== "match_root") || field === "score" || field === "period")) continue;
       if (typeof selector !== "string" || !selector || selector.length > 512 || excluded.test(selector)) throw Error();
       const parts = selector.split(/\s*>\s*|\s+/);
       if (parts.length > 8 || parts.some(p => !compound.test(p))) throw Error();
     }
     const selector = s.selectors["match_root"] ?? "";
     if (!selector.includes("#") && !selector.includes("[data-")) throw Error();
-    stop(); scope = structuredClone(s); root = document.querySelector(selector);
+    stop(); discovery = isDiscovery; scope = structuredClone(s); root = document.querySelector(selector);
     stopped = false; startWall = Date.now(); deadline = performance.now() + s.leaseMs;
     if (!guarded() || !root) throw Error();
     observer = new MutationObserver(schedule);
@@ -128,7 +134,7 @@
         if (second.status !== "OK") return second;
         if (mono - firstMono <= 1000000 && JSON.stringify(first) === JSON.stringify(second)) {
           lastEmit = performance.now();
-          return {status: "DISPLAY_COHERENT", challenge, first: first.fields, second: second.fields,
+          return {status: discovery ? "DISCOVERY_SAMPLE" : "DISPLAY_COHERENT", challenge, first: first.fields, second: second.fields,
             firstReadMonoUs: String(firstMono), browserMonoUs: String(mono), observedAtUtc: new Date().toISOString()};
         }
       }
@@ -143,8 +149,8 @@
     if (sender.id !== chrome.runtime.id || sender.tab || sender.url !== chrome.runtime.getURL("src/live/background.js")) return false;
     const m = message as Record<string, unknown> | null;
     if (!m || m["kind"] !== "FIXED_DOM_READONLY" || Object.keys(m).sort().join() !== "kind,operation,value") return false;
-    if (m["operation"] === "INIT") {
-      try { init(m["value"]); reply({status: "READY"}); } catch { stop(); reply({status: "CAPTURE_REJECTED"}); }
+    if (m["operation"] === "INIT" || m["operation"] === "DISCOVERY_INIT") {
+      try { init(m["value"], m["operation"] === "DISCOVERY_INIT"); reply({status: "READY"}); } catch { stop(); reply({status: "CAPTURE_REJECTED"}); }
     } else if (m["operation"] === "READ") { void read(m["value"]).then(reply).catch(() => { reply({status: "CAPTURE_REJECTED"}); }); return true;
     } else if (m["operation"] === "STOP" && m["value"] === scope?.captureId) { stop(); reply({status: "STOPPED"}); }
     return false;

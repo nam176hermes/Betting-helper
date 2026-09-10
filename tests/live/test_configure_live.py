@@ -62,6 +62,55 @@ def test_prepare_draft_does_not_consume_or_overwrite(tmp_path: Any, monkeypatch:
     assert prepare.main(args) == 2
 
 
+def test_discovery_launcher_checks_review_before_prompt_and_never_requests_key(
+    tmp_path: Any, monkeypatch: Any, capsys: Any
+) -> None:
+    from moj_discovery import live_preflight_batched, secrets_local
+    from tests.live.test_run_intents import make_discovery_intent
+
+    _, _, selectors, scope = make_discovery_intent(tmp_path, monkeypatch)
+    monkeypatch.setattr(prepare, "ROOT", tmp_path)
+    selector_path = tmp_path / ".local/part-b/selectors.json"
+    review_path = tmp_path / ".local/part-b/review.json"
+    selector_path.write_text(json.dumps(selectors))
+    review_path.write_text(json.dumps({"scope": scope}))
+    calls = []
+
+    def deny(*args: Any) -> None:
+        calls.append("REVIEW_REJECTED")
+        raise ValueError("TEST_ONLY_NO_REAL_REVIEW")
+
+    def no_terminal() -> Any:
+        raise AssertionError("Must not ask for confirmation before tool review")
+
+    def no_key(**kwargs: Any) -> Any:
+        raise AssertionError("Discovery must never request an API key")
+
+    monkeypatch.setattr(live_preflight_batched, "verify_external_review", deny)
+    monkeypatch.setattr(secrets_local, "controlling_tty", no_terminal)
+    monkeypatch.setattr(secrets_local, "obtain_api_football_key", no_key)
+    assert (
+        prepare.execute_discovery(
+            [
+                "--config",
+                str(tmp_path / "config.json"),
+                "--intent",
+                str(tmp_path / ".local/part-b/intents/probe.json"),
+                "--selectors",
+                str(selector_path),
+                "--review",
+                str(review_path),
+                "--profile-name",
+                "TEST_ONLY_PROFILE",
+            ]
+        )
+        == 2
+    )
+    assert calls == ["REVIEW_REJECTED"]
+    assert "Type ALLOW" not in capsys.readouterr().out
+    assert not (tmp_path / ".local/part-b/intent-consumptions.sqlite3").exists()
+
+
 def test_mock_probe_counts_fixed_calls_and_retains_projected_fields_only(
     tmp_path: Any,
     fake_clock: Any,
