@@ -1,7 +1,7 @@
 {
   "schema_version": "schema-lock/v1",
   "vendor_path": "vendor/hybrid-discovery-v6.3.6",
-  "vendor_tree_sha256": "7ec8fc75a0cba8bfaf61b7aadd81cf48ab4aa127a99884c9bda0ea2f9f707df2",
+  "vendor_tree_sha256": "68258a505d74415093471f736a5307255a41c636f4492a0d5d516cefb1cc0c43",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -21,7 +21,7 @@
     {
       "path": "docs/configs/full-verifier-controller.v2.json",
       "size_bytes": 3358,
-      "sha256": "e2d79bc38802bf18a49c0f6b9bc6743453196bcd1ccfbb0bb191f3e8171414ce"
+      "sha256": "ebf7a6bcfd8b50039ee735760214608d59723f02ae3f6efb51c89d52a62dd3e3"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -60,8 +60,8 @@
     },
     {
       "path": "docs/configs/runtime-pyproject.toml",
-      "size_bytes": 910,
-      "sha256": "1871212a5eaca96301cfeb5a11e42ecba96a265eedf60111c2e2e50b8e2cfe86"
+      "size_bytes": 932,
+      "sha256": "d8e36c0c2d1d26e512e8521f1ac2ad05cd7561aa6aa7fc2bfcaac643fd1659dd"
     },
     {
       "path": "docs/configs/tsconfig.build.json",
@@ -155,8 +155,8 @@
     },
     {
       "path": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
-      "size_bytes": 403,
-      "sha256": "352bb9950bb5384dac308a9852849d4b7e05e0c0489496a8c1bad39c6778bde6"
+      "size_bytes": 488,
+      "sha256": "8353f0f9aa4ec9e76c72d0c58308e5740089d66316540a2a79eb25b8934a7f44"
     },
     {
       "path": "docs/prompts/CODEX_IMPLEMENTATION_START_PROMPT.md",
@@ -171,7 +171,7 @@
     {
       "path": "docs/registries/artifact-ownership.v1.json",
       "size_bytes": 468382,
-      "sha256": "643e0059580a29b23ad60a999da4a408c2f3bd0616ece4bd1a52a86a588a89ac"
+      "sha256": "3844d35f92451a986b2418375aefb1b13eb4d682b2e99cc8a53f023c6e21e3ae"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -196,7 +196,7 @@
     {
       "path": "docs/registries/command-io.v1.json",
       "size_bytes": 98636,
-      "sha256": "9af964d96f525fb85837fc9d782e2dbd48d0d2db200b06e2ea606a1f82db8e30"
+      "sha256": "1c47a8adbe8bf3594f5af4e521d1eae2a9296b3990043b8e20107f1aaa7258cf"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -251,7 +251,7 @@
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
       "size_bytes": 15859,
-      "sha256": "31608efeec8fde32c79f9086f2232f4a19b43342cea519131a443e4fe30116e5"
+      "sha256": "83b4d227ab61ecc0bdd825bdea9a89fce94f009f56f205f007813a6d15d5e725"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
@@ -291,7 +291,7 @@
     {
       "path": "docs/registries/task-command-registry.v1.json",
       "size_bytes": 104644,
-      "sha256": "74778d3e6927cb1f440c963fd08c4a8fda79900fd88276c26eb07b4935fe2084"
+      "sha256": "5b9ac9f5e9738c836339cef66ef1775e411ac5bcff402c50b7c50e37074db64c"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -371,7 +371,7 @@
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
       "size_bytes": 275961,
-      "sha256": "796e6843240ff427daa6ebc85f1018e327cfe65afa23a5546ac90f0db0456f80"
+      "sha256": "a0011348abe86ba2c3fd80f2559aadb917df6ab6b97a734b79660745ed3df936"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",

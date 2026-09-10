@@ -114,3 +114,20 @@ Current input repairs:
   review and human fresh-session attestation remain separate gates. No full
   Part B PASS, operator/profile acceptance or live authority follows from these
   checks. Current status: WAITING_REVIEW; real provider/capture/live counts: 0.
+
+Current sealing qualification continuation:
+
+- The first full controller attempt at aec7da6 passed all nine prerequisites,
+  then failed TEST_V636_P01_T01: the inherited dependency policy and authored
+  pyproject input omitted the already locked websockets 17.1 dependency.
+- The policy now includes that exact existing pin and its package-identity
+  lock digest. No dependency or lockfile changed. Official pack synchronization
+  refreshed the authored pyproject input. Negative pin/range checks remain strict.
+- Review A's prompt now consumes the repository identity in its authorized
+  config; v2 uses DESCENDANT and grants no new-baseline operation.
+- Authoring commit 2aeadf705955889a9c2f75c27cbee92dfe64cbde binds a new evidence
+  root: `/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification`.
+  Prior failed attempts, native closures and reports remain immutable.
+- Exact current qualification, seal and independent-host review outcomes belong
+  in the private execution checkpoint and that evidence root. A local audit or
+  namespace broker is not a human-attested fresh reviewer session.

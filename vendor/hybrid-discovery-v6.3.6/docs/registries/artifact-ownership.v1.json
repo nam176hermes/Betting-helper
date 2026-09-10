@@ -61,7 +61,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P04-T04",
       "modifying_tasks": [],
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -134,7 +134,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T01",
       "modifying_tasks": [],
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -193,7 +193,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -245,7 +245,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -258,7 +258,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],

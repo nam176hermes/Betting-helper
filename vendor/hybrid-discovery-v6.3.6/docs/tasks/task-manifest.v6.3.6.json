@@ -2876,11 +2876,11 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
         "runtime/src/moj_discovery/durability_release.py",
         "runtime/tests/durability/test_destruction_and_release.py",
         "runtime/tests/durability/test_owner_mutation_review.py",
@@ -2947,7 +2947,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -3266,11 +3266,11 @@
         "Dependency V636-P04-T03 is ACCEPTED"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
         "runtime/tests/clock/test_clock_parity_and_mutation.py",
         "runtime/tools/run_clock_vector_qualification.py",
         "runtime/tools/verify_full_repair_qualification.py"
@@ -3317,7 +3317,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4379,9 +4379,9 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
         "authoring-fixtures/part-b-compiler-inputs.json",
         "authoring-fixtures/part-b-review-predecessor.json",
         "authoring-tests/test_command_registry_generation.py",
@@ -4428,9 +4428,9 @@
         "runtime/task-command-registry.json"
       ],
       "exact_files": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
         "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
         "authoring-tests/test_declaration_gate.py",
@@ -4786,7 +4786,7 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json"
       ],
       "exact_files": [
         "runtime/tools/run_command_registry.py",
@@ -4827,7 +4827,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4865,7 +4865,7 @@
         "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json"
       ],
       "exact_files": [
         "runtime/tests/release/test_full_proof_coverage.py"
@@ -4905,7 +4905,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4945,8 +4945,8 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
       ],
       "exact_files": [
         "runtime/tools/build_candidate_qualification_receipt.py",
@@ -4986,7 +4986,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5020,19 +5020,19 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5073,7 +5073,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5107,20 +5107,20 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5161,7 +5161,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5195,19 +5195,19 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5250,7 +5250,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5285,28 +5285,28 @@
       "inputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-MIG0-T06.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P00-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P02-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P05-T09.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P06-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
         "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
         "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
         "authoring-fixtures/part-b-compiler-inputs.json",
@@ -5502,10 +5502,10 @@
         "Dependency V636-P09-T02 is ACCEPTED"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/docs/configs/full-verifier-controller.v2.json",

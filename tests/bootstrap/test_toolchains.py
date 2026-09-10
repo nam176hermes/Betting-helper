@@ -168,6 +168,14 @@ def test_config_materialization_accepts_delivered_runtime_vendor(tmp_path: Path)
     assert verify_config_materialization(root) == []
 
 
+@pytest.mark.parametrize("replacement", ["websockets>=17.1", "websockets==17.2"])
+def test_current_websocket_dependency_pin_is_exact(tmp_path: Path, replacement: str) -> None:
+    root = _dependency_fixture(tmp_path)
+    project = root / "pyproject.toml"
+    project.write_text(project.read_text().replace("websockets==17.1", replacement))
+    assert "E_DEPENDENCY_POLICY:PYPROJECT" in verify_dependency_policy(root)
+
+
 def test_config_materialization_ignores_mutable_pack(tmp_path: Path) -> None:
     root = _dependency_fixture(tmp_path / "runtime")
     _sealed_plan_fixture(tmp_path)

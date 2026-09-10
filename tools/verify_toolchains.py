@@ -37,6 +37,7 @@ PYTHON_DEPENDENCIES = {
     "cryptography": "50.0.1",
     "jsonschema": "4.26.0",
     "rfc8785": "0.1.4",
+    "websockets": "17.1",
 }
 PYTHON_DEV_DEPENDENCIES = {
     "mypy": "2.3.1",
@@ -104,6 +105,7 @@ EXPECTED_PYPROJECT = {
             "cryptography==50.0.1",
             "jsonschema==4.26.0",
             "rfc8785==0.1.4",
+            "websockets==17.1",
         ],
     },
     "dependency-groups": {
@@ -191,7 +193,7 @@ EXPECTED_TSCONFIG_BUILD = {
     "exclude": ["test", "test-red", "test-harness", "tools"],
 }
 EXPECTED_NATIVE_LOCK_SEMANTIC_HASHES = {
-    "runtime/uv.lock": "f14a0586e32ad07397311ac467bdce1f3c51eecf763c8b4eaab49e2a15ed59fb",
+    "runtime/uv.lock": "34d75031a20b7045a94b9fa1f9e70ffd3c9a7a1e76c262bd5ffb0a7516cc6a3c",
     "runtime/pnpm-lock.yaml": "9f0bdb0ff473263eaea4c4bc063831198b0c92446fd7d0c8e02b0ab1489bc888",
 }
 T07_LOCK_COMMAND_IDS = (
