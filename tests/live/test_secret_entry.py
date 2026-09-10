@@ -1,10 +1,12 @@
 import contextlib
+import getpass
 import io
 import os
 import pty
 import select
 import time
 import warnings
+from typing import Any
 
 import pytest
 
@@ -14,52 +16,50 @@ from tools import run_with_api_football_key as launcher
 
 
 @pytest.mark.parametrize("value", ["", "  ", "x\ny", "x\ry", "x\x00y", "x\x7fy", "x" * 513])
-def test_invalid_secret(value):
+def test_invalid_secret(value: Any) -> None:
     with pytest.raises(ValueError, match="E_SECRET"):
         SecretValue(value)
 
 
-def test_secret_shape_is_not_guessed():
+def test_secret_shape_is_not_guessed() -> None:
     assert SecretValue("TEST_ONLY_not-32-hex").reveal_for_header() == "TEST_ONLY_not-32-hex"
 
 
-def test_getpass_noecho_and_prompt_wins(monkeypatch):
+def test_getpass_noecho_and_prompt_wins(monkeypatch: Any) -> None:
     monkeypatch.setattr(
         secrets_local, "controlling_tty", lambda: contextlib.nullcontext(io.StringIO())
     )
     monkeypatch.setenv("API_FOOTBALL_KEY", "TEST_ONLY_ENVIRONMENT")
-    monkeypatch.setattr(secrets_local.getpass, "getpass", lambda *a, **k: "TEST_ONLY_PROMPT")
+    monkeypatch.setattr(getpass, "getpass", lambda *a, **k: "TEST_ONLY_PROMPT")
     assert obtain_api_football_key(True).reveal_for_header() == "TEST_ONLY_PROMPT"
     assert obtain_api_football_key(False).reveal_for_header() == "TEST_ONLY_ENVIRONMENT"
 
 
-def test_no_tty_prevents_secret_read(monkeypatch):
-    def deny():
+def test_no_tty_prevents_secret_read(monkeypatch: Any) -> None:
+    def deny() -> Any:
         raise ValueError("E_SECRET_NO_TTY")
 
     monkeypatch.setattr(secrets_local, "controlling_tty", deny)
-    monkeypatch.setattr(
-        secrets_local.getpass, "getpass", lambda *a, **k: pytest.fail("read attempted")
-    )
+    monkeypatch.setattr(getpass, "getpass", lambda *a, **k: pytest.fail("read attempted"))
     for interactive in [True, False]:
         with pytest.raises(ValueError, match="E_SECRET"):
             obtain_api_football_key(interactive)
 
 
-def test_getpass_warning_never_falls_back(monkeypatch):
-    def warning(*args, **kwargs):
-        warnings.warn("TEST_ONLY_NO_ECHO", secrets_local.getpass.GetPassWarning, stacklevel=1)
+def test_getpass_warning_never_falls_back(monkeypatch: Any) -> None:
+    def warning(*args: Any, **kwargs: Any) -> Any:
+        warnings.warn("TEST_ONLY_NO_ECHO", getpass.GetPassWarning, stacklevel=1)
         pytest.fail("echo fallback continued")
 
     monkeypatch.setattr(
         secrets_local, "controlling_tty", lambda: contextlib.nullcontext(io.StringIO())
     )
-    monkeypatch.setattr(secrets_local.getpass, "getpass", warning)
+    monkeypatch.setattr(getpass, "getpass", warning)
     with pytest.raises(ValueError, match="E_SECRET_NO_ECHO"):
         obtain_api_football_key(True)
 
 
-def test_launcher_missing_owner_does_not_read_key(monkeypatch, capsys):
+def test_launcher_missing_owner_does_not_read_key(monkeypatch: Any, capsys: Any) -> None:
     monkeypatch.setattr(launcher, "obtain_api_football_key", lambda *a: pytest.fail("key read"))
     assert (
         launcher.main(
@@ -79,7 +79,7 @@ def test_launcher_missing_owner_does_not_read_key(monkeypatch, capsys):
     assert "REQUEST_ATTEMPTS: 0" in output
 
 
-def test_declined_confirmation_zero_requests(monkeypatch, capsys):
+def test_declined_confirmation_zero_requests(monkeypatch: Any, capsys: Any) -> None:
     calls = []
     intent = type(
         "SyntheticIntent",
@@ -119,7 +119,7 @@ def test_declined_confirmation_zero_requests(monkeypatch, capsys):
     assert "REQUEST_ATTEMPTS: 0" in capsys.readouterr().out
 
 
-def test_real_pseudoterminal_noecho():
+def test_real_pseudoterminal_noecho() -> None:
     """Real Linux terminal discipline, synthetic credential, no HTTP implementation."""
     pid, fd = pty.fork()
     if pid == 0:

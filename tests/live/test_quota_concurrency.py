@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from typing import Any
 from uuid import uuid4
 
 import pytest
@@ -7,7 +8,7 @@ import pytest
 from moj_discovery.providers.quota import Denied, QuotaLedger
 
 
-def test_second_process_cannot_own_poller(tmp_path, fake_clock):
+def test_second_process_cannot_own_poller(tmp_path: Any, fake_clock: Any) -> None:
     path = tmp_path / "quota.sqlite3"
     with QuotaLedger(path, scope_id=str(uuid4())):
         pid = os.fork()
@@ -21,7 +22,9 @@ def test_second_process_cannot_own_poller(tmp_path, fake_clock):
         assert os.waitstatus_to_exitcode(status) == 0
 
 
-def test_reservation_committed_before_io_and_no_crash_refund(tmp_path, fake_clock):
+def test_reservation_committed_before_io_and_no_crash_refund(
+    tmp_path: Any, fake_clock: Any
+) -> None:
     path, scope = tmp_path / "quota.sqlite3", str(uuid4())
     pid = os.fork()
     if pid == 0:
@@ -35,14 +38,12 @@ def test_reservation_committed_before_io_and_no_crash_refund(tmp_path, fake_cloc
         assert actual.execute("SELECT count(*) FROM quota_outcomes").fetchone()[0] == 0
     with QuotaLedger(path, scope_id=scope, session_cap=1, allow_status_bootstrap=True) as q:
         fake_clock.advance(60)
-        assert (
-            q.reserve_attempt(scope, "STATUS", fake_clock.utc, fake_clock.mono).code
-            == "SESSION_BUDGET"
-        )
+        denied = q.reserve_attempt(scope, "STATUS", fake_clock.utc, fake_clock.mono)
+        assert isinstance(denied, Denied) and denied.code == "SESSION_BUDGET"
         assert q.count_attempts() == 1
 
 
-def test_shared_day_budget_survives_sequential_owners(tmp_path, fake_clock):
+def test_shared_day_budget_survives_sequential_owners(tmp_path: Any, fake_clock: Any) -> None:
     path = tmp_path / "quota.sqlite3"
     for index in range(2):
         scope = str(uuid4())
@@ -52,11 +53,11 @@ def test_shared_day_budget_survives_sequential_owners(tmp_path, fake_clock):
                 assert not isinstance(a, Denied)
                 q.finalize_attempt(a.attempt_id, "TIMEOUT", {})
             else:
-                assert a.code == "DAILY_BUDGET"
+                assert isinstance(a, Denied) and a.code == "DAILY_BUDGET"
         fake_clock.advance(60)
 
 
-def test_private_files_immutability_and_symlink_rejection(tmp_path, fake_clock):
+def test_private_files_immutability_and_symlink_rejection(tmp_path: Any, fake_clock: Any) -> None:
     scope = str(uuid4())
     path = tmp_path / "quota.sqlite3"
     with QuotaLedger(path, scope_id=scope, allow_status_bootstrap=True) as q:

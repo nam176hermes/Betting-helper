@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -7,13 +8,13 @@ from moj_discovery.live_config import load_live_config
 from moj_discovery.live_preflight import check_live_readiness
 
 
-def load(tmp_path, value, **kwargs):
+def load(tmp_path: Any, value: Any, **kwargs: Any) -> Any:
     p = tmp_path / "config.json"
     p.write_text(json.dumps(value))
     return load_live_config(p, **kwargs)
 
 
-def test_disabled_v2_and_v1_compatibility(tmp_path, disabled_live_config):
+def test_disabled_v2_and_v1_compatibility(tmp_path: Any, disabled_live_config: Any) -> None:
     config = load(tmp_path, disabled_live_config)
     assert config.public["schema_version"] == "bh-live-readonly-config/v2"
     assert config.public["provider"]["events_fallback_enabled"] is False
@@ -44,7 +45,7 @@ def test_disabled_v2_and_v1_compatibility(tmp_path, disabled_live_config):
         (("gates", "security_review_path"), "/outside/fake-review.json"),
     ],
 )
-def test_closed_scope(tmp_path, disabled_live_config, path, value):
+def test_closed_scope(tmp_path: Any, disabled_live_config: Any, path: Any, value: Any) -> None:
     cursor = disabled_live_config
     for key in path[:-1]:
         cursor = cursor[key]
@@ -53,7 +54,7 @@ def test_closed_scope(tmp_path, disabled_live_config, path, value):
         load(tmp_path, disabled_live_config)
 
 
-def test_require_enabled_and_no_alias_mutation(tmp_path, disabled_live_config):
+def test_require_enabled_and_no_alias_mutation(tmp_path: Any, disabled_live_config: Any) -> None:
     with pytest.raises(ValueError):
         load(tmp_path, disabled_live_config, require_enabled=True)
     config = load(tmp_path, disabled_live_config)
@@ -61,7 +62,7 @@ def test_require_enabled_and_no_alias_mutation(tmp_path, disabled_live_config):
     assert config.enabled is False
 
 
-def test_duplicate_json_key(tmp_path):
+def test_duplicate_json_key(tmp_path: Any) -> None:
     path = tmp_path / "bad.json"
     path.write_text('{"enabled":false,"enabled":true}')
     with pytest.raises(ValueError):

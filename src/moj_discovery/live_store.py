@@ -1,6 +1,5 @@
 """Typed append-only journal; a durable receipt is returned only after COMMIT."""
 
-import copy
 import fcntl
 import hashlib
 import json
@@ -19,7 +18,7 @@ import rfc8785
 
 from .canonical import parse_strict_json
 from .live_contracts import CONTRACTS, event_hash, validate_live_record
-from .providers.football_normalizer import semantic_hash
+from .live_state import reduce_live_event
 from .store import _schema_objects
 
 TABLES = (
@@ -87,70 +86,7 @@ class DurableReceipt:
 
 
 def reduce_projection(previous: dict[str, Any] | None, event: dict[str, Any]) -> dict[str, Any]:
-    """Recorded observation state; PB-11 owns live-context eligibility on top of this seam."""
-    kind, payload = event["payload_type"], event["payload"]
-    view = copy.deepcopy(previous)
-    if kind == "BindingChange":
-        binding = validate_live_record(payload["after"], "FixtureBinding")
-        before = None if view is None else view["binding"]["revision"]
-        if payload["before_revision"] != before or int(binding["revision"]) != (
-            1 if before is None else int(before) + 1
-        ):
-            raise ValueError("E_LIVE_BINDING_REVISION")
-        view = {
-            "binding_id": binding["binding_id"],
-            "binding": binding,
-            "provider": None,
-            "books": {},
-            "health": None,
-            "model_enabled": False,
-            "money_ready": False,
-        }
-    elif view is None:
-        raise ValueError("E_LIVE_BINDING_REQUIRED")
-    elif kind == "ProviderState":
-        binding = view["binding"]
-        if any(
-            payload[k] != binding[b]
-            for k, b in (
-                ("fixture_id", "provider_fixture_id"),
-                ("home_id", "home_id"),
-                ("away_id", "away_id"),
-                ("kickoff_utc", "kickoff_utc"),
-            )
-        ):
-            raise ValueError("E_LIVE_BINDING_MISMATCH")
-        prior = view["provider"]
-        expected_revision = (
-            1
-            if prior is None
-            else int(prior["content_revision"]) + (semantic_hash(prior) != semantic_hash(payload))
-        )
-        if int(payload["content_revision"]) != expected_revision:
-            raise ValueError("E_LIVE_PROVIDER_REVISION")
-        view["provider"] = payload
-    elif kind == "MarketBook":
-        if (
-            payload["binding_revision"] != view["binding"]["revision"]
-            or payload["operator_fixture_id"] != view["binding"]["operator_fixture_id"]
-        ):
-            raise ValueError("E_LIVE_BINDING_MISMATCH")
-        prior = view["books"].get(payload["horizon"])
-        if prior is not None and (
-            int(payload["capture_revision"]) < int(prior["capture_revision"])
-            or (payload["capture_revision"] == prior["capture_revision"] and payload != prior)
-        ):
-            raise ValueError("E_LIVE_CAPTURE_REVISION")
-        view["books"][payload["horizon"]] = payload
-    elif kind == "HealthChange":
-        view["health"] = payload
-    else:
-        raise ValueError("E_LIVE_STORE_KIND")
-    assert view is not None
-    view["last_observation_id"] = event["observation_id"]
-    view["observed_at_utc"] = event["observed_at_utc"]
-    view["received_mono_us"] = event["received_mono_us"]
-    return view
+    return reduce_live_event(previous, event)
 
 
 class LiveStore:

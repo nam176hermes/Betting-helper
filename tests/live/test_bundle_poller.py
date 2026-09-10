@@ -1,31 +1,33 @@
 import copy
 import threading
+from collections.abc import Callable
 from datetime import timedelta
+from typing import Any
 from uuid import uuid4
 
 import pytest
 
 from moj_discovery.provider_protocol import ProviderScope
-from moj_discovery.providers.api_football import ProviderError, ProviderResponse
+from moj_discovery.providers.api_football import ApiFootballClient, ProviderError, ProviderResponse
 from moj_discovery.providers.bundle_poller import ProviderBundlePoller
 
 
-class FixtureHTTP:
-    def __init__(self, clock, template, ids=(101,), statuses=None):
+class FixtureHTTP(ApiFootballClient):
+    def __init__(self, clock: Any, template: Any, ids: Any = (101,), statuses: Any = None) -> None:
         self.clock = clock
         self.scope = ProviderScope(
             str(uuid4()), ids, 999, 2026, 7200, stage="LIVE_READ_ONLY", max_attempts=600
         )
         self.template = template
         self.statuses = statuses or {}
-        self.calls = []
-        self.error = None
+        self.calls: list[tuple[float, tuple[int, ...]]] = []
+        self.error: str | None = None
         self.delay = 0
         self.in_flight = 0
         self.maximum_in_flight = 0
-        self.before_reply = None
+        self.before_reply: Callable[[], None] | None = None
 
-    def get_fixture_bundle(self, ids):
+    def get_fixture_bundle(self, ids: Any) -> Any:
         self.calls.append((self.clock.mono, tuple(ids)))
         self.in_flight += 1
         self.maximum_in_flight = max(self.maximum_in_flight, self.in_flight)
@@ -49,14 +51,14 @@ class FixtureHTTP:
             self.in_flight -= 1
 
 
-def scheduler(clock, template, ids=(101,), statuses=None):
+def scheduler(clock: Any, template: Any, ids: Any = (101,), statuses: Any = None) -> Any:
     http = FixtureHTTP(clock, template, ids, statuses)
     poller = ProviderBundlePoller(http, now_mono=lambda: clock.mono, now_utc=lambda: clock.utc)
     poller.set_watchlist(ids, 1)
     return poller, http
 
 
-def test_adaptive_union_and_panel_reopen(fake_clock, synthetic_provider_response):
+def test_adaptive_union_and_panel_reopen(fake_clock: Any, synthetic_provider_response: Any) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, (101, 103), {103: "HT"})
     assert poller.tick(0).status == "UPDATED"
     for _second in range(1, 61):
@@ -71,13 +73,17 @@ def test_adaptive_union_and_panel_reopen(fake_clock, synthetic_provider_response
 
 
 @pytest.mark.parametrize("before,period", [(900, 60), (600, 60), (599, 30), (0, 30)])
-def test_pregame_deadline(fake_clock, synthetic_provider_response, before, period):
+def test_pregame_deadline(
+    fake_clock: Any, synthetic_provider_response: Any, before: Any, period: Any
+) -> None:
     fake_clock.utc -= timedelta(seconds=before)
     poller, _ = scheduler(fake_clock, synthetic_provider_response, statuses={101: "NS"})
     assert poller.tick(0).next_due_mono == period
 
 
-def test_terminal_checks_are_anchored_and_stop(fake_clock, synthetic_provider_response):
+def test_terminal_checks_are_anchored_and_stop(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, statuses={101: "FT"})
     for second in range(181):
         fake_clock.advance(second - fake_clock.mono)
@@ -87,8 +93,8 @@ def test_terminal_checks_are_anchored_and_stop(fake_clock, synthetic_provider_re
 
 
 def test_terminal_joins_existing_batch_without_early_confirmation(
-    fake_clock, synthetic_provider_response
-):
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, (101, 103), {103: "FT"})
     for second in range(151):
         fake_clock.advance(second - fake_clock.mono)
@@ -101,8 +107,8 @@ def test_terminal_joins_existing_batch_without_early_confirmation(
     "status", ["PST", "CANC", "ABD", "AWD", "WO", "ET", "BT", "P", "AET", "PEN"]
 )
 def test_unsupported_period_stops_without_settlement(
-    fake_clock, synthetic_provider_response, status
-):
+    fake_clock: Any, synthetic_provider_response: Any, status: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, statuses={101: status})
     result = poller.tick(0)
     assert result.projection.states[101]["period"] == "OUT_OF_SCOPE"
@@ -111,7 +117,7 @@ def test_unsupported_period_stops_without_settlement(
     assert len(http.calls) == 1
 
 
-def test_unknown_period_is_bounded(fake_clock, synthetic_provider_response):
+def test_unknown_period_is_bounded(fake_clock: Any, synthetic_provider_response: Any) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, statuses={101: "LIVE"})
     for second in range(601):
         fake_clock.advance(second - fake_clock.mono)
@@ -120,7 +126,9 @@ def test_unknown_period_is_bounded(fake_clock, synthetic_provider_response):
     assert poller.tick(600).stopped_ids == {101: "UNKNOWN_PERIOD_TIMEOUT"}
 
 
-def test_slow_io_and_sleep_never_catch_up(fake_clock, synthetic_provider_response):
+def test_slow_io_and_sleep_never_catch_up(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response)
     http.delay = 21
     assert poller.tick(0).next_due_mono == 36
@@ -131,11 +139,11 @@ def test_slow_io_and_sleep_never_catch_up(fake_clock, synthetic_provider_respons
     assert poller.tick(fake_clock.mono).status == "WAIT"
 
 
-def test_inflight_request_has_one_owner(fake_clock, synthetic_provider_response):
+def test_inflight_request_has_one_owner(fake_clock: Any, synthetic_provider_response: Any) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response)
     started, release = threading.Event(), threading.Event()
 
-    def blocked():
+    def blocked() -> Any:
         started.set()
         assert release.wait(3)
 
@@ -155,7 +163,9 @@ def test_inflight_request_has_one_owner(fake_clock, synthetic_provider_response)
 
 
 @pytest.mark.parametrize("code", ["SESSION_BUDGET", "QUOTA_UNKNOWN", "AUTH_FAILED", "SECRET_ECHO"])
-def test_budget_and_safety_failures_hold_last_data(fake_clock, synthetic_provider_response, code):
+def test_budget_and_safety_failures_hold_last_data(
+    fake_clock: Any, synthetic_provider_response: Any, code: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response)
     first = poller.tick(0).projection.states[101]
     http.error = code
@@ -167,7 +177,9 @@ def test_budget_and_safety_failures_hold_last_data(fake_clock, synthetic_provide
     assert len(http.calls) == 2
 
 
-def test_failed_cycles_open_circuit_then_require_restart(fake_clock, synthetic_provider_response):
+def test_failed_cycles_open_circuit_then_require_restart(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response)
     http.error = "HTTP_429"
     assert poller.tick(0).status == "STALE"
@@ -183,8 +195,8 @@ def test_failed_cycles_open_circuit_then_require_restart(fake_clock, synthetic_p
 
 
 def test_missing_member_does_not_erase_or_activate_fallback(
-    fake_clock, synthetic_provider_response
-):
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, (101, 103))
     first = poller.tick(0).projection.states[103]
     http.statuses[103] = "MISSING"
@@ -195,7 +207,9 @@ def test_missing_member_does_not_erase_or_activate_fallback(
     assert not http.scope.events_fixture_ids
 
 
-def test_watchlist_revisions_and_authority_are_bounded(fake_clock, synthetic_provider_response):
+def test_watchlist_revisions_and_authority_are_bounded(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, (101, 103))
     poller.tick(0)
     for ids, rev in [([999], 2), ([True], 2), ([101], 1), ([101], 0)]:
@@ -209,7 +223,9 @@ def test_watchlist_revisions_and_authority_are_bounded(fake_clock, synthetic_pro
         poller.set_watchlist([101, 103], 1)
 
 
-def test_deadline_and_clock_rollback_fail_closed(fake_clock, synthetic_provider_response):
+def test_deadline_and_clock_rollback_fail_closed(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response)
     poller.tick(0)
     fake_clock.advance(20)
@@ -222,7 +238,9 @@ def test_deadline_and_clock_rollback_fail_closed(fake_clock, synthetic_provider_
     assert not http2.calls
 
 
-def test_sleep_past_ft_checks_is_not_catchup_or_confirmed(fake_clock, synthetic_provider_response):
+def test_sleep_past_ft_checks_is_not_catchup_or_confirmed(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, statuses={101: "FT"})
     poller.tick(0)
     fake_clock.advance(600)
@@ -233,8 +251,10 @@ def test_sleep_past_ft_checks_is_not_catchup_or_confirmed(fake_clock, synthetic_
     assert len(http.calls) == 2
 
 
-def test_real_client_retries_feed_shared_circuit(tmp_path, fake_clock, synthetic_provider_response):
-    from test_api_football import STATUS, Reply, make_client
+def test_real_client_retries_feed_shared_circuit(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
+    from tests.live.test_api_football import STATUS, Reply, make_client
 
     replies = (
         [Reply(STATUS)]

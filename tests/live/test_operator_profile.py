@@ -2,10 +2,10 @@ import hashlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 import pytest
-from test_live_store import binding
 
 from moj_discovery.operator_profile import (
     ProfileEvidence,
@@ -13,12 +13,13 @@ from moj_discovery.operator_profile import (
     parse_decimal_price,
     validate_extraction_profile,
 )
+from tests.live.test_live_store import binding
 
 ROOT = Path(__file__).resolve().parents[2]
 NOW = datetime(2026, 9, 9, 18, tzinfo=UTC)
 
 
-def profile():
+def profile() -> Any:
     schema = json.loads(
         (ROOT / "contracts/live_readonly/v1/operator-profile.schema.json").read_text()
     )
@@ -48,7 +49,7 @@ def profile():
     )
 
 
-def sample(value):
+def sample(value: Any) -> Any:
     return dict(
         schema_version="operator-profile-sample/v1",
         source_kind="SYNTHETIC_TEST",
@@ -81,7 +82,7 @@ def sample(value):
     )
 
 
-def evidence_for(tmp_path, value, observed):
+def evidence_for(tmp_path: Any, value: Any, observed: Any) -> Any:
     directory = tmp_path / ".local/part-b/operator"
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / "sample.json"
@@ -90,7 +91,7 @@ def evidence_for(tmp_path, value, observed):
     return ProfileEvidence(tmp_path, NOW, (path,), fixture_bindings=(binding(),))
 
 
-def test_draft_is_inert_and_synthetic_target_explicit():
+def test_draft_is_inert_and_synthetic_target_explicit() -> None:
     value = profile()
     draft = validate_extraction_profile(value, ProfileEvidence(ROOT, NOW))
     assert draft.status == "DRAFT"
@@ -126,14 +127,14 @@ def test_draft_is_inert_and_synthetic_target_explicit():
         "[href='https://evil.invalid']",
     ],
 )
-def test_excluded_or_executable_selector_rejects(selector):
+def test_excluded_or_executable_selector_rejects(selector: Any) -> None:
     value = profile()
     value["selectors"]["home_odds"] = selector
     with pytest.raises(ValueError, match="PROFILE"):
         validate_extraction_profile(value, ProfileEvidence(ROOT, NOW))
 
 
-def test_null_draft_remains_unconfigured():
+def test_null_draft_remains_unconfigured() -> None:
     value = profile()
     value["selectors"] = dict.fromkeys(value["selectors"])
     draft = validate_extraction_profile(value, ProfileEvidence(ROOT, NOW))
@@ -153,7 +154,7 @@ def test_null_draft_remains_unconfigured():
         ("https://example.invalid", "/match?token=x"),
     ],
 )
-def test_exact_url_scope_rejects_secrets_and_ambiguous_routes(origin, path):
+def test_exact_url_scope_rejects_secrets_and_ambiguous_routes(origin: Any, path: Any) -> None:
     value = profile()
     value.update(origin=origin, exact_paths=[path])
     with pytest.raises(ValueError):
@@ -168,7 +169,7 @@ def test_exact_url_scope_rejects_secrets_and_ambiguous_routes(origin, path):
         ("999999.123456", "DECIMAL_DOT", "999999.123456"),
     ],
 )
-def test_decimal_parser_is_explicit(text, parser, expected):
+def test_decimal_parser_is_explicit(text: Any, parser: Any, expected: Any) -> None:
     assert parse_decimal_price(text, parser) == expected
 
 
@@ -176,12 +177,12 @@ def test_decimal_parser_is_explicit(text, parser, expected):
     "text",
     ["1", "1.0", "0.9", "NaN", "2/1", "+110", "2,10", "1 000.00", "2.1234567", "2.1\x00", "2e0"],
 )
-def test_ambiguous_price_never_coerced(text):
+def test_ambiguous_price_never_coerced(text: Any) -> None:
     with pytest.raises(ValueError):
         parse_decimal_price(text, "DECIMAL_DOT")
 
 
-def test_synthetic_observed_map_preserved_and_bound_to_sample_hash(tmp_path):
+def test_synthetic_observed_map_preserved_and_bound_to_sample_hash(tmp_path: Any) -> None:
     value = profile()
     observed = sample(value)
     evidence = evidence_for(tmp_path, value, observed)
@@ -195,7 +196,7 @@ def test_synthetic_observed_map_preserved_and_bound_to_sample_hash(tmp_path):
 @pytest.mark.parametrize(
     "mutation", ["orientation", "missing_draw", "wrong_market", "horizon", "reader", "source"]
 )
-def test_bad_sample_map_cannot_be_admitted(tmp_path, mutation):
+def test_bad_sample_map_cannot_be_admitted(tmp_path: Any, mutation: Any) -> None:
     value = profile()
     observed = sample(value)
     if mutation == "orientation":
@@ -215,7 +216,7 @@ def test_bad_sample_map_cannot_be_admitted(tmp_path, mutation):
         validate_extraction_profile(value, evidence)
 
 
-def test_fake_acceptance_or_hash_only_cannot_activate_real_profile(tmp_path):
+def test_fake_acceptance_or_hash_only_cannot_activate_real_profile(tmp_path: Any) -> None:
     value = profile()
     value.update(
         status="ACCEPTED",
@@ -229,7 +230,7 @@ def test_fake_acceptance_or_hash_only_cannot_activate_real_profile(tmp_path):
         validate_extraction_profile(value, ProfileEvidence(tmp_path, NOW))
 
 
-def test_selection_field_aliases_rejected():
+def test_selection_field_aliases_rejected() -> None:
     value = profile()
     value["selectors"]["draw_selection"] = value["selectors"]["home_selection"]
     with pytest.raises(ValueError):

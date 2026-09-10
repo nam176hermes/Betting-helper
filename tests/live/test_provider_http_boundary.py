@@ -1,25 +1,27 @@
 import io
 import json
 import ssl
+from http.client import HTTPMessage
+from typing import Any
 from urllib.error import HTTPError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request
 
 import pytest
-from test_api_football import STATUS, Reply, make_client
 
 from moj_discovery.errors import ContractNotImplementedError
 from moj_discovery.provider_protocol import verify_probe_protocol
 from moj_discovery.providers import api_football
 from moj_discovery.providers.api_football import ApiFootballClient, ProviderError
 from moj_discovery.secrets_local import SecretValue
+from tests.live.test_api_football import STATUS, Reply, make_client
 
 
-def test_legacy_stub_remains_closed():
+def test_legacy_stub_remains_closed() -> None:
     with pytest.raises(ContractNotImplementedError):
         verify_probe_protocol()
 
 
-def test_mock_key_cannot_open_real_transport(tmp_path, fake_clock):
+def test_mock_key_cannot_open_real_transport(tmp_path: Any, fake_clock: Any) -> None:
     client, q, _ = make_client(tmp_path, fake_clock, [])
     with q, client, pytest.raises(ProviderError):
         ApiFootballClient(SecretValue("TEST_ONLY_HTTP_KEY"), q, client.scope)
@@ -35,7 +37,7 @@ def test_mock_key_cannot_open_real_transport(tmp_path, fake_clock):
         lambda: Reply(STATUS, headers={"Content-Encoding": "gzip"}),
     ],
 )
-def test_transport_bounds_and_redirects(tmp_path, fake_clock, reply):
+def test_transport_bounds_and_redirects(tmp_path: Any, fake_clock: Any, reply: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [reply()])
     with q, client:
         with pytest.raises(ProviderError):
@@ -43,7 +45,7 @@ def test_transport_bounds_and_redirects(tmp_path, fake_clock, reply):
         assert len(http.calls) == q.count_attempts() == 1
 
 
-def test_exception_and_echo_never_escape(tmp_path, fake_clock, capsys):
+def test_exception_and_echo_never_escape(tmp_path: Any, fake_clock: Any, capsys: Any) -> None:
     client, q, http = make_client(
         tmp_path,
         fake_clock,
@@ -52,7 +54,7 @@ def test_exception_and_echo_never_escape(tmp_path, fake_clock, capsys):
                 "https://v3.football.api-sports.io/status",
                 401,
                 "TEST_ONLY_HTTP_KEY",
-                {},
+                HTTPMessage(),
                 io.BytesIO(b"TEST_ONLY_HTTP_KEY"),
             )
         ],
@@ -65,32 +67,32 @@ def test_exception_and_echo_never_escape(tmp_path, fake_clock, capsys):
         assert len(http.calls) == 1
 
 
-def test_default_opener_disables_proxy_redirect_and_keeps_tls():
+def test_default_opener_disables_proxy_redirect_and_keeps_tls() -> None:
     opener = api_football.build_fixed_opener()
     proxy = (
-        next(h for h in opener.handlers if isinstance(h, ProxyHandler))
-        if any(isinstance(h, ProxyHandler) for h in opener.handlers)
+        next(h for h in vars(opener)["handlers"] if isinstance(h, ProxyHandler))
+        if any(isinstance(h, ProxyHandler) for h in vars(opener)["handlers"])
         else None
     )
-    assert proxy is None or proxy.proxies == {}
-    redirect = next(h for h in opener.handlers if isinstance(h, HTTPRedirectHandler))
+    assert proxy is None or vars(proxy)["proxies"] == {}
+    redirect = next(h for h in vars(opener)["handlers"] if isinstance(h, HTTPRedirectHandler))
     assert (
         redirect.redirect_request(
             Request("https://v3.football.api-sports.io/status"),
-            None,
+            io.BytesIO(),
             302,
             "ignored",
-            {},
+            HTTPMessage(),
             "https://untrusted.invalid/",
         )
         is None
     )
-    handler = next(h for h in opener.handlers if hasattr(h, "_context"))
+    handler = next(h for h in vars(opener)["handlers"] if hasattr(h, "_context"))
     assert handler._context.verify_mode == ssl.CERT_REQUIRED
     assert handler._context.check_hostname is True
 
 
-def test_retry_after_date_and_invalid_fallback(fake_clock):
+def test_retry_after_date_and_invalid_fallback(fake_clock: Any) -> None:
     from datetime import timedelta
     from email.utils import format_datetime
 
@@ -99,7 +101,7 @@ def test_retry_after_date_and_invalid_fallback(fake_clock):
     assert api_football.retry_after_seconds("bad", fake_clock.utc) == 60
 
 
-def test_private_request_is_not_a_generic_proxy(tmp_path, fake_clock):
+def test_private_request_is_not_a_generic_proxy(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [])
     with q, client:
         for path in ["@untrusted.invalid/status", "/predictions", "/odds", "/status?secret=x"]:
@@ -108,7 +110,7 @@ def test_private_request_is_not_a_generic_proxy(tmp_path, fake_clock):
         assert not http.calls and q.count_attempts() == 0
 
 
-def test_decoded_secret_echo_is_rejected(tmp_path, fake_clock):
+def test_decoded_secret_echo_is_rejected(tmp_path: Any, fake_clock: Any) -> None:
     body = json.dumps({**STATUS, "echo": "TEST_ONLY_HTTP_KEY"}).encode()
     body = body.replace(b"TEST_ONLY_HTTP_KEY", b"\\u0054EST_ONLY_HTTP_KEY")
     client, q, _ = make_client(tmp_path, fake_clock, [Reply(body)])
@@ -116,7 +118,7 @@ def test_decoded_secret_echo_is_rejected(tmp_path, fake_clock):
         client.get_status()
 
 
-def test_three_attempt_ceiling_and_run_deadline(tmp_path, fake_clock):
+def test_three_attempt_ceiling_and_run_deadline(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(
         tmp_path,
         fake_clock,
@@ -133,7 +135,9 @@ def test_three_attempt_ceiling_and_run_deadline(tmp_path, fake_clock):
         assert len(http.calls) == 4
 
 
-def test_pinned_httpresponse_eof_and_content_length(tmp_path, fake_clock):
+def test_pinned_httpresponse_eof_and_content_length(
+    tmp_path: Any, fake_clock: Any, monkeypatch: Any
+) -> None:
     import http.client
     import socket
 
@@ -149,7 +153,7 @@ def test_pinned_httpresponse_eof_and_content_length(tmp_path, fake_clock):
         )
         response = http.client.HTTPResponse(left)
         response.begin()
-        response.geturl = lambda: "https://v3.football.api-sports.io/status"
+        monkeypatch.setattr(response, "geturl", lambda: "https://v3.football.api-sports.io/status")
         client._real = True
         request = Request("https://v3.football.api-sports.io/status")
         assert client._read(response, request, 10) == payload

@@ -3,12 +3,13 @@
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 
 @pytest.fixture
-def disabled_live_config():
+def disabled_live_config() -> Any:
     return json.loads(Path("config/live-batched.example.json").read_text())
 
 
@@ -16,7 +17,7 @@ class FakeClock:
     mono = 0.0
     utc = datetime(2026, 9, 9, 18, tzinfo=UTC)
 
-    def advance(self, seconds):
+    def advance(self, seconds: Any) -> Any:
         from datetime import timedelta
 
         self.mono += seconds
@@ -24,12 +25,12 @@ class FakeClock:
 
 
 @pytest.fixture
-def fake_clock():
+def fake_clock() -> Any:
     return FakeClock()
 
 
 @pytest.fixture
-def synthetic_provider_response():
+def synthetic_provider_response() -> Any:
     return {
         "get": "fixtures",
         "parameters": {"ids": "101"},
@@ -61,7 +62,7 @@ def synthetic_provider_response():
 
 
 @pytest.fixture
-def synthetic_book():
+def synthetic_book() -> Any:
     return {
         "binding_id": "11111111-1111-4111-8111-111111111111",
         "binding_revision": "1",

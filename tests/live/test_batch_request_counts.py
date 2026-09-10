@@ -1,14 +1,17 @@
 from dataclasses import replace
+from typing import Any
 
 import pytest
-from test_bundle_poller import FixtureHTTP, scheduler
 
 from moj_discovery.providers.bundle_poller import ProviderBundlePoller
 from moj_discovery.providers.poll_budget import PollSegment, estimate_requests
+from tests.live.test_bundle_poller import FixtureHTTP, scheduler
 
 
 @pytest.mark.parametrize("count", [1, 3, 5])
-def test_two_hour_concurrent_union_is_480(fake_clock, synthetic_provider_response, count):
+def test_two_hour_concurrent_union_is_480(
+    fake_clock: Any, synthetic_provider_response: Any, count: Any
+) -> None:
     ids = tuple(range(101, 101 + count))
     poller, http = scheduler(fake_clock, synthetic_provider_response, ids)
     for second in range(7200):
@@ -19,7 +22,9 @@ def test_two_hour_concurrent_union_is_480(fake_clock, synthetic_provider_respons
     assert all(observed == ids for _, observed in http.calls)
 
 
-def test_staggered_union_counts_active_windows(fake_clock, synthetic_provider_response):
+def test_staggered_union_counts_active_windows(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     poller, http = scheduler(fake_clock, synthetic_provider_response, (101, 103))
     poller.set_watchlist([101], 2)
     for second in range(180):
@@ -38,7 +43,9 @@ def test_staggered_union_counts_active_windows(fake_clock, synthetic_provider_re
     )
 
 
-def test_fallback_insufficient_budget_rejected_before_io(fake_clock, synthetic_provider_response):
+def test_fallback_insufficient_budget_rejected_before_io(
+    fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     http = FixtureHTTP(fake_clock, synthetic_provider_response, (101, 102, 103, 104, 105))
     http.scope = replace(http.scope, events_fixture_ids=http.scope.fixture_ids)
     with pytest.raises(ValueError, match="FALLBACK_BUDGET"):

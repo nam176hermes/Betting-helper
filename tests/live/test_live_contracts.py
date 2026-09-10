@@ -2,13 +2,14 @@ import copy
 import json
 import subprocess
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 from moj_discovery.live_contracts import validate_live_record
 
 
-def test_complete_book_and_detached_output(synthetic_book):
+def test_complete_book_and_detached_output(synthetic_book: Any) -> None:
     book = validate_live_record(synthetic_book, "MarketBook")
     assert book == synthetic_book
     book["selections"]["HOME"]["decimal_odds"] = "9.00"
@@ -30,20 +31,20 @@ def test_complete_book_and_detached_output(synthetic_book):
         ("market_id", "bad\nidentifier"),
     ],
 )
-def test_closed_book(synthetic_book, field, value):
+def test_closed_book(synthetic_book: Any, field: Any, value: Any) -> None:
     synthetic_book[field] = value
     with pytest.raises(ValueError, match="E_LIVE_RECORD"):
         validate_live_record(synthetic_book, "MarketBook")
 
 
 @pytest.mark.parametrize("odds", ["1", "1.000000", "0.99", "NaN", "Infinity", "2.1234567", 2.1])
-def test_odds(synthetic_book, odds):
+def test_odds(synthetic_book: Any, odds: Any) -> None:
     synthetic_book["selections"]["HOME"]["decimal_odds"] = odds
     with pytest.raises(ValueError):
         validate_live_record(synthetic_book, "MarketBook")
 
 
-def test_complete_unique_hda(synthetic_book):
+def test_complete_unique_hda(synthetic_book: Any) -> None:
     bad = copy.deepcopy(synthetic_book)
     del bad["selections"]["DRAW"]
     with pytest.raises(ValueError):
@@ -54,7 +55,7 @@ def test_complete_unique_hda(synthetic_book):
         validate_live_record(bad, "MarketBook")
 
 
-def test_live_union_rejects_synthetic_and_source_confusion(synthetic_book):
+def test_live_union_rejects_synthetic_and_source_confusion(synthetic_book: Any) -> None:
     event = {
         "protocol": "BH_LIVE_READONLY_V1",
         "run_id": synthetic_book["binding_id"],
@@ -81,13 +82,13 @@ def test_live_union_rejects_synthetic_and_source_confusion(synthetic_book):
             validate_live_record({**event, field: value}, "LiveEvent")
 
 
-def test_no_arbitrary_schema_or_payload():
+def test_no_arbitrary_schema_or_payload() -> None:
     for kind in ["https://untrusted.invalid/schema", "../config", "RawObservation", "MarketBook"]:
         with pytest.raises(ValueError):
             validate_live_record({"payload": {"cookie": "TEST_ONLY"}}, kind)
 
 
-def test_typescript_closed_contract_executes(synthetic_book):
+def test_typescript_closed_contract_executes(synthetic_book: Any) -> None:
     """Exercise emitted TS against the same source schemas, not compile-only evidence."""
     code = """
       import {createRequire} from 'node:module';

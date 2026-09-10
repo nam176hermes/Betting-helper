@@ -1,11 +1,11 @@
 import copy
-
-from test_provider_normalization import normalize, stamp
+from typing import Any
 
 from moj_discovery.providers.football_normalizer import compare_event_sets
+from tests.live.test_provider_normalization import normalize, stamp
 
 
-def event(detail="Normal Goal", kind="Goal", player=501):
+def event(detail: Any = "Normal Goal", kind: Any = "Goal", player: Any = 501) -> Any:
     return {
         "time": {"elapsed": 10, "extra": None},
         "team": {"id": 201},
@@ -16,7 +16,9 @@ def event(detail="Normal Goal", kind="Goal", player=501):
     }
 
 
-def test_reorder_preserves_multiset_and_duplicate_multiplicity(synthetic_provider_response):
+def test_reorder_preserves_multiset_and_duplicate_multiplicity(
+    synthetic_provider_response: Any,
+) -> None:
     row = synthetic_provider_response["response"][0]
     a, b = event(), event("Yellow Card", "Card", 502)
     row["events"] = [a, b, a]
@@ -30,7 +32,7 @@ def test_reorder_preserves_multiset_and_duplicate_multiplicity(synthetic_provide
     assert first["content_revision"] == second["content_revision"]
 
 
-def test_removed_or_changed_goal_is_correction(synthetic_provider_response):
+def test_removed_or_changed_goal_is_correction(synthetic_provider_response: Any) -> None:
     row = synthetic_provider_response["response"][0]
     row["events"] = [event(), event("Yellow Card", "Card")]
     first = normalize(synthetic_provider_response).states[101]
@@ -46,7 +48,7 @@ def test_removed_or_changed_goal_is_correction(synthetic_provider_response):
         assert result.event_changes[101].kind == "CORRECTION"
 
 
-def test_unknown_detail_and_ambiguous_reds_stay_unknown(synthetic_provider_response):
+def test_unknown_detail_and_ambiguous_reds_stay_unknown(synthetic_provider_response: Any) -> None:
     row = synthetic_provider_response["response"][0]
     cases = [
         [event("Future Card", "Card")],
@@ -62,7 +64,7 @@ def test_unknown_detail_and_ambiguous_reds_stay_unknown(synthetic_provider_respo
     assert normalize(synthetic_provider_response).states[101]["red_card_state"] == "KNOWN"
 
 
-def test_missing_actor_preserves_event_and_unknown_red(synthetic_provider_response):
+def test_missing_actor_preserves_event_and_unknown_red(synthetic_provider_response: Any) -> None:
     missing = event("Red Card", "Card")
     missing["player"] = None
     missing["assist"] = None

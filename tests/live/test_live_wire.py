@@ -3,22 +3,24 @@ import base64
 import json
 import secrets
 import time
+from typing import Any
 from uuid import uuid4
 
 import pytest
-from test_live_store import OPERATOR, RUN_ID, envelope, metadata, register
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed, InvalidStatus
+from websockets.typing import Origin
 
 from moj_discovery.live_receiver import serve_live_receiver
 from moj_discovery.live_store import LiveStore
 from moj_discovery.live_wire import LiveSession, PairingAuthority, encode_frame
+from tests.live.test_live_store import OPERATOR, RUN_ID, envelope, metadata, register
 
 KEY = bytes(range(32))
 ORIGIN = "chrome-extension://" + "a" * 32
 
 
-def handshake(role="CAPTURE_PRODUCER", clock=lambda: 0):
+def handshake(role: Any = "CAPTURE_PRODUCER", clock: Any = lambda: 0) -> Any:
     sid = str(uuid4())
     client = LiveSession(sid, RUN_ID, "CLIENT", role, clock() + 120, clock=clock)
     server = LiveSession(sid, RUN_ID, "BACKEND", role, clock() + 120, clock=clock)
@@ -35,7 +37,7 @@ def handshake(role="CAPTURE_PRODUCER", clock=lambda: 0):
     return client, server
 
 
-def capture_body(book):
+def capture_body(book: Any) -> Any:
     event = envelope("MarketBook", book)
     return {
         "run_id": RUN_ID,
@@ -48,7 +50,7 @@ def capture_body(book):
     }
 
 
-def test_role_matrix_counter_and_mac(synthetic_book):
+def test_role_matrix_counter_and_mac(synthetic_book: Any) -> None:
     client, server = handshake("UI_SUBSCRIBER")
     with pytest.raises(ValueError, match="ROLE_DENIED"):
         client.send("CAPTURE_BATCH", capture_body(synthetic_book), KEY)
@@ -67,8 +69,10 @@ def test_role_matrix_counter_and_mac(synthetic_book):
         )
 
 
-def test_capture_never_transports_backend_source(synthetic_book, synthetic_provider_response):
-    from test_provider_normalization import normalize
+def test_capture_never_transports_backend_source(
+    synthetic_book: Any, synthetic_provider_response: Any
+) -> None:
+    from tests.live.test_provider_normalization import normalize
 
     body = capture_body(synthetic_book)
     body["events"] = [
@@ -81,7 +85,7 @@ def test_capture_never_transports_backend_source(synthetic_book, synthetic_provi
         client.send("CAPTURE_BATCH", body, KEY)
 
 
-def test_wrong_hash_and_cross_stream_reject(synthetic_book):
+def test_wrong_hash_and_cross_stream_reject(synthetic_book: Any) -> None:
     for mutation in ["hash", "stream", "sequence", "generation"]:
         body = capture_body(synthetic_book)
         if mutation == "hash":
@@ -97,7 +101,7 @@ def test_wrong_hash_and_cross_stream_reject(synthetic_book):
             client.send("CAPTURE_BATCH", body, KEY)
 
 
-def test_pairing_expiry_one_use_and_handshake_deadline(fake_clock):
+def test_pairing_expiry_one_use_and_handshake_deadline(fake_clock: Any) -> None:
     authority = PairingAuthority(RUN_ID, 300, clock=lambda: fake_clock.mono)
     ticket = authority.issue("CAPTURE_PRODUCER")
     assert len(ticket.key) == 32 and base64.urlsafe_b64encode(ticket.key).decode() not in repr(
@@ -139,7 +143,7 @@ def test_pairing_expiry_one_use_and_handshake_deadline(fake_clock):
         authority.consume(data)
 
 
-def test_offline_protocol_domain_and_duplicate_json_reject():
+def test_offline_protocol_domain_and_duplicate_json_reject() -> None:
     client, server = handshake()
     ping = client.send(
         "PING", dict(run_id=RUN_ID, nonce=secrets.token_urlsafe(32), monotonic_us="0"), KEY
@@ -152,7 +156,7 @@ def test_offline_protocol_domain_and_duplicate_json_reject():
         server.receive(ping[:-1] + b',"counter":"3"}', KEY)
 
 
-def test_stop_revokes_unused_pairing():
+def test_stop_revokes_unused_pairing() -> None:
     authority = PairingAuthority(RUN_ID, 120, clock=lambda: 0)
     ticket = authority.issue("UI_SUBSCRIBER")
     client = LiveSession(ticket.session_id, RUN_ID, "CLIENT", ticket.role, 120, clock=lambda: 0)
@@ -168,7 +172,7 @@ def test_stop_revokes_unused_pairing():
         authority.issue("UI_SUBSCRIBER")
 
 
-def context(book):
+def context(book: Any) -> Any:
     return {
         "run_id": RUN_ID,
         "allowed_extension_origin": ORIGIN,
@@ -193,9 +197,11 @@ def context(book):
     }
 
 
-async def paired_socket(authority, role="CAPTURE_PRODUCER"):
+async def paired_socket(authority: Any, role: Any = "CAPTURE_PRODUCER") -> Any:
     ticket = authority.issue(role)
-    socket = await connect("ws://127.0.0.1:8765/live", origin=ORIGIN, compression=None, proxy=None)
+    socket = await connect(
+        "ws://127.0.0.1:8765/live", origin=Origin(ORIGIN), compression=None, proxy=None
+    )
     session = LiveSession(ticket.session_id, RUN_ID, "CLIENT", role, authority.deadline)
     await socket.send(
         session.send(
@@ -204,14 +210,18 @@ async def paired_socket(authority, role="CAPTURE_PRODUCER"):
             ticket.key,
         ).decode()
     )
-    welcome = session.receive((await socket.recv()).encode(), ticket.key)
+    welcome_raw = await socket.recv()
+    assert isinstance(welcome_raw, str)
+    welcome = session.receive(welcome_raw.encode(), ticket.key)
     await socket.send(session.send("READY", welcome["body"], ticket.key).decode())
-    session.receive((await socket.recv()).encode(), ticket.key)
+    ready_raw = await socket.recv()
+    assert isinstance(ready_raw, str)
+    session.receive(ready_raw.encode(), ticket.key)
     return socket, session, ticket.key
 
 
-def test_socket_commit_before_ack_and_role_rejection(tmp_path, synthetic_book):
-    async def scenario():
+def test_socket_commit_before_ack_and_role_rejection(tmp_path: Any, synthetic_book: Any) -> None:
+    async def scenario() -> Any:
         with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
             register(store)
             ctx = context(synthetic_book)
@@ -252,8 +262,8 @@ def test_socket_commit_before_ack_and_role_rejection(tmp_path, synthetic_book):
     asyncio.run(scenario())
 
 
-def test_wrong_origin_path_and_key_write_nothing(tmp_path, synthetic_book):
-    async def scenario():
+def test_wrong_origin_path_and_key_write_nothing(tmp_path: Any, synthetic_book: Any) -> None:
+    async def scenario() -> Any:
         with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
             register(store)
             ctx = context(synthetic_book)
@@ -266,13 +276,17 @@ def test_wrong_origin_path_and_key_write_nothing(tmp_path, synthetic_book):
                     (ORIGIN, "/live?secret=x"),
                 ]:
                     with pytest.raises(InvalidStatus):
-                        async with connect("ws://127.0.0.1:8765" + path, origin=origin, proxy=None):
+                        async with connect(
+                            "ws://127.0.0.1:8765" + path, origin=Origin(origin), proxy=None
+                        ):
                             pass
                 ticket = authority.issue("CAPTURE_PRODUCER")
                 client = LiveSession(
                     ticket.session_id, RUN_ID, "CLIENT", ticket.role, authority.deadline
                 )
-                async with connect("ws://127.0.0.1:8765/live", origin=ORIGIN, proxy=None) as socket:
+                async with connect(
+                    "ws://127.0.0.1:8765/live", origin=Origin(ORIGIN), proxy=None
+                ) as socket:
                     await socket.send(
                         client.send(
                             "HELLO",

@@ -1,6 +1,7 @@
 import copy
 import io
 import json
+from typing import Any
 from uuid import uuid4
 
 import pytest
@@ -29,22 +30,22 @@ STATUS = {
 
 
 class Reply(io.BytesIO):
-    def __init__(self, body, status=200, headers=None, url=None):
+    def __init__(self, body: Any, status: Any = 200, headers: Any = None, url: Any = None) -> None:
         super().__init__(body if isinstance(body, bytes) else json.dumps(body).encode())
         self.status = status
         self.headers = {**QUOTA, **(headers or {})}
         self.url = url
 
-    def geturl(self):
+    def geturl(self) -> Any:
         return self.url
 
 
 class MockHTTP:
-    def __init__(self, replies):
+    def __init__(self, replies: Any) -> None:
         self.replies = list(replies)
-        self.calls = []
+        self.calls: list[Any] = []
 
-    def open(self, request, timeout):
+    def open(self, request: Any, timeout: Any) -> Any:
         self.calls.append((request, timeout))
         result = self.replies.pop(0)
         if isinstance(result, BaseException):
@@ -54,7 +55,7 @@ class MockHTTP:
         return result
 
 
-def make_client(tmp_path, clock, replies, **scope_values):
+def make_client(tmp_path: Any, clock: Any, replies: Any, **scope_values: Any) -> Any:
     scope = ProviderScope(str(uuid4()), (101, 103), 999, 2026, clock.mono + 300, **scope_values)
     quota = QuotaLedger(
         tmp_path / "quota.sqlite3",
@@ -75,7 +76,9 @@ def make_client(tmp_path, clock, replies, **scope_values):
     return client, quota, http
 
 
-def test_status_projection_and_sorted_bundle(tmp_path, fake_clock, synthetic_provider_response):
+def test_status_projection_and_sorted_bundle(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     client, q, http = make_client(
         tmp_path, fake_clock, [Reply(STATUS), Reply(synthetic_provider_response)]
     )
@@ -95,7 +98,9 @@ def test_status_projection_and_sorted_bundle(tmp_path, fake_clock, synthetic_pro
 
 
 @pytest.mark.parametrize("change", ["unexpected", "duplicate", "bool", "pages", "errors"])
-def test_bad_bundle_rejects(tmp_path, fake_clock, synthetic_provider_response, change):
+def test_bad_bundle_rejects(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any, change: Any
+) -> None:
     bad = copy.deepcopy(synthetic_provider_response)
     if change == "unexpected":
         bad["response"][0]["fixture"]["id"] = 500
@@ -117,7 +122,7 @@ def test_bad_bundle_rejects(tmp_path, fake_clock, synthetic_provider_response, c
         assert q.count_attempts() == 2
 
 
-def test_auth_failure_zero_retries(tmp_path, fake_clock):
+def test_auth_failure_zero_retries(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [Reply({}, status=401)])
     with q, client:
         for _ in range(2):
@@ -126,7 +131,7 @@ def test_auth_failure_zero_retries(tmp_path, fake_clock):
         assert len(http.calls) == q.count_attempts() == 1
 
 
-def test_http200_auth_body_stops(tmp_path, fake_clock):
+def test_http200_auth_body_stops(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(
         tmp_path, fake_clock, [Reply({**STATUS, "errors": {"token": "TEST_ONLY_HTTP_KEY"}})]
     )
@@ -136,7 +141,9 @@ def test_http200_auth_body_stops(tmp_path, fake_clock):
         assert len(http.calls) == 1
 
 
-def test_timeout_retries_all_reserved(tmp_path, fake_clock, synthetic_provider_response):
+def test_timeout_retries_all_reserved(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     client, q, http = make_client(
         tmp_path,
         fake_clock,
@@ -150,7 +157,9 @@ def test_timeout_retries_all_reserved(tmp_path, fake_clock, synthetic_provider_r
         assert fake_clock.mono >= 30
 
 
-def test_429_retry_after_honored(tmp_path, fake_clock, synthetic_provider_response):
+def test_429_retry_after_honored(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     client, q, http = make_client(
         tmp_path,
         fake_clock,
@@ -167,7 +176,7 @@ def test_429_retry_after_honored(tmp_path, fake_clock, synthetic_provider_respon
         assert len(http.calls) == q.count_attempts() == 3
 
 
-def test_fallback_and_lookup_default_off(tmp_path, fake_clock):
+def test_fallback_and_lookup_default_off(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [])
     with q, client:
         with pytest.raises(ProviderError):
@@ -177,7 +186,7 @@ def test_fallback_and_lookup_default_off(tmp_path, fake_clock):
         assert http.calls == [] and q.count_attempts() == 0
 
 
-def test_scope_invalid_ids_never_reach_io(tmp_path, fake_clock):
+def test_scope_invalid_ids_never_reach_io(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [])
     with q, client:
         for ids in [[], [True], [1.0], [0], [500], list(range(1, 22))]:
@@ -186,7 +195,9 @@ def test_scope_invalid_ids_never_reach_io(tmp_path, fake_clock):
         assert http.calls == [] and q.count_attempts() == 0
 
 
-def test_coverage_and_bounded_lookup_cache(tmp_path, fake_clock, synthetic_provider_response):
+def test_coverage_and_bounded_lookup_cache(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
     coverage = {
         "errors": {},
         "results": 1,
@@ -217,7 +228,7 @@ def test_coverage_and_bounded_lookup_cache(tmp_path, fake_clock, synthetic_provi
         assert len(http.calls) == q.count_attempts() == 3
 
 
-def test_explicit_mock_event_comparison(tmp_path, fake_clock):
+def test_explicit_mock_event_comparison(tmp_path: Any, fake_clock: Any) -> None:
     events = {
         "errors": [],
         "results": 1,
@@ -244,7 +255,7 @@ def test_explicit_mock_event_comparison(tmp_path, fake_clock):
         assert len(http.calls) == 2
 
 
-def test_schema_failure_stops_request_family(tmp_path, fake_clock):
+def test_schema_failure_stops_request_family(tmp_path: Any, fake_clock: Any) -> None:
     client, q, http = make_client(tmp_path, fake_clock, [Reply(STATUS), Reply({})])
     with q, client:
         client.get_status()

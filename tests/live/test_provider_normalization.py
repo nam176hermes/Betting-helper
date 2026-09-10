@@ -1,6 +1,7 @@
 import copy
 from dataclasses import replace
 from datetime import UTC, datetime
+from typing import Any
 from uuid import uuid4
 
 import pytest
@@ -9,7 +10,7 @@ from moj_discovery.providers.api_football import ProviderResponse
 from moj_discovery.providers.football_normalizer import ObservationStamp, normalize_bundle
 
 
-def stamp(**kwargs):
+def stamp(**kwargs: Any) -> Any:
     return ObservationStamp(
         datetime(2026, 9, 9, 18, 10, tzinfo=UTC),
         1_000_000,
@@ -21,15 +22,15 @@ def stamp(**kwargs):
     )
 
 
-def bundle(raw):
+def bundle(raw: Any) -> Any:
     return ProviderResponse(str(uuid4()), "MOCK", "BUNDLE", tuple(raw["response"]))
 
 
-def normalize(raw, observation=None, selected=(101,)):
+def normalize(raw: Any, observation: Any = None, selected: Any = (101,)) -> Any:
     return normalize_bundle(bundle(raw), selected, observation or stamp())
 
 
-def test_scoped_snapshot_preserves_nulls_and_source_time(synthetic_provider_response):
+def test_scoped_snapshot_preserves_nulls_and_source_time(synthetic_provider_response: Any) -> None:
     result = normalize(synthetic_provider_response, selected=(101, 103))
     state = result.states[101]
     assert state["score_current"] == {"home": 0, "away": 0}
@@ -43,7 +44,7 @@ def test_scoped_snapshot_preserves_nulls_and_source_time(synthetic_provider_resp
 
 
 @pytest.mark.parametrize("value", [None, {"home": None, "away": None}, {"home": 0, "away": None}])
-def test_null_score_is_not_zero(synthetic_provider_response, value):
+def test_null_score_is_not_zero(synthetic_provider_response: Any, value: Any) -> None:
     synthetic_provider_response["response"][0]["goals"] = value
     assert normalize(synthetic_provider_response).states[101]["score_current"] is None
 
@@ -65,7 +66,9 @@ def test_null_score_is_not_zero(synthetic_provider_response, value):
         ("FUTURE", "UNKNOWN"),
     ],
 )
-def test_status_never_inferred_from_elapsed(synthetic_provider_response, status, period):
+def test_status_never_inferred_from_elapsed(
+    synthetic_provider_response: Any, status: Any, period: Any
+) -> None:
     row = synthetic_provider_response["response"][0]
     row["fixture"]["status"] = {"short": status, "elapsed": None, "extra": None}
     state = normalize(synthetic_provider_response).states[101]
@@ -78,7 +81,9 @@ def test_status_never_inferred_from_elapsed(synthetic_provider_response, status,
     "field,value",
     [("events", None), ("events", "malformed"), ("statistics", [{"PRIVATE": "DISCARDED"}])],
 )
-def test_missing_sections_and_discarded_details(synthetic_provider_response, field, value):
+def test_missing_sections_and_discarded_details(
+    synthetic_provider_response: Any, field: Any, value: Any
+) -> None:
     row = synthetic_provider_response["response"][0]
     row[field] = value
     state = normalize(synthetic_provider_response).states[101]
@@ -93,7 +98,9 @@ def test_missing_sections_and_discarded_details(synthetic_provider_response, fie
 @pytest.mark.parametrize(
     "mutation", ["score_bool", "score_large", "same_team", "league", "season", "kickoff"]
 )
-def test_bad_fixture_cannot_corrupt_sibling(synthetic_provider_response, mutation):
+def test_bad_fixture_cannot_corrupt_sibling(
+    synthetic_provider_response: Any, mutation: Any
+) -> None:
     bad = copy.deepcopy(synthetic_provider_response["response"][0])
     bad["fixture"]["id"] = 103
     if mutation == "score_bool":
@@ -114,7 +121,9 @@ def test_bad_fixture_cannot_corrupt_sibling(synthetic_provider_response, mutatio
     assert result.rejected[103] == "INVALID_FIXTURE"
 
 
-def test_observation_receipt_and_semantic_revision_are_separate(synthetic_provider_response):
+def test_observation_receipt_and_semantic_revision_are_separate(
+    synthetic_provider_response: Any,
+) -> None:
     initial_stamp = stamp()
     first = normalize(synthetic_provider_response, initial_stamp).states[101]
     next_stamp = replace(
@@ -133,7 +142,7 @@ def test_observation_receipt_and_semantic_revision_are_separate(synthetic_provid
     assert third["content_revision"] == "2"
 
 
-def test_identity_change_requires_binding_review(synthetic_provider_response):
+def test_identity_change_requires_binding_review(synthetic_provider_response: Any) -> None:
     first = normalize(synthetic_provider_response).states[101]
     synthetic_provider_response["response"][0]["teams"]["home"]["id"] = 555
     result = normalize(synthetic_provider_response, stamp(previous_states={101: first}))
@@ -141,8 +150,10 @@ def test_identity_change_requires_binding_review(synthetic_provider_response):
     assert result.rejected[101] == "IDENTITY_MISMATCH"
 
 
-def test_http_projection_flows_to_normalizer(tmp_path, fake_clock, synthetic_provider_response):
-    from test_api_football import STATUS, Reply, make_client
+def test_http_projection_flows_to_normalizer(
+    tmp_path: Any, fake_clock: Any, synthetic_provider_response: Any
+) -> None:
+    from tests.live.test_api_football import STATUS, Reply, make_client
 
     synthetic_provider_response["response"][0]["lineups"] = []
     client, quota, _ = make_client(

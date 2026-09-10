@@ -1,15 +1,16 @@
 import json
 import sqlite3
+from typing import Any
 
 import pytest
-from test_live_store import envelope, metadata, register
-from test_provider_normalization import normalize
 
 from moj_discovery.live_replay import verify_live_replay
 from moj_discovery.live_store import LiveStore
+from tests.live.test_live_store import envelope, metadata, register
+from tests.live.test_provider_normalization import normalize
 
 
-def frozen_run(tmp_path, synthetic_book, synthetic_provider_response):
+def frozen_run(tmp_path: Any, synthetic_book: Any, synthetic_provider_response: Any) -> Any:
     run = tmp_path / "observed"
     with LiveStore(run / "live.sqlite3", **metadata()) as store:
         register(store)
@@ -20,8 +21,8 @@ def frozen_run(tmp_path, synthetic_book, synthetic_provider_response):
 
 
 def test_fresh_sqlite_replays_observed_rows_twice(
-    tmp_path, synthetic_book, synthetic_provider_response
-):
+    tmp_path: Any, synthetic_book: Any, synthetic_provider_response: Any
+) -> None:
     run = frozen_run(tmp_path, synthetic_book, synthetic_provider_response)
     a = verify_live_replay(run, tmp_path / "replay-a")
     b = verify_live_replay(run, tmp_path / "replay-b")
@@ -34,8 +35,8 @@ def test_fresh_sqlite_replays_observed_rows_twice(
 
 @pytest.mark.parametrize("mutation", ["raw", "missing", "reorder", "quote", "binding", "derived"])
 def test_actual_observation_and_projection_tamper_detected(
-    tmp_path, synthetic_book, synthetic_provider_response, mutation
-):
+    tmp_path: Any, synthetic_book: Any, synthetic_provider_response: Any, mutation: Any
+) -> None:
     run = frozen_run(tmp_path, synthetic_book, synthetic_provider_response)
     path = run / "live.sqlite3"
     # Isolated corrupt copies are evidence of rejection, never imported as acceptance inputs.
@@ -76,7 +77,7 @@ def test_actual_observation_and_projection_tamper_detected(
         verify_live_replay(run, tmp_path / "replay")
 
 
-def test_open_run_cannot_be_frozen(tmp_path):
+def test_open_run_cannot_be_frozen(tmp_path: Any) -> None:
     run = tmp_path / "observed"
     with LiveStore(run / "live.sqlite3", **metadata()) as store:
         register(store)

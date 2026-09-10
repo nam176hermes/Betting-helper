@@ -4,14 +4,15 @@ import os
 import signal
 import sqlite3
 from pathlib import Path
+from typing import Any
 from uuid import uuid4
 
 import pytest
 import rfc8785
-from test_provider_normalization import normalize
 
 from moj_discovery.live_contracts import event_hash
 from moj_discovery.live_store import LiveStore
+from tests.live.test_provider_normalization import normalize
 
 RUN_ID = "11111111-1111-4111-8111-111111111119"
 CONTROL = "22222222-2222-4222-8222-222222222229"
@@ -19,7 +20,7 @@ PROVIDER = "33333333-3333-4333-8333-333333333339"
 OPERATOR = "44444444-4444-4444-8444-444444444449"
 
 
-def metadata():
+def metadata() -> Any:
     return dict(
         run_id=RUN_ID,
         source_tree_hash="a" * 64,
@@ -29,7 +30,7 @@ def metadata():
     )
 
 
-def binding():
+def binding() -> Any:
     return {
         "binding_id": "11111111-1111-4111-8111-111111111111",
         "revision": "1",
@@ -51,7 +52,9 @@ def binding():
     }
 
 
-def envelope(kind, payload, sequence=1, previous="0" * 64, stream=None):
+def envelope(
+    kind: Any, payload: Any, sequence: Any = 1, previous: Any = "0" * 64, stream: Any = None
+) -> Any:
     source, default_stream = {
         "BindingChange": ("CONTROL", CONTROL),
         "HealthChange": ("CONTROL", CONTROL),
@@ -77,7 +80,7 @@ def envelope(kind, payload, sequence=1, previous="0" * 64, stream=None):
     return event
 
 
-def register(store, value=None):
+def register(store: Any, value: Any = None) -> Any:
     return store.append(
         envelope(
             "BindingChange",
@@ -90,7 +93,7 @@ def register(store, value=None):
     )
 
 
-def read_counts(path):
+def read_counts(path: Any) -> Any:
     with sqlite3.connect(path) as db:
         return [
             db.execute("SELECT count(*) FROM " + table).fetchone()[0]  # noqa: S608 - fixed tables
@@ -99,8 +102,8 @@ def read_counts(path):
 
 
 def test_commit_payload_projection_cursor_then_idempotent_receipt(
-    tmp_path, synthetic_provider_response
-):
+    tmp_path: Any, synthetic_provider_response: Any
+) -> None:
     path = tmp_path / "run" / "live.sqlite3"
     with LiveStore(path, **metadata()) as store:
         register(store)
@@ -122,7 +125,9 @@ def test_commit_payload_projection_cursor_then_idempotent_receipt(
     assert path.parent.stat().st_mode & 0o777 == 0o700
 
 
-def test_binding_is_required_and_exact(tmp_path, synthetic_book, synthetic_provider_response):
+def test_binding_is_required_and_exact(
+    tmp_path: Any, synthetic_book: Any, synthetic_provider_response: Any
+) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
         with pytest.raises(ValueError, match="BINDING"):
             store.append(envelope("MarketBook", synthetic_book))
@@ -138,7 +143,7 @@ def test_binding_is_required_and_exact(tmp_path, synthetic_book, synthetic_provi
         assert read_counts(store.path) == [1, 1, 1, 0]
 
 
-def test_conflict_freezes_source_and_records_control(tmp_path, synthetic_book):
+def test_conflict_freezes_source_and_records_control(tmp_path: Any, synthetic_book: Any) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
         register(store)
         good = envelope("MarketBook", synthetic_book)
@@ -156,7 +161,7 @@ def test_conflict_freezes_source_and_records_control(tmp_path, synthetic_book):
         assert read_counts(store.path)[0] == 3
 
 
-def test_gap_no_ack_and_missing_exact_frame_can_resume(tmp_path, synthetic_book):
+def test_gap_no_ack_and_missing_exact_frame_can_resume(tmp_path: Any, synthetic_book: Any) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
         register(store)
         first = envelope("MarketBook", synthetic_book)
@@ -173,7 +178,7 @@ def test_gap_no_ack_and_missing_exact_frame_can_resume(tmp_path, synthetic_book)
         )
 
 
-def test_hash_run_and_stream_role_reject(tmp_path, synthetic_book):
+def test_hash_run_and_stream_role_reject(tmp_path: Any, synthetic_book: Any) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
         register(store)
         good = envelope("MarketBook", synthetic_book)
@@ -188,7 +193,9 @@ def test_hash_run_and_stream_role_reject(tmp_path, synthetic_book):
         assert read_counts(store.path)[0] == 1
 
 
-def test_generation_requires_binding_review_and_document_context(tmp_path, synthetic_book):
+def test_generation_requires_binding_review_and_document_context(
+    tmp_path: Any, synthetic_book: Any
+) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata()) as store:
         register(store)
         store.append(envelope("MarketBook", synthetic_book))
@@ -200,7 +207,7 @@ def test_generation_requires_binding_review_and_document_context(tmp_path, synth
             store.append(change)
 
 
-def test_reopen_preserves_history_and_metadata_is_immutable(tmp_path):
+def test_reopen_preserves_history_and_metadata_is_immutable(tmp_path: Any) -> None:
     path = tmp_path / "run" / "live.sqlite3"
     with LiveStore(path, **metadata()) as store:
         register(store)
@@ -226,11 +233,11 @@ def test_reopen_preserves_history_and_metadata_is_immutable(tmp_path):
         db.execute("DELETE FROM run_meta")
 
 
-def _crash_writer(path, event, stage, pipe):
+def _crash_writer(path: Any, event: Any, stage: Any, pipe: Any) -> Any:
     with LiveStore(Path(path), **metadata()) as store:
         if stage == "before":
 
-            def trace(sql):
+            def trace(sql: Any) -> Any:
                 if sql == "COMMIT":
                     pipe.send("BEFORE_COMMIT")
                     pipe.recv()
@@ -242,7 +249,9 @@ def _crash_writer(path, event, stage, pipe):
 
 
 @pytest.mark.parametrize("stage,counts", [("before", [1, 1, 1, 0]), ("after", [2, 2, 2, 0])])
-def test_process_kill_at_commit_boundary(tmp_path, synthetic_book, stage, counts):
+def test_process_kill_at_commit_boundary(
+    tmp_path: Any, synthetic_book: Any, stage: Any, counts: Any
+) -> None:
     path = tmp_path / "run" / "live.sqlite3"
     with LiveStore(path, **metadata()) as store:
         register(store)
@@ -256,6 +265,7 @@ def test_process_kill_at_commit_boundary(tmp_path, synthetic_book, stage, counts
         observed = parent.recv()
         assert observed == ("BEFORE_COMMIT" if stage == "before" else 2)
     finally:
+        assert worker.pid is not None
         os.kill(worker.pid, signal.SIGKILL)
         worker.join(5)
     assert worker.exitcode == -signal.SIGKILL
@@ -263,7 +273,7 @@ def test_process_kill_at_commit_boundary(tmp_path, synthetic_book, stage, counts
         assert read_counts(path) == counts
 
 
-def test_size_cap_stops_without_false_receipt(tmp_path, synthetic_book):
+def test_size_cap_stops_without_false_receipt(tmp_path: Any, synthetic_book: Any) -> None:
     with LiveStore(tmp_path / "run" / "live.sqlite3", **metadata(), max_bytes=256 * 1024) as store:
         register(store)
         previous = "0" * 64
@@ -287,7 +297,7 @@ def test_size_cap_stops_without_false_receipt(tmp_path, synthetic_book):
         assert read_counts(store.path)[0] == accepted + 1
 
 
-def test_single_writer_and_symlink_rejection(tmp_path):
+def test_single_writer_and_symlink_rejection(tmp_path: Any) -> None:
     path = tmp_path / "run" / "live.sqlite3"
     with LiveStore(path, **metadata()), pytest.raises(ValueError, match="LOCK"):
         LiveStore(path, **metadata())
@@ -297,7 +307,7 @@ def test_single_writer_and_symlink_rejection(tmp_path):
         LiveStore(link / "live.sqlite3", **metadata())
 
 
-def test_duplicate_never_acks_missing_durable_cursor(tmp_path, synthetic_book):
+def test_duplicate_never_acks_missing_durable_cursor(tmp_path: Any, synthetic_book: Any) -> None:
     path = tmp_path / "run" / "live.sqlite3"
     event = envelope("MarketBook", synthetic_book)
     with LiveStore(path, **metadata()) as store:
