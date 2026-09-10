@@ -47,7 +47,7 @@ def test_configured_candidate_uses_clean_git_identity_and_effective_commands(
 ) -> None:
     registry_path = Path("task-command-registry.json")
     config = load_controller_config(
-        Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json")
+        Path("vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json")
     )
     identities: list[Path] = []
     seen: list[dict[str, object]] = []
@@ -85,7 +85,7 @@ def test_generated_output_inventory_is_closed_and_binds_all_actual_files(
     tmp_path: Path,
 ) -> None:
     rows = registry_runner.collect_generated_outputs(Path.cwd())
-    assert len(rows) == 79
+    assert len(rows) == 79 + 37  # The approved Part B compiler-output amendment.
     assert [row["path"] for row in rows] == sorted(
         (row["path"] for row in rows), key=str.encode
     )

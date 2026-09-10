@@ -131,3 +131,27 @@ Current sealing qualification continuation:
 - Exact current qualification, seal and independent-host review outcomes belong
   in the private execution checkpoint and that evidence root. A local audit or
   namespace broker is not a human-attested fresh reviewer session.
+
+Qualification checkpoint after the continued controller audit:
+
+- Runtime commits cd29618 and 41ecbef fix the inherited dependency declaration
+  and two stale artifact-count assertions. The release registry tests now use
+  the current v2 controller and the 79 + 37 declared compiler-output count.
+- The full attempt on 41ecbef reached the aggregate durability campaign. It was
+  interrupted with SIGINT after a separate source audit confirmed that the
+  controller cannot emit nine mandatory ordinary phase-evidence records and
+  never invokes the registered supplemental environment capture. No aggregate
+  PASS, candidate receipt, descendant receipt or seal was issued. Preserve the
+  partial campaign; its exclusive output directory cannot be reused for a retry.
+- The registered historical migration validation was executed read-only and
+  failed E_MIGRATION_HASH for runtime/src/moj_discovery/canonical.py. The existing
+  migration receipt was unchanged. Do not reset historical source or relabel its
+  receipt as current qualification.
+- Next engineering work is a source-owned phase-evidence producer with exact
+  executed-command binding, explicit current declaration/migration validation,
+  supplemental environment integration and a safe evidence-preserving retry
+  contract. A source amendment must not substitute fabricated PASS records or
+  external-suite success for an unexecuted migration operation.
+- Status: CONTROLLER_REPAIR_REQUIRED / WAITING_REVIEW. Actual host authorization,
+  separate fresh reviewer sessions and human attestations remain pending after
+  qualification and seal. No API key, operator capture or live run was used.
