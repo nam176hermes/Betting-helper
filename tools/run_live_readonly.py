@@ -1,11 +1,13 @@
 """Live service dispatch exclusively through a consumed user-terminal intent."""
 
 # ruff: noqa: E402
+import asyncio
 import base64
 import importlib
 import json
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -40,13 +42,50 @@ def show_local_pairing(service: LiveService) -> None:
         terminal.flush()
 
 
+def enable_local_repair(service: LiveService) -> Callable[[], None]:
+    """Only an explicit PAIR line in the same user terminal can renew pairing."""
+    scope = controlling_tty()
+    terminal = scope.__enter__()
+    loop = asyncio.get_running_loop()
+    descriptor = terminal.fileno()
+    closed = False
+
+    def close() -> None:
+        nonlocal closed
+        if not closed:
+            closed = True
+            loop.remove_reader(descriptor)
+            scope.__exit__(None, None, None)
+
+    def ready() -> None:
+        line = terminal.readline(64)
+        if line == "":
+            close()
+        elif line.strip() == "PAIR":
+            try:
+                show_local_pairing(service)
+            except ValueError:
+                terminal.write("PAIRING_UNAVAILABLE: existing ticket, cap or expired session.\n")
+                terminal.flush()
+
+    try:
+        show_local_pairing(service)
+        terminal.write("After worker restart, type PAIR here for a fresh local ticket.\n")
+        terminal.flush()
+        loop.add_reader(descriptor, ready)
+    except BaseException:
+        close()
+        raise
+    return close
+
+
 def run_live_session(config: LiveConfig, secret: SecretValue, receipt: object) -> dict[str, Any]:
     try:
         gate = importlib.import_module("moj_discovery.live_preflight_batched")
         admission = gate.admit_live_run(config, receipt)
     except Exception:
         raise ValueError("E_LIVE_RUN_ADMISSION") from None
-    result = run_live_service(config, secret, admission, on_ready=show_local_pairing)
+    result = run_live_service(config, secret, admission, on_ready=enable_local_repair)
     return {
         "KEY_CHECK": "AUTHENTICATED" if result.authenticated else "NOT_CHECKED",
         "SUBSCRIPTION_CHECK": "UNKNOWN",

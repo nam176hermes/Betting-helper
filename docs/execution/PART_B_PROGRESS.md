@@ -6,8 +6,8 @@ Exact current HEAD, file/evidence hashes, command exits and failed attempts are 
 `.local/part-b/execution-state.json` and `.local/part-b/task-evidence/`.
 This tracked pointer avoids a commit/report self-hash cycle.
 
-Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06, PB-07, PB-08, PB-09, PB-10, PB-11, PB-12, PB-13, PB-14.
-Next ready task: PB-15.
+Completed local tasks: PB-00, PB-01, PB-02, PB-03, PB-04, PB-05, PB-06, PB-07, PB-08, PB-09, PB-10, PB-11, PB-12, PB-13, PB-14, PB-15.
+Next ready task: PB-16.
 
 - Full-source mypy: 25 pre-existing errors in three unchanged governance files, reproduced on starting HEAD; .local/part-b/PB-11-preexisting-static.json. No full-static PASS claimed.
 

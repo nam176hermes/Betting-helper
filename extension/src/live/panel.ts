@@ -70,12 +70,27 @@ export function renderMatch(snapshot: Projection | null, horizon: Horizon, targe
   details.open = expanded; details.append(element("summary", "Show data evidence"), evidence); target.append(details);
   if (focusEvidence) details.querySelector("summary")?.focus();
 }
-export function connectWorkspace(onView: (view: SharedView) => void): chrome.runtime.Port {
-  const port = chrome.runtime.connect({name: "BH_LIVE_UI"});
-  port.onMessage.addListener((view: SharedView) => { onView(view); });
-  port.onDisconnect.addListener(() => { onView({matches: [], active: null, connection: "DISCONNECTED — pair again"}); });
-  window.addEventListener("pagehide", () => { port.disconnect(); }, {once: true});
-  return port;
+export function connectWorkspace(onView: (view: SharedView) => void): Pick<chrome.runtime.Port, "postMessage" | "disconnect"> {
+  let port: chrome.runtime.Port | undefined, stopped = false, attempts = 0;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const connect = (): void => {
+    if (stopped || port) return;
+    const next = chrome.runtime.connect({name: "BH_LIVE_UI"}); port = next;
+    next.onMessage.addListener((view: SharedView) => { attempts = 0; onView(view); });
+    next.onDisconnect.addListener(() => {
+      if (port !== next) return;
+      port = undefined; onView({matches: [], active: null, connection: "DISCONNECTED — pair again"});
+      // Restore display subscriptions only; the new worker still needs a fresh manual ticket.
+      if (!stopped && attempts++ < 3) timer = setTimeout(connect, 250 * attempts);
+    });
+  };
+  const disconnect = (): void => { stopped = true; clearTimeout(timer); port?.disconnect(); port = undefined; };
+  window.addEventListener("pagehide", disconnect, {once: true});
+  connect();
+  return {disconnect, postMessage: (message: unknown): void => {
+    if (stopped) throw Error("E_UI_CLOSED");
+    clearTimeout(timer); connect(); port?.postMessage(message);
+  }};
 }
 export function mountWorkspace(watchlist: (view: SharedView, target: HTMLElement, command: (command: Command, id: string) => void) => void): void {
   const root = document.querySelector<HTMLElement>("main"); if (!root) throw Error("E_PANEL_ROOT");
