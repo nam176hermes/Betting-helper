@@ -53,6 +53,8 @@ class LiveReceiver:
         self._stopped_bindings: set[str] = set()
         self.rejections: deque[str] = deque(maxlen=128)
         self.on_ui: Callable[[str, str | None], Awaitable[None]] | None = None
+        self.on_capture: Callable[[dict[str, Any]], Awaitable[None]] | None = None
+        self.on_change: Callable[[str | None, str], Awaitable[None]] | None = None
 
     def _validate_context(self) -> None:
         try:
@@ -179,8 +181,10 @@ class LiveReceiver:
         finally:
             self._send_pending[socket] = max(0, self._send_pending.get(socket, 1) - 1)
 
-    async def publish(self, body: dict[str, Any]) -> None:
-        peer = self._active.get("UI_SUBSCRIBER")
+    async def publish(self, body: dict[str, Any], *, role: str = "UI_SUBSCRIBER") -> None:
+        if role not in {"UI_SUBSCRIBER", "CAPTURE_PRODUCER"}:
+            raise ValueError("E_LIVE_PROJECTION_ROLE")
+        peer = self._active.get(role)
         if peer is not None:
             try:
                 await self._send(peer, "PROJECTION", body)
@@ -259,6 +263,8 @@ class LiveReceiver:
         for event in body["events"]:
             try:
                 last = await asyncio.to_thread(self.store.append, event)
+                if self.on_capture is not None:
+                    await self.on_capture(event)
             except (ValueError, OSError):
                 rejected = True
                 break
@@ -301,6 +307,10 @@ class LiveReceiver:
                 if role == "CAPTURE_PRODUCER":
                     await self._health(None, "PAIRING_RENEWED")
             await self._send(peer, "READY_ACK", body)
+            if self.on_change is not None:
+                await self.on_change(
+                    None, "PAIRING_RENEWED" if role == "CAPTURE_PRODUCER" else "SUBSCRIBED"
+                )
             while time.monotonic() < self.context["deadline_mono"]:
                 data = await asyncio.wait_for(
                     socket.recv(), max(0, self.context["deadline_mono"] - time.monotonic())
@@ -323,6 +333,8 @@ class LiveReceiver:
                             await self._send(peer, reply_kind, reply)
                         if any(k == "NACK" for k, _ in replies):
                             break
+                        if self.on_change is not None:
+                            await self.on_change(None, "CAPTURE_COMMITTED")
                     elif kind in {"HEALTH", "STOP_CAPTURE"}:
                         if kind == "STOP_CAPTURE":
                             self._stopped_bindings.add(payload["binding_id"])
@@ -330,6 +342,11 @@ class LiveReceiver:
                             payload["binding_id"],
                             "USER_STOP" if kind == "STOP_CAPTURE" else payload["code"],
                         )
+                        if self.on_change is not None:
+                            await self.on_change(
+                                payload["binding_id"],
+                                "USER_STOP" if kind == "STOP_CAPTURE" else payload["code"],
+                            )
                     elif self.on_ui is not None:
                         binding = payload.get("binding_id")
                         if binding is not None and binding not in self.store.bindings():
@@ -349,6 +366,8 @@ class LiveReceiver:
                     async with self._intake:
                         try:
                             await self._health(None, "DISCONNECTED")
+                            if self.on_change is not None:
+                                await self.on_change(None, "DISCONNECTED")
                         except (ValueError, OSError):
                             self.rejections.append("HEALTH_STORAGE_FAILED")
             self._reserved.discard(socket)

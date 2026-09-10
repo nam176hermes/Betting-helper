@@ -44,9 +44,11 @@ class ProviderBundlePoller:
         verify_probe_protocol(client.scope)
         self.client = client
         self._mono, self._utc = now_mono, now_utc
-        duration = math.ceil(client.scope.deadline_mono - now_mono())
-        if not 0 < duration <= (300 if client.scope.stage == "PROVIDER_PROBE" else 7200):
+        now = now_mono()
+        limit = 300 if client.scope.stage == "PROVIDER_PROBE" else 7200
+        if not now < client.scope.deadline_mono <= now + limit:
             raise ValueError("E_POLLER_DEADLINE")
+        duration = min(limit, math.ceil(client.scope.deadline_mono - now))
         self._floor = 30 if client.scope.stage == "PROVIDER_PROBE" else 15
         fallback = len(client.scope.events_fixture_ids) * math.ceil(duration / 60)
         if (

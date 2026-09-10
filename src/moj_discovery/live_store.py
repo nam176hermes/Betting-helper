@@ -219,6 +219,17 @@ class LiveStore:
             ]
             return {i: self.read_projection(i)["binding"] for i in ids}
 
+    def projection_revision(self, binding_id: str) -> int:
+        with self._mutex:
+            self._owner()
+            row = self.db.execute(
+                "SELECT max(revision) FROM projection_versions WHERE run_id=? AND binding_id=?",
+                (self.run_id, binding_id),
+            ).fetchone()
+            if row[0] is None:
+                raise ValueError("E_LIVE_BINDING_REQUIRED")
+            return int(row[0])
+
     def cursor(self, stream_id: str, generation: str = "0") -> tuple[int, str]:
         with self._mutex:
             self._owner()

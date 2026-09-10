@@ -150,6 +150,7 @@ class ApiFootballClient:
         now_mono: Callable[[], float] = time.monotonic,
         now_utc: Callable[[], datetime] = lambda: datetime.now(UTC),
         sleep: Callable[[float], None] = time.sleep,
+        before_attempt: Callable[[str, str], None] | None = None,
     ):
         try:
             verify_probe_protocol(scope)
@@ -168,6 +169,7 @@ class ApiFootballClient:
         self._real = opener is None
         self._opener = build_fixed_opener() if opener is None else opener
         self._mono, self._utc, self._sleep = now_mono, now_utc, sleep
+        self._before_attempt = before_attempt
         self._lock = threading.Lock()
         self._next_start = now_mono()
         self._stopped: str | None = None
@@ -175,6 +177,7 @@ class ApiFootballClient:
         self._coverage_cache: dict[tuple[int, int], tuple[float, dict[str, Any]]] = {}
         self._lookup_cache: dict[str, tuple[float, ProviderResponse]] = {}
         self.request_log: list[dict[str, Any]] = []
+        self.http_attempts = 0
 
     def __enter__(self) -> "ApiFootballClient":
         return self
@@ -342,6 +345,8 @@ class ApiFootballClient:
                 started = self._mono()
                 self._next_start = started + 10
                 try:
+                    if self._before_attempt is not None:
+                        self._before_attempt(purpose, reservation.attempt_id)
                     assert self._secret is not None
                     request = Request(  # noqa: S310 -- exact purpose/path allowlist above, fixed HTTPS host
                         BASE + path,
@@ -354,6 +359,7 @@ class ApiFootballClient:
                     )
                     timeout = min(10, self.scope.deadline_mono - started)
                     try:
+                        self.http_attempts += 1
                         response = self._opener.open(request, timeout=timeout)
                     except HTTPError as error:
                         response = error

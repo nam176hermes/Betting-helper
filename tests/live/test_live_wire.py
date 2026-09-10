@@ -202,11 +202,11 @@ async def paired_socket(authority: Any, role: Any = "CAPTURE_PRODUCER") -> Any:
     socket = await connect(
         "ws://127.0.0.1:8765/live", origin=Origin(ORIGIN), compression=None, proxy=None
     )
-    session = LiveSession(ticket.session_id, RUN_ID, "CLIENT", role, authority.deadline)
+    session = LiveSession(ticket.session_id, authority.run_id, "CLIENT", role, authority.deadline)
     await socket.send(
         session.send(
             "HELLO",
-            dict(run_id=RUN_ID, role=role, client_nonce=secrets.token_urlsafe(32)),
+            dict(run_id=authority.run_id, role=role, client_nonce=secrets.token_urlsafe(32)),
             ticket.key,
         ).decode()
     )

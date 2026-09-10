@@ -61,7 +61,7 @@ def verify_call_authorization(
         purpose not in {"STATUS", "COVERAGE", "LOOKUP", "BUNDLE", "EVENTS_FALLBACK"}
         or not math.isfinite(now_mono)
         or not now_mono < scope.deadline_mono
-        or scope.deadline_mono - now_mono > (300 if scope.stage == "PROVIDER_PROBE" else 7200)
+        or scope.deadline_mono > now_mono + (300 if scope.stage == "PROVIDER_PROBE" else 7200)
     ):
         raise ValueError("E_PROVIDER_DEADLINE_OR_PURPOSE")
     if scope.source_kind == "OBSERVED_REAL":
