@@ -22,6 +22,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.add_argument("--league", type=int)
         parser.add_argument("--season", type=int)
         parser.add_argument("--fixtures")
+        parser.add_argument("--lookup-only", action="store_true")
         parser.add_argument("--max-matches", type=int, choices=(1, 3, 5), default=1)
         parser.add_argument("--minutes", type=int, default=120)
         parser.add_argument("--requests", type=int, default=600)
@@ -29,6 +30,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.add_argument("--minute-cap", type=int, default=6)
         parser.add_argument("--replace", action="store_true")
         args = parser.parse_args(argv)
+        if args.lookup_only:
+            if args.fixtures:
+                raise ValueError()
+            args.fixtures = ""
         if any(
             getattr(args, name) is None for name in ("platform", "league", "season", "fixtures")
         ):
@@ -55,8 +60,8 @@ def main(argv: list[str] | None = None) -> int:
         if output.exists() and not args.replace:
             raise ValueError()
         value = json.loads((ROOT / "config/live-batched.example.json").read_text())
-        fixtures = [int(v) for v in args.fixtures.split(",")]
-        if len(set(fixtures)) != len(fixtures) or not fixtures:
+        fixtures = [] if args.lookup_only else [int(v) for v in args.fixtures.split(",")]
+        if len(set(fixtures)) != len(fixtures) or (not fixtures and not args.lookup_only):
             raise ValueError()
         value["provider"].update(
             league_id=args.league,
@@ -69,7 +74,11 @@ def main(argv: list[str] | None = None) -> int:
         value["runtime"].update(
             platform=args.platform, max_matches=args.max_matches, max_run_minutes=args.minutes
         )
-        estimate = estimate_requests([PollSegment(0, args.minutes * 60, 15)] * len(fixtures))
+        estimate = (
+            estimate_requests([], setup=2, confirmations=0)
+            if args.lookup_only
+            else estimate_requests([PollSegment(0, args.minutes * 60, 15)] * len(fixtures))
+        )
         # This is an upper estimate at the live cadence, not measured provider latency.
         if estimate.with_reserve > args.requests:
             raise ValueError()

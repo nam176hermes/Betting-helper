@@ -2,6 +2,7 @@ import importlib
 import math
 import re
 from dataclasses import dataclass
+from datetime import date
 from uuid import UUID
 
 from .errors import ContractNotImplementedError
@@ -27,11 +28,17 @@ class ProviderScope:
 def verify_probe_protocol(scope: ProviderScope | None = None) -> None:
     if type(scope) is not ProviderScope:
         raise ContractNotImplementedError("D0-T01")
+    lookup_only = scope.lookup_date is not None and not scope.fixture_ids
+    if scope.lookup_date is not None and (
+        scope.stage != "PROVIDER_PROBE"
+        or date.fromisoformat(scope.lookup_date).isoformat() != scope.lookup_date
+    ):
+        raise ValueError("E_PROVIDER_LOOKUP_SCOPE")
     if (
         str(UUID(scope.scope_id)) != scope.scope_id
         or scope.source_kind not in {"MOCK", "OBSERVED_REAL"}
         or scope.stage not in {"PROVIDER_PROBE", "LIVE_READ_ONLY"}
-        or not 1 <= len(scope.fixture_ids) <= 5
+        or not (0 if lookup_only else 1) <= len(scope.fixture_ids) <= 5
         or len(set(scope.fixture_ids)) != len(scope.fixture_ids)
         or any(type(i) is not int or not 0 < i <= 2**53 - 1 for i in scope.fixture_ids)
         or type(scope.league_id) is not int

@@ -60,6 +60,71 @@ def make_intent(tmp_path: Path) -> Any:
     return intent, loaded, target, value
 
 
+def test_date_lookup_has_empty_exact_scope_and_cannot_become_live(tmp_path: Any) -> None:
+    from moj_discovery.live_config import LiveConfig
+
+    _, config, path, value = make_intent(tmp_path)
+    cfg = config.public
+    cfg["provider"]["fixture_ids"] = []
+    config = LiveConfig(cfg, config.sha256)
+    value.update(fixture_ids=[], lookup_date="2026-09-10")
+    path.write_text(json.dumps(value))
+    intent = live_intent.load_run_intent(path, config, "PROVIDER_PROBE", root=tmp_path)
+    assert intent.public["lookup_date"] == "2026-09-10"
+    for mutation in (
+        {"stage": "LIVE_READ_ONLY"},
+        {"lookup_date": "2026-02-30"},
+        {"fixture_ids": [101]},
+        {"lookup_date": None},
+    ):
+        path.write_text(json.dumps(value | mutation))
+        with pytest.raises(ValueError):
+            live_intent.load_run_intent(path, config, "PROVIDER_PROBE", root=tmp_path)
+
+
+def test_lookup_confirmation_only_authorizes_status_and_chosen_date(
+    tmp_path: Any,
+    monkeypatch: Any,
+) -> None:
+    from moj_discovery.live_config import LiveConfig
+    from moj_discovery.provider_protocol import ProviderScope
+
+    _, config, path, value = make_intent(tmp_path)
+    cfg = config.public
+    cfg["provider"]["fixture_ids"] = []
+    config = LiveConfig(cfg, config.sha256)
+    value.update(fixture_ids=[], lookup_date="2026-09-10")
+    path.write_text(json.dumps(value))
+    intent = live_intent.load_run_intent(path, config, "PROVIDER_PROBE", root=tmp_path)
+    monkeypatch.setattr(live_intent, "controlling_tty", contextlib.nullcontext)
+    receipt = live_intent.consume_user_intent(intent, config, "ALLOW PROVIDER PROBE")
+    monkeypatch.setattr(live_intent, "ROOT", tmp_path)
+    live_intent.claim_receipt(receipt, "PROVIDER_PROBE")
+    scope = ProviderScope(
+        receipt.run_id,
+        (),
+        999,
+        2026,
+        receipt.deadline_mono,
+        source_kind="OBSERVED_REAL",
+        config_sha256=config.sha256,
+        source_tree_sha256=value["source_tree_sha256"],
+        receipt=receipt,
+        lookup_date=value["lookup_date"],
+    )
+    for purpose in ("STATUS", "LOOKUP"):
+        live_intent.verify_provider_receipt(receipt, scope, purpose)
+    for purpose in ("COVERAGE", "BUNDLE", "EVENTS_FALLBACK"):
+        with pytest.raises(ValueError):
+            live_intent.verify_provider_receipt(receipt, scope, purpose)
+    from dataclasses import replace
+
+    with pytest.raises(ValueError):
+        live_intent.verify_provider_receipt(
+            receipt, replace(scope, lookup_date="2026-09-11"), "LOOKUP"
+        )
+
+
 def test_consumption_burns_intent_and_claim_once_even_after_reload(
     tmp_path: Any, monkeypatch: Any
 ) -> None:

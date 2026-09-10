@@ -30,6 +30,7 @@ def main(argv: list[str] | None = None) -> int:
         parser.add_argument("--duration", type=int)
         parser.add_argument("--attempts", type=int)
         parser.add_argument("--operator-url", action="append", default=[])
+        parser.add_argument("--lookup-date")
         args = parser.parse_args(argv)
         config = load_live_config(args.config)
         stage = STAGES[args.stage]
@@ -61,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
             user_confirmation_required=True,
             money_authority=False,
         )
+        if args.lookup_date is not None:
+            value["lookup_date"] = args.lookup_date
         _validate(RunIntent(value, "0" * 64, ROOT), config, now)
         if stage == "LIVE_READ_ONLY" and relative != config.public["gates"]["live_intent_path"]:
             raise ValueError()

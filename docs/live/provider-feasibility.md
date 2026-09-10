@@ -1,7 +1,15 @@
 # Provider feasibility — PB-18
 
-Status: WAITING_FOR_USER_SECRET and selected nonsecret fixture scope.
+Status: WAITING_FOR_USER_SECRET and verified provider fixture ID.
 PROVIDER_PROBE_PASS: NOT_EXECUTED. Real provider attempts: 0.
+
+User-selected scope: Champions League 2026/27, Bayern München – Bodø/Glimt,
+2026-09-10. Public API documentation identifies league 2 and season 2026;
+the fixture ID is not guessed. The tested lookup-only path in
+`docs/runbooks/START_LIVE_READ_ONLY.md` can obtain candidate IDs in the user's
+terminal after an exact league/season/date confirmation. It permits only STATUS
+and LOOKUP, never BUNDLE or events, and remains PARTIAL until a separately
+confirmed exact-fixture probe passes. Key presence grants no request authority.
 
 PB-17's complete mock gate passed at commit
 `180da4b19beae2c10bc2adc06cc98fdc181a94d3`; the immutable result is

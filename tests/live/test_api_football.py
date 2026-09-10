@@ -56,7 +56,8 @@ class MockHTTP:
 
 
 def make_client(tmp_path: Any, clock: Any, replies: Any, **scope_values: Any) -> Any:
-    scope = ProviderScope(str(uuid4()), (101, 103), 999, 2026, clock.mono + 300, **scope_values)
+    ids = scope_values.pop("fixture_ids", (101, 103))
+    scope = ProviderScope(str(uuid4()), ids, 999, 2026, clock.mono + 300, **scope_values)
     quota = QuotaLedger(
         tmp_path / "quota.sqlite3",
         scope_id=scope.scope_id,
@@ -74,6 +75,48 @@ def make_client(tmp_path: Any, clock: Any, replies: Any, **scope_values: Any) ->
         sleep=clock.advance,
     )
     return client, quota, http
+
+
+@pytest.mark.parametrize("mutation", [None, "date", "league", "control"])
+def test_lookup_only_bounded_identity_projection(
+    tmp_path: Any,
+    fake_clock: Any,
+    synthetic_provider_response: Any,
+    mutation: Any,
+) -> None:
+    from tools.probe_football_provider import inspect_fixture_lookup
+
+    raw = copy.deepcopy(synthetic_provider_response)
+    row = raw["response"][0]
+    if mutation == "date":
+        row["fixture"]["date"] = "2026-09-10T18:00:00Z"
+    if mutation == "league":
+        row["league"]["id"] = 42
+    if mutation == "control":
+        row["teams"]["home"]["name"] = "BAD\x1b[0m"
+    client, quota, http = make_client(
+        tmp_path,
+        fake_clock,
+        [Reply(STATUS), Reply(raw)],
+        fixture_ids=(),
+        lookup_date="2026-09-09",
+    )
+    with quota, client:
+        result = inspect_fixture_lookup(client)
+        assert result["PROBE_RESULT"] == ("PARTIAL" if mutation is None else "FAIL")
+        assert result["source_kind"] == "MOCK" and result["REQUEST_ATTEMPTS"] == 2
+        assert quota.count_attempts() == len(http.calls) == 2
+        assert http.calls[-1][0].full_url.endswith(
+            "/fixtures?league=999&season=2026&date=2026-09-09"
+        )
+        if mutation is None:
+            assert result["fixture_candidates"][0]["fixture_id"] == 101
+        else:
+            assert result["fixture_candidates"] == []
+        assert "PRIVATE_NOT_RETAINED" not in repr(result)
+        with pytest.raises(ProviderError):
+            client.get_fixture_bundle([101])
+        assert len(http.calls) == 2
 
 
 def test_status_projection_and_sorted_bundle(

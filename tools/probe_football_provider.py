@@ -3,6 +3,7 @@
 # ruff: noqa: E402
 import json
 import os
+import re
 import sys
 import time
 from dataclasses import asdict
@@ -23,6 +24,59 @@ from moj_discovery.providers.quota import QuotaLedger
 from moj_discovery.secrets_local import SecretValue
 
 ProbeResult = dict[str, Any]
+
+
+def inspect_fixture_lookup(client: ApiFootballClient) -> ProbeResult:
+    """Two fixed request purposes; output only validated fixture identities."""
+    result: ProbeResult = dict(
+        KEY_CHECK="NOT_CHECKED",
+        SUBSCRIPTION_CHECK="UNKNOWN",
+        PROBE_RESULT="PARTIAL",
+        REQUEST_ATTEMPTS=0,
+        MISSING_CAPABILITIES=["EXACT_FIXTURE_PROBE_REQUIRED"],
+        fixture_candidates=[],
+    )
+    try:
+        status = client.get_status()
+        result["KEY_CHECK"] = "AUTHENTICATED"
+        if not status.active:
+            raise ValueError()
+        scope = client.scope
+        assert scope.lookup_date is not None
+        response = client.get_fixtures_for_date(scope.league_id, scope.season, scope.lookup_date)
+        rows = []
+        for row in response.rows:
+            fixture, league, teams = row["fixture"], row["league"], row["teams"]
+            stamp = datetime.fromisoformat(fixture["date"])
+            if (
+                len(response.rows) > 20
+                or league != {"id": scope.league_id, "season": scope.season}
+                or stamp.tzinfo is None
+                or stamp.astimezone(UTC).date().isoformat() != scope.lookup_date
+                or any(
+                    type(teams[s]["id"]) is not int
+                    or teams[s]["id"] <= 0
+                    or type(teams[s]["name"]) is not str
+                    or not re.fullmatch(r"[^\x00-\x1f\x7f-\x9f]{1,100}", teams[s]["name"])
+                    for s in ("home", "away")
+                )
+            ):
+                raise ValueError()
+            rows.append(
+                {
+                    "fixture_id": fixture["id"],
+                    "kickoff_utc": stamp.astimezone(UTC).isoformat(),
+                    "home": teams["home"],
+                    "away": teams["away"],
+                }
+            )
+        result["fixture_candidates"] = rows
+    except (ProviderError, ValueError, KeyError, TypeError):
+        result.update(PROBE_RESULT="FAIL", MISSING_CAPABILITIES=["PROVIDER_UNAVAILABLE"])
+    result["REQUEST_ATTEMPTS"] = client.http_attempts
+    result["source_kind"] = client.scope.source_kind
+    result["requests"] = client.request_log
+    return result
 
 
 def inspect_provider(config: LiveConfig, client: ApiFootballClient) -> ProbeResult:
@@ -153,6 +207,7 @@ def run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt)
         config_sha256=config.sha256,
         source_tree_sha256=intent.intent.public["source_tree_sha256"],
         receipt=intent,
+        lookup_date=intent.intent.public.get("lookup_date"),
     )
     # Admission is checked before constructing the fixed HTTPS opener, including on every attempt.
     from moj_discovery.live_intent import verify_provider_receipt
@@ -174,7 +229,11 @@ def run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt)
         ) as quota,
         ApiFootballClient(secret, quota, scope) as client,
     ):
-        result = inspect_provider(config, client)
+        result = (
+            inspect_fixture_lookup(client)
+            if scope.lookup_date
+            else inspect_provider(config, client)
+        )
     report = {
         **result,
         "run_id": intent.run_id,
@@ -200,6 +259,23 @@ def run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt)
         output.write(data)
         output.flush()
         os.fsync(output.fileno())
+    if scope.lookup_date and result["fixture_candidates"]:
+        from moj_discovery.secrets_local import controlling_tty
+
+        with controlling_tty() as terminal:
+            terminal.write("Lookup only. Select the exact match ID for a separate fixture probe.\n")
+            for row in result["fixture_candidates"]:
+                terminal.write(
+                    str(row["fixture_id"])
+                    + ": "
+                    + row["home"]["name"]
+                    + " - "
+                    + row["away"]["name"]
+                    + " ("
+                    + row["kickoff_utc"]
+                    + ")\n"
+                )
+            terminal.flush()
     return result
 
 

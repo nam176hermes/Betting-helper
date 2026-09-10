@@ -74,6 +74,7 @@ def _report(result: dict[str, Any]) -> None:
         "SOURCE_MISMATCH",
         "PROVIDER_UNAVAILABLE",
         "REVIEW_REQUIRED",
+        "EXACT_FIXTURE_PROBE_REQUIRED",
     }
     if type(codes) is not list or any(type(c) is not str or c not in allowed_codes for c in codes):
         raise ValueError("E_KEY_LAUNCHER_RESULT")
@@ -97,6 +98,10 @@ def main(argv: list[str] | None = None) -> int:
         preview = intent.public
         print("STAGE: " + STAGES[args.action])
         print("FIXTURE_IDS: " + ",".join(str(i) for i in preview["fixture_ids"]))
+        if "lookup_date" in preview:
+            print("LOOKUP_ONLY_LEAGUE: " + str(config.public["provider"]["league_id"]))
+            print("LOOKUP_ONLY_SEASON: " + str(config.public["provider"]["season"]))
+            print("LOOKUP_ONLY_DATE_UTC: " + preview["lookup_date"])
         print(f"MAX_DURATION_SECONDS: {preview['max_duration_seconds']}")
         print(f"MAX_HTTP_ATTEMPTS: {preview['max_http_attempts']}")
         print("Type " + PHRASES[args.action] + " to confirm this exact scope:")

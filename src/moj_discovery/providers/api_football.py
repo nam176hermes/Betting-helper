@@ -120,6 +120,7 @@ def _request_worker() -> None:
     url, timeout = value["url"], value["timeout"]
     paths = (
         r"(?:/status|/leagues\?id=[1-9][0-9]*&season=[0-9]{4}"
+        r"|/fixtures\?league=[1-9][0-9]*&season=[0-9]{4}&date=[0-9]{4}-[0-9]{2}-[0-9]{2}"
         r"|/fixtures\?ids=[1-9][0-9]*(?:-[1-9][0-9]*){0,19})"
     )
     if (

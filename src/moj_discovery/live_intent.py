@@ -114,6 +114,12 @@ def _validate(intent: RunIntent, config: LiveConfig, now: datetime) -> dict[str,
             raise ValueError()
         value, cfg = intent.public, config.public
         schema_validate(value, "run-intent")
+        lookup = value.get("lookup_date")
+        if lookup is not None:
+            from datetime import date
+
+            if date.fromisoformat(lookup).isoformat() != lookup:
+                raise ValueError()
         validate_intent_window(
             datetime.fromisoformat(value["issued_at"]),
             datetime.fromisoformat(value["expires_at"]),
@@ -123,7 +129,9 @@ def _validate(intent: RunIntent, config: LiveConfig, now: datetime) -> dict[str,
             value["config_sha256"] != config.sha256
             or value["source_tree_sha256"] != source_tree_hash(intent.root)
             or tuple(sorted(value["fixture_ids"])) != config.fixture_ids
-            or not 1 <= len(config.fixture_ids) <= cfg["runtime"]["max_matches"]
+            or not (0 if lookup is not None else 1)
+            <= len(config.fixture_ids)
+            <= cfg["runtime"]["max_matches"]
             or cfg["provider"]["league_id"] is None
             or cfg["provider"]["season"] is None
             or cfg["provider"]["events_fallback_enabled"]
@@ -304,7 +312,12 @@ def verify_provider_receipt(receipt: RunIntentReceipt, scope: ProviderScope, pur
         or scope.max_attempts > value["max_http_attempts"]
         or scope.deadline_mono > receipt.deadline_mono
         or scope.events_fixture_ids
-        or scope.lookup_date is not None
-        or purpose not in {"STATUS", "COVERAGE", "BUNDLE"}
+        or scope.lookup_date != value.get("lookup_date")
+        or purpose
+        not in (
+            {"STATUS", "LOOKUP"}
+            if scope.lookup_date is not None
+            else {"STATUS", "COVERAGE", "BUNDLE"}
+        )
     ):
         raise ValueError("E_INTENT_PROVIDER_SCOPE")
