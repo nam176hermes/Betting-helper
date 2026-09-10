@@ -19,8 +19,12 @@ to the chosen tab and narrow observed fixture fields before real use; this
 bootstrap observation has not been executed or qualified.
 
 PB-18's exact-fixture provider probe is now accepted for fixture 1635632. The
-next missing user input is the public Mise-o-jeu match route in the dedicated
-profile. Do not request another API key for this operator step. The existing
+user selected this public operator route:
+`https://miseojeuplus.espacejeux.com/sports/en/sports/event/1361565/soccer/european/uefa-champions-league/bodo-glimt-at-bayern-munich`.
+Event ID 1361565 is parsed from that user-supplied route, not observed DOM.
+Its binding to provider fixture 1635632, HOME/AWAY orientation and settlement
+remain unverified. The dedicated profile and chosen tab are not yet confirmed.
+Do not request another API key for this operator step. The existing
 OPERATOR_DISCOVERY intent declaration is not itself an executable or reviewed
 bootstrap capture path. Its exact-tab execution/field map still needs preparation
 and external review before requesting observation permission or reading a tab.
