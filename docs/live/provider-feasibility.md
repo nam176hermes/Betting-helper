@@ -1,7 +1,18 @@
 # Provider feasibility — PB-18
 
-Status: WAITING_FOR_USER_SECRET and verified provider fixture ID.
-PROVIDER_PROBE_PASS: NOT_EXECUTED. Real provider attempts: 0.
+Status: WAITING_FOR_USER_SECRET for a fresh user-terminal diagnostic probe;
+the provider fixture ID remains unverified. PROVIDER_PROBE_PASS: FAIL.
+Two user-confirmed runs each attempted STATUS once and stopped with SCHEMA_ERROR.
+KEY_CHECK remains NOT_CHECKED, not FAILED; neither a bad credential nor a provider
+outage has been established. No raw response was retained, so the failed validator
+cannot be recovered from those old records. Real attempts by this worker: 0.
+
+The client now reports a fixed PROVIDER_DIAGNOSTIC validator label through both
+lookup and exact-fixture probes. It never includes provider values, raw JSON,
+headers or exception text. This change preserves rejection, quota, retry and
+authorization rules; it does not claim to repair an unobserved response shape.
+Old failed observations remain in their private run directories. A fresh intent
+and own-terminal confirmation are required to observe the new diagnostic.
 
 User-selected scope: Champions League 2026/27, Bayern München – Bodø/Glimt,
 2026-09-10. Public API documentation identifies league 2 and season 2026;

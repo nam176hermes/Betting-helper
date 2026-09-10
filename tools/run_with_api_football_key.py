@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 
 from moj_discovery.live_config import LiveConfig, load_live_config
+from moj_discovery.providers.api_football import PROVIDER_DIAGNOSTICS
 from moj_discovery.secrets_local import KEY_NAME, controlling_tty, obtain_api_football_key
 
 PHRASES = {"probe": "ALLOW PROVIDER PROBE", "live-readonly": "START READ ONLY"}
@@ -78,10 +79,14 @@ def _report(result: dict[str, Any]) -> None:
     }
     if type(codes) is not list or any(type(c) is not str or c not in allowed_codes for c in codes):
         raise ValueError("E_KEY_LAUNCHER_RESULT")
+    diagnostic = result.get("PROVIDER_DIAGNOSTIC", "NONE")
+    if type(diagnostic) is not str or diagnostic not in PROVIDER_DIAGNOSTICS:
+        raise ValueError("E_KEY_LAUNCHER_RESULT")
     for key, value in selected.items():
         print(f"{key}: {value}")
     print(f"REQUEST_ATTEMPTS: {attempts}")
     print("MISSING_CAPABILITIES: " + (", ".join(codes) or "NONE"))
+    print("PROVIDER_DIAGNOSTIC: " + diagnostic)
 
 
 def main(argv: list[str] | None = None) -> int:

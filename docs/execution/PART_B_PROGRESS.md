@@ -17,9 +17,10 @@ checkpoint records whether final verification has completed on the frozen bytes.
 
 External gates:
 
-- PB-18 WAITING_FOR_USER_SECRET: Champions League 2026/27, Bayern München –
-  Bodø/Glimt, 2026-09-10 selected. Lookup config is disabled, league 2/season 2026;
-  actual provider fixture ID, own-terminal confirmation and key entry remain.
+- PB-18 WAITING_FOR_USER_SECRET: two user-terminal probes each stopped after one
+  STATUS request with SCHEMA_ERROR; key validity remains NOT_CHECKED. Fixed safe
+  validator diagnostics are implemented and need a fresh confirmed terminal run.
+  Lookup remains league 2/season 2026/date 2026-09-10; fixture ID is unverified.
 - PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
   No real selectors, IDs or settlement are guessed; the admitted index is empty.
@@ -37,5 +38,6 @@ Full-source mypy retains 25 pre-existing errors in three unchanged governance
 files, reproduced at the starting commit; scoped Part B checks are separate.
 
 Real provider attempts by this worker: 0. Real operator captures: 0.
+Observed user-terminal provider attempts: 2 (two failed STATUS calls).
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.

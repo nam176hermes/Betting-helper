@@ -14,6 +14,22 @@ from tools import run_with_api_football_key as launcher
 TEST_SECRET = "TEST_ONLY_secret+/%_never_real"  # noqa: S105 -- synthetic leak sentinel
 
 
+@pytest.mark.parametrize("diagnostic", [TEST_SECRET, [TEST_SECRET], None])
+def test_report_rejects_nonfinite_diagnostic_before_output(diagnostic: Any, capsys: Any) -> None:
+    with pytest.raises(ValueError, match="E_KEY_LAUNCHER_RESULT"):
+        launcher._report(
+            {
+                "KEY_CHECK": "NOT_CHECKED",
+                "SUBSCRIPTION_CHECK": "UNKNOWN",
+                "PROBE_RESULT": "FAIL",
+                "REQUEST_ATTEMPTS": 1,
+                "MISSING_CAPABILITIES": ["PROVIDER_UNAVAILABLE"],
+                "PROVIDER_DIAGNOSTIC": diagnostic,
+            }
+        )
+    assert capsys.readouterr().out == ""
+
+
 def test_repr_and_serialization_are_closed(capsys: Any) -> None:
     secret = SecretValue(TEST_SECRET)
     assert repr(secret) == str(secret) == format(secret) == "[REDACTED]"

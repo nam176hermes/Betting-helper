@@ -1,6 +1,7 @@
 import copy
 import io
 import json
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
@@ -75,6 +76,76 @@ def make_client(tmp_path: Any, clock: Any, replies: Any, **scope_values: Any) ->
         sleep=clock.advance,
     )
     return client, quota, http
+
+
+@pytest.mark.parametrize(
+    "change,diagnostic",
+    [
+        ("json", "INVALID_JSON"),
+        ("envelope", "ENVELOPE_SHAPE"),
+        ("errors", "ERRORS_SHAPE"),
+        ("missing_paging", "PAGING_MISSING"),
+        ("paging", "PAGING_INVALID"),
+        ("response", "STATUS_RESPONSE_SHAPE"),
+        ("results", "STATUS_RESULT_COUNT"),
+        ("encoding", "CONTENT_ENCODING"),
+        ("length", "CONTENT_LENGTH_MISMATCH"),
+        ("fields", "STATUS_FIELDS"),
+        ("auth", "NONE"),
+    ],
+)
+@pytest.mark.parametrize("lookup", [True, False])
+def test_probe_reports_finite_schema_diagnostics(
+    tmp_path: Any, fake_clock: Any, change: str, diagnostic: str, lookup: bool
+) -> None:
+    from moj_discovery.live_config import load_live_config
+    from tools.probe_football_provider import inspect_fixture_lookup, inspect_provider
+    from tools.run_with_api_football_key import _report
+
+    raw: Any = copy.deepcopy(STATUS)
+    headers = {}
+    if change == "json":
+        raw = b"PRIVATE_INVALID_JSON"
+    elif change == "envelope":
+        raw = []
+    elif change == "errors":
+        raw["errors"] = "PRIVATE_ERROR"
+    elif change == "missing_paging":
+        del raw["paging"]
+    elif change == "paging":
+        raw["paging"]["total"] = 2
+    elif change == "response":
+        raw["response"] = []
+    elif change == "results":
+        raw["results"] = 0
+    elif change == "encoding":
+        headers["Content-Encoding"] = "PRIVATE_ENCODING"
+    elif change == "length":
+        headers["Content-Length"] = "1"
+    elif change == "fields":
+        raw["response"]["subscription"] = []
+    elif change == "auth":
+        raw["errors"] = {"token": "PRIVATE_AUTH_ERROR"}
+    client, quota, http = make_client(
+        tmp_path,
+        fake_clock,
+        [Reply(raw, headers=headers)],
+        **({"fixture_ids": (), "lookup_date": "2026-09-09"} if lookup else {}),
+    )
+    with quota, client:
+        result = (
+            inspect_fixture_lookup(client)
+            if lookup
+            else inspect_provider(
+                load_live_config(Path("config/live-batched.example.json")), client
+            )
+        )
+        assert result["PROVIDER_DIAGNOSTIC"] == diagnostic
+        assert result["PROBE_RESULT"] == "FAIL"
+        assert result["KEY_CHECK"] == ("FAILED" if change == "auth" else "NOT_CHECKED")
+        assert len(http.calls) == quota.count_attempts() == result["REQUEST_ATTEMPTS"] == 1
+        assert "PRIVATE_" not in json.dumps(result)
+        _report(result)
 
 
 @pytest.mark.parametrize("mutation", [None, "date", "league", "control"])

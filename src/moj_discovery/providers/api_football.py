@@ -35,12 +35,32 @@ from .quota import HEADER_NAMES, Denied, QuotaLedger
 
 BASE = "https://v3.football.api-sports.io"
 MAX_BODY = 8 * 1024 * 1024
+PROVIDER_DIAGNOSTICS = frozenset(
+    {
+        "NONE",
+        "CONTENT_ENCODING",
+        "CONTENT_LENGTH_MISMATCH",
+        "INVALID_JSON",
+        "ENVELOPE_SHAPE",
+        "ERRORS_SHAPE",
+        "PAGING_MISSING",
+        "PAGING_INVALID",
+        "STATUS_RESPONSE_SHAPE",
+        "STATUS_RESULT_COUNT",
+        "RESULT_ROWS",
+        "FIXTURE_IDS",
+        "STATUS_FIELDS",
+    }
+)
 
 
 class ProviderError(ValueError):
-    def __init__(self, code: str, retry_after: float | None = None):
+    def __init__(self, code: str, retry_after: float | None = None, *, diagnostic: str = "NONE"):
+        if diagnostic not in PROVIDER_DIAGNOSTICS:
+            raise ValueError("E_PROVIDER_DIAGNOSTIC")
         super().__init__(code)
         self.code, self.retry_after = code, retry_after
+        self.diagnostic = diagnostic
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -326,7 +346,7 @@ class ApiFootballClient:
             raise ProviderError("REDIRECT")
         encoding = response.headers.get("Content-Encoding", "identity")
         if encoding.lower() not in {"identity", ""}:
-            raise ProviderError("SCHEMA_ERROR")
+            raise ProviderError("SCHEMA_ERROR", diagnostic="CONTENT_ENCODING")
         length = response.headers.get("Content-Length")
         if length is not None and (
             not re.fullmatch(r"[0-9]{1,10}", length) or int(length) > MAX_BODY
@@ -351,14 +371,18 @@ class ApiFootballClient:
                 break
             chunks.append(chunk)
         if length is not None and size != int(length):
-            raise ProviderError("SCHEMA_ERROR")
+            raise ProviderError("SCHEMA_ERROR", diagnostic="CONTENT_LENGTH_MISMATCH")
         return b"".join(chunks)
 
     def _decode(self, raw: bytes, purpose: str, ids: tuple[int, ...]) -> dict[str, Any]:
+        # Only fixed validator labels escape; never retain response values or exception text.
+        diagnostic = "INVALID_JSON"
         try:
             body = parse_strict_json(raw)
+            diagnostic = "ENVELOPE_SHAPE"
             if type(body) is not dict:
                 raise ProviderError("SCHEMA_ERROR")
+            diagnostic = "ERRORS_SHAPE"
             errors = body.get("errors")
             if errors not in ({}, []):
                 if isinstance(errors, dict) and set(errors) & {"token", "access", "authentication"}:
@@ -383,6 +407,7 @@ class ApiFootballClient:
             if has_echo(body):
                 raise ProviderError("SECRET_ECHO")
             paging = body.get("paging")
+            diagnostic = "PAGING_MISSING" if "paging" not in body else "PAGING_INVALID"
             if (
                 type(paging) is not dict
                 or type(paging.get("current")) is not int
@@ -393,11 +418,11 @@ class ApiFootballClient:
                 raise ProviderError("SCHEMA_ERROR")
             rows = body.get("response")
             if purpose == "STATUS":
-                if (
-                    type(rows) is not dict
-                    or type(body.get("results")) is not int
-                    or body["results"] != 1
-                ):
+                diagnostic = "STATUS_RESPONSE_SHAPE"
+                if type(rows) is not dict:
+                    raise ProviderError("SCHEMA_ERROR")
+                diagnostic = "STATUS_RESULT_COUNT"
+                if type(body.get("results")) is not int or body["results"] != 1:
                     raise ProviderError("SCHEMA_ERROR")
             elif (
                 type(rows) is not list
@@ -405,18 +430,21 @@ class ApiFootballClient:
                 or body["results"] != len(rows)
                 or any(type(row) is not dict for row in rows)
             ):
-                raise ProviderError("SCHEMA_ERROR")
+                raise ProviderError("SCHEMA_ERROR", diagnostic="RESULT_ROWS")
             if purpose in {"BUNDLE", "LOOKUP"}:
+                diagnostic = "FIXTURE_IDS"
                 returned = [_positive_id(row.get("fixture", {}).get("id")) for row in rows]
                 if len(returned) != len(set(returned)) or (
                     purpose == "BUNDLE" and not set(returned) <= set(ids)
                 ):
                     raise ProviderError("SCHEMA_ERROR")
             return body
-        except ProviderError:
+        except ProviderError as error:
+            if error.code == "SCHEMA_ERROR" and error.diagnostic == "NONE":
+                error.diagnostic = diagnostic
             raise
         except Exception:
-            raise ProviderError("SCHEMA_ERROR") from None
+            raise ProviderError("SCHEMA_ERROR", diagnostic=diagnostic) from None
 
     def _request(
         self, purpose: str, path: str, ids: tuple[int, ...] = ()
@@ -546,6 +574,7 @@ class ApiFootballClient:
                             "attempt_id": reservation.attempt_id,
                             "purpose": purpose,
                             "outcome": outcome,
+                            "diagnostic": "NONE" if failure is None else failure.diagnostic,
                             "source_kind": self.scope.source_kind,
                         }
                     )
@@ -600,7 +629,7 @@ class ApiFootballClient:
                 remaining = limit - used
             return SafeStatus(plan, active, expires, limit, remaining)
         except Exception:
-            raise ProviderError("SCHEMA_ERROR") from None
+            raise ProviderError("SCHEMA_ERROR", diagnostic="STATUS_FIELDS") from None
 
     def get_fixture_bundle(self, ids: Sequence[int]) -> ProviderResponse:
         ordered = tuple(sorted({_positive_id(i) for i in ids}))

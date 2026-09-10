@@ -34,6 +34,7 @@ def inspect_fixture_lookup(client: ApiFootballClient) -> ProbeResult:
         PROBE_RESULT="PARTIAL",
         REQUEST_ATTEMPTS=0,
         MISSING_CAPABILITIES=["EXACT_FIXTURE_PROBE_REQUIRED"],
+        PROVIDER_DIAGNOSTIC="NONE",
         fixture_candidates=[],
     )
     try:
@@ -71,7 +72,17 @@ def inspect_fixture_lookup(client: ApiFootballClient) -> ProbeResult:
                 }
             )
         result["fixture_candidates"] = rows
-    except (ProviderError, ValueError, KeyError, TypeError):
+    except ProviderError as error:
+        result.update(
+            PROBE_RESULT="FAIL",
+            PROVIDER_DIAGNOSTIC=error.diagnostic,
+            MISSING_CAPABILITIES=[
+                "AUTH_FAILED" if error.code == "AUTH_FAILED" else "PROVIDER_UNAVAILABLE"
+            ],
+        )
+        if error.code == "AUTH_FAILED":
+            result["KEY_CHECK"] = "FAILED"
+    except (ValueError, KeyError, TypeError):
         result.update(PROBE_RESULT="FAIL", MISSING_CAPABILITIES=["PROVIDER_UNAVAILABLE"])
     result["REQUEST_ATTEMPTS"] = client.http_attempts
     result["source_kind"] = client.scope.source_kind
@@ -87,6 +98,7 @@ def inspect_provider(config: LiveConfig, client: ApiFootballClient) -> ProbeResu
         "PROBE_RESULT": "FAIL",
         "REQUEST_ATTEMPTS": 0,
         "MISSING_CAPABILITIES": [],
+        "PROVIDER_DIAGNOSTIC": "NONE",
     }
     missing: set[str] = set()
     cfg = config.public
@@ -147,6 +159,7 @@ def inspect_provider(config: LiveConfig, client: ApiFootballClient) -> ProbeResu
             )
             previous = projected.states
     except ProviderError as error:
+        result["PROVIDER_DIAGNOSTIC"] = error.diagnostic
         if error.code == "AUTH_FAILED":
             result["KEY_CHECK"] = "FAILED"
         missing.add(
