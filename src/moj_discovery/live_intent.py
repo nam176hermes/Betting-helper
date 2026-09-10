@@ -86,6 +86,7 @@ class RunIntent:
     _data: dict[str, Any] = field(repr=False)
     sha256: str
     root: Path = field(repr=False, default=ROOT)
+    original_json: str | None = field(default=None, repr=False)
 
     @property
     def public(self) -> dict[str, Any]:
@@ -169,7 +170,7 @@ def load_run_intent(path: Path, config: LiveConfig, stage: str, *, root: Path = 
         value = parse_strict_json(raw)
         if type(value) is not dict or value["stage"] != stage or stage not in PHRASES:
             raise ValueError()
-        intent = RunIntent(value, hashlib.sha256(raw).hexdigest(), root)
+        intent = RunIntent(value, hashlib.sha256(raw).hexdigest(), root, raw.decode())
         _validate(intent, config, datetime.now(UTC))
         if stage == "LIVE_READ_ONLY" and relative != config.public["gates"]["live_intent_path"]:
             raise ValueError()

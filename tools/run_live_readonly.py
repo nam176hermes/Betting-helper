@@ -58,7 +58,7 @@ def enable_local_repair(service: LiveService) -> Callable[[], None]:
             scope.__exit__(None, None, None)
 
     def ready() -> None:
-        line = terminal.readline(64)
+        line = terminal.readline(256)
         if line == "":
             close()
         elif line.strip() == "PAIR":
@@ -67,10 +67,25 @@ def enable_local_repair(service: LiveService) -> Callable[[], None]:
             except ValueError:
                 terminal.write("PAIRING_UNAVAILABLE: existing ticket, cap or expired session.\n")
                 terminal.flush()
+        elif line.startswith("CHECK "):
+            try:
+                _, fixture, home, draw, away = line.split()
+                service.record_manual_ft_check(int(fixture), (home, draw, away))
+                terminal.write("FT_CHECK_RECORDED\n")
+            except (ValueError, KeyError, StopIteration):
+                terminal.write(
+                    "FT_CHECK_REFUSED: not current, mismatched, duplicate or outside scope.\n"
+                )
+            terminal.flush()
 
     try:
         show_local_pairing(service)
         terminal.write("After worker restart, type PAIR here for a fresh local ticket.\n")
+        terminal.write(
+            "Compare the exact fixture, market and HOME/DRAW/AWAY selection IDs in both views.\n"
+            "Then record the visible prices: CHECK fixture_id home_price draw_price away_price\n"
+            "Record three distinct current FT captures per fixture, at least 30 seconds apart.\n"
+        )
         terminal.flush()
         loop.add_reader(descriptor, ready)
     except BaseException:

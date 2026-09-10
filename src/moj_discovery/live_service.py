@@ -16,14 +16,16 @@ from contextlib import ExitStack
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import UUID, uuid4, uuid5
+
+import rfc8785
 
 from .live_config import LiveConfig, private_path
 from .live_contracts import event_hash, schema_validate, validate_live_record
 from .live_receiver import LiveReceiver, serve_live_receiver
 from .live_state import request_reference
-from .live_store import LiveStore
+from .live_store import MAX_BYTES, LiveStore
 from .live_wire import PairingAuthority
 from .operator_profile import ExtractionProfile, activate_profile
 from .provider_protocol import ProviderScope
@@ -198,7 +200,52 @@ class LiveService:
             raise ValueError("E_LIVE_RUN_RESTART_REQUIRES_ADMISSION")
         self.directory.mkdir(mode=0o700, parents=True)
         self._started_utc = self._utc().isoformat().replace("+00:00", "Z")
+        self._started_mono = self._mono()
+        self._manual_checks: list[dict[str, Any]] = []
         try:
+            from .live_intent import RunIntentReceipt
+
+            receipt = (
+                cast(RunIntentReceipt, admitted.provider_receipt)
+                if admitted.source_kind == "OBSERVED_REAL"
+                else None
+            )
+            self._artifact(
+                "intent.json",
+                {
+                    "intent": receipt.intent.public if receipt is not None else None,
+                    "original_json": receipt.intent.original_json if receipt is not None else None,
+                    "intent_sha256": receipt.intent.sha256 if receipt is not None else None,
+                    "consumed_at_utc": receipt.consumed_at_utc if receipt is not None else None,
+                    "confirmation_kind": receipt.confirmation_kind
+                    if receipt is not None
+                    else "MOCK",
+                },
+            )
+            self._artifact(
+                "config-public.json",
+                {
+                    "value": cfg,
+                    "original_json": config.original_json,
+                    "original_sha256": config.sha256,
+                    "canonical_sha256": hashlib.sha256(rfc8785.dumps(cfg)).hexdigest(),
+                },
+            )
+            self._artifact(
+                "source-bindings.json",
+                {
+                    "run_id": admitted.run_id,
+                    "source_kind": admitted.source_kind,
+                    "source_tree_sha256": admitted.source_tree_sha256,
+                    "profile": admitted.profile.public,
+                    "profile_sha256": admitted.profile.profile_hash,
+                    "bindings": list(admitted.bindings),
+                    "evidence_refs": cast(Any, admitted.security_evidence).evidence.paths
+                    if receipt is not None
+                    else {},
+                },
+            )
+            self._artifact("manual-ft-checks.jsonl", [], lines=True)
             self.store = self._resources.enter_context(
                 LiveStore(
                     self.directory / "live.sqlite3",
@@ -207,6 +254,8 @@ class LiveService:
                     config_hash=config.sha256,
                     started_utc=self._started_utc,
                     max_matches=cfg["runtime"]["max_matches"],
+                    # Reserve room for bounded run metadata, request outcomes and SQLite journal.
+                    max_bytes=MAX_BYTES - 16 * 1024 * 1024,
                 )
             )
             for binding in admitted.bindings:
@@ -280,6 +329,73 @@ class LiveService:
         except BaseException:
             self._resources.close()
             raise
+
+    def _artifact(self, name: str, value: Any, *, lines: bool = False) -> None:
+        raw = (
+            b"".join(rfc8785.dumps(row) + b"\n" for row in value)
+            if lines
+            else rfc8785.dumps(value) + b"\n"
+        )
+        if len(raw) > 1024 * 1024:
+            raise ValueError("E_LIVE_RUN_ARTIFACT_CAP")
+        fd = os.open(
+            self.directory / name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600
+        )
+        with os.fdopen(fd, "wb") as output:
+            output.write(raw)
+            output.flush()
+            os.fsync(output.fileno())
+
+    def record_manual_ft_check(self, fixture_id: int, prices: tuple[str, str, str]) -> None:
+        """Record an explicit terminal comparison against a current, committed FT book."""
+        from .secrets_local import controlling_tty
+
+        with controlling_tty(), self._lock:
+            if self._closed or self._reason or len(self._manual_checks) >= 30:
+                raise ValueError("E_LIVE_MANUAL_CHECK_STOPPED")
+            binding = next(
+                b for b in self.admitted.bindings if b["provider_fixture_id"] == fixture_id
+            )
+            view = self.view(binding["binding_id"])
+            book = view["books"]["FT"]
+            stamp = self._utc()
+            if (
+                type(fixture_id) is not int
+                or view["market_states"]["FT"]["status"] != "CURRENT_DISPLAY_ONLY"
+                or tuple(book["selections"][s]["decimal_odds"] for s in ("HOME", "DRAW", "AWAY"))
+                != prices
+                or not 0
+                <= (stamp - datetime.fromisoformat(book["observed_at_utc"])).total_seconds()
+                <= 30
+                or any(
+                    r["binding_id"] == binding["binding_id"]
+                    and (
+                        r["capture_event_hash"] == view["book_meta"]["FT"]["event_hash"]
+                        or (stamp - datetime.fromisoformat(r["checked_at_utc"])).total_seconds()
+                        < 30
+                    )
+                    for r in self._manual_checks
+                )
+            ):
+                raise ValueError("E_LIVE_MANUAL_CHECK_NOT_CURRENT_OR_DISTINCT")
+            row = {
+                "confirmation_kind": "LOCAL_TTY_USER_CHECK",
+                "source_kind": self.admitted.source_kind,
+                "run_id": self.admitted.run_id,
+                "binding_id": binding["binding_id"],
+                "capture_event_hash": view["book_meta"]["FT"]["event_hash"],
+                "checked_at_utc": stamp.isoformat(),
+                "selections": book["selections"],
+                "market_id": book["market_id"],
+            }
+            fd = os.open(
+                self.directory / "manual-ft-checks.jsonl", os.O_WRONLY | os.O_APPEND | os.O_NOFOLLOW
+            )
+            with os.fdopen(fd, "wb") as output:
+                output.write(rfc8785.dumps(row) + b"\n")
+                output.flush()
+                os.fsync(output.fileno())
+            self._manual_checks.append(row)
 
     def _append(self, kind: str, payload: dict[str, Any]) -> dict[str, Any]:
         with self._lock:
@@ -627,8 +743,54 @@ class LiveService:
                     for binding in self.admitted.bindings:
                         self.control(binding["binding_id"], "USER_STOP", "STOPPED")
                     await self.publish()
-                self.store.close_run(self._utc().isoformat().replace("+00:00", "Z"), self._reason)
+                closed_utc = self._utc().isoformat().replace("+00:00", "Z")
+                self.store.close_run(closed_utc, self._reason)
                 count = self.quota.count_attempts()
+                rows = self.quota.db.execute(
+                    "SELECT r.attempt_id,r.purpose,r.reserved_at_utc,"
+                    "r.reserved_mono_us,o.result_code "
+                    "FROM quota_reservations r LEFT JOIN quota_outcomes o USING(attempt_id) "
+                    "WHERE r.scope_id=? ORDER BY r.reserved_mono_us,r.attempt_id",
+                    (self.admitted.run_id,),
+                ).fetchall()
+                requests = [
+                    dict(
+                        zip(
+                            (
+                                "attempt_id",
+                                "purpose",
+                                "reserved_at_utc",
+                                "reserved_mono_us",
+                                "outcome",
+                            ),
+                            row,
+                            strict=True,
+                        )
+                    )
+                    for row in rows
+                ]
+                self._artifact("requests.jsonl", requests, lines=True)
+                self._artifact(
+                    "result.json",
+                    {
+                        "schema_version": "part-b-recorded-run/v1",
+                        "run_id": self.admitted.run_id,
+                        "source_kind": self.admitted.source_kind,
+                        "status": "STOPPED",
+                        "reason": self._reason,
+                        "started_at_utc": self._started_utc,
+                        "closed_at_utc": closed_utc,
+                        "duration_us": max(0, int((self._mono() - self._started_mono) * 1000000)),
+                        "reserved_attempts": count,
+                        "http_attempts": self.client.http_attempts,
+                        "real_http_attempts": self.client.http_attempts
+                        if self.admitted.source_kind == "OBSERVED_REAL"
+                        else 0,
+                        "authenticated": self._bootstrapped,
+                        "model_enabled": False,
+                        "money_ready": False,
+                    },
+                )
                 with (self.directory / "provider-attempts.json").open("x") as output:
                     json.dump(
                         {

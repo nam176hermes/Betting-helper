@@ -2,7 +2,7 @@
 
 import copy
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
 
@@ -36,6 +36,7 @@ def private_path(name: str, *, root: Path = ROOT, must_exist: bool = False) -> P
 class LiveConfig:
     _data: dict[str, Any]
     sha256: str
+    original_json: str | None = field(default=None, repr=False)
 
     @property
     def public(self) -> dict[str, Any]:
@@ -104,6 +105,6 @@ def load_live_config(path: Path, require_enabled: bool = False) -> LiveConfig:
                 != operator["profile_evidence_hash"]
             ):
                 raise ValueError("E_LIVE_CONFIG_PROFILE_HASH")
-        return LiveConfig(copy.deepcopy(value), hashlib.sha256(raw).hexdigest())
+        return LiveConfig(copy.deepcopy(value), hashlib.sha256(raw).hexdigest(), raw.decode())
     except Exception:
         raise ValueError("E_LIVE_CONFIG") from None

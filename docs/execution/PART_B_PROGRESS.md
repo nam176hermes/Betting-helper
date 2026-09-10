@@ -21,3 +21,5 @@ PB-17 passed 39 required cases, 356 Python tests, seven TypeScript tests and
 PART_B_MOCK_PASS: PASS_AT_PB17_COMMIT; final changed candidate requires a rerun.
 Real provider attempts: 0. Real operator capture: NOT_RUN.
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
+
+PB-21/PB-22 recording, manual comparisons and staged replay qualification code tested locally. Real one/three/five acceptance remains WAITING_REVIEW / WAITING_MATCH_WINDOW. Fresh final source-bound campaign pending.
