@@ -108,7 +108,7 @@ export class LiveTransport {
     if (!this.session?.ready || this.session.role !== "UI_SUBSCRIBER") return Promise.reject(new Error("E_LIVE_TRANSPORT_ROLE"));
     return this.send(kind, {run_id: this.session.runId, ...(kind === "STOP_SESSION" ? {} : {binding_id: bindingId})});
   }
-  sendHealth(bindingId: string | null, code: "HIDDEN" | "NAVIGATED" | "DOM_UNSTABLE" | "PROFILE_EXPIRED" | "SPOOL_CAPACITY" | "WORKER_RESTART"): Promise<void> {
+  sendHealth(bindingId: string | null, code: "HIDDEN" | "NAVIGATED" | "DOM_UNSTABLE" | "PROFILE_EXPIRED" | "SPOOL_CAPACITY" | "WORKER_RESTART" | "CAPTURE_REJECTED"): Promise<void> {
     if (!this.session?.ready || this.session.role !== "CAPTURE_PRODUCER") return Promise.reject(new Error("E_LIVE_TRANSPORT_ROLE"));
     return this.send("HEALTH", {run_id: this.session.runId, binding_id: bindingId, code});
   }

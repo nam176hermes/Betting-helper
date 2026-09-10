@@ -195,6 +195,29 @@ class QuotaLedger:
             ).fetchone(),
         )
 
+    def display_remaining(self, now_utc: datetime, now_mono: float) -> dict[str, int | None]:
+        with self._mutex:
+            self._owner()
+            day = now_utc.astimezone(UTC).date().isoformat()
+            used_day = self.db.execute(
+                "SELECT count(*) FROM quota_reservations WHERE utc_day=?", (day,)
+            ).fetchone()[0]
+            used_minute = self.db.execute(
+                "SELECT count(*) FROM quota_reservations WHERE boot_id=? AND reserved_mono_us>?",
+                (self.boot_id, int((now_mono - 60) * 1000000)),
+            ).fetchone()[0]
+            known = self._latest_quota()
+            return {
+                "session_remaining": max(0, self.session_cap - self.count_attempts()),
+                "daily_remaining": max(0, self.daily_cap - used_day),
+                "minute_remaining": max(0, self.minute_cap - used_minute),
+                "provider_remaining": int(known["observed_daily_remaining"])
+                if known is not None
+                and known["utc_day"] == day
+                and known["boot_id"] == self.boot_id
+                else None,
+            }
+
     def _provider_guard(self, purpose: str, day: str, mono_us: int) -> Denied | None:
         known = self._latest_quota()
         latest = self.db.execute(

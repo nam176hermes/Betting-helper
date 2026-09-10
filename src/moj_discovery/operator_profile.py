@@ -22,6 +22,8 @@ CAPTURE_FILES = (
     "extension/src/live/dom_reader.ts",
     "extension/src/live/capture.ts",
     "extension/src/live/background.ts",
+    "extension/src/live/panel.ts",
+    "extension/src/live/workspace.ts",
     "extension/src/live/contracts.ts",
     "extension/src/live/protocol.ts",
     "extension/src/live/spool.ts",
@@ -30,6 +32,7 @@ CAPTURE_FILES = (
     "src/moj_discovery/operator_profile.py",
     "contracts/live_readonly/v1/operator-profile.schema.json",
     "contracts/live_readonly/v1/records.schema.json",
+    "contracts/live_readonly/v1/wire.schema.json",
 )
 EXCLUDED = re.compile(
     r"password|passwd|token|cookie|account|balance|betslip|cashout|login|email|username|wallet|form|input|textarea|iframe|contenteditable",

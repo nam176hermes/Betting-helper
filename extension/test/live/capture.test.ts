@@ -55,7 +55,7 @@ void test("complete stable book maps only observed labels; ambiguous content fai
     assert.throws(() => assembleCapture(changed, plan, "a".repeat(64), "1"));
   }
   for (const changes of [{home_id: "A"}, {horizon_label: "FT"}, {draw_odds: "1.0"}, {draw_odds: "3,20"},
-    {draw_odds: "3.2000001"}, {home_team: "x\u0000"}, {home_selection: "SD"}]) {
+    {draw_odds: "3.2000001"}, {home_team: "x\u0000"}, {home_selection: "SD"}, {score: "101:0"}]) {
     const changed = {...fields, ...changes};
     assert.throws(() => assembleCapture({...response(), first: changed, second: changed}, plan, "a".repeat(64), "1"));
   }

@@ -58,6 +58,9 @@ def validate_frame(value: object) -> dict[str, Any]:
                     raise ValueError()
         elif frame["message_type"] == "PROJECTION":
             validate_live_record(body["binding"], "FixtureBinding")
+            health = validate_live_record(body["health"], "HealthChange")
+            if health["binding_id"] not in {None, body["binding"]["binding_id"]}:
+                raise ValueError()
             if body["provider_state"] is not None:
                 state = validate_live_record(body["provider_state"], "ProviderState")
                 if state["fixture_id"] != body["binding"]["provider_fixture_id"]:
@@ -72,6 +75,19 @@ def validate_frame(value: object) -> dict[str, Any]:
                 ):
                     raise ValueError()
                 horizons.add(book["horizon"])
+            if "display" in body and set(body["display"]["markets"]) != horizons:
+                raise ValueError()
+            if "capture_scope" in body:
+                scope = body["capture_scope"]
+                if (
+                    "display" not in body
+                    or scope["exact_url"] != body["binding"]["operator_match_url"]
+                    or (scope["profile_status"] == "DRAFT")
+                    != (body["display"]["source_kind"] == "MOCK")
+                    or int(scope["generation"]) > 2**63 - 1
+                    or any(book["profile_hash"] != scope["profile_hash"] for book in body["books"])
+                ):
+                    raise ValueError()
         return frame
     except Exception:
         raise ValueError("E_LIVE_WIRE_SCHEMA") from None

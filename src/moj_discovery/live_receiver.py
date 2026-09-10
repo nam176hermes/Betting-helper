@@ -40,6 +40,9 @@ HEALTH = {
 
 
 class LiveReceiver:
+    def connected(self, role: str) -> bool:
+        return role in self._active
+
     def __init__(self, context: dict[str, Any], store: LiveStore, pairing: PairingAuthority):
         self.context = copy.deepcopy(context)
         self.store, self.pairing = store, pairing

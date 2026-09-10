@@ -21,7 +21,7 @@ from tools.offline_browser import OfflineBrowser
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKER = r"""
-import {startReadOnlyCapture} from './capture.js';
+import {startReadOnlyCapture as testStartReadOnlyCapture} from './capture.js';
 let capture, tabId, senderObservation;
 const books=[], notices=[];
 chrome.runtime.onMessage.addListener((m,s,reply)=>{
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((m,s,reply)=>{
    for(let n=0;n<100 && (await chrome.tabs.get(tabId)).status!=='complete';n++) await new Promise(r=>setTimeout(r,50));
    await chrome.scripting.executeScript({target:{tabId,frameIds:[0]},files:['test-sender.js'],world:'ISOLATED'});
    senderObservation=await chrome.tabs.sendMessage(tabId,{kind:'PB10_TEST_SENDER'});
-   capture=await startReadOnlyCapture({...m.plan,tabId},{onBook:async(b,c)=>{books.push({book:b,challenge:c})},onInvalidation:c=>notices.push(c),onRecapture:()=>notices.push('RECAPTURE')});
+   capture=await testStartReadOnlyCapture({...m.plan,tabId},{onBook:async(b,c)=>{books.push({book:b,challenge:c})},onInvalidation:c=>notices.push(c),onRecapture:()=>notices.push('RECAPTURE')});
   } else if(m.operation==='READ') {await capture.request(m.challenge);}
   else if(m.operation==='FAULT') {
    if(!['hidden','missing','secret','unstable','root','route','context','swapped'].includes(m.fault)) throw Error();
@@ -83,7 +83,7 @@ def make_graph(tmp_path: Any) -> Any:
         timeout=60,
     )
     hashes = {}
-    for name in ("dom_reader", "capture", "background"):
+    for name in ("dom_reader", "capture", "background", "panel"):
         source = tmp_path / "classic/src/live" / (name + ".js")
         destination = extension / "src/live" / (name + ".js")
         destination.write_bytes(source.read_bytes())
@@ -273,6 +273,17 @@ def test_live_graph_has_fixed_injection_and_no_mutation_capability() -> None:
 
     for source, expected in [
         (capture, {"./contracts.js", "./background.js"}),
-        (background, {"./capture.js"}),
+        (
+            background,
+            {
+                "./capture.js",
+                "./contracts.js",
+                "./spool.js",
+                "./transport.js",
+                "./protocol.js",
+                "../canonical.js",
+                "./panel.js",
+            },
+        ),
     ]:
         assert set(re.findall(r'from "([^"]+)"', source)) == expected

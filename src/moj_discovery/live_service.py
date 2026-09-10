@@ -14,7 +14,7 @@ from collections import deque
 from collections.abc import Callable
 from contextlib import ExitStack
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4, uuid5
@@ -31,6 +31,7 @@ from .providers.api_football import ApiFootballClient, ProviderError
 from .providers.bundle_poller import ProviderBundlePoller
 from .providers.quota import QuotaLedger
 from .secrets_local import SecretValue
+from .workspace_projection import WorkspaceState, project_watchlist
 
 
 def _utc_now() -> datetime:
@@ -359,10 +360,29 @@ class LiveService:
         self._subscribers.discard(queue)
 
     def snapshot(self) -> dict[str, Any]:
-        return {
+        views = []
+        for binding in self.admitted.bindings:
+            view, revision = self.store.read_projection_version(binding["binding_id"])
+            views.append({**view, "projection_revision": revision})
+        state: WorkspaceState = {
             "run_id": self.admitted.run_id,
-            "views": [self.view(b["binding_id"]) for b in self.admitted.bindings],
+            "views": views,
             "selected": sorted(self._selected),
+            "max_matches": self.config.public["runtime"]["max_matches"],
+            "source_kind": self.admitted.source_kind,
+            "quota": self.quota.display_remaining(self._utc(), self._mono()),
+            "provider_connection": "STOPPED"
+            if self._reason
+            else (
+                "PAUSED" if not self._selected else "CONNECTED" if self._bootstrapped else "WAITING"
+            ),
+            "capture_connection": "CONNECTED"
+            if self.receiver and self.receiver.connected("CAPTURE_PRODUCER")
+            else "DISCONNECTED",
+        }
+        return {
+            **state,
+            "workspace": project_watchlist(state),
             "attempts": self.quota.count_attempts(),
             "model_enabled": False,
             "money_ready": False,
@@ -371,13 +391,43 @@ class LiveService:
     def wire_projection(
         self, binding_id: str, health: dict[str, Any] | None = None
     ) -> dict[str, Any]:
-        view = self.view(binding_id)
+        snapshot = self.snapshot()
+        view = next(v for v in snapshot["views"] if v["binding"]["binding_id"] == binding_id)
+        match = next(
+            v for v in snapshot["workspace"]["matches"] if v["binding"]["binding_id"] == binding_id
+        )
+        stream, scope = next(
+            (k, v)
+            for k, v in self.admitted.capture_streams.items()
+            if v["binding_id"] == binding_id
+        )
+        profile = self.admitted.profile.public
         return dict(
+            **match,
             run_id=self.admitted.run_id,
-            binding=view["binding"],
-            provider_state=view["provider"],
-            books=list(view["books"].values()),
-            revision=str(self.store.projection_revision(binding_id)),
+            capture_scope={
+                "stream_id": stream,
+                "generation": scope["generation"],
+                "exact_url": view["binding"]["operator_match_url"],
+                "profile_status": self.admitted.profile.status,
+                "profile_hash": self.admitted.profile.profile_hash,
+                "document_epoch": scope["document_epoch"],
+                "selectors": profile["selectors"],
+                "price_parser": profile["price_parser"],
+                "markets": self.admitted.profile.observed_markets[
+                    view["binding"]["operator_fixture_id"]
+                ],
+                "expires_at": profile["expires_at"]
+                or (
+                    self._utc()
+                    + timedelta(seconds=max(0, self.admitted.deadline_mono - self._mono()))
+                )
+                .isoformat()
+                .replace("+00:00", "Z"),
+                "max_duration_seconds": max(
+                    1, min(7200, int(self.admitted.deadline_mono - self._mono()))
+                ),
+            },
             health=health
             or {
                 "binding_id": binding_id,
@@ -464,7 +514,9 @@ class LiveService:
             self.poller.set_watchlist(ids, self._watchlist_revision)
         elif command == "REFRESH":
             self.poller.request_refresh()
-        elif command != "SELECT_ACTIVE" or binding_id not in self._selected:
+        elif command != "SELECT_ACTIVE" or binding_id not in {
+            b["binding_id"] for b in self.admitted.bindings
+        }:
             raise ValueError("E_LIVE_UI_SCOPE")
         await self.publish()
 

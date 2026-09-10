@@ -101,7 +101,10 @@ export function assembleCapture(response: unknown, plan: CapturePlan, challenge:
   const separator = market.labels.score_separator === "EN_DASH" ? "–" : market.labels.score_separator === "COLON" ? ":" : market.labels.score_separator === "HYPHEN" ? "-" : null;
   if (separator && second["score"]) {
     const parts = second["score"].split(separator);
-    if (parts.length === 2 && parts.every(v => /^(0|[1-9][0-9]{0,2})$/.test(v))) score = {home: Number(parts[0]), away: Number(parts[1])};
+    if (parts.length === 2 && parts.every(v => /^(0|[1-9][0-9]{0,2})$/.test(v))) {
+      if (parts.some(v => Number(v) > 100)) throw Error("E_CAPTURE_SCORE");
+      score = {home: Number(parts[0]), away: Number(parts[1])};
+    }
   }
   return {binding_id: plan.bindingId, binding_revision: plan.bindingRevision, operator_fixture_id: plan.operatorFixtureId,
     market_id: market.market_id, horizon: market.horizon, settlement_basis: market.settlement_basis, selections,
@@ -115,7 +118,7 @@ export function assembleCapture(response: unknown, plan: CapturePlan, challenge:
 export async function startReadOnlyCapture(input: CapturePlan, callbacks: {
   onBook: (book: MarketBook, challenge: string) => Promise<void>;
   onInvalidation: (reason: string) => void; onRecapture: () => void;
-}): Promise<{identity: CaptureIdentity; request: (challenge: string) => Promise<void>; stop: () => Promise<void>}> {
+}, expectedDocumentId?: string): Promise<{identity: CaptureIdentity; request: (challenge: string) => Promise<void>; stop: () => Promise<void>}> {
   const plan = structuredClone(input);
   validateCapturePlan(plan);
   const tab = await chrome.tabs.get(plan.tabId);
@@ -123,6 +126,7 @@ export async function startReadOnlyCapture(input: CapturePlan, callbacks: {
   const results = await chrome.scripting.executeScript({target: {tabId: plan.tabId, frameIds: [0]},
     files: ["src/live/dom_reader.js"], world: "ISOLATED"});
   if (results.length !== 1 || results[0]?.frameId !== 0 || !results[0].documentId) throw Error("E_CAPTURE_DOCUMENT");
+  if (expectedDocumentId !== undefined && results[0].documentId !== expectedDocumentId) throw Error("E_CAPTURE_DOCUMENT_CHANGED");
   const identity: CaptureIdentity = {tabId: plan.tabId, documentId: results[0].documentId,
     exactUrl: plan.exactUrl, captureId: crypto.randomUUID(), profileHash: plan.profileHash,
     bindingRevision: plan.bindingRevision, documentEpoch: plan.documentEpoch};

@@ -46,6 +46,8 @@ export const validateLiveFrame = async (value: unknown, validators: Validators):
     // Validate counters and nested record semantics even on backend projections.
     if (frame.message_type === "PROJECTION") {
       const binding = validateLiveRecord(body["binding"], "FixtureBinding", validators.record);
+      const health = validateLiveRecord(body["health"], "HealthChange", validators.record);
+      if (health["binding_id"] !== null && health["binding_id"] !== binding["binding_id"]) throw new Error();
       if (body["provider_state"] !== null) {
         const provider = validateLiveRecord(body["provider_state"], "ProviderState", validators.record);
         if (provider["fixture_id"] !== binding["provider_fixture_id"]) throw new Error();
@@ -55,6 +57,17 @@ export const validateLiveFrame = async (value: unknown, validators: Validators):
         const book = validateLiveRecord(raw, "MarketBook", validators.record);
         if (book["binding_id"] !== binding["binding_id"] || book["binding_revision"] !== binding["revision"] || horizons.has(book["horizon"])) throw new Error();
         horizons.add(book["horizon"]);
+      }
+      if (body["display"] !== undefined) {
+        const display = body["display"] as {markets: Record<string, unknown>; source_kind: string};
+        if (Object.keys(display.markets).length !== horizons.size || Object.keys(display.markets).some(h => !horizons.has(h))) throw new Error();
+      }
+      if (body["capture_scope"] !== undefined) {
+        const scope = body["capture_scope"] as Record<string, unknown>;
+        const display = body["display"] as {source_kind: string} | undefined;
+        if (!display || scope["exact_url"] !== binding["operator_match_url"] ||
+            (scope["profile_status"] === "DRAFT") !== (display.source_kind === "MOCK") ||
+            BigInt(scope["generation"] as string) > maximum || (body["books"] as {profile_hash: string}[]).some(b => b.profile_hash !== scope["profile_hash"])) throw new Error();
       }
     }
     for (const name of ["generation", "sequence", "revision", "monotonic_us"]) {

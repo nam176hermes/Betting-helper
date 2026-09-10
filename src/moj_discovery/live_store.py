@@ -193,10 +193,14 @@ class LiveStore:
                 self._closed = True
 
     def read_projection(self, binding_id: str) -> dict[str, Any]:
+        return self.read_projection_version(binding_id)[0]
+
+    def read_projection_version(self, binding_id: str) -> tuple[dict[str, Any], int]:
         with self._mutex:
             self._owner()
             row = self.db.execute(
-                "SELECT canonical_view,content_hash FROM projection_versions WHERE run_id=? "
+                "SELECT canonical_view,content_hash,revision FROM projection_versions "
+                "WHERE run_id=? "
                 "AND binding_id=? ORDER BY revision DESC LIMIT 1",
                 (self.run_id, binding_id),
             ).fetchone()
@@ -205,7 +209,7 @@ class LiveStore:
             view = cast(dict[str, Any], parse_strict_json(bytes(row[0])))
             if view_hash(view) != row[1] or rfc8785.dumps(view) != row[0]:
                 raise ValueError("E_LIVE_PROJECTION_HASH")
-            return view
+            return view, int(row[2])
 
     def bindings(self) -> dict[str, dict[str, Any]]:
         with self._mutex:
@@ -220,15 +224,7 @@ class LiveStore:
             return {i: self.read_projection(i)["binding"] for i in ids}
 
     def projection_revision(self, binding_id: str) -> int:
-        with self._mutex:
-            self._owner()
-            row = self.db.execute(
-                "SELECT max(revision) FROM projection_versions WHERE run_id=? AND binding_id=?",
-                (self.run_id, binding_id),
-            ).fetchone()
-            if row[0] is None:
-                raise ValueError("E_LIVE_BINDING_REQUIRED")
-            return int(row[0])
+        return self.read_projection_version(binding_id)[1]
 
     def cursor(self, stream_id: str, generation: str = "0") -> tuple[int, str]:
         with self._mutex:
