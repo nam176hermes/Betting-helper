@@ -658,9 +658,13 @@ class LiveService:
                 self._resources.close()
 
 
-async def _run(service: LiveService) -> LiveRunResult:
+async def _run(
+    service: LiveService, on_ready: Callable[[LiveService], None] | None = None
+) -> LiveRunResult:
     try:
         await service.start()
+        if on_ready is not None:
+            on_ready(service)
         while service._reason is None:
             await service.tick()
             await asyncio.sleep(1)
@@ -672,7 +676,11 @@ async def _run(service: LiveService) -> LiveRunResult:
 
 
 def run_live_service(
-    config: LiveConfig, secret: SecretValue, admitted: RunAdmission
+    config: LiveConfig,
+    secret: SecretValue,
+    admitted: RunAdmission,
+    *,
+    on_ready: Callable[[LiveService], None] | None = None,
 ) -> LiveRunResult:
     # No secret lookup occurs here. Only the no-echo user-terminal launcher may obtain it.
-    return asyncio.run(_run(LiveService(config, secret, admitted)))
+    return asyncio.run(_run(LiveService(config, secret, admitted), on_ready))

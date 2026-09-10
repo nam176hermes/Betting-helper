@@ -89,11 +89,14 @@ def load_live_config(path: Path, require_enabled: bool = False) -> LiveConfig:
         refs = [
             operator["capture_profile_path"],
             runtime["platform_qualification_path"],
-            *value["gates"].values(),
+            *(ref for name, ref in value["gates"].items() if name != "live_intent_path"),
         ]
         for ref in refs:
             if ref is not None:
                 private_path(ref, must_exist=value["enabled"])
+        # Intent creation follows config creation; the launcher validates its bytes before I/O.
+        if value["gates"]["live_intent_path"] is not None:
+            private_path(value["gates"]["live_intent_path"])
         if value["enabled"]:
             profile = private_path(operator["capture_profile_path"], must_exist=True)
             if (

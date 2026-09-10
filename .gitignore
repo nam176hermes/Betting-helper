@@ -12,3 +12,4 @@ extension/node_modules/
 node_modules/
 .local/
 config/live.local.json
+config/live.local.json.pending
