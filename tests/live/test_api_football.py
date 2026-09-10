@@ -117,7 +117,7 @@ def test_probe_reports_finite_schema_diagnostics(
     elif change == "response":
         raw["response"] = []
     elif change == "results":
-        raw["results"] = 0
+        raw["results"] = -1
     elif change == "encoding":
         headers["Content-Encoding"] = "PRIVATE_ENCODING"
     elif change == "length":
@@ -146,6 +146,75 @@ def test_probe_reports_finite_schema_diagnostics(
         assert len(http.calls) == quota.count_attempts() == result["REQUEST_ATTEMPTS"] == 1
         assert "PRIVATE_" not in json.dumps(result)
         _report(result)
+
+
+@pytest.mark.parametrize(
+    "count,expiry,expected",
+    [
+        (0, "2026-12-31T23:24:27+00:00", "2026-12-31"),
+        (3, "2027-01-01T01:00:00+02:00", "2026-12-31"),
+        (1, "2026-12-31", "2026-12-31"),
+        (0, None, None),
+        (3, "PRIVATE_INVALID_EXPIRY", None),
+        (1, "2026-12-31T23:24:27", None),
+    ],
+)
+def test_status_object_uses_validated_payload_not_single_row_count(
+    tmp_path: Any, fake_clock: Any, count: int, expiry: Any, expected: Any
+) -> None:
+    # Synthetic compatibility cases, not a copy or claim about a real account response.
+    raw = copy.deepcopy(STATUS)
+    raw["results"] = count
+    raw["response"]["subscription"]["end"] = expiry
+    client, quota, http = make_client(tmp_path, fake_clock, [Reply(raw)])
+    with quota, client:
+        status = client.get_status()
+        assert (status.plan, status.active, status.daily_limit, status.daily_remaining) == (
+            "PRO",
+            True,
+            7500,
+            7499,
+        )
+        assert status.expires_on == expected
+        assert "PRIVATE_" not in repr(status)
+        assert quota.count_attempts() == len(http.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("results", True),
+        ("results", "1"),
+        ("results", None),
+        ("results", -1),
+        ("results", 2**31),
+        ("subscription", {}),
+        ("requests", {}),
+        ("active", "true"),
+        ("plan", None),
+        ("current", True),
+        ("current", -1),
+        ("current", 7501),
+        ("limit_day", "7500"),
+    ],
+)
+def test_status_metadata_cannot_replace_account_quota_validation(
+    tmp_path: Any, fake_clock: Any, field: str, value: Any
+) -> None:
+    raw = copy.deepcopy(STATUS)
+    if field == "results":
+        raw[field] = value
+    elif field in {"subscription", "requests"}:
+        raw["response"][field] = value
+    elif field in {"active", "plan"}:
+        raw["response"]["subscription"][field] = value
+    else:
+        raw["response"]["requests"][field] = value
+    client, quota, http = make_client(tmp_path, fake_clock, [Reply(raw)])
+    with quota, client:
+        with pytest.raises(ProviderError, match="SCHEMA_ERROR"):
+            client.get_status()
+        assert quota.count_attempts() == len(http.calls) == 1
 
 
 @pytest.mark.parametrize("mutation", [None, "date", "league", "control"])

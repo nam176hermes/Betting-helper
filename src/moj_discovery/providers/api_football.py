@@ -422,7 +422,9 @@ class ApiFootballClient:
                 if type(rows) is not dict:
                     raise ProviderError("SCHEMA_ERROR")
                 diagnostic = "STATUS_RESULT_COUNT"
-                if type(body.get("results")) is not int or body["results"] != 1:
+                # STATUS is an object, not a one-row fixture list. Validate its
+                # payload in get_status; this metadata is not an authentication gate.
+                if type(body.get("results")) is not int or not 0 <= body["results"] <= 2**31 - 1:
                     raise ProviderError("SCHEMA_ERROR")
             elif (
                 type(rows) is not list
@@ -611,22 +613,34 @@ class ApiFootballClient:
         try:
             response = body["response"]
             subscription, requests = response.get("subscription", {}), response.get("requests", {})
-            plan = subscription.get("plan", "UNKNOWN").upper()
+            if type(subscription) is not dict or type(requests) is not dict:
+                raise ValueError()
+            plan, active = subscription.get("plan"), subscription.get("active")
+            if type(plan) is not str or not plan.strip() or type(active) is not bool:
+                raise ValueError()
+            plan = plan.upper()
             if plan not in {"FREE", "PRO", "ULTRA", "MEGA"}:
                 plan = "UNKNOWN"
-            active = subscription.get("active") is True
-            expires = subscription.get("end")
-            if type(expires) is not str or date.fromisoformat(expires).isoformat() != expires:
-                expires = None
+            expires = None
+            raw_end = subscription.get("end")
+            if type(raw_end) is str:
+                try:
+                    if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", raw_end):
+                        expires = date.fromisoformat(raw_end).isoformat()
+                    else:
+                        stamp = datetime.fromisoformat(raw_end)
+                        if stamp.tzinfo is not None:
+                            expires = stamp.astimezone(UTC).date().isoformat()
+                except (ValueError, OverflowError):
+                    pass  # Unknown expiry stays unknown; it grants no live authority.
             limit, used = requests.get("limit_day"), requests.get("current")
             if (
                 type(limit) is not int
                 or type(used) is not int
                 or not 0 <= used <= limit <= 2**31 - 1
             ):
-                limit, remaining = None, None
-            else:
-                remaining = limit - used
+                raise ValueError()
+            remaining = limit - used
             return SafeStatus(plan, active, expires, limit, remaining)
         except Exception:
             raise ProviderError("SCHEMA_ERROR", diagnostic="STATUS_FIELDS") from None

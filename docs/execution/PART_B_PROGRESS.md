@@ -17,9 +17,11 @@ checkpoint records whether final verification has completed on the frozen bytes.
 
 External gates:
 
-- PB-18 WAITING_FOR_USER_SECRET: two user-terminal probes each stopped after one
-  STATUS request with SCHEMA_ERROR; key validity remains NOT_CHECKED. Fixed safe
-  validator diagnostics are implemented and need a fresh confirmed terminal run.
+- PB-18 WAITING_FOR_USER_SECRET: three user-terminal probes each stopped after one
+  STATUS request; the latest diagnostic is STATUS_RESULT_COUNT. The status object
+  parser and timestamp expiry handling are repaired and locally tested; actual
+  provider validation needs a fresh confirmed terminal run. Key validity remains
+  NOT_CHECKED until that run succeeds.
   Lookup remains league 2/season 2026/date 2026-09-10; fixture ID is unverified.
 - PB-19 WAITING_OPERATOR_SAMPLE: dedicated manually logged-in Windows Chrome
   profile, exact tab and separately reviewed <=10-minute fixed DOM observation.
@@ -38,6 +40,6 @@ Full-source mypy retains 25 pre-existing errors in three unchanged governance
 files, reproduced at the starting commit; scoped Part B checks are separate.
 
 Real provider attempts by this worker: 0. Real operator captures: 0.
-Observed user-terminal provider attempts: 2 (two failed STATUS calls).
+Observed user-terminal provider attempts: 3 (three failed STATUS calls).
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.

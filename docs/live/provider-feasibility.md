@@ -2,17 +2,25 @@
 
 Status: WAITING_FOR_USER_SECRET for a fresh user-terminal diagnostic probe;
 the provider fixture ID remains unverified. PROVIDER_PROBE_PASS: FAIL.
-Two user-confirmed runs each attempted STATUS once and stopped with SCHEMA_ERROR.
+Three user-confirmed runs each attempted STATUS once and stopped with SCHEMA_ERROR.
 KEY_CHECK remains NOT_CHECKED, not FAILED; neither a bad credential nor a provider
-outage has been established. No raw response was retained, so the failed validator
-cannot be recovered from those old records. Real attempts by this worker: 0.
+outage has been established. The third run identified STATUS_RESULT_COUNT; the
+exact count/type was not retained. Real attempts by this worker: 0.
 
-The client now reports a fixed PROVIDER_DIAGNOSTIC validator label through both
-lookup and exact-fixture probes. It never includes provider values, raw JSON,
-headers or exception text. This change preserves rejection, quota, retry and
-authorization rules; it does not claim to repair an unobserved response shape.
-Old failed observations remain in their private run directories. A fresh intent
-and own-terminal confirmation are required to observe the new diagnostic.
+The status parser previously assumed results == 1. STATUS carries an object,
+so results is now checked as bounded nonnegative integer metadata; authentication
+requires validated subscription and request-quota fields. Fixture/list counts,
+paging, errors, secret-echo rejection, reservations and retry limits stay enforced.
+Expiry accepts dates and ISO timestamps with timezone; absent/invalid expiry stays
+unknown and grants no authority. The timestamp form appears in the provider's
+[archived documentation, page 2](https://www.duckweeds7.com/posts/pdf-to-cursor-skills-with-marker/API-Football%20-%20Documentation.pdf),
+a third-party-hosted copy dated 2026-02-03, not current live-account evidence.
+
+Fixed PROVIDER_DIAGNOSTIC labels include no provider values, raw JSON, headers or
+exception text. Synthetic compatibility cases are distinct from the real failed
+response, whose raw bytes were not retained. Old observations remain immutable;
+a fresh intent and own-terminal confirmation are required to verify the repair
+against the actual provider. No real-source PASS is claimed from this patch.
 
 User-selected scope: Champions League 2026/27, Bayern München – Bodø/Glimt,
 2026-09-10. Public API documentation identifies league 2 and season 2026;
