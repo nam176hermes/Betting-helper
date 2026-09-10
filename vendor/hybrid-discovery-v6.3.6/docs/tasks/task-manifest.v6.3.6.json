@@ -5506,7 +5506,7 @@
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/receipts/descendant-repository-qualification-receipt.json",
@@ -5595,7 +5595,7 @@
         "Dependency V636-P09-T03 is ACCEPTED"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "Verified immutable plan-input and the task-specific registered command inputs",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/SELF_REVIEW_REPORT.json",
@@ -5688,7 +5688,7 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -5790,7 +5790,7 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -5892,7 +5892,7 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
@@ -6003,7 +6003,7 @@
         "Human HOST_REVIEW_AUTHORITY_BOOTSTRAP is completed and verified; it is an external prerequisite, not authority granted to this task."
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",

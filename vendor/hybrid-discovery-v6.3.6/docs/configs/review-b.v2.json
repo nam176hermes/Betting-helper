@@ -20,7 +20,7 @@
   ],
   "input_roots": [
     "/home/thenam176/betting-helper/part-b-review-host/pack",
-    "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+    "/home/thenam176/betting-helper/part-b-candidate",
     "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
     "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
     "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256"
@@ -37,8 +37,8 @@
       "mode": "READ_ONLY"
     },
     {
-      "source_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
-      "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "source_root": "/home/thenam176/betting-helper/part-b-candidate",
+      "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate",
       "mode": "READ_ONLY"
     },
     {
@@ -68,7 +68,7 @@
     "UV_OFFLINE": "1",
     "UV_PROJECT_ENVIRONMENT": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/python-env"
   },
-  "authority_config": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/review-config/review-authority.v1.json",
+  "authority_config": "/home/thenam176/betting-helper/part-b-candidate/review-config/review-authority.v1.json",
   "seal_inputs": {
     "attestation": "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
     "zip": "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -78,19 +78,19 @@
     "project_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project",
     "project_inputs": [
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/package.json",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/package.json",
         "destination": "package.json"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/pnpm-lock.yaml",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/pnpm-lock.yaml",
         "destination": "pnpm-lock.yaml"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/pnpm-workspace.yaml",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/pnpm-workspace.yaml",
         "destination": "pnpm-workspace.yaml"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/package.json",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/extension/package.json",
         "destination": "extension/package.json"
       }
     ],
@@ -98,12 +98,12 @@
     "dependency_mounts": [
       {
         "source_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/node_modules",
-        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate/node_modules",
         "mode": "READ_ONLY"
       },
       {
         "source_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b/scratch/node-project/extension/node_modules",
-        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate/extension/node_modules",
         "mode": "READ_ONLY"
       }
     ],

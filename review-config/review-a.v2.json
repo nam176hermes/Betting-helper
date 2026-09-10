@@ -9,7 +9,7 @@
   ],
   "input_roots": [
     "/home/thenam176/betting-helper/part-b-review-host/pack",
-    "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+    "/home/thenam176/betting-helper/part-b-candidate",
     "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
     "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
     "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256"
@@ -26,8 +26,8 @@
       "mode": "READ_ONLY"
     },
     {
-      "source_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
-      "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "source_root": "/home/thenam176/betting-helper/part-b-candidate",
+      "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate",
       "mode": "READ_ONLY"
     },
     {
@@ -57,7 +57,7 @@
     "UV_OFFLINE": "1",
     "UV_PROJECT_ENVIRONMENT": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/python-env"
   },
-  "authority_config": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/review-config/review-authority.v1.json",
+  "authority_config": "/home/thenam176/betting-helper/part-b-candidate/review-config/review-authority.v1.json",
   "seal_inputs": {
     "attestation": "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
     "zip": "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -67,19 +67,19 @@
     "project_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project",
     "project_inputs": [
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/package.json",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/package.json",
         "destination": "package.json"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/pnpm-lock.yaml",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/pnpm-lock.yaml",
         "destination": "pnpm-lock.yaml"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/pnpm-workspace.yaml",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/pnpm-workspace.yaml",
         "destination": "pnpm-workspace.yaml"
       },
       {
-        "source": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/package.json",
+        "source": "/home/thenam176/betting-helper/part-b-candidate/extension/package.json",
         "destination": "extension/package.json"
       }
     ],
@@ -87,12 +87,12 @@
     "dependency_mounts": [
       {
         "source_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/node_modules",
-        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate/node_modules",
         "mode": "READ_ONLY"
       },
       {
         "source_root": "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a/scratch/node-project/extension/node_modules",
-        "workspace_mount": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/extension/node_modules",
+        "workspace_mount": "/home/thenam176/betting-helper/part-b-candidate/extension/node_modules",
         "mode": "READ_ONLY"
       }
     ],
@@ -109,17 +109,17 @@
   "producer_environment": {
     "schema_version": "review-producer-environment/v1",
     "mode": "VERIFIED_READ_ONLY_PROJECTION",
-    "python_environment": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/.venv",
-    "python_executable": "/home/thenam176/betting-helper/discovery-runtime-part-b-review/.venv/bin/python3",
+    "python_environment": "/home/thenam176/betting-helper/part-b-candidate/.venv",
+    "python_executable": "/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python3",
     "python_executable_sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
     "node_lookup": "/home/thenam176/.local/share/mise/shims/node",
     "node_executable": "/home/thenam176/.local/share/mise/installs/node/22.23.0/bin/node",
     "node_executable_sha256": "b587d8a062552ab52ecae2a7b0bcd079351d1dc61cf2555fd5994f558274ae58",
     "path_translation_executable": "/init",
     "wsl_distro": "Ubuntu",
-    "runtime_unc": "\\\\wsl.localhost\\Ubuntu\\home\\thenam176\\betting-helper\\discovery-runtime-part-b-review",
+    "runtime_unc": "\\\\wsl.localhost\\Ubuntu\\home\\thenam176\\betting-helper\\part-b-candidate",
     "path_translation_sha256": "9b2be781d42bdd73e8887366698e2c56d03c815a9be6f8d47dfeac22e0104fb7",
-    "native_dependency_root": "/mnt/c/Users/thenam/Documents/BettingHelper-Repair-Chrome/native-dependency-closure-ab0f612d-1f27-4349-921a-76f05780578a",
+    "native_dependency_root": "/mnt/c/Users/thenam/Documents/BettingHelper-Repair-Chrome/native-dependency-closure-ef63da26-f87f-45ab-af76-dd2b9ef02c08",
     "live_files": [
       "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
       "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",
@@ -128,7 +128,7 @@
       "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/DLLs/_sqlite3.pyd",
       "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/DLLs/sqlite3.dll",
       "/mnt/c/Users/thenam/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe",
-      "/home/thenam176/betting-helper/discovery-runtime-part-b-review/.local/bh-repair/native-wheel-cache/rpds_py-2026.6.3-cp312-cp312-win_amd64.whl",
+      "/home/thenam176/betting-helper/part-b-candidate/.local/bh-repair/native-wheel-cache/rpds_py-2026.6.3-cp312-cp312-win_amd64.whl",
       "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/1/1/2/7/e/1127e3d2d646b8b978b6f86221cfed3abb713e990a117406d3ce6b47.body",
       "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/c/9/2/3/4/c92343c66b0dc7638b486b828ba26c07e51fe308e9da38034706d11f.body",
       "/mnt/c/Users/thenam/AppData/Local/pip/cache/http-v2/b/1/4/e/c/b14ec1286f8ec83b268f9c52cdccd1001d22496d6e01ba5b4fd8aeb4.body",

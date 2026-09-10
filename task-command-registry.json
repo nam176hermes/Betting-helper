@@ -1032,7 +1032,7 @@
     },
     {
       "command_id": "FINALIZE_A_V636_P10_T03",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1056,7 +1056,7 @@
     },
     {
       "command_id": "FINALIZE_B_V636_P10_T03",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1404,7 +1404,7 @@
     },
     {
       "command_id": "TEST_V636_P03_T07",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1413,7 +1413,7 @@
         "python",
         "tools/run_full_repair_qualification.py",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--aggregate",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
         "--inventory",
@@ -1469,7 +1469,7 @@
     },
     {
       "command_id": "TEST_V636_P04_T04",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1478,7 +1478,7 @@
         "python",
         "tools/verify_full_repair_qualification.py",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--aggregate",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/full-repair/aggregate.json",
         "--inventory",
@@ -1946,7 +1946,7 @@
     },
     {
       "command_id": "VERIFY_V636_P07_T01",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1959,7 +1959,7 @@
         "--registry",
         "task-command-registry.json",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json"
       ],
@@ -1973,7 +1973,7 @@
     },
     {
       "command_id": "VERIFY_V636_P07_T02",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -1982,13 +1982,13 @@
         "python",
         "tools/verify_proof_coverage.py",
         "--matrix",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
         "--evidence-root",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes",
         "--stage",
         "CANDIDATE",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json"
       ],
@@ -2002,7 +2002,7 @@
     },
     {
       "command_id": "VERIFY_V636_P07_T03",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2011,9 +2011,9 @@
         "python",
         "tools/build_candidate_qualification_receipt.py",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--source",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--command-evidence",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
         "--output",
@@ -2029,7 +2029,7 @@
     },
     {
       "command_id": "VERIFY_V636_P08_T01",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2038,9 +2038,9 @@
         "python",
         "tools/qualify_descendant_repository.py",
         "--root",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P08-T01.json",
         "--preflight"
@@ -2055,7 +2055,7 @@
     },
     {
       "command_id": "VERIFY_V636_P08_T02",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2064,9 +2064,9 @@
         "python",
         "tools/qualify_descendant_repository.py",
         "--root",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--issue",
         "--receipt",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
@@ -2083,7 +2083,7 @@
     },
     {
       "command_id": "VERIFY_V636_P08_T03",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2092,9 +2092,9 @@
         "python",
         "tools/qualify_descendant_repository.py",
         "--root",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--check-only",
         "--receipt",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/DESCENDANT_REPOSITORY_QUALIFICATION.json",
@@ -2111,7 +2111,7 @@
     },
     {
       "command_id": "VERIFY_V636_P09_T01",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "python3.12",
         "-B",
@@ -2121,7 +2121,7 @@
         "--destination",
         "/home/thenam176/betting-helper/part-b-review-host/pack",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
@@ -2137,7 +2137,7 @@
     },
     {
       "command_id": "VERIFY_V636_P09_T02",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "python3.12",
         "-B",
@@ -2157,7 +2157,7 @@
     },
     {
       "command_id": "VERIFY_V636_P09_T03",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "python3.12",
         "-B",
@@ -2171,7 +2171,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/configs/full-verifier-controller.v2.json",
         "--recorded-config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
@@ -2187,7 +2187,7 @@
     },
     {
       "command_id": "VERIFY_V636_P09_T04",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "python3.12",
         "-B",
@@ -2197,7 +2197,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/configs/full-verifier-controller.v2.json",
         "--recorded-config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
@@ -2219,7 +2219,7 @@
     },
     {
       "command_id": "VERIFY_V636_P10_T01",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2241,7 +2241,7 @@
     },
     {
       "command_id": "VERIFY_V636_P10_T02",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2263,7 +2263,7 @@
     },
     {
       "command_id": "VERIFY_V636_P10_T04",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2704,7 +2704,7 @@
         "--tasks",
         "pack/docs/tasks/task-manifest.v6.3.6.json",
         "--output",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/task-command-registry.json",
+        "/home/thenam176/betting-helper/part-b-candidate/task-command-registry.json",
         "--source-registry",
         "pack/docs/registries/task-command-registry.v1.json",
         "--review-config-source",
@@ -2722,7 +2722,7 @@
     },
     {
       "command_id": "HOST_REVIEW_AUTHORITY_BOOTSTRAP",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -2938,7 +2938,7 @@
     },
     {
       "command_id": "BASELINE_INSTALL_PYTHON",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "sync",
@@ -2955,7 +2955,7 @@
     },
     {
       "command_id": "BASELINE_INSTALL_NODE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "pnpm",
         "install",
@@ -2999,7 +2999,7 @@
         "uv",
         "run",
         "--project",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--frozen",
         "--offline",
         "python",
@@ -3026,7 +3026,7 @@
     },
     {
       "command_id": "CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -3035,7 +3035,7 @@
         "python",
         "tools/run_environment_qualification.py",
         "--config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--workspace",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/environment",
         "--aggregate",

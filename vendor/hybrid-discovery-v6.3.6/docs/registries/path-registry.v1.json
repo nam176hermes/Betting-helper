@@ -1,9 +1,9 @@
 {
   "schema_version": "path-registry/v1",
   "authoring_root": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
-  "runtime_candidate": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+  "runtime_candidate": "/home/thenam176/betting-helper/part-b-candidate",
   "pack_candidate": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
-  "final_runtime": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+  "final_runtime": "/home/thenam176/betting-helper/part-b-candidate",
   "final_pack": "/home/thenam176/betting-helper/part-b-review-host/pack",
   "review_root": "/home/thenam176/betting-helper/part-b-review-host/results",
   "review_authorization_root": "/home/thenam176/betting-helper/part-b-review-host/authorizations",

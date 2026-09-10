@@ -1,6 +1,8 @@
 # Part B execution progress
 
-Batch: PB-00 through PB-24. Branch: `codex/part-b-batched`.
+Batch: PB-00 through PB-24. Original branch: `codex/part-b-batched`.
+Current candidate: `/home/thenam176/betting-helper/part-b-candidate`,
+branch `codex/part-b-input-fixes`.
 Starting HEAD: `39b92966c2db6694b31507526b339206f4db2b0d`.
 Exact current HEAD, task/evidence/config hashes, commands and exits live in
 `.local/part-b/execution-state.json`, `.local/part-b/task-evidence/` and the current
@@ -58,7 +60,7 @@ Observed user-terminal attempt counts and run hashes are in the current private 
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.
 
-Current review-input amendment (isolated descendant of 62150ea):
+Historical review-input amendment at 80106f4 (isolated descendant of 62150ea):
 
 - Runtime checkout: `/home/thenam176/betting-helper/discovery-runtime-part-b-review`.
   Authoring checkout: `/home/thenam176/betting-helper/authoring-part-b-review-inputs`,
@@ -86,3 +88,29 @@ Current review-input amendment (isolated descendant of 62150ea):
 - No final seal, descendant qualification, independent host receipt, human fresh
   review session, operator sample or live run has been created by this amendment.
   Status: WAITING_PLATFORM / WAITING_REVIEW. Models and money remain disabled.
+
+Current input repairs:
+
+- Authoring commit: `943098fd1dd0e90dd24c4be643b8c15b5866db6f`.
+  Its generator declares 37 compiler outputs from 23 hash-pinned TypeScript
+  inputs at 62150ea and records producer/consumer ownership. Expected source
+  declarations are separate from actual compiler output observations.
+- The unchanged offline native producer created a fresh isolated Windows
+  closure for the current lock. Real native import and Ingestor boundary checks
+  passed. Existing lock, wheel, RECORD, payload and import-reference checks
+  remain enforced. Historical closures/receipts remain unchanged.
+- This standalone local Git clone preserves full ancestry, has an internal
+  .git directory, and uses no hardlinks, shallow history or external object
+  references. The linked worktree is retained. No new baseline was created.
+- Current focused checks passed: 68 authoring tests and 117 subtests, 49 runtime
+  regression cases, and 17 real TEST_ONLY namespace cases including read-only
+  producer identity and copied clock evidence. Ownership has 1051 entries;
+  all 62 task and 219 command declarations passed semantic validation.
+- Final current commit, source/config/native/evidence hashes, command exits and
+  post-commit observation results are recorded in `.local/part-b/execution-state.json`
+  and `/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes`.
+- The two original input blockers and linked-Git namespace blocker are resolved.
+  Full candidate/descendant qualification, final sealing, independent host
+  review and human fresh-session attestation remain separate gates. No full
+  Part B PASS, operator/profile acceptance or live authority follows from these
+  checks. Current status: WAITING_REVIEW; real provider/capture/live counts: 0.

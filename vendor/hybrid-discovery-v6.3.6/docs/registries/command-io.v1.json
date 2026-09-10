@@ -1419,7 +1419,7 @@
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T01.json",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-review-input-fixes/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/receipts/descendant-repository-qualification-receipt.json",
@@ -1442,7 +1442,7 @@
         "V636-P09-T04"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/SELF_REVIEW_REPORT.json",
         "pack/SELF_REVIEW_REPORT.md",
@@ -1470,7 +1470,7 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256",
@@ -1498,7 +1498,7 @@
         "V636-P10-T02"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256",
@@ -1529,7 +1529,7 @@
         "V636-P10-T04"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
@@ -2040,7 +2040,7 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -2080,7 +2080,7 @@
         "V636-P10-T03"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -2111,7 +2111,7 @@
         "V636-P10-T02"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -2154,7 +2154,7 @@
         "V636-P10-T03"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
@@ -2188,7 +2188,7 @@
         "V636-P10-T04"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-a.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/authorizations/review-b.authorization.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
@@ -2227,7 +2227,7 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/receipts/descendant-repository-qualification-receipt.json",
         "pack/evidence/retained-artifact-manifest.json",
@@ -2246,7 +2246,7 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.seal-attestation.json",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip",
         "/home/thenam176/betting-helper/part-b-review-host/pack.zip.sha256",
@@ -3018,7 +3018,7 @@
         "V636-P10-T01"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/configs/full-verifier-controller.v2.json",
         "pack/docs/receipts/descendant-repository-qualification-receipt.json",
         "pack/evidence/retained-artifact-manifest.json",

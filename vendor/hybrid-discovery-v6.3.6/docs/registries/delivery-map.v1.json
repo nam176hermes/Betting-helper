@@ -192,7 +192,7 @@
       "owner": "V636-P09-T01"
     }
   ],
-  "runtime_source_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
-  "final_runtime_root": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+  "runtime_source_root": "/home/thenam176/betting-helper/part-b-candidate",
+  "final_runtime_root": "/home/thenam176/betting-helper/part-b-candidate",
   "rule": "Sealed-review reference resolution maps historic authoring source paths through this exact source export; runtime references resolve in final runtime. No authoring workspace mount is needed."
 }

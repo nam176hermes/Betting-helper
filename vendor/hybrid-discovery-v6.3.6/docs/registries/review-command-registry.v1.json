@@ -3,7 +3,7 @@
   "commands": [
     {
       "command_id": "REVIEW_A_PREPARE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -23,7 +23,7 @@
     },
     {
       "command_id": "REVIEW_A_MECHANICAL",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -45,7 +45,7 @@
     },
     {
       "command_id": "REVIEW_A_FINALIZE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -69,7 +69,7 @@
     },
     {
       "command_id": "REVIEW_B_PREPARE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -89,7 +89,7 @@
     },
     {
       "command_id": "REVIEW_B_MECHANICAL",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -111,7 +111,7 @@
     },
     {
       "command_id": "REVIEW_B_FINALIZE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -135,7 +135,7 @@
     },
     {
       "command_id": "REVIEW_AGGREGATE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -169,7 +169,7 @@
     },
     {
       "command_id": "A_CHECK_SOURCE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -184,7 +184,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/configs/full-verifier-controller.v2.json",
         "--recorded-config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
@@ -200,7 +200,7 @@
     },
     {
       "command_id": "A_CHECK_EVIDENCE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -223,7 +223,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/configs/full-verifier-controller.v2.json",
         "--recorded-config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
@@ -239,7 +239,7 @@
     },
     {
       "command_id": "A_CHECK_BASELINE",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -248,7 +248,7 @@
         "python",
         "tools/qualify_zero_parent_baseline.py",
         "--root",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--check-only",
         "--receipt",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/receipts/repo0-baseline-receipt.json"
@@ -299,7 +299,7 @@
     },
     {
       "command_id": "A_INSTALL_PYTHON",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "sync",
@@ -316,7 +316,7 @@
     },
     {
       "command_id": "B_INSTALL_PYTHON",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "sync",
@@ -333,7 +333,7 @@
     },
     {
       "command_id": "A_CHECK_DESCENDANT",
-      "cwd": "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
       "argv": [
         "uv",
         "run",
@@ -342,7 +342,7 @@
         "python",
         "tools/qualify_descendant_repository.py",
         "--root",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review",
+        "/home/thenam176/betting-helper/part-b-candidate",
         "--config",
         "/home/thenam176/betting-helper/part-b-review-host/pack/docs/configs/full-verifier-controller.v2.json",
         "--check-only",
@@ -351,7 +351,7 @@
         "--pack",
         "/home/thenam176/betting-helper/part-b-review-host/pack",
         "--recorded-config",
-        "/home/thenam176/betting-helper/discovery-runtime-part-b-review/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--retained-manifest",
         "/home/thenam176/betting-helper/part-b-review-host/pack/evidence/retained-artifact-manifest.json",
         "--retained-root",
