@@ -18,7 +18,8 @@ def test_materialized_contracts_valid_gate_passes() -> None:
     assert receipt["gate"] == "MATERIALIZED_CONTRACTS_VALID"
     assert receipt["result"] == "PASS"
     assert receipt["task_count"] == 62
-    assert receipt["artifact_count"] == 987
+    # Approved amendment: 23 TS inputs, 37 outputs and four authoring inputs.
+    assert receipt["artifact_count"] == 987 + 23 + 37 + 4
     assert receipt["command_count"] == 219
     assert receipt["schema_reference_count"] == 13
     assert receipt["authorized_production_phases"] == "NONE"
