@@ -4,6 +4,7 @@ import copy
 import hashlib
 import importlib
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -129,6 +130,35 @@ def _private_bytes(path: Path, root: Path) -> bytes:
     return checked.read_bytes()
 
 
+def _observed_labels(value: object) -> None:
+    if type(value) is not dict or set(value) != {"horizon", "status", "period", "score_separator"}:
+        raise ValueError("E_PROFILE_LABELS")
+    if value["score_separator"] not in {None, "EN_DASH", "COLON", "HYPHEN"}:
+        raise ValueError("E_PROFILE_LABELS")
+    strings = [value["horizon"]]
+    for name, permitted in (
+        ("status", {"OPEN", "SUSPENDED", "CLOSED", "UNKNOWN"}),
+        (
+            "period",
+            {"PREGAME", "H1", "HALFTIME", "H2", "FINISHED", "BLOCKED", "OUT_OF_SCOPE", "UNKNOWN"},
+        ),
+    ):
+        mapping = value[name]
+        if type(mapping) is not dict or not set(mapping) <= permitted:
+            raise ValueError("E_PROFILE_LABELS")
+        if len(set(mapping.values())) != len(mapping):
+            raise ValueError("E_PROFILE_LABELS")
+        strings.extend(mapping.values())
+    for label in strings:
+        if (
+            type(label) is not str
+            or not 1 <= len(label) <= 256
+            or label != unicodedata.normalize("NFC", label)
+            or any(ord(c) < 32 or ord(c) == 127 for c in label)
+        ):
+            raise ValueError("E_PROFILE_LABELS")
+
+
 def _samples(
     value: dict[str, Any], evidence: ProfileEvidence, field_map: dict[str, dict[str, str]]
 ) -> dict[str, list[dict[str, Any]]]:
@@ -177,7 +207,8 @@ def _samples(
         for market in sample["markets"]:
             if (
                 type(market) is not dict
-                or set(market) != {"market_id", "horizon", "settlement_basis", "selections"}
+                or set(market)
+                != {"market_id", "horizon", "settlement_basis", "selections", "labels"}
                 or market["horizon"] not in value["horizons"]
                 or market["horizon"] in horizons
                 or market["settlement_basis"] != "NORMAL_TIME_INCLUDING_STOPPAGE"
@@ -186,6 +217,7 @@ def _samples(
                 or len(set(market["selections"].values())) != 3
             ):
                 raise ValueError("E_PROFILE_SAMPLE_MARKET")
+            _observed_labels(market["labels"])
             for identifier in (market["market_id"], *market["selections"].values()):
                 if (
                     type(identifier) is not str

@@ -36,7 +36,9 @@ def profile() -> Any:
         locale="en",
         price_parser="DECIMAL_DOT",
         selectors={
-            k: "#" + ("TEST_ONLY_MATCH" if k == "match_root" else k.replace("_", "-"))
+            k: "#"
+            + ("TEST_ONLY_MATCH" if k == "match_root" else k.replace("_", "-"))
+            + (" > .selection-id" if k.endswith("_selection") else "")
             for k in fields
         },
         horizons=["FT"],
@@ -65,6 +67,12 @@ def sample(value: Any) -> Any:
                 horizon="FT",
                 settlement_basis="NORMAL_TIME_INCLUDING_STOPPAGE",
                 selections={side: "SYNTHETIC-" + side for side in ["HOME", "DRAW", "AWAY"]},
+                labels={
+                    "horizon": "FT",
+                    "status": {"OPEN": "OPEN"},
+                    "period": {"H1": "1H"},
+                    "score_separator": "EN_DASH",
+                },
             )
         ],
         field_map={
@@ -235,3 +243,24 @@ def test_selection_field_aliases_rejected() -> None:
     value["selectors"]["draw_selection"] = value["selectors"]["home_selection"]
     with pytest.raises(ValueError):
         validate_extraction_profile(value, ProfileEvidence(ROOT, NOW))
+
+
+@pytest.mark.parametrize(
+    "label_change", ["missing", "unknown_period", "duplicate_status", "extra", "control"]
+)
+def test_unobserved_or_ambiguous_labels_rejected(tmp_path: Any, label_change: str) -> None:
+    value = profile()
+    observed = sample(value)
+    labels = observed["markets"][0]["labels"]
+    if label_change == "missing":
+        del observed["markets"][0]["labels"]
+    if label_change == "unknown_period":
+        labels["period"] = {"FIRST_HALF_MAYBE": "1H"}
+    if label_change == "duplicate_status":
+        labels["status"] = {"OPEN": "X", "SUSPENDED": "X"}
+    if label_change == "extra":
+        labels["script"] = "read page"
+    if label_change == "control":
+        labels["horizon"] = "FT\x00"
+    with pytest.raises(ValueError):
+        validate_extraction_profile(value, evidence_for(tmp_path, value, observed))
