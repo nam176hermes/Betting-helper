@@ -45,6 +45,7 @@ def prepare_offline_extension(workspace: Path) -> tuple[Path, str]:
         "canonical.js",
         "errors.js",
         "spool.js",
+        "storage/durable_idb.js",
         "security/redaction.js",
         "security/loopback.js",
         "offline/protocol.js",

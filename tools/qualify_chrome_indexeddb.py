@@ -481,6 +481,7 @@ def _prepare_test_extension(repository_root: Path, workspace: Path) -> tuple[Pat
         "html": harness_root / "repair-probe.html",
         "probe": build_root / "test-harness/repair-probe.js",
         "spool": build_root / "src/spool.js",
+        "durable_idb": build_root / "src/storage/durable_idb.js",
         "errors": build_root / "src/errors.js",
     }
     missing = [str(path) for path in required.values() if not path.is_file()]
@@ -493,6 +494,8 @@ def _prepare_test_extension(repository_root: Path, workspace: Path) -> tuple[Pat
     shutil.copy2(required["html"], extension / "repair-probe.html")
     shutil.copy2(required["probe"], extension / "repair-probe.js")
     shutil.copy2(required["spool"], extension / "src/spool.js")
+    (extension / "src/storage").mkdir()
+    shutil.copy2(required["durable_idb"], extension / "src/storage/durable_idb.js")
     (extension / "src/offline").mkdir()
     run(  # noqa: S603 -- pinned local generator and owned output path
         ["node", str(repository_root / "tools/build_offline_validators.cjs"),  # noqa: S607

@@ -1033,6 +1033,7 @@ def _compiled_typescript_module_hashes(input_binding: str, graph: str) -> dict[s
             "repair-probe.js": output / "test-harness/repair-probe.js",
             "src/errors.js": output / "src/errors.js",
             "src/spool.js": output / "src/spool.js",
+            "src/storage/durable_idb.js": output / "src/storage/durable_idb.js",
         }
         generated = output / "src/offline/validators.js"
         run(  # noqa: S603 -- bound local Node, registered generator, owned output
@@ -1091,6 +1092,7 @@ def _verify_retained_typescript_graph(
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/storage/durable_idb.js",
         "src/offline/validators.js",
     }
     artifacts = _RETAINED_ARTIFACTS.get()
