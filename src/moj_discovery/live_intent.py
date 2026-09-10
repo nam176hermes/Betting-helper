@@ -104,6 +104,7 @@ class RunIntentReceipt:
     _proof: object = field(default=None, repr=False)
     _pid: int = field(default=0, repr=False)
     _claimed: bool = field(default=False, repr=False)
+    _live_authority: object = field(default=None, repr=False, init=False)
 
 
 def _validate(intent: RunIntent, config: LiveConfig, now: datetime) -> dict[str, Any]:
@@ -284,6 +285,10 @@ def claim_receipt(receipt: RunIntentReceipt, stage: str) -> None:
 
 def verify_provider_receipt(receipt: RunIntentReceipt, scope: ProviderScope, purpose: str) -> None:
     verify_receipt(receipt, scope.stage)
+    if scope.stage == "LIVE_READ_ONLY":
+        from .live_preflight_batched import verify_live_receipt
+
+        verify_live_receipt(receipt)
     value, provider = receipt.intent.public, receipt.config.public["provider"]
     if (
         not receipt._claimed

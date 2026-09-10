@@ -1,14 +1,20 @@
 """Fixed API-Football GET client. All calls share one reservation ledger and owner."""
 
+import base64
 import copy
+import io
+import json
 import re
 import ssl
+import subprocess
+import sys
 import threading
 import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from email.utils import parsedate_to_datetime
+from pathlib import Path
 from types import TracebackType
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -48,6 +54,114 @@ def build_fixed_opener() -> OpenerDirector:
     context = ssl.create_default_context()
     context.set_alpn_protocols(["http/1.1"])
     return build_opener(ProxyHandler({}), NoRedirect(), HTTPSHandler(context=context))
+
+
+class _IsolatedReply(io.BytesIO):
+    def __init__(self, value: dict[str, Any]):
+        super().__init__(base64.b64decode(value["body"], validate=True))
+        self.status, self.headers, self.url = value["status"], value["headers"], value["url"]
+
+    def geturl(self) -> str:
+        return str(self.url)
+
+
+def _isolated_open(request: Request, timeout: float) -> _IsolatedReply:
+    """Bound DNS, TLS, headers and body together in one owned backend child."""
+    if not 0 < timeout <= 10:
+        raise TimeoutError()
+    deadline = time.monotonic() + timeout
+    module_root = str(Path(__file__).resolve().parents[2])
+    program = (
+        "import sys;sys.path.insert(0,"
+        + repr(module_root)
+        + ");from moj_discovery.providers.api_football import _request_worker;_request_worker()"
+    )
+    child = subprocess.Popen(  # noqa: S603 -- fixed backend entrypoint; key only in private stdin.
+        [sys.executable, "-I", "-c", program],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        env={},
+        close_fds=True,
+    )
+    try:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise TimeoutError()
+        payload = json.dumps(
+            {
+                "url": request.full_url,
+                "key": request.get_header("X-apisports-key"),
+                "timeout": remaining,
+            }
+        ).encode()
+        raw, _ = child.communicate(payload, timeout=remaining)
+        if child.returncode != 0 or len(raw) > (MAX_BODY + 1) * 2:
+            raise TimeoutError()
+        value = parse_strict_json(raw)
+        if type(value) is not dict or set(value) != {"status", "headers", "url", "body"}:
+            raise ProviderError("TRANSPORT_ERROR")
+        return _IsolatedReply(value)
+    except subprocess.TimeoutExpired:
+        raise TimeoutError() from None
+    finally:
+        if child.poll() is None:
+            child.kill()  # Exact owned Popen child, never an image-name/PID search.
+        child.communicate()
+
+
+def _request_worker() -> None:
+    """Private subprocess entrypoint, not a public CLI or a generic HTTP proxy."""
+    import signal
+
+    value = parse_strict_json(sys.stdin.buffer.read(4097))
+    if type(value) is not dict or set(value) != {"url", "key", "timeout"}:
+        raise ValueError("E_PROVIDER_WORKER_INPUT")
+    url, timeout = value["url"], value["timeout"]
+    paths = (
+        r"(?:/status|/leagues\?id=[1-9][0-9]*&season=[0-9]{4}"
+        r"|/fixtures\?ids=[1-9][0-9]*(?:-[1-9][0-9]*){0,19})"
+    )
+    if (
+        type(url) is not str
+        or re.fullmatch(re.escape(BASE) + paths, url) is None
+        or type(timeout) not in {int, float}
+        or not 0 < timeout <= 10
+    ):
+        raise ValueError("E_PROVIDER_WORKER_SCOPE")
+    # Default SIGALRM termination also bounds a blocking libc DNS lookup on WSL/Linux.
+    signal.signal(signal.SIGALRM, signal.SIG_DFL)
+    signal.setitimer(signal.ITIMER_REAL, timeout)
+    key = SecretValue(value["key"])
+    request = Request(  # noqa: S310 -- fixed HTTPS authority and finite path grammar.
+        url,
+        method="GET",
+        headers={
+            "x-apisports-key": key.reveal_for_header(),
+            "Accept": "application/json",
+            "Accept-Encoding": "identity",
+        },
+    )  # noqa: S310 -- fixed HTTPS authority and finite path grammar.
+    try:
+        response = build_fixed_opener().open(request, timeout=timeout)
+    except HTTPError as error:
+        response = error
+    with response:
+        # The parent projects/validates the response. No raw provider bytes reach artifacts.
+        body = response.read(MAX_BODY + 1)
+        headers = {
+            name: response.headers[name]
+            for name in (*HEADER_NAMES, "Retry-After", "Content-Length", "Content-Encoding")
+            if name in response.headers
+        }
+        record = {
+            "status": response.code,
+            "headers": headers,
+            "url": response.geturl(),
+            "body": base64.b64encode(body).decode(),
+        }
+    sys.stdout.write(json.dumps(record))
+    sys.stdout.flush()
 
 
 def retry_after_seconds(value: str | None, now: datetime) -> float:
@@ -220,12 +334,12 @@ class ApiFootballClient:
         deadline = min(self.scope.deadline_mono, self._mono() + timeout)
         chunks, size = [], 0
         while True:
-            if self._real and response.fp is None:
+            if self._real and not isinstance(response, _IsolatedReply) and response.fp is None:
                 break
             remaining = deadline - self._mono()
             if remaining <= 0:
                 raise ProviderError("TIMEOUT")
-            if self._real:
+            if self._real and not isinstance(response, _IsolatedReply):
                 # Pinned Python 3.12 HTTPResponse socket; fail closed if the shape changes.
                 response.fp.raw._sock.settimeout(min(10, remaining))
             chunk = response.read1(min(65536, MAX_BODY + 1 - size))
@@ -357,10 +471,16 @@ class ApiFootballClient:
                             "Accept-Encoding": "identity",
                         },
                     )
-                    timeout = min(10, self.scope.deadline_mono - started)
+                    timeout = min(10, self.scope.deadline_mono - self._mono())
+                    if timeout <= 0:
+                        raise ProviderError("RUN_DEADLINE_OR_AUTHORITY")
                     try:
                         self.http_attempts += 1
-                        response = self._opener.open(request, timeout=timeout)
+                        response = (
+                            _isolated_open(request, timeout)
+                            if self._real
+                            else self._opener.open(request, timeout=timeout)
+                        )
                     except HTTPError as error:
                         response = error
                     headers = {

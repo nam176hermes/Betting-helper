@@ -6,6 +6,7 @@ import os
 import sys
 import time
 from dataclasses import asdict
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -182,6 +183,12 @@ def run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt)
         "intent_sha256": intent.intent.sha256,
         "confirmation_kind": intent.confirmation_kind,
         "finished_before_deadline": time.monotonic() < intent.deadline_mono,
+        "finished_at_utc": datetime.now(UTC).isoformat(),
+        "provider_config_scope": {
+            "provider": config.public["provider"],
+            "max_run_minutes": config.public["runtime"]["max_run_minutes"],
+            "max_matches": config.public["runtime"]["max_matches"],
+        },
     }
     data = json.dumps(report, indent=2).encode()
     if len(data) > 16 * 1024 * 1024:
