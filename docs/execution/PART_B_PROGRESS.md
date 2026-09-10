@@ -17,7 +17,7 @@ checkpoint records whether final verification has completed on the frozen bytes.
 
 External gates:
 
-- PB-18 WAITING_FOR_USER_SECRET: three user-terminal probes each stopped after one
+- PB-18 WAITING_FOR_USER_SECRET: user-terminal probes each stopped after one
   STATUS request; the latest diagnostic is STATUS_RESULT_COUNT. The status object
   parser and timestamp expiry handling are repaired and locally tested; actual
   provider validation needs a fresh confirmed terminal run. Key validity remains
@@ -40,6 +40,6 @@ Full-source mypy retains 25 pre-existing errors in three unchanged governance
 files, reproduced at the starting commit; scoped Part B checks are separate.
 
 Real provider attempts by this worker: 0. Real operator captures: 0.
-Observed user-terminal provider attempts: 3 (three failed STATUS calls).
+Observed user-terminal attempt counts and run hashes are in the current private checkpoint.
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.

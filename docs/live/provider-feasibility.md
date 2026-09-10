@@ -2,9 +2,10 @@
 
 Status: WAITING_FOR_USER_SECRET for a fresh user-terminal diagnostic probe;
 the provider fixture ID remains unverified. PROVIDER_PROBE_PASS: FAIL.
-Three user-confirmed runs each attempted STATUS once and stopped with SCHEMA_ERROR.
+User-confirmed runs stopped after STATUS with SCHEMA_ERROR. Actual attempt counts
+and immutable run references are in `.local/part-b/execution-state.json`.
 KEY_CHECK remains NOT_CHECKED, not FAILED; neither a bad credential nor a provider
-outage has been established. The third run identified STATUS_RESULT_COUNT; the
+outage has been established. Recent runs identified STATUS_RESULT_COUNT; the
 exact count/type was not retained. Real attempts by this worker: 0.
 
 The status parser previously assumed results == 1. STATUS carries an object,
