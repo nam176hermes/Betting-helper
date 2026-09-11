@@ -12,6 +12,95 @@ from tools import qualify_chrome_indexeddb as chrome
 from tools import run_environment_qualification as environment
 
 
+@pytest.mark.parametrize("style", ["count", "identities"])
+@pytest.mark.parametrize("clears", [True, False])
+def test_native_job_cleanup_waits_boundedly_without_accepting_survivors(
+    monkeypatch: pytest.MonkeyPatch, style: str, clears: bool
+) -> None:
+    import json
+    import subprocess
+
+    from tools import native_environment_probe as native
+
+    wait = getattr(native, "_wait_for_job_cleanup", None)
+    assert callable(wait), "Job cleanup is checked before asynchronous termination finishes"
+    clock = [0.0]
+    calls = []
+    owned = {"ProcessId": 42, "CreationDate": "owned-creation"}
+    command = ["fixed-owned-descendant-observer"]
+
+    def observe(argv: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        assert argv == command
+        assert 0 < kwargs["timeout"] <= 10
+        calls.append(argv)
+        empty = clears and len(calls) >= 3
+        raw = (b"0" if empty else b"1") if style == "count" else json.dumps(
+            [] if empty else [owned]
+        ).encode()
+        return subprocess.CompletedProcess(argv, 0, stdout=raw, stderr=b"")
+
+    monkeypatch.setattr(native.subprocess, "run", observe)
+    monkeypatch.setattr(native.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(
+        native.time, "sleep", lambda seconds: clock.__setitem__(0, clock[0] + seconds)
+    )
+    complete = (lambda raw: raw.strip() == b"0") if style == "count" else (
+        lambda raw: owned not in json.loads(raw)
+    )
+    if clears:
+        result = wait(command, complete)
+        assert complete(result.stdout) and len(calls) == 3 and 0 < clock[0] < 10
+    else:
+        with pytest.raises(RuntimeError, match="E_ENV_WINDOWS_JOB_CLEANUP_TIMEOUT"):
+            wait(command, complete)
+        assert clock[0] == 10
+
+
+@pytest.mark.parametrize("failure", ["malformed", "observer_failed"])
+def test_native_job_cleanup_rejects_unobserved_cleanup(
+    monkeypatch: pytest.MonkeyPatch, failure: str
+) -> None:
+    import json
+    import subprocess
+
+    from tools import native_environment_probe as native
+
+    wait = getattr(native, "_wait_for_job_cleanup", None)
+    assert callable(wait)
+    calls = []
+
+    def observe(argv: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        calls.append(argv)
+        if failure == "observer_failed":
+            raise subprocess.CalledProcessError(1, argv)
+        return subprocess.CompletedProcess(argv, 0, stdout=b"invalid", stderr=b"")
+
+    monkeypatch.setattr(native.subprocess, "run", observe)
+    with pytest.raises((json.JSONDecodeError, subprocess.CalledProcessError)):
+        wait(["fixed-owned-descendant-observer"], lambda raw: not json.loads(raw))
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("elapsed", [10.0, 10.1])
+def test_native_job_cleanup_rejects_a_late_success(
+    monkeypatch: pytest.MonkeyPatch, elapsed: float
+) -> None:
+    import subprocess
+
+    from tools import native_environment_probe as native
+
+    clock = [0.0]
+
+    def observe(argv: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        clock[0] = elapsed
+        return subprocess.CompletedProcess(argv, 0, stdout=b"0", stderr=b"")
+
+    monkeypatch.setattr(native.subprocess, "run", observe)
+    monkeypatch.setattr(native.time, "monotonic", lambda: clock[0])
+    with pytest.raises(RuntimeError, match="E_ENV_WINDOWS_JOB_CLEANUP_TIMEOUT"):
+        native._wait_for_job_cleanup(["fixed-owned-descendant-observer"], lambda raw: raw == b"0")
+
+
 def test_pipe_owner_drops_unbound_node_preload(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

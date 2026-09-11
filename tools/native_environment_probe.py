@@ -11,6 +11,7 @@ import sqlite3
 import subprocess
 import sys
 import time
+from collections.abc import Callable
 from contextlib import closing
 from pathlib import Path
 from typing import Any
@@ -357,6 +358,23 @@ def browser_leader(config: dict[str, Any]) -> None:
         time.sleep(1)
 
 
+def _wait_for_job_cleanup(
+    command: list[str], complete: Callable[[bytes], bool]
+) -> subprocess.CompletedProcess[bytes]:
+    """Observe only the owned descendants until asynchronous job termination settles."""
+    deadline = time.monotonic() + 10
+    while (remaining := deadline - time.monotonic()) > 0:
+        result = subprocess.run(  # noqa: S603 -- fixed read-only owned-descendant query.
+            command, capture_output=True, check=True, timeout=remaining
+        )
+        if time.monotonic() >= deadline:
+            break
+        if complete(result.stdout):
+            return result
+        time.sleep(min(0.05, max(0, deadline - time.monotonic())))
+    raise RuntimeError("E_ENV_WINDOWS_JOB_CLEANUP_TIMEOUT")
+
+
 def browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
     if config.get("transport") == "pipe":
         return pipe_browser(config, input_path)
@@ -452,7 +470,7 @@ def browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
     # A terminated job must not leave the named browser process alive.
     owned_ids = [item["ProcessId"] for item in descendants]
     pid_filter = " OR ".join(f"ProcessId={pid}" for pid in owned_ids)
-    check = subprocess.run(  # noqa: S603 -- exact observed descendant PID set, read only.
+    check = _wait_for_job_cleanup(
         [
             "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "-NoProfile",
@@ -460,10 +478,8 @@ def browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
             "-Command",
             f"@(Get-CimInstance Win32_Process -Filter '{pid_filter}').Count",
         ],
-        capture_output=True,
-        check=True,
-        timeout=15,
-    )  # noqa: S603
+        lambda raw: raw.strip() == b"0",
+    )
     if code != 1 or check.stdout.strip() != b"0":
         raise RuntimeError("E_ENV_BROWSER_JOB_SURVIVOR")
     return {
@@ -583,7 +599,11 @@ def pipe_browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
                 leader.kill()  # Owned leader handle; inherited job kills Node/Chrome.
             code = leader.wait(timeout=10)
         ids = [row["ProcessId"] for row in descendants]
-        cleanup = subprocess.run(  # noqa: S603 -- read-only exact observed identity set.
+
+        def descendants_gone(raw: bytes, owned: list[dict[str, Any]] = descendants) -> bool:
+            return not any(old in json.loads(raw) for old in owned)
+
+        cleanup = _wait_for_job_cleanup(
             [
                 "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "-NoProfile",
@@ -594,9 +614,7 @@ def pipe_browser(config: dict[str, Any], input_path: Path) -> dict[str, Any]:
                 + "' | Select-Object ProcessId,ParentProcessId,CreationDate,"
                 "ExecutablePath,CommandLine) -Compress",
             ],
-            capture_output=True,
-            check=True,
-            timeout=15,
+            descendants_gone,
         )
         survivors = [old for old in descendants if old in json.loads(cleanup.stdout)]
         if code != 1 or survivors:

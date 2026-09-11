@@ -337,3 +337,20 @@ W08/W09 registered CLI fixture repair for r10:
 - The complete seal group and related registered CLI tests are checked before
   another source freeze. The r9 failure remains preserved; r10 qualification
   cannot be inferred from its earlier partial PASS records. No live authority.
+
+W08 native owned-job cleanup repair for r11:
+
+- The r10 seal/CLI regression passed 56 tests; committed runtime `593a379c` and
+  authoring `33dfa23e`. Its full controller stopped during native Windows browser
+  environment capture with `E_ENV_PIPE_JOB_SURVIVOR`; no qualification was issued.
+- A separate traced diagnostic observed two clean terminations but was correctly
+  rejected as qualification because its invocation differed. The original failure
+  did not retain which exit/survivor predicate failed; no exact timing cause is
+  claimed from that log. Windows termination is asynchronous, and both existing
+  browser transports checked descendants only once immediately after leader exit.
+- Both transports now share a bounded 10-second cleanup observer. It preserves
+  exact descendant/exit predicates and rejects late success, persistent survivors,
+  malformed output and observer failures. Technical review found the late-success
+  edge case before freeze; two additional failing-then-passing tests cover it.
+- Focused native browser regression and canonical declarations precede a fresh
+  r11 freeze. Historical evidence and all real-source/live gates remain unchanged.
