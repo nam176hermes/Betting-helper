@@ -202,6 +202,9 @@ W08 review follow-up and fresh campaign:
 - The first controller campaign stopped at TEST_V636_P02_T01 because its literal
   command count still expected 219 instead of the declared 222. The expectation
   is corrected without changing the dependency or authority checks.
-- New qualification uses the source-owned `part-b-one-ready-r2` evidence root.
+- Retention preflight also removed an obsolete fresh-bootstrap input with no
+  producing operation. The existing historical BOOT0 receipt and the separately
+  declared current authoring receipt remain required and unchanged in meaning.
+- New qualification uses the source-owned `part-b-one-ready-r3` evidence root.
   Prior observations and failed outputs are preserved; current qualification,
   sealed review, operator observation and live authority remain pending.
