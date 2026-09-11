@@ -545,6 +545,10 @@
     {
       "plan_source": "docs/vectors/plan-contract-negative.v1.json",
       "vendor_relative": "docs/vectors/plan-contract-negative.v1.json"
+    },
+    {
+      "plan_source": "docs/contracts/part-b-one-ready.v1.json",
+      "vendor_relative": "docs/contracts/part-b-one-ready.v1.json"
     }
   ],
   "vendor_prefix": "runtime/vendor/hybrid-discovery-v6.3.6/",

@@ -629,12 +629,14 @@
       "outputs": [
         "authoring-tools/issue_declaration_gate.py",
         "authoring-tests/test_declaration_gate.py",
-        "pack/docs/receipts/declaration-complete.v1.json"
+        "pack/docs/receipts/declaration-complete.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P00-T05.json"
       ],
       "exact_files": [
         "authoring-tools/issue_declaration_gate.py",
         "authoring-tests/test_declaration_gate.py",
-        "pack/docs/receipts/declaration-complete.v1.json"
+        "pack/docs/receipts/declaration-complete.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P00-T05.json"
       ],
       "exact_symbols": [
         "authoring-tools/issue_declaration_gate.py::issue_declaration_complete_receipt",
@@ -1159,12 +1161,14 @@
       "outputs": [
         "authoring-tools/verify_successor_migration.py",
         "authoring-tests/test_successor_migration_receipt.py",
-        "pack/docs/receipts/migration-receipt.v1.json"
+        "pack/docs/receipts/migration-receipt.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json"
       ],
       "exact_files": [
         "authoring-tools/verify_successor_migration.py",
         "authoring-tests/test_successor_migration_receipt.py",
-        "pack/docs/receipts/migration-receipt.v1.json"
+        "pack/docs/receipts/migration-receipt.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json"
       ],
       "exact_symbols": [
         "authoring-tools/verify_successor_migration.py::verify_successor_migration",
@@ -2188,11 +2192,13 @@
       ],
       "outputs": [
         "runtime/src/moj_discovery/artifact_ownership.py",
-        "runtime/tests/contracts/test_artifact_dependency_semantics.py"
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P02-T02.json"
       ],
       "exact_files": [
         "runtime/src/moj_discovery/artifact_ownership.py",
-        "runtime/tests/contracts/test_artifact_dependency_semantics.py"
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P02-T02.json"
       ],
       "exact_symbols": [
         "runtime/src/moj_discovery/artifact_ownership.py::validate_artifact_lifecycle",
@@ -2433,13 +2439,15 @@
         "runtime/tools/qualify_chrome_indexeddb.py",
         "runtime/tests/durability/test_chrome_indexeddb_environment.py",
         "runtime/extension/test-harness/indexeddb-crash-child.ts",
-        "runtime/tools/inspect_restart_state.py"
+        "runtime/tools/inspect_restart_state.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T02.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_chrome_indexeddb.py",
         "runtime/tests/durability/test_chrome_indexeddb_environment.py",
         "runtime/extension/test-harness/indexeddb-crash-child.ts",
-        "runtime/tools/inspect_restart_state.py"
+        "runtime/tools/inspect_restart_state.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T02.json"
       ],
       "exact_symbols": [
         "runtime/tools/qualify_chrome_indexeddb.py::qualify_chrome_indexeddb_environment",
@@ -2876,11 +2884,11 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
         "runtime/src/moj_discovery/durability_release.py",
         "runtime/tests/durability/test_destruction_and_release.py",
         "runtime/tests/durability/test_owner_mutation_review.py",
@@ -2947,7 +2955,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -3266,11 +3274,11 @@
         "Dependency V636-P04-T03 is ACCEPTED"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
         "runtime/tests/clock/test_clock_parity_and_mutation.py",
         "runtime/tools/run_clock_vector_qualification.py",
         "runtime/tools/verify_full_repair_qualification.py"
@@ -3317,7 +3325,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -3442,7 +3450,8 @@
         "runtime/src/moj_discovery/governance.py",
         "runtime/tests/bootstrap/test_schema_closure.py",
         "runtime/tests/coverage/test_proof_coverage_matrix.py",
-        "runtime/tools/verify_proof_coverage.py"
+        "runtime/tools/verify_proof_coverage.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T02.json"
       ],
       "exact_files": [
         "pack/docs/registries/inherited-baseline-qualification.v1.json",
@@ -3450,7 +3459,8 @@
         "runtime/src/moj_discovery/governance.py",
         "runtime/tests/bootstrap/test_schema_closure.py",
         "runtime/tests/coverage/test_proof_coverage_matrix.py",
-        "runtime/tools/verify_proof_coverage.py"
+        "runtime/tools/verify_proof_coverage.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T02.json"
       ],
       "exact_symbols": [
         "runtime/tools/verify_proof_coverage.py::verify_proof_coverage_matrix",
@@ -3674,7 +3684,8 @@
         "runtime/tools/issue_review_launch_authorization.py",
         "runtime/tests/review/test_review_launch_authorization.py",
         "runtime/tools/bootstrap_review_authority.py",
-        "runtime/tests/review/test_review_authority_bootstrap.py"
+        "runtime/tests/review/test_review_authority_bootstrap.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T04.json"
       ],
       "exact_files": [
         "runtime/src/moj_discovery/review_authorization.py",
@@ -3686,7 +3697,8 @@
         "runtime/tests/review/test_review_authority_bootstrap.py",
         "runtime/review-config/review-authority.v1.json",
         "pack/docs/configs/review-authority.v1.json",
-        "pack/docs/security/review-trust-root.v1.json"
+        "pack/docs/security/review-trust-root.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T04.json"
       ],
       "exact_symbols": [
         "runtime/src/moj_discovery/review_authorization.py::verify_review_launch_authorization",
@@ -3773,12 +3785,14 @@
       "outputs": [
         "runtime/tools/prepare_review_workspace.py",
         "runtime/tools/finalize_review.py",
-        "runtime/tests/review/test_review_workspace_isolation.py"
+        "runtime/tests/review/test_review_workspace_isolation.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T05.json"
       ],
       "exact_files": [
         "runtime/tools/prepare_review_workspace.py",
         "runtime/tools/finalize_review.py",
-        "runtime/tests/review/test_review_workspace_isolation.py"
+        "runtime/tests/review/test_review_workspace_isolation.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T05.json"
       ],
       "exact_symbols": [
         "runtime/tools/prepare_review_workspace.py::main",
@@ -4141,6 +4155,10 @@
         "runtime/extension/test/offline/spool-payload.test.ts"
       ],
       "outputs": [
+        "runtime/contracts/live_readonly/v1/config.schema.json",
+        "runtime/docs/execution/PART_B_PROGRESS.md",
+        "runtime/docs/runbooks/INSTALL_PART_B_VI.md",
+        "runtime/docs/runbooks/RUN_ONE_MATCH_VI.md",
         "runtime/extension/.test-build/src/live/background.js",
         "runtime/extension/.test-build/src/live/capture.js",
         "runtime/extension/.test-build/src/live/contracts.js",
@@ -4178,15 +4196,46 @@
         "runtime/extension/dist/offline/protocol.js",
         "runtime/extension/dist/offline/session.js",
         "runtime/extension/dist/storage/durable_idb.js",
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/panel.css",
+        "runtime/extension/src/live/panel.html",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/workspace.html",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/test/live/panel.test.ts",
+        "runtime/src/moj_discovery/canonical.py",
+        "runtime/src/moj_discovery/live_config.py",
+        "runtime/src/moj_discovery/live_intent.py",
+        "runtime/src/moj_discovery/live_preflight_batched.py",
+        "runtime/src/moj_discovery/live_service.py",
         "runtime/src/moj_discovery/pack_verifier.py",
+        "runtime/src/moj_discovery/providers/api_football.py",
+        "runtime/src/moj_discovery/secrets_local.py",
+        "runtime/src/moj_discovery/windows_credential_store.py",
         "runtime/tests/bootstrap/test_command_registry.py",
         "runtime/tests/bootstrap/test_repository_baseline.py",
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+        "runtime/tests/contracts/test_declaration_complete_gate.py",
+        "runtime/tests/live/test_admitted_live_bindings.py",
+        "runtime/tests/live/test_live_preflight_batched.py",
+        "runtime/tests/live/test_live_qualification.py",
+        "runtime/tests/live/test_part_b_inventory.py",
+        "runtime/tests/live/test_part_b_launcher.py",
+        "runtime/tests/live/test_part_b_package.py",
+        "runtime/tests/live/test_platform_binding.py",
+        "runtime/tests/live/test_run_intents.py",
+        "runtime/tests/live/test_secret_entry.py",
+        "runtime/tests/live/test_secret_nonleakage.py",
+        "runtime/tests/live/test_windows_credential_store.py",
+        "runtime/tests/live/test_workspace_projection.py",
         "runtime/tests/release/test_candidate_command_registry.py",
         "runtime/tests/release/test_candidate_qualification_receipt.py",
         "runtime/tests/release/test_full_proof_coverage.py",
         "runtime/tests/release/test_post_commit_baseline.py",
         "runtime/tests/release/test_zero_parent_export.py",
         "runtime/tests/release/test_zero_parent_repository.py",
+        "runtime/tests/repairs/test_full_verifier_controller_config.py",
+        "runtime/tests/repairs/test_phase_evidence.py",
         "runtime/tests/seal/test_deterministic_seal.py",
         "runtime/tests/seal/test_governed_content_root.py",
         "runtime/tests/seal/test_pack_assembly.py",
@@ -4197,20 +4246,54 @@
         "runtime/tools/compute_governed_content_root.py",
         "runtime/tools/create_zero_parent_repository.py",
         "runtime/tools/export_zero_parent_candidate.py",
+        "runtime/tools/launch_part_b.py",
+        "runtime/tools/live_preflight_batched.py",
+        "runtime/tools/package_part_b.py",
+        "runtime/tools/phase_evidence.py",
+        "runtime/tools/probe_football_provider.py",
+        "runtime/tools/qualify_live_platform.py",
+        "runtime/tools/qualify_live_readonly.py",
         "runtime/tools/qualify_zero_parent_baseline.py",
         "runtime/tools/run_command_registry.py",
-        "runtime/tools/seal_review_pack.py"
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/run_live_readonly.py",
+        "runtime/tools/run_with_api_football_key.py",
+        "runtime/tools/seal_review_pack.py",
+        "runtime/tools/verify_local.py",
+        "runtime/tools/verify_part_b.py",
+        "runtime/tools/verify_proof_coverage.py",
+        "runtime/tools/windows_credential_helper.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json"
       ],
       "exact_files": [
         "pack/docs/registries/inherited-baseline-qualification.v1.json",
+        "runtime/contracts/live_readonly/v1/config.schema.json",
+        "runtime/docs/execution/PART_B_PROGRESS.md",
+        "runtime/docs/runbooks/INSTALL_PART_B_VI.md",
+        "runtime/docs/runbooks/RUN_ONE_MATCH_VI.md",
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/panel.css",
+        "runtime/extension/src/live/panel.html",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/workspace.html",
+        "runtime/extension/src/live/workspace.ts",
         "runtime/extension/test/bootstrap.test.ts",
         "runtime/extension/test/bootstrap/canonical-vectors.test.ts",
         "runtime/extension/test/bootstrap/clock-coherence-vectors.test.ts",
+        "runtime/extension/test/live/panel.test.ts",
         "runtime/extension/test/schema-vendor.test.ts",
         "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+        "runtime/src/moj_discovery/canonical.py",
         "runtime/src/moj_discovery/governance.py",
+        "runtime/src/moj_discovery/live_config.py",
+        "runtime/src/moj_discovery/live_intent.py",
+        "runtime/src/moj_discovery/live_preflight_batched.py",
+        "runtime/src/moj_discovery/live_service.py",
         "runtime/src/moj_discovery/pack_verifier.py",
+        "runtime/src/moj_discovery/providers/api_football.py",
+        "runtime/src/moj_discovery/secrets_local.py",
         "runtime/src/moj_discovery/vendor.py",
+        "runtime/src/moj_discovery/windows_credential_store.py",
         "runtime/tests-red/test_canonical_hash_red.py",
         "runtime/tests/bootstrap/test_authorization_vectors.py",
         "runtime/tests/bootstrap/test_bootstrap.py",
@@ -4231,12 +4314,28 @@
         "runtime/tests/bootstrap/test_scope0_semantics.py",
         "runtime/tests/bootstrap/test_semantic_denial.py",
         "runtime/tests/bootstrap/test_toolchains.py",
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py",
+        "runtime/tests/contracts/test_declaration_complete_gate.py",
+        "runtime/tests/live/test_admitted_live_bindings.py",
+        "runtime/tests/live/test_live_preflight_batched.py",
+        "runtime/tests/live/test_live_qualification.py",
+        "runtime/tests/live/test_part_b_inventory.py",
+        "runtime/tests/live/test_part_b_launcher.py",
+        "runtime/tests/live/test_part_b_package.py",
+        "runtime/tests/live/test_platform_binding.py",
+        "runtime/tests/live/test_run_intents.py",
+        "runtime/tests/live/test_secret_entry.py",
+        "runtime/tests/live/test_secret_nonleakage.py",
+        "runtime/tests/live/test_windows_credential_store.py",
+        "runtime/tests/live/test_workspace_projection.py",
         "runtime/tests/release/test_candidate_command_registry.py",
         "runtime/tests/release/test_candidate_qualification_receipt.py",
         "runtime/tests/release/test_full_proof_coverage.py",
         "runtime/tests/release/test_post_commit_baseline.py",
         "runtime/tests/release/test_zero_parent_export.py",
         "runtime/tests/release/test_zero_parent_repository.py",
+        "runtime/tests/repairs/test_full_verifier_controller_config.py",
+        "runtime/tests/repairs/test_phase_evidence.py",
         "runtime/tests/seal/test_deterministic_seal.py",
         "runtime/tests/seal/test_governed_content_root.py",
         "runtime/tests/seal/test_pack_assembly.py",
@@ -4247,12 +4346,27 @@
         "runtime/tools/compute_governed_content_root.py",
         "runtime/tools/create_zero_parent_repository.py",
         "runtime/tools/export_zero_parent_candidate.py",
+        "runtime/tools/launch_part_b.py",
+        "runtime/tools/live_preflight_batched.py",
+        "runtime/tools/package_part_b.py",
+        "runtime/tools/phase_evidence.py",
+        "runtime/tools/probe_football_provider.py",
+        "runtime/tools/qualify_live_platform.py",
+        "runtime/tools/qualify_live_readonly.py",
         "runtime/tools/qualify_zero_parent_baseline.py",
         "runtime/tools/run_command_registry.py",
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/run_live_readonly.py",
+        "runtime/tools/run_with_api_football_key.py",
         "runtime/tools/seal_review_pack.py",
         "runtime/tools/sync_pack_assets.py",
+        "runtime/tools/verify_local.py",
         "runtime/tools/verify_normative_bundle.py",
-        "runtime/tools/verify_toolchains.py"
+        "runtime/tools/verify_part_b.py",
+        "runtime/tools/verify_proof_coverage.py",
+        "runtime/tools/verify_toolchains.py",
+        "runtime/tools/windows_credential_helper.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json"
       ],
       "exact_symbols": [
         "runtime/tests/release/test_candidate_command_registry.py::test_candidate_mode_runs_every_required_command_once",
@@ -4379,29 +4493,36 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt.json",
         "authoring-fixtures/part-b-compiler-inputs.json",
+        "authoring-fixtures/part-b-one-ready-predecessor.json",
         "authoring-fixtures/part-b-review-predecessor.json",
         "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_current_phase_inputs.py",
         "authoring-tests/test_declaration_gate.py",
         "authoring-tests/test_descendant_qualification_followup.py",
         "authoring-tests/test_full_verifier_controller_config.py",
         "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tests/test_one_ready_inputs.py",
         "authoring-tests/test_part_b_review_inputs.py",
         "authoring-tests/test_task_manifest_semantics.py",
         "authoring-tools/apply_descendant_qualification_followup.py",
         "authoring-tools/apply_full_verifier_followup.py",
         "authoring-tools/build_task_command_registry.py",
         "authoring-tools/issue_current_authoring_repository_receipt.py",
+        "authoring-tools/issue_declaration_gate.py",
+        "authoring-tools/prepare_one_ready_inputs.py",
         "authoring-tools/prepare_part_b_review_inputs.py",
+        "authoring-tools/validate_current_phase_inputs.py",
         "pack/docs/configs/full-verifier-controller.v1.json",
         "pack/docs/configs/review-a.v2.json",
         "pack/docs/configs/review-aggregation.v2.json",
         "pack/docs/configs/review-b.v2.json",
         "pack/docs/contracts/07-command-and-config-lifecycle.md",
+        "pack/docs/contracts/part-b-one-ready.v1.json",
         "pack/docs/receipts/migration-final-receipt.v1.json",
         "pack/docs/registries/artifact-ownership.v1.json",
         "pack/docs/registries/command-io.v1.json",
@@ -4425,28 +4546,43 @@
         "runtime/review-config/review-authority.v1.json",
         "runtime/review-config/review-b.v1.json",
         "runtime/review-config/review-b.v2.json",
-        "runtime/task-command-registry.json"
+        "runtime/task-command-registry.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-aggregation.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/full-verifier-controller.schema.json"
       ],
       "exact_files": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt.json",
+        "authoring-fixtures/part-b-one-ready-predecessor.json",
         "authoring-tests/test_command_registry_generation.py",
         "authoring-tests/test_current_authoring_receipt.py",
+        "authoring-tests/test_current_phase_inputs.py",
         "authoring-tests/test_declaration_gate.py",
         "authoring-tests/test_descendant_qualification_followup.py",
         "authoring-tests/test_full_verifier_controller_config.py",
         "authoring-tests/test_full_verifier_followup_amendment.py",
+        "authoring-tests/test_one_ready_inputs.py",
         "authoring-tests/test_task_manifest_semantics.py",
         "authoring-tools/apply_descendant_qualification_followup.py",
         "authoring-tools/apply_full_verifier_followup.py",
         "authoring-tools/build_task_command_registry.py",
         "authoring-tools/issue_current_authoring_repository_receipt.py",
+        "authoring-tools/issue_declaration_gate.py",
+        "authoring-tools/prepare_one_ready_inputs.py",
+        "authoring-tools/validate_current_phase_inputs.py",
         "pack/docs/configs/full-verifier-controller.v1.json",
         "pack/docs/configs/review-a.v2.json",
         "pack/docs/configs/review-aggregation.v2.json",
         "pack/docs/configs/review-b.v2.json",
         "pack/docs/contracts/07-command-and-config-lifecycle.md",
+        "pack/docs/contracts/part-b-one-ready.v1.json",
         "pack/docs/registries/artifact-ownership.v1.json",
         "pack/docs/registries/command-io.v1.json",
         "pack/docs/registries/delivery-map.v1.json",
@@ -4469,7 +4605,15 @@
         "runtime/review-config/review-authority.v1.json",
         "runtime/review-config/review-b.v1.json",
         "runtime/review-config/review-b.v2.json",
-        "runtime/task-command-registry.json"
+        "runtime/task-command-registry.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-aggregation.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/full-verifier-controller.schema.json"
       ],
       "exact_symbols": [
         "authoring-tools/sync_normative_bundle.py::synchronize_normative_bundle"
@@ -4482,7 +4626,9 @@
         "V636_MIG0_T08_BINDINGS",
         "V636_MIG0_T08_CHECK",
         "V636_MIG0_T08_SYNC",
-        "VERIFY_FINAL_MIGRATION"
+        "VERIFY_FINAL_MIGRATION",
+        "VALIDATE_CURRENT_DECLARATION",
+        "VALIDATE_CURRENT_DESCENDANT_MIGRATION"
       ],
       "tests_first": [],
       "positive_vectors": [
@@ -4549,11 +4695,13 @@
       ],
       "outputs": [
         "runtime/tools/verify_executable_references.py",
-        "runtime/tests/release/test_executable_references.py"
+        "runtime/tests/release/test_executable_references.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P06-T01.json"
       ],
       "exact_files": [
         "runtime/tools/verify_executable_references.py",
-        "runtime/tests/release/test_executable_references.py"
+        "runtime/tests/release/test_executable_references.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P06-T01.json"
       ],
       "exact_symbols": [
         "runtime/tools/verify_executable_references.py::verify_executable_references",
@@ -4786,11 +4934,215 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "runtime/tools/full_verifier_config.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stderr"
       ],
       "exact_files": [
+        "runtime/tests/release/test_candidate_command_registry.py",
+        "runtime/tools/full_verifier_config.py",
         "runtime/tools/run_command_registry.py",
-        "runtime/tests/release/test_candidate_command_registry.py"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stderr"
       ],
       "exact_symbols": [
         "runtime/tools/run_command_registry.py::main",
@@ -4799,7 +5151,8 @@
       "exact_schema_refs": [],
       "exact_command_ids": [
         "VERIFY_EXTERNAL_AUTHORING_SOURCES",
-        "VERIFY_V636_P07_T01"
+        "VERIFY_V636_P07_T01",
+        "ISSUE_CURRENT_PHASE_PROOFS"
       ],
       "tests_first": [
         "runtime/tests/release/test_candidate_command_registry.py"
@@ -4827,7 +5180,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4865,10 +5218,14 @@
         "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stderr"
       ],
       "exact_files": [
-        "runtime/tests/release/test_full_proof_coverage.py"
+        "runtime/tests/release/test_full_proof_coverage.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stderr"
       ],
       "exact_symbols": [
         "runtime/tests/release/test_full_proof_coverage.py::test_every_proof_matrix_row_has_passing_evidence"
@@ -4905,7 +5262,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -4945,12 +5302,16 @@
         "Verified immutable plan-input and the task-specific registered command inputs"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stderr"
       ],
       "exact_files": [
         "runtime/tools/build_candidate_qualification_receipt.py",
-        "runtime/tests/release/test_candidate_qualification_receipt.py"
+        "runtime/tests/release/test_candidate_qualification_receipt.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stderr"
       ],
       "exact_symbols": [
         "runtime/tools/build_candidate_qualification_receipt.py::main",
@@ -4986,7 +5347,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5020,19 +5381,19 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T01.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5073,7 +5434,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T01.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5107,20 +5468,20 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/DESCENDANT_REPOSITORY_QUALIFICATION.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5161,7 +5522,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T02.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5195,19 +5556,19 @@
       ],
       "inputs": [
         "pack/docs/configs/full-verifier-controller.v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json"
       ],
       "outputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T03.json"
       ],
       "exact_files": [
         "runtime/tools/qualify_descendant_repository.py",
@@ -5250,7 +5611,7 @@
         "AUTHORITY_BOUNDARY_VIOLATION"
       ],
       "evidence_artifacts": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T03.json"
       ],
       "rollback": [
         "Keep the failed candidate and evidence; resume only from the last accepted source inventory in a new isolated authoring root.",
@@ -5285,28 +5646,28 @@
       "inputs": [
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
         "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-MIG0-T06.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P00-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P02-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T04.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T05.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P06-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
         "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
         "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
         "authoring-fixtures/part-b-compiler-inputs.json",
@@ -5322,7 +5683,112 @@
         "plan-input/bootstrap/extract_plan.py",
         "plan-input/bootstrap/initialize_authoring_repository.py",
         "plan-input/bootstrap/test_bootstrap_tools.py",
-        "plan-input/bootstrap/verify_extracted_plan.py"
+        "plan-input/bootstrap/verify_extracted_plan.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stderr"
       ],
       "outputs": [
         "pack/authoring-source/bootstrap/create_authoring_workspace.py",
@@ -5502,10 +5968,10 @@
         "Dependency V636-P09-T02 is ACCEPTED"
       ],
       "inputs": [
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "pack/GOVERNED_CONTENT_ROOT.json",
         "pack/docs/configs/full-verifier-controller.v2.json",

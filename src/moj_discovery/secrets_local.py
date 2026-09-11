@@ -1,22 +1,24 @@
-"""Ephemeral backend-only credentials. No storage, fingerprints or subprocess dispatch."""
+"""Opaque backend-only credentials and fail-closed terminal entry."""
 
 import getpass
 import io
 import os
-import termios
 import unicodedata
 import warnings
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from typing import Never, SupportsIndex, TextIO
+
+if os.name != "nt":
+    import termios
 
 KEY_NAME = "API_FOOTBALL_KEY"
 
 
 class SecretValue:
-    __slots__ = ("__value",)
+    __slots__ = ("__value", "__usable")
 
-    def __init__(self, value: str):
+    def __init__(self, value: str, *, usable: Callable[[], bool] | None = None):
         if (
             type(value) is not str
             or not value.strip()
@@ -25,6 +27,7 @@ class SecretValue:
         ):
             raise ValueError("E_SECRET_FORMAT")
         self.__value = value
+        self.__usable = usable
 
     def __repr__(self) -> str:
         return "[REDACTED]"
@@ -44,12 +47,19 @@ class SecretValue:
         raise TypeError("E_SECRET_SERIALIZATION")
 
     def reveal_for_header(self) -> str:
-        """Only the fixed provider transport may consume this value outside tests."""
+        """Only the backend credential owner/transport may consume the value."""
+        self.check_usable()
         return self.__value
+
+    def check_usable(self) -> None:
+        if self.__usable is not None and self.__usable() is not True:
+            raise ValueError("E_SECRET_LEASE_LOST")
 
 
 @contextmanager
 def controlling_tty() -> Iterator[TextIO]:
+    if os.name == "nt":
+        raise ValueError("E_SECRET_NO_TTY")
     try:
         terminal = io.TextIOWrapper(io.FileIO("/dev/tty", "r+"), encoding="utf-8")
         try:

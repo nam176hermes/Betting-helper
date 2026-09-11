@@ -297,8 +297,7 @@ def validate_external_authoring_result(
 def _declared_compiler_outputs(root: Path) -> set[str]:
     registry = json.loads(
         (
-            root
-            / "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json"
+            root / "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json"
         ).read_text()
     )
     entries = registry.get("entries")
@@ -418,20 +417,18 @@ def build_candidate_command_results(
             _fail("GENERATED_OUTPUTS")
         expected_paths = _declared_compiler_outputs(config.current_checkout_root)
         required_output = {"path", "sha256", "size_bytes", "mode"}
-        if (
-            [item.get("path") for item in generated_outputs if isinstance(item, dict)]
-            != sorted(expected_paths, key=str.encode)
-            or any(
-                not isinstance(item, dict)
-                or set(item) != required_output
-                or not isinstance(item.get("path"), str)
-                or not isinstance(item.get("sha256"), str)
-                or re.fullmatch(r"[0-9a-f]{64}", cast(str, item.get("sha256"))) is None
-                or not isinstance(item.get("size_bytes"), str)
-                or re.fullmatch(r"0|[1-9][0-9]*", cast(str, item.get("size_bytes"))) is None
-                or item.get("mode") not in {"100644", "100755"}
-                for item in generated_outputs
-            )
+        if [item.get("path") for item in generated_outputs if isinstance(item, dict)] != sorted(
+            expected_paths, key=str.encode
+        ) or any(
+            not isinstance(item, dict)
+            or set(item) != required_output
+            or not isinstance(item.get("path"), str)
+            or not isinstance(item.get("sha256"), str)
+            or re.fullmatch(r"[0-9a-f]{64}", cast(str, item.get("sha256"))) is None
+            or not isinstance(item.get("size_bytes"), str)
+            or re.fullmatch(r"0|[1-9][0-9]*", cast(str, item.get("size_bytes"))) is None
+            or item.get("mode") not in {"100644", "100755"}
+            for item in generated_outputs
         ):
             _fail("GENERATED_OUTPUTS")
         report["generated_outputs"] = generated_outputs
@@ -439,9 +436,26 @@ def build_candidate_command_results(
 
 
 def evaluate_invocation(
-    invocation: dict[str, object], *, environment: dict[str, str], working_directory: Path
+    invocation: dict[str, object],
+    *,
+    environment: dict[str, str],
+    working_directory: Path,
+    log_directory: Path | None = None,
 ) -> dict[str, object]:
     argv = cast(list[str], invocation["argv"])
+    log_paths: list[Path] = []
+    if log_directory is not None:
+        identifier = invocation["command_id"]
+        if (
+            not isinstance(identifier, str)
+            or re.fullmatch(r"[A-Z0-9_]{1,100}", identifier) is None
+            or log_directory.resolve() != log_directory
+        ):
+            raise ValueError("E_COMMAND_LOG_PATH")
+        log_directory.mkdir(parents=True, exist_ok=True)
+        log_paths = [log_directory / f"{identifier}.{stream}" for stream in ("stdout", "stderr")]
+        if any(path.exists() or path.is_symlink() for path in log_paths):
+            raise ValueError("E_COMMAND_LOG_EXISTS")
     try:
         completed = subprocess.run(  # noqa: S603 - argv passed from closed registry
             argv, capture_output=True, cwd=working_directory, env=environment
@@ -455,6 +469,9 @@ def evaluate_invocation(
     stdout, stderr = completed.stdout, completed.stderr
     if not isinstance(stdout, bytes) or not isinstance(stderr, bytes):
         return {"command_id": invocation["command_id"], "failure": "E_COMMAND_CAPTURE"}
+    for path, data in zip(log_paths, (stdout, stderr), strict=False):
+        with path.open("xb") as stream:
+            stream.write(data)
     return {
         "command_id": invocation["command_id"],
         "argv": argv,
@@ -576,7 +593,8 @@ def _git_source_identity(root: Path) -> dict[str, object]:
     return {
         "head": read("rev-parse", "HEAD"),
         "tree": read("rev-parse", "HEAD^{tree}"),
-        "source_diff": read("diff", "--binary", "--", *sorted(set(changed) - allowed)),
+        # Source dirt was rejected above; compiler outputs have their own inventory.
+        "source_diff": "",
     }
 
 
@@ -605,6 +623,11 @@ def run_registry(
             command,
             environment=environment,
             working_directory=Path(cast(str, command["cwd"])),
+            **(
+                {"log_directory": config.evidence_root / "command-logs"}
+                if config is not None
+                else {}
+            ),
         )
         results.append(result)
         if result.get("passed") is not True:

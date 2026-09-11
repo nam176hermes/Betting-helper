@@ -155,3 +155,38 @@ Qualification checkpoint after the continued controller audit:
 - Status: CONTROLLER_REPAIR_REQUIRED / WAITING_REVIEW. Actual host authorization,
   separate fresh reviewer sessions and human attestations remain pending after
   qualification and seal. No API key, operator capture or live run was used.
+
+W00-W12 implementation in progress (user-approved one-match readiness plan):
+
+- W00: explicit source-owned amendment, current declaration/migration commands,
+  and nine phase-proof declarations generated from authoring predecessor `2aeadf7`.
+- W01-W03: current validation and retained command-log proofs implemented; focused
+  authoring and controller checks pass. Full frozen-source campaign is pending.
+- W04: Windows Credential Manager helper, encrypted private pipe, generation-bound
+  consent and rotation lock implemented. Real Windows TEST_ONLY write/read/delete
+  check passes; primary credential slot was not accessed.
+- W05-W07: Vietnamese launcher, current Side Panel and delivery package are under
+  implementation. New code has not received host review or live authority.
+- Current evidence/checkpoint: `authoring-evidence/part-b-one-ready` and the local
+  execution-state file. Old receipts and the interrupted campaign remain intact.
+
+W00-W07 implementation checkpoint before source freeze:
+
+- Starting runtime HEAD: `6d0d1c96bc8b7bddc9651d5bcd5a90b511ba8867`;
+  starting authoring HEAD: `2aeadf705955889a9c2f75c27cbee92dfe64cbde`.
+  The final commit and evidence hashes are recorded outside tracked source in
+  `.local/part-b/execution-state.json` and `authoring-evidence/part-b-one-ready`.
+- Current declarations include exact canonical destinations, nine phase outputs,
+  104 command-log files and their sealed retention inputs. Historical receipts
+  and accepted ancestor semantics remain unchanged.
+- The provider checks the Windows credential lease before use; loss stops further
+  requests and closes live recording at SECURITY_HOLD. Current live intent URLs
+  must exactly match reviewed fixture bindings. No source observation is invented.
+- Native Windows TEST_ONLY checks observed no-echo entry, overflow/cancellation
+  buffer flushing, competing mutex exclusion and release after EOF/process death.
+  The primary credential slot was not accessed.
+- Vietnamese shortcut/launcher and shared Side Panel are implemented. Current
+  package generation, full qualification, genuine host review and real-source
+  observation/live gates remain separately pending at this source checkpoint.
+- All actual API attempts and real operator captures in this implementation: 0.
+  MODEL_ENABLED=false; MONEY_READY=NO; no production or betting authority.

@@ -50,3 +50,38 @@ def test_mock_binding_and_key_cannot_create_real_admission(
         LiveService(config, SecretValue("TEST_ONLY_NOT_A_REAL_KEY"), admitted)
     assert http.paths == []
     assert config.public["model_enabled"] is False and config.public["money_enabled"] is False
+
+
+def test_direct_live_admission_rejects_intent_url_before_claim(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from types import SimpleNamespace
+
+    from moj_discovery import live_preflight_batched as gate
+
+    config = SimpleNamespace(sha256="TEST_ONLY_CONFIG")
+    receipt = SimpleNamespace(
+        config=config,
+        intent=SimpleNamespace(
+            root=gate.ROOT, public={"operator_urls": ["https://miseojeuplus.espacejeux.com/WRONG"]}
+        ),
+    )
+    evidence = SimpleNamespace(
+        profile=object(),
+        bindings=[
+            {
+                "provider_fixture_id": 101,
+                "operator_match_url": "https://miseojeuplus.espacejeux.com/TEST_ONLY",
+            }
+        ],
+    )
+    monkeypatch.setattr(gate, "load_evidence", lambda config: evidence)
+    monkeypatch.setattr(
+        gate, "evaluate_live_readiness", lambda *args: SimpleNamespace(live_read_only_ready=True)
+    )
+    monkeypatch.setattr(gate, "verify_receipt", lambda *args: None)
+    monkeypatch.setattr(
+        gate, "claim_receipt", lambda *args: pytest.fail("mismatched scope claimed")
+    )
+    with pytest.raises(ValueError, match="E_LIVE_INTENT_OPERATOR_URL"):
+        gate.admit_live_run(config, receipt)

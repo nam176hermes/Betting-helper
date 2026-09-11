@@ -61,7 +61,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/CANDIDATE_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/DESCENDANT_REPOSITORY_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P04-T04",
       "modifying_tasks": [],
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -134,7 +134,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P07-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P07-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T01",
       "modifying_tasks": [],
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P08-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P08-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -193,7 +193,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/bootstrap/authoring-repository-receipt.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/environment-aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/environment-aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -245,7 +245,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/environment/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/environment/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -258,7 +258,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/full-repair/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/full-repair/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -1613,12 +1613,15 @@
       "path": "authoring-tools/issue_declaration_gate.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P00-T05",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-MIG0-T08"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": null,
       "consumers": [
-        "V636-P00-T05"
+        "V636-P00-T05",
+        "V636-MIG0-T08"
       ]
     },
     {
@@ -8861,6 +8864,7 @@
       "source": null,
       "qualification_owner": "V636-MIG0-T08",
       "consumers": [
+        "V636-MIG0-T08",
         "V636-P10-T01",
         "V636-P10-T02",
         "V636-P10-T03",
@@ -8896,6 +8900,7 @@
       "source": null,
       "qualification_owner": "V636-MIG0-T08",
       "consumers": [
+        "V636-MIG0-T08",
         "V636-P10-T04"
       ]
     },
@@ -8949,6 +8954,7 @@
       "source": null,
       "qualification_owner": "V636-MIG0-T08",
       "consumers": [
+        "V636-MIG0-T08",
         "V636-P10-T02",
         "V636-P10-T03",
         "V636-P10-T04"
@@ -9045,7 +9051,8 @@
       "classification": "BASELINE_COPY",
       "creation_owner": "V636-MIG0-T02",
       "modifying_tasks": [
-        "V636-MIG0-T03"
+        "V636-MIG0-T03",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": {
@@ -9053,7 +9060,9 @@
         "sha256": "90d37e4451d67a921a533f079bd5c1aa83e26e5a2b1992c857471733a737a1e4"
       },
       "qualification_owner": "V636-MIG0-T06",
-      "consumers": []
+      "consumers": [
+        "V636-P05-T09"
+      ]
     },
     {
       "path": "runtime/src/moj_discovery/capability.py",
@@ -10065,7 +10074,8 @@
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
-        "V636-P02-T02"
+        "V636-P02-T02",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": null,
@@ -10073,6 +10083,7 @@
       "consumers": [
         "V636-P01-T02",
         "V636-P02-T02",
+        "V636-P05-T09",
         "V636-P08-T03"
       ]
     },
@@ -10133,7 +10144,8 @@
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
-        "V636-P02-T03"
+        "V636-P02-T03",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": null,
@@ -10141,6 +10153,7 @@
       "consumers": [
         "V636-P01-T02",
         "V636-P02-T03",
+        "V636-P05-T09",
         "V636-P08-T03"
       ]
     },
@@ -11831,12 +11844,15 @@
       "path": "runtime/tools/run_environment_qualification.py",
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P03-T07",
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
       "materialization_required": true,
       "source": null,
       "qualification_owner": "V636-P03-T07",
       "consumers": [
         "V636-P03-T07",
+        "V636-P05-T09",
         "V636-P08-T01",
         "V636-P09-T01"
       ]
@@ -12105,7 +12121,8 @@
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
         "V636-P01-T05",
-        "V636-P05-T02"
+        "V636-P05-T02",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": null,
@@ -12114,6 +12131,7 @@
         "V636-P01-T02",
         "V636-P01-T05",
         "V636-P05-T02",
+        "V636-P05-T09",
         "V636-P07-T02",
         "V636-P10-T01"
       ]
@@ -13861,7 +13879,9 @@
       "path": "runtime/extension/src/live/background.ts",
       "classification": "EXTERNAL_INPUT",
       "creation_owner": null,
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
       "materialization_required": true,
       "source": {
         "path": "/home/thenam176/betting-helper/part-b-candidate/extension/src/live/background.ts",
@@ -14061,7 +14081,9 @@
       "path": "runtime/extension/src/live/panel.ts",
       "classification": "EXTERNAL_INPUT",
       "creation_owner": null,
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
       "materialization_required": true,
       "source": {
         "path": "/home/thenam176/betting-helper/part-b-candidate/extension/src/live/panel.ts",
@@ -14261,7 +14283,9 @@
       "path": "runtime/extension/src/live/workspace.ts",
       "classification": "EXTERNAL_INPUT",
       "creation_owner": null,
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
       "materialization_required": true,
       "source": {
         "path": "/home/thenam176/betting-helper/part-b-candidate/extension/src/live/workspace.ts",
@@ -14593,7 +14617,9 @@
       "path": "runtime/extension/test/live/panel.test.ts",
       "classification": "EXTERNAL_INPUT",
       "creation_owner": null,
-      "modifying_tasks": [],
+      "modifying_tasks": [
+        "V636-P05-T09"
+      ],
       "materialization_required": true,
       "source": {
         "path": "/home/thenam176/betting-helper/part-b-candidate/extension/test/live/panel.test.ts",
@@ -14843,6 +14869,2234 @@
       "qualification_owner": "V636-P05-T09",
       "consumers": [
         "V636-P05-T09"
+      ]
+    },
+    {
+      "path": "authoring-tools/prepare_one_ready_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-tools/validate_current_phase_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_one_ready_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-tests/test_current_phase_inputs.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "authoring-fixtures/part-b-one-ready-predecessor.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "pack/docs/contracts/part-b-one-ready.v1.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/docs/execution/PART_B_PROGRESS.md",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/secrets_local.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/windows_credential_store.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/live_config.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/live_intent.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/live_preflight_batched.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/providers/api_football.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/src/moj_discovery/live_service.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/phase_evidence.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/verify_local.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/windows_credential_helper.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/run_with_api_football_key.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/run_live_readonly.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/launch_part_b.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/package_part_b.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/qualify_live_platform.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/qualify_live_readonly.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/verify_part_b.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/probe_football_provider.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tools/live_preflight_batched.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/contracts/live_readonly/v1/config.schema.json",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/repairs/test_phase_evidence.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/repairs/test_full_verifier_controller_config.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_windows_credential_store.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_part_b_launcher.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_part_b_package.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_part_b_inventory.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_secret_entry.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_secret_nonleakage.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_run_intents.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_live_preflight_batched.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_admitted_live_bindings.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_workspace_projection.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_platform_binding.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/tests/live/test_live_qualification.py",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/panel.html",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/workspace.html",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/extension/src/live/panel.css",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/docs/runbooks/INSTALL_PART_B_VI.md",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/docs/runbooks/RUN_ONE_MATCH_VI.md",
+      "classification": "TASK_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": null,
+      "qualification_owner": "V636-P05-T09",
+      "consumers": [
+        "V636-P05-T09",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/contracts/part-b-one-ready.v1.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/configs/full-verifier-controller.v1.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/configs/full-verifier-controller.v2.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v2.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/configs/review-a.v2.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-aggregation.v2.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/configs/review-aggregation.v2.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v2.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/configs/review-b.v2.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/schemas/descendant-repository-qualification-receipt.schema.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/full-verifier-controller.schema.json",
+      "classification": "GENERATED_OUTPUT",
+      "creation_owner": "V636-MIG0-T08",
+      "modifying_tasks": [],
+      "materialization_required": true,
+      "source": {
+        "path": "pack/docs/schemas/full-verifier-controller.schema.json"
+      },
+      "qualification_owner": "V636-MIG0-T08",
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-MIG0-T06",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P00-T05.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P00-T05",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P02-T02.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P02-T02",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T02.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P03-T02",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T02.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P05-T02",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T04.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P05-T04",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T05.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P05-T05",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P06-T01.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P06-T01",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P05-T09",
+      "modifying_tasks": [
+        "V636-P07-T01"
+      ],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/CURRENT_INPUTS.json",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_ALL_TESTS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_PRODUCTION.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/COMPILE_V636_P04_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_RELEASE_TOOLS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_PY.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_SECURITY_TS.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_TS_V636_P04_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T04.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T05.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P01_T06.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P02_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T04.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T05.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T06.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P03_T07.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P04_T04.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T04.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T05.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T06.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T07.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P05_T08.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/TEST_V636_P06_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T01.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T01",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T01",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T02",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T02.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T02",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T02",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stdout",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T03",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T03",
+        "V636-P09-T01"
+      ]
+    },
+    {
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/command-logs/VERIFY_V636_P07_T03.stderr",
+      "classification": "EVIDENCE_OUTPUT",
+      "creation_owner": "V636-P07-T03",
+      "modifying_tasks": [],
+      "materialization_required": false,
+      "source": null,
+      "qualification_owner": null,
+      "consumers": [
+        "V636-P07-T03",
+        "V636-P09-T01"
       ]
     }
   ]

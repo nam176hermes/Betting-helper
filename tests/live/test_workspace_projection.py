@@ -132,7 +132,7 @@ const observe=()=>Object.fromEntries(Object.keys(panes).map(n=>{
   viewportWidth:d.defaultView.innerWidth,htmlNodes:d.querySelectorAll('img,svg').length,width:d.documentElement.clientWidth,scrollWidth:d.documentElement.scrollWidth,
   revision:d.querySelector('section').dataset.revision,binding:d.querySelector('section').dataset.binding,
   navRevision:d.querySelector('nav [aria-current=true]')?.dataset.revision,
-  focus:d.activeElement?.textContent,expanded:d.querySelector('details')?.open,input:d.querySelector('input').value}]}));
+  focus:d.activeElement?.textContent,expanded:d.querySelector('[data-evidence]')?.open,input:d.querySelector('input').value}]}));
 globalThis.offlineProbe={command:async m=>{
  for(let i=0;i<80 && !doc('panel')?.querySelector('section');i++) await wait();
  if(m.operation==='SELECT_DISCOVERY_TAB') return await chrome.runtime.sendMessage({operation:'TEST_ONLY_DISCOVERY_TAB'});
@@ -141,7 +141,7 @@ globalThis.offlineProbe={command:async m=>{
  else if(m.operation==='HORIZON') doc('panel').querySelector('[data-horizon="'+m.horizon+'"]').click();
  else if(m.operation==='OTHER') {const {renderMatch}=await import('../live/panel.js');renderMatch(m.projection,'FT',doc('panel').querySelector('section'));}
  else if(m.operation==='FOCUS') doc('panel').querySelector('[data-horizon="FT"]').focus();
- else if(m.operation==='EVIDENCE') {const s=doc('panel').querySelector('summary');s.click();s.focus();}
+ else if(m.operation==='EVIDENCE') {const s=doc('panel').querySelector('[data-evidence] summary');s.click();s.focus();}
  else if(m.operation==='CLICK') {const b=[...doc('panel').querySelectorAll('button')].find(b=>b.textContent===m.label);b.click();await wait();}
  else if(m.operation==='REOPEN') {panes.panel.src=panes.panel.src;await wait();}
  else if(m.operation==='WAIT') await new Promise(r=>setTimeout(r,1200));
@@ -285,7 +285,7 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
                 assert not any(
                     b["text"].lower() in {"bet", "cashout", "buy", "sell"} for b in pane["buttons"]
                 )
-                assert next(b for b in pane["buttons"] if b["text"] == "Open LiveScore match")[
+                assert next(b for b in pane["buttons"] if b["text"] == "Mở đúng trang LiveScore")[
                     "disabled"
                 ]
             assert observed["panel"]["revision"] == observed["workspace"]["revision"]
@@ -310,14 +310,14 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
             await command("EVIDENCE")
             observed = await command("WAIT")
             assert (
-                observed["panel"]["expanded"] and observed["panel"]["focus"] == "Show data evidence"
+                observed["panel"]["expanded"] and observed["panel"]["focus"] == "Xem bằng chứng dữ liệu"
             )
             observed = await command("REOPEN")
             assert (
                 observed["panel"]["revision"] == observed["workspace"]["revision"]
                 and len(http.paths) == 2
             )
-            await command("CLICK", label="Pause / Remove fixture")
+            await command("CLICK", label="Tạm dừng trận")
             observed = await command("WAIT")
             assert (
                 "PAUSED" in observed["panel"]["text"] and "PAUSED" in observed["workspace"]["text"]
@@ -329,7 +329,7 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
             assert intent["bindings"] == [
                 {"bindingId": book["binding_id"], "profileHash": book["profile_hash"]}
             ]
-            await command("CLICK", label="Stop session")
+            await command("CLICK", label="Dừng phiên")
             await command("WAIT")
             assert service._reason == "USER_STOP"
             await service.close("USER_STOP")
@@ -354,9 +354,9 @@ def test_actual_chrome_panel_shared_worker_keyboard_and_narrow_layout(
                 }
                 observed = await command("PAIR", ticket=json.dumps(ticket))
                 assert "DISCOVERY" in observed["panel"]["text"], observed
-                stop = next(b for b in observed["panel"]["buttons"] if b["text"] == "Stop session")
+                stop = next(b for b in observed["panel"]["buttons"] if b["text"] == "Dừng phiên")
                 assert stop["disabled"] is False
-                await command("CLICK", label="Stop session")
+                await command("CLICK", label="Dừng phiên")
                 await asyncio.wait_for(closed.wait(), 3)
                 observed = await command("OBSERVE")
                 assert "DISCOVERY_STOPPED" in observed["panel"]["text"], observed

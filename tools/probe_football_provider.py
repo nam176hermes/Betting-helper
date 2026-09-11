@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 from moj_discovery.live_config import LiveConfig, private_path
 from moj_discovery.live_intent import RunIntentReceipt, claim_receipt
+from moj_discovery.live_preflight_batched import provider_config_scope
 from moj_discovery.provider_protocol import ProviderScope
 from moj_discovery.providers.api_football import ApiFootballClient, ProviderError
 from moj_discovery.providers.football_normalizer import ObservationStamp, normalize_bundle
@@ -256,11 +257,7 @@ def run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt)
         "confirmation_kind": intent.confirmation_kind,
         "finished_before_deadline": time.monotonic() < intent.deadline_mono,
         "finished_at_utc": datetime.now(UTC).isoformat(),
-        "provider_config_scope": {
-            "provider": config.public["provider"],
-            "max_run_minutes": config.public["runtime"]["max_run_minutes"],
-            "max_matches": config.public["runtime"]["max_matches"],
-        },
+        "provider_config_scope": provider_config_scope(config),
     }
     data = json.dumps(report, indent=2).encode()
     if len(data) > 16 * 1024 * 1024:

@@ -664,6 +664,7 @@ class LiveService:
         if self._tick_lock.locked():
             return
         async with self._tick_lock:
+            self.client.check_credential()
             now = self._mono()
             if now < self._last_clock:
                 self._reason = "SECURITY_HOLD"
@@ -734,6 +735,10 @@ class LiveService:
         if self._closed:
             raise ValueError("E_LIVE_SERVICE_CLOSED")
         self._reason = self._reason or reason
+        try:
+            self.client.check_credential()
+        except ProviderError:
+            self._reason = "SECURITY_HOLD"
         self.poller.stop("SHUTDOWN")
         if self.receiver:
             await self.receiver.close()

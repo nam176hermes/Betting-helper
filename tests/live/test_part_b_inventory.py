@@ -188,9 +188,40 @@ def test_existing_descendant_and_immutable_baseline() -> None:
         return subprocess.check_output(["/usr/bin/git", *args], cwd=root)  # noqa: S603 -- fixed local identity commands.
 
     assert git("rev-list", "--max-parents=0", "HEAD") == git("rev-list", "--max-parents=0", start)
+    amendment = root / "vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json"
+    if not amendment.exists():
+        assert (
+            git("diff", start, "--", "vendor", "task-command-registry.json", "schema-lock.json")
+            == b""
+        )
+        return
+    # The explicitly adopted descendant permits canonical source-owned rebinding;
+    # historical receipts and ancestry keep their original bytes and meaning.
+    from tools.full_verifier_config import load_controller_config
+    from tools.sync_pack_assets import sync_pack_assets
+
+    contract = json.loads(amendment.read_bytes())
+    adopted = contract["adopted_source"]
+    assert adopted == {
+        "commit": "6d0d1c96bc8b7bddc9651d5bcd5a90b511ba8867",
+        "tree": "c73cca5eee550a10bd70cbbecf1819cb08bccc21",
+        "qualification": "NOT_INFERRED",
+    }
+    assert git("rev-parse", adopted["commit"] + "^{tree}").decode().strip() == adopted["tree"]
+    assert git("merge-base", "--is-ancestor", adopted["commit"], "HEAD") == b""
     assert (
-        git("diff", start, "--", "vendor", "task-command-registry.json", "schema-lock.json") == b""
+        git("diff", adopted["commit"], "--", "vendor/hybrid-discovery-v6.3.6/docs/receipts") == b""
     )
+    config = load_controller_config(
+        root / "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json"
+    )
+    assert (
+        hashlib.sha256(
+            (config.governed_source_pack / "docs/receipts/migration-receipt.v1.json").read_bytes()
+        ).hexdigest()
+        == contract["historical_migration_sha256"]
+    )
+    sync_pack_assets(config.governed_source_pack, root, check=True)
 
 
 def verify_executed_inventory(
@@ -217,6 +248,8 @@ def verify_executed_inventory(
         "ruff",
         "mypy",
         "eslint",
+        "credential-console",
+        "credential-store",
     }:
         raise ValueError("E_PART_B_REQUIRED_COMMANDS")
     for record in records:

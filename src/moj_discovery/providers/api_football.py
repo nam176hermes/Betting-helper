@@ -334,12 +334,22 @@ class ApiFootballClient:
             raise ProviderError(self._stopped)
         if purpose in self._blocked_purposes:
             raise ProviderError(self._blocked_purposes[purpose])
+        self.check_credential()
         try:
             verify_call_authorization(self.scope, purpose=purpose, now_mono=self._mono())
         except Exception:
             raise ProviderError("RUN_DEADLINE_OR_AUTHORITY") from None
         if self.quota.count_attempts() >= self.scope.max_attempts:
             raise ProviderError("SESSION_BUDGET")
+
+    def check_credential(self) -> None:
+        if self._secret is None:
+            raise ProviderError("STOPPED")
+        try:
+            self._secret.check_usable()
+        except ValueError:
+            self._stopped = "AUTH_FAILED"
+            raise ProviderError("AUTH_FAILED") from None
 
     def _read(self, response: Any, request: Request, timeout: float) -> bytes:
         if response.geturl() != request.full_url:

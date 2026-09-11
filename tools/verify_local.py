@@ -73,9 +73,7 @@ def _portable_timeout(check_id: str) -> int:
 
 def _portable_environment() -> dict[str, str]:
     environment = {
-        key: value
-        for key, value in os.environ.items()
-        if not key.startswith(("PYTEST_", "PYTHON"))
+        key: value for key, value in os.environ.items() if not key.startswith(("PYTEST_", "PYTHON"))
     }
     environment.update(
         {
@@ -124,9 +122,7 @@ def _run_portable() -> int:
                 "exit_code": None,
                 "stdout": _captured_text(error.stdout),
                 "stderr": "\n".join(
-                    part
-                    for part in (partial_stderr, f"{type(error).__name__}: {error}")
-                    if part
+                    part for part in (partial_stderr, f"{type(error).__name__}: {error}") if part
                 ),
             }
         except OSError as error:
@@ -215,9 +211,7 @@ def _git_output(root: Path, *args: str) -> str:
     return completed.stdout.strip()
 
 
-def _validate_bootstrap_receipt(
-    receipt_path: Path, pack: Path, accepted_ancestor: str
-) -> None:
+def _validate_bootstrap_receipt(receipt_path: Path, pack: Path, accepted_ancestor: str) -> None:
     receipt = _load_object(receipt_path)
     authoring_root = pack.resolve(strict=True).parent
     if (
@@ -513,11 +507,27 @@ def _full_prerequisites(config: FullVerifierConfig) -> list[dict[str, object]]:
 
 
 def _delegate_controller(config: FullVerifierConfig) -> int:
+    from tools import phase_evidence
+
     config.evidence_root.mkdir(parents=True, exist_ok=True)
-    external_result = _execute_external_authoring_suite(config)
-    if external_result["passed"] is not True:
+    # A campaign is exclusive. Keep interrupted observations and choose a new
+    # source-owned evidence root instead of executing over partial outputs.
+    if (
+        config.candidate_command_evidence.exists()
+        or (config.evidence_root / "command-logs").exists()
+    ):
+        print("E_CONTROLLER_CAMPAIGN_EXISTS: use a new declared evidence root", flush=True)
         return 1
     try:
+        current_phases = phase_evidence.contract(config)
+        campaign_identity = (
+            run_command_registry._git_source_identity(REPOSITORY_ROOT)
+            if current_phases is not None
+            else None
+        )
+        external_result = _execute_external_authoring_suite(config)
+        if external_result["passed"] is not True:
+            return 1
         _validate_bootstrap_receipt(
             config.authoring_repository_receipt,
             config.governed_source_pack,
@@ -531,7 +541,16 @@ def _delegate_controller(config: FullVerifierConfig) -> int:
     except (OSError, ValueError, json.JSONDecodeError, subprocess.SubprocessError):
         return 1
 
+    def recheck_campaign() -> None:
+        if current_phases is not None:
+            if campaign_identity != run_command_registry._git_source_identity(REPOSITORY_ROOT):
+                raise ValueError("E_CONTROLLER_SOURCE_DRIFT")
+            _validate_authoring_tests(
+                config.external_authoring_tests, config.external_authoring_source_sha256
+            )
+
     def execute(command_id: str) -> dict[str, object]:
+        recheck_campaign()
         command = next(
             (
                 item
@@ -540,18 +559,51 @@ def _delegate_controller(config: FullVerifierConfig) -> int:
             ),
             None,
         )
-        if command is None or Path(cast(str, command["cwd"])) != REPOSITORY_ROOT:
+        if command is None:
             raise ValueError("E_CONTROLLER_DAG")
+        cwd = Path(cast(str, command["cwd"]))
+        if cwd != REPOSITORY_ROOT:
+            if (
+                current_phases is None
+                or command_id not in phase_evidence.CURRENT_COMMANDS
+                or cwd != config.external_authoring_cwd
+            ):
+                raise ValueError("E_CONTROLLER_DAG")
+            _validate_authoring_tests(
+                config.external_authoring_tests, config.external_authoring_source_sha256
+            )
         result = run_command_registry.evaluate_invocation(
             command,
             environment=run_command_registry.execution_environment(config),
-            working_directory=REPOSITORY_ROOT,
+            working_directory=cwd,
+            **(
+                {"log_directory": config.evidence_root / "command-logs"}
+                if current_phases is not None
+                else {}
+            ),
         )
         if result.get("passed") is not True:
             raise RuntimeError(f"E_CONTROLLER_DAG:{command_id}")
+        recheck_campaign()
         return result
 
     try:
+        phase_results = []
+        if current_phases is not None:
+            for command_id in sorted(phase_evidence.CURRENT_COMMANDS):
+                phase_results.append(execute(command_id))
+            with (config.evidence_root / "CURRENT_INPUTS.json").open("x") as stream:
+                json.dump(
+                    {
+                        "source_identity": campaign_identity,
+                        "results": phase_results,
+                        "controller_binding": config.binding(),
+                    },
+                    stream,
+                    sort_keys=True,
+                )
+                stream.write("\n")
+            execute("CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT")
         execute("VERIFY_V636_P07_T01")
         command_evidence = _load_object(config.candidate_command_evidence)
         command_evidence["schema_version"] = "candidate-command-results/v3"
@@ -559,6 +611,8 @@ def _delegate_controller(config: FullVerifierConfig) -> int:
         config.candidate_command_evidence.write_text(
             json.dumps(command_evidence, sort_keys=True, separators=(",", ":")) + "\n"
         )
+        if current_phases is not None:
+            execute("ISSUE_CURRENT_PHASE_PROOFS")
         execute("VERIFY_V636_P07_T02")
         issuance = execute("VERIFY_V636_P07_T03")
         config.candidate_issuance_evidence.write_text(
@@ -576,7 +630,8 @@ def _delegate_controller(config: FullVerifierConfig) -> int:
             )
             + "\n"
         )
-    except (OSError, RuntimeError, ValueError, json.JSONDecodeError):
+    except (OSError, RuntimeError, ValueError, json.JSONDecodeError) as error:
+        print(str(error), flush=True)
         return 1
     return 0
 

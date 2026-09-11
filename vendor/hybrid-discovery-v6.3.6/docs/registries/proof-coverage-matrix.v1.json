@@ -25,8 +25,8 @@
       "vector_ids": [
         "DECLARATION-ALL-OWNED-AND-ORDERED"
       ],
-      "command_id": "ISSUE_V636_P00_T05",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P00-T05.json",
+      "command_id": "VALIDATE_CURRENT_DECLARATION",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P00-T05.json",
       "release_gate": "DECLARATION_COMPLETE",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P00-T05",
@@ -42,7 +42,7 @@
         "LIFECYCLE-OWNER-BEFORE-CONSUMER"
       ],
       "command_id": "TEST_V636_P02_T02",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P02-T02.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P02-T02.json",
       "release_gate": "MATERIALIZED_CONTRACTS_VALID",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P02-T02",
@@ -57,8 +57,8 @@
       "vector_ids": [
         "MIGRATION-NO-ACTIVE-V62-REF"
       ],
-      "command_id": "VERIFY_V636_MIG0_T06",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-MIG0-T06.json",
+      "command_id": "VALIDATE_CURRENT_DESCENDANT_MIGRATION",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json",
       "release_gate": "MATERIALIZATION_COMPLETE",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-MIG0-T06",
@@ -75,7 +75,7 @@
         "EXACT-JSON-POINTERS"
       ],
       "command_id": "TEST_V636_P06_T01",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P06-T01.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P06-T01.json",
       "release_gate": "EXECUTABLE_REFERENCE_COMPLETE",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P06-T01",
@@ -136,7 +136,7 @@
         "DESTROY-06-AFTER-PROOF"
       ],
       "command_id": "TEST_V636_P03_T07",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T07.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T07.json",
       "release_gate": "DURABILITY_RELEASE_ACCEPTED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P03-T07",
@@ -154,7 +154,7 @@
         "CLOCK-MUTATION"
       ],
       "command_id": "TEST_V636_P04_T04",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P04-T04.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P04-T04.json",
       "release_gate": "CLOCK_QUALIFICATION_ACCEPTED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P04-T04",
@@ -198,8 +198,8 @@
       "vector_ids": [
         "R633-01-REGRESSION"
       ],
-      "command_id": "VERIFY_V636_MIG0_T06",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-MIG0-T06.json",
+      "command_id": "VALIDATE_CURRENT_DESCENDANT_MIGRATION",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-MIG0-T06",
@@ -215,7 +215,7 @@
         "R633-02-REGRESSION"
       ],
       "command_id": "QUALIFY_INHERITED_BOOTSTRAP_PY",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T09",
@@ -231,7 +231,7 @@
         "R633-03-REGRESSION"
       ],
       "command_id": "TEST_V636_P03_T02",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P03-T02.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P03-T02.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P03-T02",
@@ -247,7 +247,7 @@
         "R633-04-REGRESSION"
       ],
       "command_id": "TEST_SECURITY_TS",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T09",
@@ -263,7 +263,7 @@
         "R633-05-REGRESSION"
       ],
       "command_id": "TEST_V636_P05_T04",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T04.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T04.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T04",
@@ -279,7 +279,7 @@
         "R633-06-REGRESSION"
       ],
       "command_id": "TEST_V636_P05_T02",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T02.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T02.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T02",
@@ -294,8 +294,8 @@
       "vector_ids": [
         "R634-MIGRATION-STAGE-REGRESSION"
       ],
-      "command_id": "VERIFY_V636_MIG0_T06",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-MIG0-T06.json",
+      "command_id": "VALIDATE_CURRENT_DESCENDANT_MIGRATION",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-MIG0-T06.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-MIG0-T06",
@@ -311,7 +311,7 @@
         "R634-PRODUCTION-BUILD-REGRESSION"
       ],
       "command_id": "TEST_SECURITY_TS",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T09",
@@ -327,7 +327,7 @@
         "R634-DEPENDENCY-SETUP-REGRESSION"
       ],
       "command_id": "TEST_V636_P05_T05",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T05.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T05.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T05",
@@ -343,7 +343,7 @@
         "R634-EXPORT-INVENTORY-REGRESSION"
       ],
       "command_id": "TEST_RELEASE_TOOLS",
-      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-seal-qualification/V636-P05-T09.json",
+      "evidence_artifact": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready/V636-P05-T09.json",
       "release_gate": "CANDIDATE_QUALIFIED",
       "stage": "CANDIDATE",
       "evidence_owner": "V636-P05-T09",

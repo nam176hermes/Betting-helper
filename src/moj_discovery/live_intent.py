@@ -548,6 +548,14 @@ def _ledger(root: Path) -> Iterator[sqlite3.Connection]:
         os.close(fd)
 
 
+def intent_is_consumed(intent: RunIntent) -> bool:
+    """Inspect the durable public ledger without granting or consuming authority."""
+    with _ledger(intent.root) as db:
+        return db.execute(
+            "SELECT 1 FROM intent_consumptions WHERE intent_id=?", (intent.public["intent_id"],)
+        ).fetchone() is not None
+
+
 def consume_user_intent(
     intent: RunIntent, config: LiveConfig, confirmation: str
 ) -> RunIntentReceipt:

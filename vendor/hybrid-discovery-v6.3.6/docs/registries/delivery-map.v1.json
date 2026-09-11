@@ -190,6 +190,31 @@
       "source": "authoring-fixtures/part-b-compiler-inputs.json",
       "destination": "pack/authoring-source/authoring-fixtures/part-b-compiler-inputs.json",
       "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/prepare_one_ready_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/prepare_one_ready_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/validate_current_phase_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/validate_current_phase_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_one_ready_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_one_ready_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_current_phase_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_current_phase_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-one-ready-predecessor.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-one-ready-predecessor.json",
+      "owner": "V636-P09-T01"
     }
   ],
   "runtime_source_root": "/home/thenam176/betting-helper/part-b-candidate",

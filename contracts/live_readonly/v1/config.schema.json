@@ -17,6 +17,16 @@
     "cashout_submission_enabled"
   ],
   "properties": {
+    "credentials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend", "generation", "native_python_sha256"],
+      "properties": {
+        "backend": {"const": "WINDOWS_CREDENTIAL_MANAGER"},
+        "generation": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},
+        "native_python_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "schema_version": {
       "const": "bh-live-readonly-config/v2"
     },

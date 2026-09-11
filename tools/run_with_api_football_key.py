@@ -6,6 +6,7 @@ import importlib
 import os
 import sys
 from collections.abc import Callable
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Any, Never
 
@@ -89,6 +90,34 @@ def _report(result: dict[str, Any]) -> None:
     print("PROVIDER_DIAGNOSTIC: " + diagnostic)
 
 
+def _report_live(result: dict[str, Any]) -> None:
+    if (
+        set(result)
+        != {
+            "LIVE_SESSION_RESULT",
+            "REQUEST_ATTEMPTS",
+            "REAL_HTTP_ATTEMPTS",
+            "RUN_DIRECTORY",
+            "REPLAY_REQUIRED",
+        }
+        or result["LIVE_SESSION_RESULT"] != "CLOSED_PENDING_REPLAY"
+        or result["REPLAY_REQUIRED"] is not True
+        or any(
+            type(result[k]) is not int or not 0 <= result[k] <= 600
+            for k in ("REQUEST_ATTEMPTS", "REAL_HTTP_ATTEMPTS")
+        )
+    ):
+        raise ValueError("E_KEY_LAUNCHER_RESULT")
+    directory = Path(result["RUN_DIRECTORY"])
+    if directory.resolve() != directory or not directory.is_relative_to(ROOT / ".local/part-b"):
+        raise ValueError("E_KEY_LAUNCHER_RESULT")
+    print("LIVE_SESSION_RESULT: CLOSED_PENDING_REPLAY")
+    print("REQUEST_ATTEMPTS: " + str(result["REQUEST_ATTEMPTS"]))
+    print("REAL_HTTP_ATTEMPTS: " + str(result["REAL_HTTP_ATTEMPTS"]))
+    print("RUN_DIRECTORY: " + str(directory))
+    print("REPLAY_REQUIRED: true — phiên đã đóng; chưa phải LIVE_READ_ONLY_PASS_ONE")
+
+
 def main(argv: list[str] | None = None) -> int:
     started = False
     secret = None
@@ -103,6 +132,8 @@ def main(argv: list[str] | None = None) -> int:
         preview = intent.public
         print("STAGE: " + STAGES[args.action])
         print("FIXTURE_IDS: " + ",".join(str(i) for i in preview["fixture_ids"]))
+        for url in preview.get("operator_urls", []):
+            print("OPERATOR_URL: " + url)
         if "lookup_date" in preview:
             print("LOOKUP_ONLY_LEAGUE: " + str(config.public["provider"]["league_id"]))
             print("LOOKUP_ONLY_SEASON: " + str(config.public["provider"]["season"]))
@@ -116,11 +147,32 @@ def main(argv: list[str] | None = None) -> int:
             _failure(False)
             return 2
         receipt = consume(intent, config, confirmation)
-        secret = obtain_api_football_key(interactive=True)
         # Browser subprocesses must never inherit a credential supplied to this process.
         os.environ.pop(KEY_NAME, None)
-        started = True
-        result = dispatch(config, secret, receipt)
+        with ExitStack() as stack:
+            credentials = config.public.get("credentials")
+            if credentials is None:
+                secret = obtain_api_football_key(interactive=True)
+            else:
+                from moj_discovery.windows_credential_store import stored_key
+
+                secret = stack.enter_context(
+                    stored_key(
+                        args.action,
+                        config.sha256,
+                        preview["source_tree_sha256"],
+                        credentials["generation"],
+                        run_id=receipt.run_id,
+                        intent_hash=intent.sha256,
+                        native_python_sha256=credentials["native_python_sha256"],
+                    )
+                )
+            started = True
+            result = dispatch(config, secret, receipt)
+            secret.check_usable()
+        if args.action == "live-readonly":
+            _report_live(result)
+            return 0
         _report(result)
         return 0 if result["PROBE_RESULT"] == "PASS" else 2
     except (Exception, KeyboardInterrupt):

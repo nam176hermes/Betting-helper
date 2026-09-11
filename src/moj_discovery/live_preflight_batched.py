@@ -45,6 +45,7 @@ def provider_config_scope(config: LiveConfig) -> dict[str, Any]:
         "provider": cfg["provider"],
         "max_run_minutes": cfg["runtime"]["max_run_minutes"],
         "max_matches": cfg["runtime"]["max_matches"],
+        **({"credentials": cfg["credentials"]} if "credentials" in cfg else {}),
     }
 
 
@@ -534,6 +535,11 @@ def admit_live_run(config: LiveConfig, receipt: RunIntentReceipt) -> Any:
     verify_receipt(receipt, "LIVE_READ_ONLY")
     if receipt.config.sha256 != config.sha256 or receipt.intent.root != ROOT:
         raise ValueError("E_LIVE_ADMISSION_CONFIG")
+    if receipt.intent.public["operator_urls"] != [
+        binding["operator_match_url"]
+        for binding in sorted(verified.bindings, key=lambda b: b["provider_fixture_id"])
+    ]:
+        raise ValueError("E_LIVE_INTENT_OPERATOR_URL")
     claim_receipt(receipt, "LIVE_READ_ONLY")
     streams = {}
     for binding in verified.bindings:

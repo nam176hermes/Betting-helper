@@ -1,0 +1,125 @@
+{
+  "schema_version": "part-b-one-ready/v1",
+  "scope": "PB-00..PB-24/W00..W12",
+  "production_authority": "NONE",
+  "adopted_source": {
+    "commit": "6d0d1c96bc8b7bddc9651d5bcd5a90b511ba8867",
+    "tree": "c73cca5eee550a10bd70cbbecf1819cb08bccc21",
+    "qualification": "NOT_INFERRED"
+  },
+  "approved_files": {
+    "authoring-tools/prepare_one_ready_inputs.py": "V636-MIG0-T08",
+    "authoring-tools/validate_current_phase_inputs.py": "V636-MIG0-T08",
+    "authoring-tests/test_one_ready_inputs.py": "V636-MIG0-T08",
+    "authoring-tests/test_current_phase_inputs.py": "V636-MIG0-T08",
+    "authoring-fixtures/part-b-one-ready-predecessor.json": "V636-MIG0-T08",
+    "authoring-tools/issue_declaration_gate.py": "V636-MIG0-T08",
+    "authoring-tests/test_declaration_gate.py": "V636-MIG0-T08",
+    "authoring-tests/test_task_manifest_semantics.py": "V636-MIG0-T08",
+    "pack/docs/contracts/part-b-one-ready.v1.json": "V636-MIG0-T08",
+    "runtime/docs/execution/PART_B_PROGRESS.md": "V636-P05-T09",
+    "runtime/src/moj_discovery/canonical.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/secrets_local.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/windows_credential_store.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/live_config.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/live_intent.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/live_preflight_batched.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/providers/api_football.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/live_service.py": "V636-P05-T09",
+    "runtime/tools/phase_evidence.py": "V636-P05-T09",
+    "runtime/tools/verify_local.py": "V636-P05-T09",
+    "runtime/tools/run_command_registry.py": "V636-P05-T09",
+    "runtime/tools/verify_proof_coverage.py": "V636-P05-T09",
+    "runtime/tools/full_verifier_config.py": "V636-P07-T01",
+    "runtime/tools/build_candidate_qualification_receipt.py": "V636-P05-T09",
+    "runtime/tools/run_environment_qualification.py": "V636-P05-T09",
+    "runtime/tools/windows_credential_helper.py": "V636-P05-T09",
+    "runtime/tools/run_with_api_football_key.py": "V636-P05-T09",
+    "runtime/tools/run_live_readonly.py": "V636-P05-T09",
+    "runtime/tools/launch_part_b.py": "V636-P05-T09",
+    "runtime/tools/package_part_b.py": "V636-P05-T09",
+    "runtime/tools/qualify_live_platform.py": "V636-P05-T09",
+    "runtime/tools/qualify_live_readonly.py": "V636-P05-T09",
+    "runtime/tools/verify_part_b.py": "V636-P05-T09",
+    "runtime/tools/probe_football_provider.py": "V636-P05-T09",
+    "runtime/tools/live_preflight_batched.py": "V636-P05-T09",
+    "runtime/contracts/live_readonly/v1/config.schema.json": "V636-P05-T09",
+    "runtime/review-config/review-a.v2.json": "V636-MIG0-T08",
+    "runtime/review-config/review-b.v2.json": "V636-MIG0-T08",
+    "runtime/review-config/review-aggregation.v2.json": "V636-MIG0-T08",
+    "runtime/review-config/review-authority.v1.json": "V636-MIG0-T08",
+    "runtime/tests/repairs/test_phase_evidence.py": "V636-P05-T09",
+    "runtime/tests/repairs/test_full_verifier_controller_config.py": "V636-P05-T09",
+    "runtime/tests/release/test_candidate_qualification_receipt.py": "V636-P05-T09",
+    "runtime/tests/release/test_full_proof_coverage.py": "V636-P05-T09",
+    "runtime/tests/contracts/test_artifact_dependency_semantics.py": "V636-P05-T09",
+    "runtime/tests/contracts/test_declaration_complete_gate.py": "V636-P05-T09",
+    "runtime/tests/live/test_windows_credential_store.py": "V636-P05-T09",
+    "runtime/tests/live/test_part_b_launcher.py": "V636-P05-T09",
+    "runtime/tests/live/test_part_b_package.py": "V636-P05-T09",
+    "runtime/tests/live/test_part_b_inventory.py": "V636-P05-T09",
+    "runtime/tests/live/test_secret_entry.py": "V636-P05-T09",
+    "runtime/tests/live/test_secret_nonleakage.py": "V636-P05-T09",
+    "runtime/tests/live/test_run_intents.py": "V636-P05-T09",
+    "runtime/tests/live/test_live_preflight_batched.py": "V636-P05-T09",
+    "runtime/tests/live/test_admitted_live_bindings.py": "V636-P05-T09",
+    "runtime/tests/live/test_workspace_projection.py": "V636-P05-T09",
+    "runtime/tests/live/test_platform_binding.py": "V636-P05-T09",
+    "runtime/tests/live/test_live_qualification.py": "V636-P05-T09",
+    "runtime/extension/src/live/panel.ts": "V636-P05-T09",
+    "runtime/extension/src/live/workspace.ts": "V636-P05-T09",
+    "runtime/extension/src/live/background.ts": "V636-P05-T09",
+    "runtime/extension/src/live/panel.html": "V636-P05-T09",
+    "runtime/extension/src/live/workspace.html": "V636-P05-T09",
+    "runtime/extension/src/live/panel.css": "V636-P05-T09",
+    "runtime/extension/test/live/panel.test.ts": "V636-P05-T09",
+    "runtime/docs/runbooks/INSTALL_PART_B_VI.md": "V636-P05-T09",
+    "runtime/docs/runbooks/RUN_ONE_MATCH_VI.md": "V636-P05-T09"
+  },
+  "phases": {
+    "V636-MIG0-T06": [
+      "VALIDATE_CURRENT_DESCENDANT_MIGRATION"
+    ],
+    "V636-P00-T05": [
+      "VALIDATE_CURRENT_DECLARATION"
+    ],
+    "V636-P02-T02": [
+      "TEST_V636_P02_T02"
+    ],
+    "V636-P03-T02": [
+      "TEST_V636_P03_T02"
+    ],
+    "V636-P05-T02": [
+      "TEST_V636_P05_T02"
+    ],
+    "V636-P05-T04": [
+      "TEST_V636_P05_T04"
+    ],
+    "V636-P05-T05": [
+      "TEST_V636_P05_T05"
+    ],
+    "V636-P06-T01": [
+      "TEST_V636_P06_T01"
+    ],
+    "V636-P05-T09": [
+      "COMPILE_ALL_TESTS",
+      "COMPILE_PRODUCTION",
+      "TEST_RELEASE_TOOLS",
+      "TEST_SECURITY_PY",
+      "TEST_SECURITY_TS",
+      "QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "QUALIFY_INHERITED_CANONICAL_PY",
+      "QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK"
+    ]
+  },
+  "historical_migration": "pack/docs/receipts/migration-receipt.v1.json",
+  "historical_migration_sha256": "6e7f44ad27dc62144ba6039db906f874e9da4b5fb5f85fac1367c26ced7916dc",
+  "historical_checks": [
+    "authoring-tests/test_successor_migration_receipt.py",
+    "authoring-tests/test_declaration_gate.py"
+  ],
+  "key_storage": "WINDOWS_CREDENTIAL_MANAGER",
+  "entry": "WINDOWS_SHORTCUT_PLUS_EXTENSION"
+}

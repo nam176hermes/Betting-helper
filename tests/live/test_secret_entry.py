@@ -161,3 +161,74 @@ def test_real_pseudoterminal_noecho() -> None:
 
                 os.kill(pid, signal.SIGKILL)
                 os.waitpid(pid, 0)
+
+
+@pytest.mark.parametrize("vault_fails", [False, True])
+def test_stored_key_is_read_only_after_consumption_without_fallback(
+    monkeypatch: Any,
+    capsys: Any,
+    vault_fails: bool,
+) -> None:
+    from types import SimpleNamespace
+
+    from moj_discovery import windows_credential_store
+
+    calls = []
+    config = SimpleNamespace(
+        sha256="a" * 64,
+        public={
+            "credentials": {"generation": "TEST_ONLY_GENERATION", "native_python_sha256": "b" * 64}
+        },
+    )
+    intent = SimpleNamespace(
+        sha256="c" * 64,
+        public={
+            "fixture_ids": [101],
+            "max_duration_seconds": 300,
+            "max_http_attempts": 20,
+            "source_tree_sha256": "d" * 64,
+        },
+    )
+
+    def consume(*args: Any) -> Any:
+        calls.append("consume")
+        return SimpleNamespace(run_id="TEST_ONLY_RUN")
+
+    @contextlib.contextmanager
+    def key(*args: Any, **kwargs: Any) -> Any:
+        calls.append("key")
+        assert "API_FOOTBALL_KEY" not in os.environ
+        if vault_fails:
+            raise ValueError("E_CREDENTIAL_ROTATED")
+        yield SecretValue("TEST_ONLY_VAULT")
+
+    def dispatch(*args: Any) -> Any:
+        calls.append("dispatch")
+        return {
+            "KEY_CHECK": "AUTHENTICATED",
+            "SUBSCRIPTION_CHECK": "CONFIRMED",
+            "PROBE_RESULT": "PASS",
+            "REQUEST_ATTEMPTS": 4,
+            "MISSING_CAPABILITIES": [],
+            "PROVIDER_DIAGNOSTIC": "NONE",
+        }
+
+    monkeypatch.setattr(launcher, "load_live_config", lambda *a, **k: config)
+    monkeypatch.setattr(launcher, "_load_action", lambda *a: (intent, consume, dispatch))
+    monkeypatch.setattr(
+        launcher,
+        "controlling_tty",
+        lambda: contextlib.nullcontext(io.StringIO("ALLOW PROVIDER PROBE\n")),
+    )
+    monkeypatch.setattr(windows_credential_store, "stored_key", key)
+    monkeypatch.setattr(
+        launcher, "obtain_api_football_key", lambda *a, **k: pytest.fail("fallback")
+    )
+    monkeypatch.setenv("API_FOOTBALL_KEY", "TEST_ONLY_ENV_MUST_NOT_PROPAGATE")
+    exit_code = launcher.main(
+        ["--action", "probe", "--config", "TEST_ONLY.json", "--intent", "TEST_ONLY.json"]
+    )
+    assert exit_code == (2 if vault_fails else 0)
+    assert calls == (["consume", "key"] if vault_fails else ["consume", "key", "dispatch"])
+    output = capsys.readouterr().out
+    assert "TEST_ONLY_VAULT" not in output and "TEST_ONLY_ENV_MUST_NOT_PROPAGATE" not in output

@@ -203,6 +203,17 @@ def verify_proof_coverage_matrix(
                 raise ValueError("E_PROOF_COVERAGE")
             if config is not None:
                 _verify_full_repair_proof(entry["command_id"], evidence, config, artifacts)
+                if entry["command_id"] not in {"TEST_V636_P03_T07", "TEST_V636_P04_T04"}:
+                    from tools.phase_evidence import contract, verify_phase
+
+                    current = contract(config, artifacts)
+                    if current is not None:
+                        phase = entry["evidence_owner"]
+                        if evidence.get("task_id") != phase or entry["command_id"] not in current[
+                            "phases"
+                        ].get(phase, []):
+                            raise ValueError("E_PROOF_COVERAGE")
+                        verify_phase(evidence, config, artifacts)
             verified.append(
                 {
                     "requirement_id": str(entry["requirement_id"]),

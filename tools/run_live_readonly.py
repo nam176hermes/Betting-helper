@@ -102,11 +102,11 @@ def run_live_session(config: LiveConfig, secret: SecretValue, receipt: object) -
         raise ValueError("E_LIVE_RUN_ADMISSION") from None
     result = run_live_service(config, secret, admission, on_ready=enable_local_repair)
     return {
-        "KEY_CHECK": "AUTHENTICATED" if result.authenticated else "NOT_CHECKED",
-        "SUBSCRIPTION_CHECK": "UNKNOWN",
-        "PROBE_RESULT": "PARTIAL",
+        "LIVE_SESSION_RESULT": "CLOSED_PENDING_REPLAY",
         "REQUEST_ATTEMPTS": result.request_attempts,
-        "MISSING_CAPABILITIES": ["REVIEW_REQUIRED"],
+        "REAL_HTTP_ATTEMPTS": result.real_http_attempts,
+        "RUN_DIRECTORY": result.run_directory,
+        "REPLAY_REQUIRED": True,
     }
 
 

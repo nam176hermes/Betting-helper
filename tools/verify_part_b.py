@@ -28,6 +28,7 @@ SECURITY_TESTS = [
     "test_live_wire.py",
     "test_operator_profile.py",
     "test_run_intents.py",
+    "test_windows_credential_store.py",
 ]
 BROWSER_TESTS = [
     "test_live_spool_bridge.py",
@@ -46,6 +47,7 @@ PART_B_PYTHON = [
     "src/moj_discovery/provider_records.py",
     "src/moj_discovery/operator_profile.py",
     "src/moj_discovery/secrets_local.py",
+    "src/moj_discovery/windows_credential_store.py",
     "src/moj_discovery/workspace_projection.py",
     "src/moj_discovery/data_manifest.py",
     "tools/configure_live_batched.py",
@@ -56,6 +58,9 @@ PART_B_PYTHON = [
     "tools/probe_football_provider.py",
     "tools/run_live_readonly.py",
     "tools/run_with_api_football_key.py",
+    "tools/windows_credential_helper.py",
+    "tools/launch_part_b.py",
+    "tools/package_part_b.py",
     "tools/verify_part_b.py",
 ]
 
@@ -249,6 +254,24 @@ def verify_profile(profile: str, output: Path) -> VerificationResult:
             records.append(run_check(argv, output, name))
         if any(r["exit"] != 0 for r in records):
             missing.append("STATIC_OR_UNIT_CHECKS_NOT_PASSED")
+    if profile == "mock" and not missing:
+        from moj_discovery.windows_credential_store import NATIVE_PYTHON
+        from tools.run_environment_qualification import winpath
+
+        for name, script, extra in (
+            ("credential-console", "tests/live/test_windows_credential_store.py", []),
+            ("credential-store", "tools/windows_credential_helper.py", ["--self-test"]),
+        ):
+            records.append(
+                run_check(
+                    [str(NATIVE_PYTHON), "-I", "-B", winpath(ROOT / script), *extra],
+                    output,
+                    name,
+                    timeout=60,
+                )
+            )
+        if any(r["exit"] != 0 for r in records):
+            missing.append("NATIVE_CREDENTIAL_TESTS_NOT_PASSED")
     if profile == "mock" and not missing:
         records.append(
             run_check(
