@@ -35,6 +35,10 @@
       "classification": "internal"
     },
     {
+      "path": "runtime/extension/test/security/current-surface.ts",
+      "classification": "internal"
+    },
+    {
       "path": "runtime/extension/test/security/dynamic-dispatch.test.ts",
       "classification": "internal"
     },

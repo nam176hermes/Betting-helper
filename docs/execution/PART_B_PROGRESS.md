@@ -244,3 +244,9 @@ W08 current host inputs and package security follow-up:
 - Full current-source qualification, package/browser observations and genuine
   fresh host reviews are still required. Primary credential access, authenticated
   provider attempts, real operator captures and live sessions remain zero.
+
+- The `300b8c4` campaign stopped at P01-T02: its generated materialization registry
+  lacked the new helper entry. The existing canonical generator added that single
+  entry; the three materialization tests pass. Current qualification continues in
+  the separately declared `part-b-one-ready-r5` evidence root. The r4 failure and
+  installed candidate remain preserved, with no qualification inferred.

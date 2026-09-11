@@ -23,6 +23,7 @@
     "pack/docs/registries/inherited-baseline-qualification.v1.json": "V636-MIG0-T08",
     "pack/docs/schemas/review-launch-authorization.schema.json": "V636-MIG0-T08",
     "pack/BOOTSTRAP.md": "V636-MIG0-T08",
+    "runtime/.contract-stub-registry.json": "V636-P05-T09",
     "runtime/docs/execution/PART_B_PROGRESS.md": "V636-P05-T09",
     "runtime/src/moj_discovery/canonical.py": "V636-P05-T09",
     "runtime/src/moj_discovery/secrets_local.py": "V636-P05-T09",

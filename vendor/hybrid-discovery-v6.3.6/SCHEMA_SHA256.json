@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "675c2e8b7f6d26954ac4b8203b5fd1f45bbab45fb80faff0fe087566a53c158a",
+  "tree_sha256": "bef9b21885fe943dfae4721fd178ebe883b9448a38b1a70832ae7bfb150ee85d",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -22,7 +22,7 @@
     {
       "path": "docs/configs/full-verifier-controller.v2.json",
       "size_bytes": 3280,
-      "sha256": "96be90e460e89c97e9073407bcde13a8f18471befb9536fd35238ef16cbf2411"
+      "sha256": "42790843fd37dee2ae624f5ace5eee2a6cdf82cc42393a206e10a2f68899778b"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -136,8 +136,8 @@
     },
     {
       "path": "docs/contracts/part-b-one-ready.v1.json",
-      "size_bytes": 8124,
-      "sha256": "f899d87c8cd750d43aa215c50947d412bfaa8076a47adbe84ec0c501e3daebae"
+      "size_bytes": 8184,
+      "sha256": "e08c582d2db067cca621f43dc1e49235a3d1e7d0b26b92f526260bbb1c20aa25"
     },
     {
       "path": "docs/fixtures/inherited/v6.2/plan-manifest.json",
@@ -181,8 +181,8 @@
     },
     {
       "path": "docs/registries/artifact-ownership.v1.json",
-      "size_bytes": 543713,
-      "sha256": "68e0d476635464d7981b06f216c57bac7f77113f38df4fbaba3af7bf017b9f07"
+      "size_bytes": 543767,
+      "sha256": "49bf2a9707489e0dab1d3baf40dc8c1433efe00cdf236b12965ca6b6274d2b38"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -207,7 +207,7 @@
     {
       "path": "docs/registries/command-io.v1.json",
       "size_bytes": 133208,
-      "sha256": "d8c85a256a4406a77dbe985573850a97a38b24a41a6c1b212c36d215f5eff1a7"
+      "sha256": "bc4a0f6c5cff76cf250abde223c55d2336e49e96292b043f7e98a3e2e820963a"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -262,7 +262,7 @@
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
       "size_bytes": 15824,
-      "sha256": "81908079c0696d29634f7a62caaf1ebd3488fe4d2736c776592cbdc5df7834bf"
+      "sha256": "c287311fca8def9b67f43e23734465e3a0090c2f2e5822773608dbbbd8c8fe99"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
@@ -302,7 +302,7 @@
     {
       "path": "docs/registries/task-command-registry.v1.json",
       "size_bytes": 106928,
-      "sha256": "f9c7ded9c2668d793eed14d5d8d200bcc629200ca3d622d9f64b8474a291ccb7"
+      "sha256": "b095b7470ec73f9b5ef7fce5c1101f93dca954f08940bcd97c85874607afe02c"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -381,8 +381,8 @@
     },
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
-      "size_bytes": 326880,
-      "sha256": "cb450530b9c3d54c9f7ed1ee71ff01e330afc84c5b5f5a1feaa24b44c3b2b0b3"
+      "size_bytes": 326976,
+      "sha256": "252ffb950e23be92014d2bf75b2cfe01eafaa7bab89b137148bbf0784ad00b7c"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",
