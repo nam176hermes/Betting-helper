@@ -4,9 +4,9 @@
   "accepted_authoring_ancestor": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
   "current_checkout_root": "/home/thenam176/betting-helper/part-b-candidate",
   "governed_source_pack": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
-  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9",
+  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10",
   "external_authoring_tests": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
-  "external_authoring_source_sha256": "f4e1e2a0a6944ee218753b8f319d86c5fbe25d4af865a064ebb5866c0cbcd0b6",
+  "external_authoring_source_sha256": "d79fb3fea88e764758bdedb51648cef1ac4d4bc95fad539b6129c1fb3ae0b040",
   "external_authoring_command": {
     "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
     "argv": [
@@ -38,20 +38,20 @@
     "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
   },
   "receipts": {
-    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T01.json",
-    "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T02.json",
-    "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T03.json",
-    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/CANDIDATE_QUALIFICATION.json",
-    "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/V636-P07-T01.json",
+    "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/V636-P07-T02.json",
+    "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/V636-P07-T03.json",
+    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/CANDIDATE_QUALIFICATION.json",
+    "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/DESCENDANT_REPOSITORY_QUALIFICATION.json"
   },
   "audited_runtime_ancestor": "7cd7ab14652458608386d940bdc7764910044f6a",
   "qualification_evidence": {
-    "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/full-repair/aggregate.json",
-    "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/full-repair/inventory.json",
-    "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/environment/environment-aggregate.json",
-    "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/environment/inventory.json",
-    "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P03-T07.json",
-    "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P04-T04.json"
+    "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/full-repair/aggregate.json",
+    "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/full-repair/inventory.json",
+    "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/environment/environment-aggregate.json",
+    "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/environment/inventory.json",
+    "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/V636-P03-T07.json",
+    "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r10/V636-P04-T04.json"
   }
 }

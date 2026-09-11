@@ -70,6 +70,8 @@
     "runtime/tests/release/test_full_proof_coverage.py": "V636-P05-T09",
     "runtime/tests/release/test_descendant_repository_qualification.py": "V636-P08-T01",
     "runtime/tests/seal/test_pack_assembly.py": "V636-P05-T09",
+    "runtime/tests/seal/test_self_review_binding.py": "V636-P05-T09",
+    "runtime/tests/seal/test_deterministic_seal.py": "V636-P05-T09",
     "runtime/tests/review/test_review_b_runner.py": "V636-P05-T09",
     "runtime/tests/review/test_review_launch_authorization.py": "V636-P05-T09",
     "runtime/tests/contracts/test_artifact_dependency_semantics.py": "V636-P05-T09",

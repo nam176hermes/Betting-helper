@@ -68,7 +68,7 @@ def test_registered_descendant_self_review_argv_emits_exact_v2(
     chain, pack = descendant_pack, descendant_pack["pack"]
     registry = json.loads((pack / "docs/registries/task-command-registry.v1.json").read_bytes())
     row = next(row for row in registry["commands"] if row["command_id"] == "VERIFY_V636_P09_T03")
-    argv = row["argv"][2:]
+    argv = row["argv"][row["argv"].index("tools/build_self_review.py"):]
     values = {
         "--governed-root": pack / "GOVERNED_CONTENT_ROOT.json",
         "--repository-receipt": pack

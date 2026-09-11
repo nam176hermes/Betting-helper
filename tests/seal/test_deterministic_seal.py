@@ -62,7 +62,7 @@ def test_registered_descendant_sealer_argv_emits_v7(
     _current_self_review(chain)
     registry = json.loads((pack / "docs/registries/task-command-registry.v1.json").read_bytes())
     row = next(row for row in registry["commands"] if row["command_id"] == "VERIFY_V636_P09_T04")
-    argv = row["argv"][2:]
+    argv = row["argv"][row["argv"].index("tools/seal_review_pack.py"):]
     values = {
         "--pack": pack,
         "--config": pack / "docs/configs/full-verifier-controller.v2.json",

@@ -324,3 +324,16 @@ W08/W09 sealing entrypoint repair for r9:
 - Historical r8 receipts, package and failed operation logs remain intact. Real
   provider attempts, operator captures, live sessions and primary-key accesses
   remain zero. Source commit and final evidence are in the private checkpoint.
+
+W08/W09 registered CLI fixture repair for r10:
+
+- The r9 controller on `c454107a` passed the actual 111-case/105-mutation matrix
+  and P03/P04 proofs, then stopped at TEST_RELEASE_TOOLS: 520 passed and two
+  direct-main CLI fixtures failed. They still removed exactly two launcher
+  arguments after P09 had moved to the qualified `uv` entrypoint.
+- The two fixtures now locate the exact script argument before calling its main
+  function. Their receipt/schema assertions and all production checks are
+  unchanged. Source-owned ownership explicitly includes these existing test files.
+- The complete seal group and related registered CLI tests are checked before
+  another source freeze. The r9 failure remains preserved; r10 qualification
+  cannot be inferred from its earlier partial PASS records. No live authority.
