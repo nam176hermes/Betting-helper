@@ -81,7 +81,7 @@ def package(output: Path) -> dict[str, Any]:
     if (
         set(manifest["permissions"]) != {"storage", "sidePanel", "scripting", "activeTab"}
         or manifest["optional_host_permissions"] != ["https://miseojeuplus.espacejeux.com/*"]
-        or "host_permissions" in manifest
+        or manifest.get("host_permissions", []) != []
         or manifest["manifest_version"] != 3
     ):
         raise ValueError("E_DELIVERY_PERMISSIONS")
