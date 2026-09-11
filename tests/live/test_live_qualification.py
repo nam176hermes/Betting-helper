@@ -12,9 +12,11 @@ import pytest
 
 from moj_discovery.live_contracts import event_hash
 from moj_discovery.live_state import capture_observation_id
+from moj_discovery.live_store import LiveStore
 from tests.live.test_live_replay import frozen_run
 from tests.live.test_live_service import make_service
-from tests.live.test_live_store import envelope
+from tests.live.test_live_store import envelope, metadata, register
+from tests.live.test_provider_normalization import normalize
 from tools.qualify_live_readonly import _verify_manual_checks, qualify_recorded_run
 
 
@@ -35,6 +37,41 @@ def test_journal_without_run_authority_never_becomes_live_pass(
 def test_missing_or_active_journal_cannot_qualify(tmp_path: Path) -> None:
     with pytest.raises(ValueError):
         qualify_recorded_run(tmp_path)
+
+
+@pytest.mark.parametrize("reason,passed", [("USER_STOP", True), ("SECURITY_HOLD", False)])
+def test_security_closure_vetoes_otherwise_passing_stubbed_checks(
+    tmp_path: Path,
+    synthetic_book: Any,
+    synthetic_provider_response: Any,
+    monkeypatch: Any,
+    reason: str,
+    passed: bool,
+) -> None:
+    # Policy test only: authority/manual checks are stubbed, never real-source evidence.
+    from tools import qualify_live_readonly as gate
+
+    run = tmp_path / "TEST_ONLY_STUBBED_AUTHORITY"
+    state = normalize(synthetic_provider_response).states[101]
+    state["quality_flags"] = []
+    book = copy.deepcopy(synthetic_book)
+    book["quality_flags"] = []
+    with LiveStore(run / "live.sqlite3", **{**metadata(), "max_matches": 1}) as store:
+        register(store)
+        store.append(envelope("ProviderState", state))
+        store.append(envelope("MarketBook", book))
+        store.close_run("2026-09-09T18:30:00Z", reason)
+    for name in ("intent.json", "config-public.json", "source-bindings.json", "result.json"):
+        (run / name).write_text("{}")
+    for name in ("requests.jsonl", "manual-ft-checks.jsonl"):
+        (run / name).write_text("")
+    monkeypatch.setattr(gate, "_verify_run_artifacts", lambda *args: None)
+    monkeypatch.setattr(gate, "_verify_manual_checks", lambda *args: {book["binding_id"]: 3})
+    result = gate.qualify_recorded_run(run)
+    assert result["replay"]["equal"] is True
+    assert result["LIVE_READ_ONLY_PASS"] is passed
+    assert result["status"] == ("PASS" if passed else "HOLD")
+    assert result["missing_inputs"] == ([] if passed else ["RUN_CLOSED_SECURITY_HOLD"])
 
 
 def test_terminal_check_binds_committed_book_and_preserves_mock_label(

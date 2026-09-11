@@ -98,6 +98,8 @@ def qualify_recorded_run(run_dir: Path, *, expected_scope: int | None = None) ->
     )
     if synthetic:
         missing.append("SYNTHETIC_OBSERVATIONS")
+    if closure[2] == "SECURITY_HOLD":
+        missing.append("RUN_CLOSED_SECURITY_HOLD")
     result: LiveQualification = {
         "schema_version": "part-b-live-qualification/v1",
         "status": "PASS" if not missing else "HOLD",

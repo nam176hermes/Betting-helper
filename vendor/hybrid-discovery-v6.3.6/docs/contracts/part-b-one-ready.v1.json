@@ -54,6 +54,7 @@
     "runtime/tests/release/test_full_proof_coverage.py": "V636-P05-T09",
     "runtime/tests/contracts/test_artifact_dependency_semantics.py": "V636-P05-T09",
     "runtime/tests/contracts/test_declaration_complete_gate.py": "V636-P05-T09",
+    "runtime/tests/contracts/test_task_manifest_semantics.py": "V636-P05-T09",
     "runtime/tests/live/test_windows_credential_store.py": "V636-P05-T09",
     "runtime/tests/live/test_part_b_launcher.py": "V636-P05-T09",
     "runtime/tests/live/test_part_b_package.py": "V636-P05-T09",

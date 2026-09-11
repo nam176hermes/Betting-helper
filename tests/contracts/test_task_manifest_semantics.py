@@ -40,7 +40,7 @@ def test_review_counterexamples_are_rejected() -> None:
     assert validate_task_manifest_semantics(manifest, commands, owned) == {
         "result": "PASS",
         "task_count": 62,
-        "command_count": 219,
+        "command_count": 222,
     }
     cases = [
         (

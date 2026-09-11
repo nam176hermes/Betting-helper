@@ -190,3 +190,18 @@ W00-W07 implementation checkpoint before source freeze:
   observation/live gates remain separately pending at this source checkpoint.
 - All actual API attempts and real operator captures in this implementation: 0.
   MODEL_ENABLED=false; MONEY_READY=NO; no production or betting authority.
+
+W08 review follow-up and fresh campaign:
+
+- Commit `b542522` passed the full Part B mock campaign, native installation/menu
+  smoke and Windows Chrome/WSL2 synthetic platform checks. Those results remain
+  bound to that commit in `authoring-evidence/part-b-one-ready`.
+- Technical review found that a SECURITY_HOLD closure could still qualify after
+  otherwise passing observations. A focused test reproduced the false PASS;
+  qualification now keeps that closure at HOLD.
+- The first controller campaign stopped at TEST_V636_P02_T01 because its literal
+  command count still expected 219 instead of the declared 222. The expectation
+  is corrected without changing the dependency or authority checks.
+- New qualification uses the source-owned `part-b-one-ready-r2` evidence root.
+  Prior observations and failed outputs are preserved; current qualification,
+  sealed review, operator observation and live authority remain pending.
