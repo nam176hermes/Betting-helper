@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import test from "node:test";
 
 import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
+import { verifyCurrentSurface } from "./current-surface.js";
 
 export const testSecurityBoundary = (): void => {
   const vectors = {
@@ -12,7 +13,7 @@ export const testSecurityBoundary = (): void => {
     deny: "SEC_OUTBOUND_NETWORK-DENY",
     mutate: "SEC_OUTBOUND_NETWORK-MUTATE",
   };
-  assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
+  assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
   for (const [name, source] of [
     [vectors.deny, "fetch('https://example.invalid')"],
     [vectors.mutate, "new WebSocket(userUrl)"],

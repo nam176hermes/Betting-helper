@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import test from "node:test";
 
 import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
+import { verifyCurrentSurface } from "./current-surface.js";
 
 export const testSecurityBoundary = (): void => {
   const vectors = {
@@ -12,7 +13,7 @@ export const testSecurityBoundary = (): void => {
     deny: "SEC_CDP_REACHABILITY-DENY",
     mutate: "SEC_CDP_REACHABILITY-MUTATE",
   };
-  assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
+  assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
   for (const [name, source] of [
     [vectors.deny, "chrome.debugger.sendCommand(target,'Runtime.evaluate',{})"],
     [vectors.mutate, "chrome.debugger.sendCommand(target,'Network.enable',{maxPostDataSize:1})"],

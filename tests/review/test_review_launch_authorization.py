@@ -293,22 +293,20 @@ def measured_current_pack(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> di
         patcher: pytest.MonkeyPatch,
         witnesses: dict[str, bytes],
     ) -> None:
+        # Transport the current named inputs, not paths from an older checkout.
+        # Only configuration locators are read; the host key is never accessed.
+        selected = json.loads((source / "docs/configs/review-a.v2.json").read_bytes())
+        authority = json.loads((source / "docs/configs/review-authority.v1.json").read_bytes())
+        inputs = selected["input_roots"]
         replacements = {
-            "/home/thenam176/.config/hybrid-discovery/review-authority": str(
+            str(Path(authority["private_key_path"]).parent): str(
                 tmp_path / "TEST_ONLY_EPHEMERAL_AUTHORITY"
             ),
-            "/home/thenam176/betting-helper/discovery-runtime-v6.3.6": str(root),
-            "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6": str(delivery),
-            "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip": str(
-                tmp_path / "current.zip"
-            ),
-            "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256": str(
-                tmp_path / "current.sha256"
-            ),
-            (
-                "/home/thenam176/betting-helper/review-packs/"
-                "hybrid-discovery-v6.3.6.seal-attestation.json"
-            ): str(tmp_path / "current.json"),
+            inputs[1]: str(root),
+            inputs[0]: str(delivery),
+            inputs[3]: str(tmp_path / "current.zip"),
+            inputs[4]: str(tmp_path / "current.sha256"),
+            inputs[2]: str(tmp_path / "current.json"),
         }
 
         def transport(value: Any) -> Any:
@@ -335,6 +333,14 @@ def measured_current_pack(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> di
             witnesses[relative] = raw
             receipt_tests._write(pack / relative, transport(json.loads(raw)))
         original_sync(source, pack, root, patcher, witnesses)
+        for role in ("a", "b"):
+            configured = json.loads((root / f"review-config/review-{role}.v2.json").read_bytes())
+            assert all(Path(p).is_relative_to(tmp_path) for p in configured["input_roots"])
+            authority_path = Path(configured["authority_config"])
+            assert authority_path.is_relative_to(root)
+            isolated = json.loads(authority_path.read_bytes())
+            assert all(Path(isolated[k]).is_relative_to(tmp_path)
+                       for k in ("private_key_path", "public_key_path"))
 
     monkeypatch.setattr(receipt_tests, "_sync_fixture_sources", transported_sync)
     chain = cast(Any, current_chain).__wrapped__(tmp_path, monkeypatch)

@@ -1,0 +1,35 @@
+{
+  "schema_version": "part-b-package-policy/v1",
+  "production_authority": "NONE",
+  "live_modules": ["background", "capture", "contracts", "dom_reader", "panel", "protocol", "spool", "transport", "workspace"],
+  "shared_modules": ["canonical.js", "errors.js", "storage/durable_idb.js"],
+  "generated_modules": ["live-validators.js", "src/canonicalize.js"],
+  "assets": ["src/live/panel.html", "src/live/workspace.html", "src/live/panel.css"],
+  "entrypoints": ["src/live/background.js", "src/live/workspace.js", "src/live/dom_reader.js"],
+  "manifest": {
+    "manifest_version": 3,
+    "permissions": ["storage", "sidePanel", "scripting", "activeTab"],
+    "host_permissions": [],
+    "optional_host_permissions": ["https://miseojeuplus.espacejeux.com/*"],
+    "web_accessible_resources": [],
+    "content_security_policy": {"extension_pages": "default-src 'none'; script-src 'self'; style-src 'self'; object-src 'none'; form-action 'none'; connect-src ws://127.0.0.1:8765"},
+    "background": {"service_worker": "src/live/background.js", "type": "module"},
+    "action": {"default_title": "Open read-only panel"},
+    "side_panel": {"default_path": "src/live/panel.html"}
+  },
+  "chrome_owners": {
+    "src/live/background.js": ["chrome.action.onClicked.addListener", "chrome.sidePanel.open", "chrome.storage.local.get", "chrome.storage.local.set", "chrome.storage.session.get", "chrome.storage.session.set", "chrome.permissions.contains", "chrome.tabs.query", "chrome.tabs.create", "chrome.runtime.onConnect.addListener", "chrome.runtime.id", "chrome.runtime.getURL"],
+    "src/live/capture.js": ["chrome.tabs.get", "chrome.scripting.executeScript", "chrome.tabs.onUpdated.addListener", "chrome.tabs.onUpdated.removeListener", "chrome.tabs.onRemoved.addListener", "chrome.tabs.onRemoved.removeListener", "chrome.tabs.sendMessage", "chrome.runtime.onMessage.addListener", "chrome.runtime.onMessage.removeListener", "chrome.runtime.id"],
+    "src/live/dom_reader.js": ["chrome.runtime.sendMessage", "chrome.runtime.onMessage.addListener", "chrome.runtime.id", "chrome.runtime.getURL"],
+    "src/live/panel.js": ["chrome.runtime.connect", "chrome.permissions.request"]
+  },
+  "websocket_owners": {
+    "src/live/transport.js": "ws://127.0.0.1:8765/live",
+    "src/live/capture.js": "ws://127.0.0.1:8765/operator-discovery"
+  },
+  "indexeddb_owner": "src/live/spool.js",
+  "operator_reader": "src/live/dom_reader.js",
+  "extension_dom_owners": ["src/live/panel.js", "src/live/workspace.js"],
+  "inherited_raw_observation": "CLOSED_SYNTHETIC_ONLY",
+  "independent_review": "REQUIRED_SEPARATELY"
+}

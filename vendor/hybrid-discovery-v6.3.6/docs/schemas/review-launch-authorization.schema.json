@@ -282,8 +282,18 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "workspace_root": {
-          "type": "string",
-          "pattern": "^/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+            },
+            {
+              "enum": [
+                "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b"
+              ]
+            }
+          ]
         },
         "input_mounts": {
           "type": "array",
@@ -303,8 +313,18 @@
           }
         },
         "allowed_output_root": {
-          "type": "string",
-          "pattern": "^/home/thenam176/betting-helper/reviews/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^/home/thenam176/betting-helper/reviews/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+            },
+            {
+              "enum": [
+                "/home/thenam176/betting-helper/part-b-review-host/results/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host/results/review-b"
+              ]
+            }
+          ]
         },
         "prompt_sha256": {
           "type": "string",

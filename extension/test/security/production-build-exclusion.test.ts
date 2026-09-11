@@ -18,6 +18,7 @@ export const testSecurityBoundary = (): void => {
   assert.deepEqual(build.exclude, ["test", "test-red", "test-harness", "tools"], vectors.allow);
   const distFiles = readdirSync(resolve("extension/dist"), { recursive: true }).map(String);
   assert.equal(distFiles.some((path) => /(?:test|harness|tools)/u.test(path)), false, vectors.deny);
+  assert.equal(verifyCapabilityGraph(resolve("extension/src")).includes("E_COMPILED_CHUNK_SET"), false);
 
   const root = mkdtempSync(resolve(tmpdir(), "sec-build-"));
   cpSync(resolve("extension/src"), resolve(root, "extension/src"), { recursive: true });

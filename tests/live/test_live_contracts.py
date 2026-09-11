@@ -88,13 +88,13 @@ def test_no_arbitrary_schema_or_payload() -> None:
             validate_live_record({"payload": {"cookie": "TEST_ONLY"}}, kind)
 
 
-def test_typescript_closed_contract_executes(synthetic_book: Any) -> None:
+def test_typescript_closed_contract_executes(synthetic_book: Any, tmp_path: Path) -> None:
     """Exercise emitted TS against the same source schemas, not compile-only evidence."""
     code = """
       import {createRequire} from 'node:module';
       import fs from 'node:fs';
       import assert from 'node:assert/strict';
-      import {validateLiveRecord} from './extension/.test-build/live/src/live/contracts.js';
+      const {validateLiveRecord} = await import(process.argv[1]);
       const require = createRequire(new URL('./extension/package.json', import.meta.url));
       const Ajv = require('ajv/dist/2020').default;
       const ajv = new Ajv({strict:false});
@@ -114,9 +114,38 @@ def test_typescript_closed_contract_executes(synthetic_book: Any) -> None:
       console.log('TS_LIVE_CONTRACT: 1 positive, 5 rejections');
     """
     root = Path(__file__).resolve().parents[2]
+    compiled = tmp_path / "compiled"
+    compiled.mkdir()
+    (compiled / "package.json").write_text('{"type":"module"}\n')
+    (compiled / "node_modules").symlink_to(
+        root / "extension/node_modules", target_is_directory=True
+    )
+    before = set((root / "extension/.test-build").rglob("*"))
     for argv, data in [
-        (["pnpm", "--dir", "extension", "exec", "tsc", "-p", "tsconfig.live.json"], None),
-        (["node", "--input-type=module", "-e", code], json.dumps(synthetic_book)),
+        (
+            [
+                "pnpm",
+                "--dir",
+                "extension",
+                "exec",
+                "tsc",
+                "-p",
+                "tsconfig.live.json",
+                "--outDir",
+                str(compiled),
+            ],
+            None,
+        ),
+        (
+            [
+                "node",
+                "--input-type=module",
+                "-e",
+                code,
+                (compiled / "src/live/contracts.js").as_uri(),
+            ],
+            json.dumps(synthetic_book),
+        ),
     ]:
         result = subprocess.run(  # noqa: S603 -- fixed isolated compiler/test commands
             argv,
@@ -127,3 +156,4 @@ def test_typescript_closed_contract_executes(synthetic_book: Any) -> None:
             timeout=60,
         )
         assert result.returncode == 0, result.stdout + result.stderr
+    assert set((root / "extension/.test-build").rglob("*")) == before

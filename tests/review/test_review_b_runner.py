@@ -61,7 +61,7 @@ def test_current_source_b_keeps_exact_sec14_and_no_descendant_execution() -> Non
     raw = path.read_bytes()
     assert (
         sha256(raw).hexdigest()
-        == "c2009100f4df8cd3e8d1daa4abb901641dd0c1fc5b83162f78188342a541fa5d"
+        == "2f0414624388b0e01272572fadd9f7a6a5f00b0fd7d5a2331f5bfd02f5951a59"
     )
     registry = json.loads(raw)
     config["command_registry_path"] = str(path)

@@ -79,6 +79,74 @@ def _write(path: Path, value: object) -> bytes:
     return raw
 
 
+def _refresh_current_phase_fixtures(config: Any) -> None:
+    """Structural TEST_ONLY_NOT_EXECUTED inputs; never actual command evidence.
+
+    Keep the phase producer and verifier real while binding disposable command
+    records to the fixture's current Git state and source declarations.
+    """
+    from tools import phase_evidence as phase
+    from tools import run_command_registry as commands
+
+    assert config.current_checkout_root != ROOT
+    assert config.evidence_root.is_relative_to(config.current_checkout_root.parent)
+    spec = phase.contract(config)
+    if spec is None:
+        return
+    identity = commands._git_source_identity(config.current_checkout_root)
+    candidate = json.loads(config.candidate_command_evidence.read_bytes())
+    inputs = {
+        name: hashlib.sha256((config.governed_source_pack / 'docs' / name).read_bytes()).hexdigest()
+        for name in (
+            'tasks/task-manifest.v6.3.6.json', 'registries/artifact-ownership.v1.json',
+            'schemas/artifact-ownership.schema.json', 'registries/task-command-registry.v1.json',
+            'registries/review-command-registry.v1.json',
+            'registries/cybersecurity-command-registry.v1.json',
+            'registries/baseline-replay-command-registry.v1.json',
+        )
+    }
+    registry = phase.expected_commands(config)
+    extras = []
+    logs = config.evidence_root / 'command-logs'
+    logs.mkdir(exist_ok=True)
+    for result in candidate['results']:
+        for stream in ('stdout', 'stderr'):
+            assert result[stream + '_sha256'] == hashlib.sha256(b'').hexdigest()
+            (logs / (result['command_id'] + '.' + stream)).write_bytes(b'')
+    for identifier in sorted(phase.CURRENT_COMMANDS):
+        raw = _write(logs / (identifier + '.stdout'), {
+            'fixture': 'TEST_ONLY_NOT_EXECUTED',
+            'gate': 'CURRENT_DECLARATION_VALID' if identifier == 'VALIDATE_CURRENT_DECLARATION'
+                else 'CURRENT_DESCENDANT_SOURCE_VALID',
+            'result': 'PASS', 'production_authority': 'NONE', 'source_identity': identity,
+            'contract_sha256': hashlib.sha256(
+                (config.governed_source_pack / phase.CONTRACT).read_bytes()
+            ).hexdigest(),
+            'input_hashes': inputs, 'adopted_source': spec['adopted_source'],
+            'historical_receipt_sha256': spec['historical_migration_sha256'],
+            'historical_regressions': {'exit_code': 0}, 'historical_acceptance': 'NOT_INFERRED',
+        })
+        (logs / (identifier + '.stderr')).write_bytes(b'')
+        extras.append({
+            **{key: registry[identifier][key] for key in (
+                'command_id', 'argv', 'cwd', 'expected_exit',
+            )},
+            'exit_code': 0, 'passed': True,
+            'stdout_sha256': hashlib.sha256(raw).hexdigest(), 'stdout_size_bytes': str(len(raw)),
+            'stderr_sha256': hashlib.sha256(b'').hexdigest(), 'stderr_size_bytes': '0',
+        })
+    _write(config.evidence_root / 'CURRENT_INPUTS.json', {
+        'source_identity': identity, 'results': extras, 'controller_binding': config.binding(),
+    })
+    for task in spec['phases']:
+        # Only this helper's earlier disposable records may be refreshed.
+        path = config.evidence_root / (task + '.json')
+        if path.exists():
+            assert json.loads(path.read_bytes()).get('schema_version') == 'current-phase-proof/v1'
+            path.unlink()
+    phase.issue_phases(config, extras, identity)
+
+
 def _sync_fixture_sources(
     source: Path, pack: Path, root: Path, monkeypatch: pytest.MonkeyPatch,
     witnesses: dict[str, bytes],
@@ -290,7 +358,6 @@ def actual_matrix_candidate_chain(
     )
     for entry in matrix["entries"]:
         if entry["stage"] == "CANDIDATE":
-            value = {"result": "PASS", "controller_binding": config.binding()}
             if entry["command_id"] == "TEST_V636_P03_T07":
                 value = {
                     **full, "schema_version": "full-repair-qualification/v1",
@@ -298,10 +365,9 @@ def actual_matrix_candidate_chain(
                 }
             elif entry["command_id"] == "TEST_V636_P04_T04":
                 value = full
+            else:
+                continue
             _write(Path(entry["evidence_artifact"]), value)
-    _write(config.proof_coverage_evidence, proof.verify_proof_coverage_matrix(
-        matrix, config.evidence_root, "CANDIDATE", config,
-    ))
     registry = commands.validate_registry(root / "task-command-registry.json")
     stream_fields = {
         "stdout_sha256": hashlib.sha256(b"").hexdigest(), "stdout_size_bytes": "0",
@@ -317,6 +383,10 @@ def actual_matrix_candidate_chain(
         "exit_code": 0, "passed": True, **stream_fields,
     })
     _write(config.candidate_command_evidence, evidence)
+    _refresh_current_phase_fixtures(config)
+    _write(config.proof_coverage_evidence, proof.verify_proof_coverage_matrix(
+        matrix, config.evidence_root, "CANDIDATE", config,
+    ))
     candidate.build_candidate_qualification_receipt(
         root, config.candidate_command_evidence, config.candidate_qualification_receipt, config,
     )

@@ -711,7 +711,7 @@
     {
       "path": "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
       "source_sha256": "1705c95cbc4e412778c9244e1e2ea8bd957bb73bf4ee725f7ba791045b258727",
-      "modification_owner": null,
+      "modification_owner": "V636-P05-T09",
       "qualification_owner": "V636-P05-T09",
       "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
       "compiled_test_path": "extension/.test-build/test/security/capability-reachability.bootstrap.test.js"

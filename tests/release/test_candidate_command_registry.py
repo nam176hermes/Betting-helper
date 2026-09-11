@@ -85,7 +85,7 @@ def test_generated_output_inventory_is_closed_and_binds_all_actual_files(
     tmp_path: Path,
 ) -> None:
     rows = registry_runner.collect_generated_outputs(Path.cwd())
-    assert len(rows) == 79 + 37  # The approved Part B compiler-output amendment.
+    assert len(rows) == 79 + 37 + 1  # Part B outputs and current security-surface adapter.
     assert [row["path"] for row in rows] == sorted(
         (row["path"] for row in rows), key=str.encode
     )

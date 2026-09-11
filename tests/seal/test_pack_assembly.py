@@ -18,8 +18,9 @@ RUNTIME = Path(__file__).resolve().parents[2]
 def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
     """Real descendant/candidate binding; full/environment semantics ONLY are fixed.
 
-    All derived paths and inert issuance records are TEST_ONLY_NOT_ISSUED, never
-    an actual campaign or receipt qualification. Original source bytes are retained.
+    Command/phase records are structural TEST_ONLY_NOT_EXECUTED inputs. All derived
+    paths and inert issuance records are TEST_ONLY_NOT_ISSUED, never an actual
+    campaign or receipt qualification. Original source bytes are retained.
     """
     from tests.release import test_descendant_repository_qualification as receipt_tests
     from tools import build_candidate_qualification_receipt as candidate
@@ -84,6 +85,10 @@ def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
         task["inputs"] for task in manifest_source["tasks"]
         if task["task_id"] == "V636-P09-T01"
     )
+    for value in assembly_inputs:
+        prefix = original['evidence_root'] + '/'
+        if value.startswith(prefix):
+            paths.setdefault(value, str(config.evidence_root / value.removeprefix(prefix)))
     for task in manifest_source["tasks"]:
         if task["task_id"] not in {
             "V636-BOOT0-T01",
@@ -101,7 +106,7 @@ def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
             target = Path(paths[value])
             inert.append(target)
             write(target, {"fixture": "TEST_ONLY_NOT_ISSUED", "recorded_source": value})
-    assert len(inert) == 6 and len(set(inert)) == 6
+    assert len(inert) == 5 and len(set(inert)) == 5
     assert len(set(paths.values())) == len(paths)
 
     def transport(value: Any, mapping: dict[str, str]) -> Any:
@@ -127,6 +132,14 @@ def current_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, 
     # Sync ONLY this disposable checkout, through the official copier. Its registry
     # is the actual current source registry; no hand-generated command rows.
     sync_fixture(pack, root)
+    receipt_tests._refresh_current_phase_fixtures(config)
+    # Controller-only retained logs also belong to this disposable fixture;
+    # never load the running campaign's real logs through an untransported path.
+    for value in assembly_inputs:
+        if value.startswith(original['evidence_root'] + '/command-logs/'):
+            path = Path(paths[value])
+            if not path.exists():
+                path.write_bytes(b'TEST_ONLY_NOT_EXECUTED\n')
     qualification = config.qualification_evidence
     for aggregate, inventory in (
         (qualification.full_repair_aggregate, qualification.full_repair_inventory),

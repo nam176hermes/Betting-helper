@@ -208,3 +208,39 @@ W08 review follow-up and fresh campaign:
 - New qualification uses the source-owned `part-b-one-ready-r3` evidence root.
   Prior observations and failed outputs are preserved; current qualification,
   sealed review, operator observation and live authority remain pending.
+
+W08 assembly input and fixture follow-up:
+
+- The frozen `e5a3e8a` controller produced current P03/P04 proofs, then stopped at
+  TEST_V636_P05_T02. Its unit fixture still constructed legacy minimal phase
+  records and expected an obsolete sixth bootstrap input.
+- Disposable fixtures now exercise the real phase producer/verifier with clearly
+  marked structural TEST_ONLY_NOT_EXECUTED inputs and retain only their own logs.
+- Assembly preflight exposed 105 task inputs absent from the command declaration
+  and an existing unowned BOOTSTRAP.md. The authoring generator now declares the
+  complete command input set and retains that guide; historical bytes are intact.
+- Fresh verification uses `authoring-evidence/part-b-one-ready-r4`. Earlier failed
+  campaigns and packages remain source-bound checkpoints, not current admission.
+
+W08 current host inputs and package security follow-up:
+
+- Disposable review fixtures now transport every configured input into their own
+  temporary authority root before generating or reading TEST_ONLY signing keys.
+  The current v2 launch schema admits the two exact configured host paths; the
+  legacy schema and historical receipts remain unchanged.
+- The explicit current security-surface amendment keeps every inherited named
+  test and denial vector. Its adapter executes the actual inert legacy denials,
+  scans current source and emitted closures, runs current live TypeScript tests,
+  and builds the delivered package through the canonical build owner. Unsupported
+  legacy product implementation remains NOT_QUALIFIED.
+- The delivered package has a finite module/import/permission boundary. Technical
+  review reproduced DOM/global alias and HTML navigation escapes; parser-only
+  regression mutations now reject them. HTML uses a finite allowlist and the
+  extension CSP also denies form submission. This is static boundary coverage,
+  not a general JavaScript security proof or a host review receipt.
+- Fresh focused checks: 75 authoring tests plus 117 subtests and 82 TypeScript
+  security/current-live tests pass. Compilation preserved the five pre-existing
+  generated-file changes. The new adapter output has explicit ownership.
+- Full current-source qualification, package/browser observations and genuine
+  fresh host reviews are still required. Primary credential access, authenticated
+  provider attempts, real operator captures and live sessions remain zero.

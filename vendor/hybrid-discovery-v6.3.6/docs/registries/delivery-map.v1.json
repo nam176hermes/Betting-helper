@@ -215,6 +215,16 @@
       "source": "authoring-fixtures/part-b-one-ready-predecessor.json",
       "destination": "pack/authoring-source/authoring-fixtures/part-b-one-ready-predecessor.json",
       "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-review-launch-source.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-review-launch-source.json",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-security-surface-source.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-security-surface-source.json",
+      "owner": "V636-P09-T01"
     }
   ],
   "runtime_source_root": "/home/thenam176/betting-helper/part-b-candidate",

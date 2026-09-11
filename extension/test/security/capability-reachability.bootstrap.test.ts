@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
+import { verifyCurrentSurface } from "./current-surface.js";
 
 import {
   verifyCapabilityGraph,
@@ -11,7 +12,7 @@ import {
 } from "../../tools/verify-capability-graph.js";
 
 void test("bootstrap privilege graph is closed", () => {
-  assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), []);
+  verifyCurrentSurface();
 });
 
 void test("security-sensitive stubs expose no arbitrary map or index signature", () => {

@@ -29,6 +29,7 @@ SECURITY_TESTS = [
     "test_operator_profile.py",
     "test_run_intents.py",
     "test_windows_credential_store.py",
+    "test_part_b_package.py",
 ]
 BROWSER_TESTS = [
     "test_live_spool_bridge.py",
@@ -61,6 +62,7 @@ PART_B_PYTHON = [
     "tools/windows_credential_helper.py",
     "tools/launch_part_b.py",
     "tools/package_part_b.py",
+    "tools/verify_live_package.py",
     "tools/verify_part_b.py",
 ]
 

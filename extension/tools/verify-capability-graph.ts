@@ -2174,7 +2174,7 @@ export const verifyCapabilityGraph = (root: string): string[] => {
     else {
       const expectedCompiled = new Set(
         filesBelow(absoluteRoot)
-          .filter((path) => path.endsWith(".ts"))
+          .filter((path) => path.endsWith(".ts") && !path.endsWith(".d.ts"))
           .map((path) => `${relative(absoluteRoot, path).slice(0, -3)}.js`),
       );
       const actualCompiled = new Set(

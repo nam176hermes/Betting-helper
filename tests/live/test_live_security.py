@@ -69,7 +69,8 @@ def test_live_manifest_has_no_generic_http_or_privileged_browser_api() -> None:
     assert manifest["web_accessible_resources"] == []
     assert (
         manifest["content_security_policy"]["extension_pages"]
-        == "script-src 'self'; object-src 'none'; connect-src ws://127.0.0.1:8765"
+        == "default-src 'none'; script-src 'self'; style-src 'self'; object-src 'none'; "
+        "form-action 'none'; connect-src ws://127.0.0.1:8765"
     )
 
 

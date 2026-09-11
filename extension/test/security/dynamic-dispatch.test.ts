@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import test from "node:test";
 
 import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
+import { verifyCurrentSurface } from "./current-surface.js";
 
 export const testSecurityBoundary = (): void => {
   const vectors = {
@@ -12,7 +13,7 @@ export const testSecurityBoundary = (): void => {
     deny: "SEC_DYNAMIC_DISPATCH-DENY",
     mutate: "SEC_DYNAMIC_DISPATCH-MUTATE",
   };
-  assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
+  assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
   for (const [name, source] of [
     [vectors.deny, "const send=chrome.debugger.sendCommand;send(target,method,{})"],
     [vectors.mutate, "chrome.debugger['send'+'Command'](target,'Network.disable',{})"],
