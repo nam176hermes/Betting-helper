@@ -61,7 +61,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/CANDIDATE_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/CANDIDATE_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/DESCENDANT_REPOSITORY_QUALIFICATION.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P03-T07.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P03-T07.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -106,7 +106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P04-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P04-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P04-T04",
       "modifying_tasks": [],
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -134,7 +134,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P07-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -159,7 +159,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P08-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T01",
       "modifying_tasks": [],
@@ -171,7 +171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P08-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T02",
       "modifying_tasks": [],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T03.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P08-T03.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P08-T03",
       "modifying_tasks": [],
@@ -193,7 +193,7 @@
       "consumers": []
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/bootstrap/authoring-repository-receipt-descendant-source-v1.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -219,7 +219,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/bootstrap/authoring-repository-receipt.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/bootstrap/authoring-repository-receipt.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T08",
       "modifying_tasks": [],
@@ -232,7 +232,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/environment/environment-aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/environment/environment-aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -245,7 +245,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/environment/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/environment/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -258,7 +258,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/aggregate.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/full-repair/aggregate.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -273,7 +273,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/inventory.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/full-repair/inventory.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T07",
       "modifying_tasks": [],
@@ -15791,7 +15791,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-MIG0-T06.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-MIG0-T06.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-MIG0-T06",
       "modifying_tasks": [
@@ -15807,7 +15807,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P00-T05.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P00-T05.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P00-T05",
       "modifying_tasks": [
@@ -15823,7 +15823,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P02-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P02-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P02-T02",
       "modifying_tasks": [
@@ -15839,7 +15839,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P03-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P03-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P03-T02",
       "modifying_tasks": [
@@ -15855,7 +15855,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P05-T02.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P05-T02.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P05-T02",
       "modifying_tasks": [
@@ -15871,7 +15871,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P05-T04.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P05-T04.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P05-T04",
       "modifying_tasks": [
@@ -15887,7 +15887,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P05-T05.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P05-T05.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P05-T05",
       "modifying_tasks": [
@@ -15903,7 +15903,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P06-T01.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P06-T01.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P06-T01",
       "modifying_tasks": [
@@ -15919,7 +15919,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P05-T09.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/V636-P05-T09.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P05-T09",
       "modifying_tasks": [
@@ -15935,7 +15935,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/CURRENT_INPUTS.json",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/CURRENT_INPUTS.json",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -15949,7 +15949,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -15962,7 +15962,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -15975,7 +15975,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_ALL_TESTS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_ALL_TESTS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -15988,7 +15988,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_ALL_TESTS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_ALL_TESTS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16001,7 +16001,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_CRASH_HARNESS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_CRASH_HARNESS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16014,7 +16014,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_CRASH_HARNESS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_CRASH_HARNESS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16027,7 +16027,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16040,7 +16040,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16053,7 +16053,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_PRODUCTION.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_PRODUCTION.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16066,7 +16066,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_PRODUCTION.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_PRODUCTION.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16079,7 +16079,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_V636_P04_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_V636_P04_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16092,7 +16092,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/COMPILE_V636_P04_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/COMPILE_V636_P04_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16105,7 +16105,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16118,7 +16118,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16131,7 +16131,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16144,7 +16144,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16157,7 +16157,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16170,7 +16170,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16183,7 +16183,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16196,7 +16196,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16209,7 +16209,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16222,7 +16222,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16235,7 +16235,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16248,7 +16248,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16261,7 +16261,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_RELEASE_TOOLS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_RELEASE_TOOLS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16274,7 +16274,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_RELEASE_TOOLS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_RELEASE_TOOLS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16287,7 +16287,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_SECURITY_PY.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_SECURITY_PY.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16300,7 +16300,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_SECURITY_PY.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_SECURITY_PY.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16313,7 +16313,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_SECURITY_TS.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_SECURITY_TS.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16326,7 +16326,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_SECURITY_TS.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_SECURITY_TS.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16339,7 +16339,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_TS_V636_P04_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_TS_V636_P04_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16352,7 +16352,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_TS_V636_P04_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_TS_V636_P04_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16365,7 +16365,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16378,7 +16378,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16391,7 +16391,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16404,7 +16404,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16417,7 +16417,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16430,7 +16430,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16443,7 +16443,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T04.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T04.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16456,7 +16456,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T04.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T04.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16469,7 +16469,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T05.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T05.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16482,7 +16482,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T05.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T05.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16495,7 +16495,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T06.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T06.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16508,7 +16508,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P01_T06.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P01_T06.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16521,7 +16521,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16534,7 +16534,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16547,7 +16547,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16560,7 +16560,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16573,7 +16573,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16586,7 +16586,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P02_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P02_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16599,7 +16599,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16612,7 +16612,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16625,7 +16625,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16638,7 +16638,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16651,7 +16651,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16664,7 +16664,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16677,7 +16677,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T04.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T04.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16690,7 +16690,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T04.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T04.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16703,7 +16703,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T05.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T05.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16716,7 +16716,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T05.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T05.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16729,7 +16729,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T06.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T06.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16742,7 +16742,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T06.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T06.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16755,7 +16755,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T07.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T07.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16768,7 +16768,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P03_T07.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P03_T07.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16781,7 +16781,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16794,7 +16794,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16807,7 +16807,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16820,7 +16820,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16833,7 +16833,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T04.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T04.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16846,7 +16846,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P04_T04.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P04_T04.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16859,7 +16859,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16872,7 +16872,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16885,7 +16885,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16898,7 +16898,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16911,7 +16911,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16924,7 +16924,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16937,7 +16937,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T04.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T04.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16950,7 +16950,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T04.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T04.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16963,7 +16963,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T05.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T05.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16976,7 +16976,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T05.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T05.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -16989,7 +16989,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T06.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T06.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17002,7 +17002,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T06.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T06.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17015,7 +17015,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T07.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T07.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17028,7 +17028,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T07.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T07.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17041,7 +17041,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T08.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T08.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17054,7 +17054,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P05_T08.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P05_T08.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17067,7 +17067,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17080,7 +17080,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17093,7 +17093,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17106,7 +17106,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17119,7 +17119,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17132,7 +17132,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/TEST_V636_P06_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/TEST_V636_P06_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17145,7 +17145,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17158,7 +17158,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17171,7 +17171,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17184,7 +17184,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17197,7 +17197,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17210,7 +17210,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17223,7 +17223,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T01.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T01.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17236,7 +17236,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T01.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T01.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T01",
       "modifying_tasks": [],
@@ -17249,7 +17249,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T02.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T02.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -17262,7 +17262,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T02.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T02.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T02",
       "modifying_tasks": [],
@@ -17275,7 +17275,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T03.stdout",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T03.stdout",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],
@@ -17288,7 +17288,7 @@
       ]
     },
     {
-      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/command-logs/VERIFY_V636_P07_T03.stderr",
+      "path": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r9/command-logs/VERIFY_V636_P07_T03.stderr",
       "classification": "EVIDENCE_OUTPUT",
       "creation_owner": "V636-P07-T03",
       "modifying_tasks": [],

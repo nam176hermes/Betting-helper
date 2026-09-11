@@ -307,3 +307,20 @@ W08 complete custody-token coverage for r8:
 - Current declarations and qualification use the exclusive r8 evidence root.
   Exact commits, command exits and blockers remain in the private checkpoint.
   Provider attempts, real operator captures and primary-key accesses remain zero.
+
+W08/W09 sealing entrypoint repair for r9:
+
+- Runtime `b8589556` passed full candidate qualification, all P08 descendant
+  checks, Part B mock and isolated Windows Chrome/WSL2 qualification. Its P09-T01
+  operation failed before creating a pack: system `python3.12` did not match the
+  exact `.venv/bin/python3` invocation recorded in process evidence.
+- The source-owned generator now declares all four current P09 operations using
+  `uv run --frozen --offline python -B`, matching the evidence producer. Executable
+  path/hash, entrypoint and process provenance predicates remain unchanged.
+- Four command regressions failed before the change and pass afterward. Current
+  focused declaration checks pass: 36 runtime tests and 13 authoring tests with
+  four subtests. Isolated technical review found no concrete defect; it grants no
+  formal host authority. Fresh qualification uses the r9 evidence root.
+- Historical r8 receipts, package and failed operation logs remain intact. Real
+  provider attempts, operator captures, live sessions and primary-key accesses
+  remain zero. Source commit and final evidence are in the private checkpoint.
