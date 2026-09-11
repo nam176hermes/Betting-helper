@@ -264,3 +264,20 @@ W08 ready-marker publication repair:
 - Current qualification moves to the source-owned `part-b-one-ready-r6` root.
   Earlier campaigns are historical; no real credential, provider, operator or
   live access occurred. Formal host review and real-source admission remain pending.
+
+W08 current receipt fixture repair:
+
+- The `36ad714` r6 campaign issued P03/P04 proofs with 111 controls and 105
+  verified mutations, zero survivors. It then stopped at TEST_RELEASE_TOOLS:
+  520 tests passed and two candidate receipt fixtures retained obsolete assumptions.
+- Compiler input tests now verify the original 23 hashes against pinned `62150ea`
+  Git blobs and require the declared modifier, phase and qualification owner for
+  current changes. Historical bindings are preserved; current bytes are not
+  relabeled as historical source.
+- Sealed replay reuses the existing disposable current phase producer/verifier
+  fixture and its complete retained closure. Original roots are removed; omitted,
+  duplicate and missing-registry evidence remain rejected. This fixture is
+  TEST_ONLY and grants no actual qualification or host authority.
+- All eight focused receipt tests pass. Fresh qualification will use the declared
+  `part-b-one-ready-r7` evidence root; earlier proofs and installed packages remain
+  historical checkpoints. Real credential/provider/operator/live accesses remain zero.
