@@ -1415,11 +1415,11 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--aggregate",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/aggregate.json",
         "--inventory",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/inventory.json",
         "--proof",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P03-T07.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P03-T07.json"
       ],
       "purpose": "Execute and retain the exact 111-control and 105-mutation qualification campaign",
       "expected_exit": 0,
@@ -1480,11 +1480,11 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--aggregate",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/aggregate.json",
         "--inventory",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/full-repair/inventory.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P04-T04.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P04-T04.json"
       ],
       "purpose": "Verify the 65 clock records from the exact immutable P03 aggregate",
       "expected_exit": 0,
@@ -1961,7 +1961,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P07-T01.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T01.json"
       ],
       "purpose": "Run exact verifier for V636-P07-T01",
       "expected_exit": 0,
@@ -1984,13 +1984,13 @@
         "--matrix",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
         "--evidence-root",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8",
         "--stage",
         "CANDIDATE",
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P07-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T02.json"
       ],
       "purpose": "Run exact verifier for V636-P07-T02",
       "expected_exit": 0,
@@ -2015,9 +2015,9 @@
         "--source",
         "/home/thenam176/betting-helper/part-b-candidate",
         "--command-evidence",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P07-T01.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/CANDIDATE_QUALIFICATION.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/CANDIDATE_QUALIFICATION.json"
       ],
       "purpose": "Run exact verifier for V636-P07-T03",
       "expected_exit": 0,
@@ -2042,7 +2042,7 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P08-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T01.json",
         "--preflight"
       ],
       "purpose": "Preflight the current descendant repository without mutation",
@@ -2069,9 +2069,9 @@
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--issue",
         "--receipt",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/DESCENDANT_REPOSITORY_QUALIFICATION.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P08-T02.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T02.json"
       ],
       "purpose": "Exclusively issue the descendant repository qualification receipt",
       "expected_exit": 0,
@@ -2097,9 +2097,9 @@
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--check-only",
         "--receipt",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/DESCENDANT_REPOSITORY_QUALIFICATION.json",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/V636-P08-T03.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/V636-P08-T03.json"
       ],
       "purpose": "Revalidate the descendant receipt without writing repository state",
       "expected_exit": 0,
@@ -2982,7 +2982,7 @@
         "--root",
         "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
         "--output",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
         "--accepted-ancestor",
         "5249e84b57b7bc4d30abc24f41ead64174ab7549"
       ],
@@ -3039,11 +3039,11 @@
         "--config",
         "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
         "--workspace",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/environment",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/environment",
         "--aggregate",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/environment/environment-aggregate.json",
         "--inventory",
-        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/environment/inventory.json"
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r8/environment/inventory.json"
       ],
       "purpose": "Capture the supplemental environment aggregate and closed retained inventory",
       "expected_exit": 0,

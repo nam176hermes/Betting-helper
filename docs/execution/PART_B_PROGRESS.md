@@ -293,3 +293,17 @@ W08 inherited bootstrap follow-up before r7 qualification:
   historical vectors remain immutable. Focused regressions cover these repairs.
 - These changes require fresh source-owned declarations, local commits and full
   qualification. They grant no host review, operator or live authority.
+
+W08 complete custody-token coverage for r8:
+
+- The r7 campaign was interrupted after a confirmed scanner regression accepted
+  forbidden private-method and regex-literal tokens. Its partial results and log
+  are preserved under `authoring-evidence/part-b-one-ready-r7`; they do not qualify
+  this changed source.
+- The shared guard now scans every non-comment TypeScript leaf token, retaining
+  decoded names and template expressions. Private names, regex literals and
+  escaped names have runnable negative cases. Focused checks: 13 passed, Ruff
+  passed and the changed governance module passed mypy.
+- Current declarations and qualification use the exclusive r8 evidence root.
+  Exact commits, command exits and blockers remain in the private checkpoint.
+  Provider attempts, real operator captures and primary-key accesses remain zero.

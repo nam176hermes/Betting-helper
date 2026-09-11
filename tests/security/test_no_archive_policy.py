@@ -49,7 +49,11 @@ def test_custody_scanner_uses_identifiers_and_ack_tokens(tmp_path: Path, suffix:
         for text in ("store[`delete_acked_${suffix}`]();",
                      "store[`allowed_${deleteAckedRecord()}`]();",
                      "store[`allowed_${suffix}restore_backup`]();",
-                     'store["delete_acked_record"]();'):
+                     'store["delete_acked_record"]();',
+                     "class Store { #delete_acked_record() {} }",
+                     "store[/delete_acked_record/.source]();",
+                     r"function delete\u005facked_record() {}",
+                     r'store["delete\u005facked_record"]();'):
             candidate.write_text(text)
             with pytest.raises(AssertionError, match="E_CUSTODY_PATH_DENIED"):
                 validate_runtime_custody_prohibitions(tmp_path)

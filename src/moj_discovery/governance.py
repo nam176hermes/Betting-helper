@@ -178,8 +178,8 @@ def validate_runtime_custody_prohibitions(root: Path | None = None) -> None:
             if any(_custody_symbol_forbidden(symbol) for symbol in symbols):
                 raise AssertionError(f"E_CUSTODY_PATH_DENIED:{path.relative_to(root)}")
     if typescript:
-        # Use the already pinned compiler: comments are not identifiers, and
-        # template expressions still contain executable identifiers to inspect.
+        # Parse every non-comment leaf token with the already pinned compiler;
+        # a token-kind allowlist would omit private names or regex literals.
         node = shutil.which("node")
         assert node is not None, "E_CUSTODY_SOURCE_PARSE"
         script = """
@@ -189,9 +189,9 @@ const result = JSON.parse(fs.readFileSync(0, 'utf8')).map(([path, text]) => {
   if (source.parseDiagnostics.length) throw new Error('E_CUSTODY_SOURCE_PARSE');
   const symbols = [];
   function visit(node) {
-    if (ts.isIdentifier(node)) symbols.push(node.text);
-    else if (ts.isStringLiteralLike(node) || ts.isTemplateLiteralToken(node)) {
-      symbols.push(...(node.text.match(/[$A-Za-z_][$0-9A-Za-z_]*/g) || []));
+    if (node.getChildCount(source) === 0) {
+      const text = typeof node.text === 'string' ? node.text : node.getText(source);
+      symbols.push(...(text.match(/[$A-Za-z_][$0-9A-Za-z_]*/g) || []));
     }
     ts.forEachChild(node, visit);
   }

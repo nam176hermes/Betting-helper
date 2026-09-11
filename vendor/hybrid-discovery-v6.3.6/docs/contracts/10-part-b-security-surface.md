@@ -26,8 +26,9 @@ and TEST_RELEASE_TOOLS (including all tests/live) must pass on frozen bytes.
 
 The inherited Python capability allow test consumes that same current adapter;
 its existing named tests and negative vector cases remain mandatory. The custody
-identifier guard parses TypeScript with the pinned compiler so comments cannot
-become executable names, rejects malformed syntax, and matches acknowledged-record
+identifier guard parses every non-comment TypeScript leaf token with the pinned
+compiler, including private identifiers, regex literals and template fragments;
+it retains decoded names, rejects malformed syntax, and matches acknowledged-record
 deletion names without mistaking the word backend for an acknowledgement. All
 automatic archive, backup, compaction, restore and individual-deletion negatives
 remain enforced. The schema-format test adapts only its disposable SpoolRecord
