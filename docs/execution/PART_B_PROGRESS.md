@@ -281,3 +281,15 @@ W08 current receipt fixture repair:
 - All eight focused receipt tests pass. Fresh qualification will use the declared
   `part-b-one-ready-r7` evidence root; earlier proofs and installed packages remain
   historical checkpoints. Real credential/provider/operator/live accesses remain zero.
+
+W08 inherited bootstrap follow-up before r7 qualification:
+
+- Six of seven preflight groups passed on `41f5365`; Python bootstrap reported
+  209 passed, 11 skipped and three failures. No full r7 campaign had started.
+- The capability allow test now uses the same declared current security adapter.
+  The custody guard inspects real TypeScript syntax and acknowledgement-name
+  tokens, preserving prohibited-operation checks while rejecting malformed syntax.
+  The format fixture uses the current observation ID and recomputed content hash;
+  historical vectors remain immutable. Focused regressions cover these repairs.
+- These changes require fresh source-owned declarations, local commits and full
+  qualification. They grant no host review, operator or live authority.

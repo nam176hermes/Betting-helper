@@ -80,7 +80,7 @@
     {
       "path": "runtime/tests/bootstrap/test_capability_reachability.py",
       "source_sha256": "6d2b6b5bf51a08cb67b70b1c7a04d059c38ea0769f03c45a92713c8954cd0f4a",
-      "modification_owner": null,
+      "modification_owner": "V636-P05-T09",
       "qualification_owner": "V636-P05-T09",
       "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
       "tests": [
@@ -471,7 +471,7 @@
     {
       "path": "runtime/tests/bootstrap/test_schema_format_checker.py",
       "source_sha256": "7451330ce1ce19eb212f4c2dddede5242433f0ca36caa100206b4838022ca7bc",
-      "modification_owner": null,
+      "modification_owner": "V636-P05-T09",
       "qualification_owner": "V636-P05-T09",
       "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
       "tests": [
@@ -744,9 +744,10 @@
       "modification_owners": [
         "V636-MIG0-T03",
         "V636-P02-T01",
-        "V636-P05-T02"
+        "V636-P05-T02",
+        "V636-P05-T09"
       ],
-      "qualification_owner": "V636-P05-T02",
+      "qualification_owner": "V636-P05-T09",
       "interface_obligation": "validate_task_dependencies accepts the successor task manifest explicitly and validates its declared count/DAG; validate_canonical_registry accepts pinned historical registry data and explicit successor coverage bindings, never assumes active commands have v6.2 verification_commands shape."
     },
     {

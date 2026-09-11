@@ -9317,7 +9317,8 @@
       "modifying_tasks": [
         "V636-MIG0-T03",
         "V636-P02-T01",
-        "V636-P05-T02"
+        "V636-P05-T02",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": {
@@ -9749,7 +9750,8 @@
       "classification": "BASELINE_COPY",
       "creation_owner": "V636-MIG0-T02",
       "modifying_tasks": [
-        "V636-MIG0-T03"
+        "V636-MIG0-T03",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": {
@@ -9934,7 +9936,8 @@
       "classification": "BASELINE_COPY",
       "creation_owner": "V636-MIG0-T02",
       "modifying_tasks": [
-        "V636-MIG0-T03"
+        "V636-MIG0-T03",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": {
@@ -11366,7 +11369,8 @@
       "classification": "TASK_OUTPUT",
       "creation_owner": "V636-P01-T02",
       "modifying_tasks": [
-        "V636-P05-T03"
+        "V636-P05-T03",
+        "V636-P05-T09"
       ],
       "materialization_required": true,
       "source": null,

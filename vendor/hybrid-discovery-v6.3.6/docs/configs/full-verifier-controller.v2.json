@@ -6,7 +6,7 @@
   "governed_source_pack": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
   "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7",
   "external_authoring_tests": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
-  "external_authoring_source_sha256": "b7e4194448480d240c37bba3ce763c4fe4c4ac82e64669db5403386fea13b968",
+  "external_authoring_source_sha256": "933766f61a22489b010f05bb733d61f51daf5c580627e5852fb1b16361146361",
   "external_authoring_command": {
     "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
     "argv": [

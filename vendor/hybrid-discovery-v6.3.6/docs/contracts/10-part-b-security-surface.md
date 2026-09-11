@@ -24,6 +24,16 @@ unchanged. P05-T09 owns the explicit inherited allow-oracle adaptation and its
 compiler output. Its complete compile, current security leaves, inherited corpus
 and TEST_RELEASE_TOOLS (including all tests/live) must pass on frozen bytes.
 
+The inherited Python capability allow test consumes that same current adapter;
+its existing named tests and negative vector cases remain mandatory. The custody
+identifier guard parses TypeScript with the pinned compiler so comments cannot
+become executable names, rejects malformed syntax, and matches acknowledged-record
+deletion names without mistaking the word backend for an acknowledgement. All
+automatic archive, backup, compaction, restore and individual-deletion negatives
+remain enforced. The schema-format test adapts only its disposable SpoolRecord
+to the current observation ID format and recomputes its hash before format
+mutations. Historical vector bytes, hashes and test symbols remain unchanged.
+
 `contracts/live_readonly/v1/package-policy.json` independently declares finite
 modules/assets, entrypoints, manifest, Chrome owners, exact fixed WebSocket routes,
 storage owner and isolated operator reader. `verify_live_package` checks emitted

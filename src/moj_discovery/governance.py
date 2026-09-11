@@ -6,7 +6,9 @@ import importlib
 import json
 import math
 import re
+import shutil
 import sqlite3
+import subprocess
 import tempfile
 from collections.abc import Iterable, Iterator
 from pathlib import Path
@@ -125,6 +127,7 @@ FUTURE_GRAPH_NODES = [
 
 def _custody_symbol_forbidden(name: str) -> bool:
     normalized = re.sub(r"[^a-z0-9]", "", name.casefold())
+    words = re.split(r"[^A-Za-z0-9]|(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", name)
     return (
         "automaticbackup" in normalized
         or "automaticarchive" in normalized
@@ -133,13 +136,16 @@ def _custody_symbol_forbidden(name: str) -> bool:
         or ("retention" in normalized and "daemon" in normalized)
         or "automaticcleanup" in normalized
         or normalized.startswith("restore")
-        or ("delete" in normalized and "ack" in normalized)
+        or ("delete" in normalized and (
+            "deleteack" in normalized or any(word.casefold().startswith("ack") for word in words)
+        ))
     )
 
 
 def validate_runtime_custody_prohibitions(root: Path | None = None) -> None:
     root = root or Path.cwd()
     source_roots = (root / "src", root / "tools", root / "extension/src")
+    typescript: list[Path] = []
     for source_root in source_roots:
         if not source_root.exists():
             continue
@@ -167,9 +173,48 @@ def validate_runtime_custody_prohibitions(root: Path | None = None) -> None:
                     )
                 )
             else:
-                symbols = iter(re.findall(r"[$A-Za-z_][$0-9A-Za-z_]*", path.read_text()))
+                typescript.append(path)
+                continue
             if any(_custody_symbol_forbidden(symbol) for symbol in symbols):
                 raise AssertionError(f"E_CUSTODY_PATH_DENIED:{path.relative_to(root)}")
+    if typescript:
+        # Use the already pinned compiler: comments are not identifiers, and
+        # template expressions still contain executable identifiers to inspect.
+        node = shutil.which("node")
+        assert node is not None, "E_CUSTODY_SOURCE_PARSE"
+        script = """
+const ts = require('typescript'), fs = require('node:fs');
+const result = JSON.parse(fs.readFileSync(0, 'utf8')).map(([path, text]) => {
+  const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true);
+  if (source.parseDiagnostics.length) throw new Error('E_CUSTODY_SOURCE_PARSE');
+  const symbols = [];
+  function visit(node) {
+    if (ts.isIdentifier(node)) symbols.push(node.text);
+    else if (ts.isStringLiteralLike(node) || ts.isTemplateLiteralToken(node)) {
+      symbols.push(...(node.text.match(/[$A-Za-z_][$0-9A-Za-z_]*/g) || []));
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return symbols;
+});
+process.stdout.write(JSON.stringify(result));
+"""
+        try:
+            result = subprocess.run(  # noqa: S603 -- fixed parser; scanned code is never executed.
+                [node, "-e", script],
+                cwd=Path(__file__).resolve().parents[2] / "extension",
+                input=json.dumps([(str(path), path.read_text()) for path in typescript]),
+                text=True, capture_output=True, check=True, timeout=30,
+            )
+            parsed = json.loads(result.stdout)
+            assert isinstance(parsed, list) and len(parsed) == len(typescript)
+            for path, names in zip(typescript, parsed, strict=True):
+                assert isinstance(names, list) and all(isinstance(name, str) for name in names)
+                if any(_custody_symbol_forbidden(name) for name in names):
+                    raise AssertionError(f"E_CUSTODY_PATH_DENIED:{path.relative_to(root)}")
+        except (OSError, subprocess.SubprocessError, ValueError) as error:
+            raise AssertionError("E_CUSTODY_SOURCE_PARSE") from error
 
 
 def validate_graph_partition(vendor: Path = VENDOR) -> None:

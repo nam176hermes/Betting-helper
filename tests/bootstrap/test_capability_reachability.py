@@ -1,5 +1,6 @@
 import json
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -9,11 +10,15 @@ from moj_discovery.governance import validate_capability_artifacts
 
 def test_no_privileged_extension_source_exists_before_projection() -> None:
     validate_capability_artifacts()
-    sources = "\n".join(path.read_text() for path in Path("extension/src").rglob("*.ts"))
-    assert (
-        "fetch(" not in sources
-        and "XMLHttpRequest" not in sources
-        and "new WebSocket" not in sources
+    node = shutil.which("node")
+    assert node is not None
+    # Current declared allow surface; all inherited denial vectors remain below
+    # and in the mandatory TypeScript security leaves.
+    subprocess.run(  # noqa: S603 -- fixed current-source qualification adapter.
+        [node, "--input-type=module", "--eval",
+         "import {verifyCurrentSurface} from "
+         "'./extension/.test-build/test/security/current-surface.js';verifyCurrentSurface();"],
+        check=True, capture_output=True, timeout=120,
     )
 
 

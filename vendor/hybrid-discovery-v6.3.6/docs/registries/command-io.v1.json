@@ -2162,7 +2162,12 @@
       "consumers": [
         "V636-P05-T09"
       ],
-      "inputs": [],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "runtime/tools/verify_live_package.py",
+        "runtime/contracts/live_readonly/v1/package-policy.json",
+        "pack/docs/contracts/10-part-b-security-surface.md"
+      ],
       "outputs": [
         "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
         "/home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r7/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr"

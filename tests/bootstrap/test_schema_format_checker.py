@@ -7,6 +7,7 @@ from typing import cast
 import pytest
 from jsonschema import ValidationError  # type: ignore[import-untyped]
 
+from moj_discovery.canonical import canonical_content_hash
 from moj_discovery.governance import _published_schema_registry, _record_validates
 from moj_discovery.schema_registry import validate_artifact
 
@@ -20,7 +21,14 @@ def _authorization_record() -> dict[str, object]:
 
 def _durability_record() -> dict[str, object]:
     vectors = json.loads((VENDOR / "vectors/durability-crash-v1.json").read_text())
-    return cast(dict[str, object], vectors["canonical_hash_positive_vector"]["record"])
+    record = cast(dict[str, object], vectors["canonical_hash_positive_vector"]["record"])
+    # Adapt this disposable format fixture to the current observation ID contract;
+    # the pinned historical vector and its expected hash remain unchanged.
+    record["raw_observation_id"] = "observation:" + "2" * 64
+    record["content_hash"] = canonical_content_hash(
+        "SpoolRecord", record, registry_path=VENDOR / "registries/canonical-hash-domains.v1.json",
+    )
+    return record
 
 
 def _invalid_date_time(record: dict[str, object]) -> None:
@@ -71,9 +79,10 @@ def test_governance_schema_validation_enforces_formats(
     mutate: Callable[[dict[str, object]], None],
 ) -> None:
     record = copy.deepcopy(record_factory())
-    mutate(record)
     schema = json.loads((VENDOR / "schemas" / schema_name).read_text())
     schema_ref = schema["$id"]
     case = {"record_schema_ref": schema_ref, "record": record}
+    assert _record_validates(case, _published_schema_registry(VENDOR))
+    mutate(record)
 
     assert not _record_validates(case, _published_schema_registry(VENDOR))

@@ -23,3 +23,36 @@ def test_security_boundary(tmp_path: Path) -> None:
         with pytest.raises(AssertionError, match="E_CUSTODY_PATH_DENIED"):
             validate_runtime_custody_prohibitions(tmp_path)
         assert (vectors["deny"], vectors["mutate"])[index > 0]
+
+
+@pytest.mark.parametrize("suffix", [".py", ".ts"])
+def test_custody_scanner_uses_identifiers_and_ack_tokens(tmp_path: Path, suffix: str) -> None:
+    source = tmp_path / "src"
+    source.mkdir()
+    candidate = source / ("receipt" + suffix)
+
+    def definition(symbol: str) -> str:
+        return (
+            f"# Restore display subscriptions\ndef {symbol}(): pass\n"
+            if suffix == ".py"
+            else f"// Restore display subscriptions\nfunction {symbol}() {{}}\n"
+        )
+
+    candidate.write_text(definition("delete_backend"))
+    validate_runtime_custody_prohibitions(tmp_path)
+    for symbol in ("delete_acked_record", "deleteAckedRecord", "deleteACK", "deleteackrecord",
+                   "acknowledged_record_delete", "restore_backup", "automatic_archive"):
+        candidate.write_text(definition(symbol))
+        with pytest.raises(AssertionError, match="E_CUSTODY_PATH_DENIED"):
+            validate_runtime_custody_prohibitions(tmp_path)
+    if suffix == ".ts":
+        for text in ("store[`delete_acked_${suffix}`]();",
+                     "store[`allowed_${deleteAckedRecord()}`]();",
+                     "store[`allowed_${suffix}restore_backup`]();",
+                     'store["delete_acked_record"]();'):
+            candidate.write_text(text)
+            with pytest.raises(AssertionError, match="E_CUSTODY_PATH_DENIED"):
+                validate_runtime_custody_prohibitions(tmp_path)
+        candidate.write_text("function incomplete( {")
+        with pytest.raises(AssertionError, match="E_CUSTODY_SOURCE_PARSE"):
+            validate_runtime_custody_prohibitions(tmp_path)
