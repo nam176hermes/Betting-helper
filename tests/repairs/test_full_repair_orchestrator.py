@@ -658,6 +658,7 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         "repair-probe.js": compiled / "test-harness/repair-probe.js",
         "src/errors.js": compiled / "src/errors.js",
         "src/spool.js": compiled / "src/spool.js",
+        "src/storage/durable_idb.js": compiled / "src/storage/durable_idb.js",
     }
     for name, source in copies.items():
         target = extension / name
@@ -683,6 +684,7 @@ def test_browser_owner_module_graph_is_explicit_closed_inventory(
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/storage/durable_idb.js",
         "src/offline/validators.js",
     }
     modules = {
@@ -764,6 +766,7 @@ def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collis
         "src/canonicalize.js",
         "src/errors.js",
         "src/spool.js",
+        "src/storage/durable_idb.js",
         "src/offline/validators.js",
     }
 
@@ -803,7 +806,7 @@ def test_mixed_browser_and_destruction_module_graphs_are_declared_without_collis
         live_roots=(),
     )
     legacy = [row for row in declarations if not row[0].endswith("/src/offline/validators.js")]
-    assert len(legacy) == 24
+    assert len(legacy) == 28
     assert len([row for row in declarations if row[0].endswith("/src/offline/validators.js")]) == 4
     assert set(declarations) == {
         (f"/recorded/{owner}/test-extension/{name}", "/recorded", character * 64)

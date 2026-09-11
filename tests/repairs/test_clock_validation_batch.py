@@ -364,3 +364,120 @@ def test_exit_subprocess_failure_keeps_public_fail_closed_envelope(
         assert result["errors"][-1]["error"] == "E_REPAIR_VALIDATION_INPUT_DRIFT"
     assert calls == 2
     assert gate._CLOCK_VALIDATION.get() is None
+
+
+@pytest.fixture
+def retained_browser_graph(
+    identity_files: dict[str, Path], tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> tuple[dict[str, Any], Any, Path]:
+    """TEST_ONLY compiler boundary; retained bytes, hashes and path checks are real."""
+    import json
+
+    from tools.retained_artifact_io import RetainedArtifactIO
+
+    case = tmp_path / "case"
+    extension = case / "test-extension"
+    names = {
+        "indexeddb-crash-child.js", "repair-probe.js", "src/canonical.js",
+        "src/canonicalize.js", "src/errors.js", "src/spool.js",
+        "src/storage/durable_idb.js", "src/offline/validators.js",
+    }
+    contents = {str(extension / name): (
+        b'import value from "./canonicalize.js";' if name == "src/canonical.js"
+        else name.encode()
+    ) for name in names}
+    modules = {name: hashlib.sha256(contents[str(extension / name)]).hexdigest()
+               for name in names}
+    binding = {"before": modules, "after": modules}
+    descriptor = case / "typescript-execution-binding.json"
+    contents[str(descriptor)] = json.dumps(binding).encode()
+    # A similarly named sibling must not be mistaken for an in-scope module.
+    contents[str(case / "test-extension-other/extra.js")] = b"TEST_ONLY"
+    retained = tmp_path / "retained-browser"
+    retained.mkdir()
+    rows = []
+    for index, (locator, raw) in enumerate(contents.items()):
+        relative = str(index)
+        (retained / relative).write_bytes(raw)
+        rows.append({"recorded_locator": locator, "recorded_boundary": str(tmp_path),
+                     "copied_relative_path": relative, "size_bytes": len(raw),
+                     "sha256": hashlib.sha256(raw).hexdigest()})
+    artifacts = RetainedArtifactIO.from_manifest({
+        "schema_version": "retained-artifact-manifest/v1",
+        "recorded_boundaries": [str(tmp_path)], "files": rows,
+    }, retained)
+    row = {"case_directory": str(case), "identity": {"module_sha256": modules["src/spool.js"]},
+           "module_hashes": modules, "typescript_execution_binding": binding,
+           "typescript_execution_binding_artifact": {"path": str(descriptor),
+               "sha256": hashlib.sha256(contents[str(descriptor)]).hexdigest()}}
+    monkeypatch.setattr(gate, "_compiled_browser_module_hashes", lambda _binding: modules.copy())
+    return row, artifacts, extension
+
+
+def test_browser_graph_batch_authenticates_toolchain_at_both_boundaries(
+    retained_browser_graph: tuple[dict[str, Any], Any, Path],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    row, artifacts, _ = retained_browser_graph
+    original = gate._typescript_compile_binding
+    calls = []
+
+    def observed(current: dict[str, Any]) -> str:
+        value = original(current)
+        calls.append(value)
+        return value
+
+    monkeypatch.setattr(gate, "_typescript_compile_binding", observed)
+    token = gate._RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        with gate._clock_validation_scope():
+            current = gate._clock_current_binding()
+            for _ in range(3):
+                gate._verify_retained_typescript_graph(row, current, "E_TEST_GRAPH")
+        assert len(calls) == 2
+        assert calls[0] == calls[1]
+        gate._verify_retained_typescript_graph(row, gate.capture_binding(), "E_TEST_GRAPH")
+        assert len(calls) == 4  # A standalone operation must authenticate anew.
+    finally:
+        gate._RETAINED_ARTIFACTS.reset(token)
+
+
+def test_browser_graph_batch_rejects_same_stat_compiler_drift(
+    retained_browser_graph: tuple[dict[str, Any], Any, Path],
+    identity_files: dict[str, Path],
+) -> None:
+    row, artifacts, _ = retained_browser_graph
+    token = gate._RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        with (
+            pytest.raises(ValueError, match="E_REPAIR_VALIDATION_INPUT_DRIFT"),
+            gate._clock_validation_scope(),
+        ):
+            gate._verify_retained_typescript_graph(
+                row, gate._clock_current_binding(), "E_TEST_GRAPH",
+            )
+            change_same_stat(identity_files["compiler"])
+        assert gate._CLOCK_VALIDATION.get() is None
+    finally:
+        gate._RETAINED_ARTIFACTS.reset(token)
+
+
+def test_browser_graph_batch_rechecks_retained_bytes_on_every_call(
+    retained_browser_graph: tuple[dict[str, Any], Any, Path],
+) -> None:
+    row, artifacts, extension = retained_browser_graph
+    token = gate._RETAINED_ARTIFACTS.set(artifacts)
+    try:
+        with gate._clock_validation_scope():
+            current = gate._clock_current_binding()
+            gate._verify_retained_typescript_graph(row, current, "E_TEST_GRAPH")
+            path = artifacts.physical_path(str(extension / "src/spool.js"),
+                recorded_boundary=artifacts.recorded_boundary(str(extension / "src/spool.js")))
+            before = path.stat()
+            raw = path.read_bytes()
+            path.write_bytes(b"X" + raw[1:])
+            os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns))
+            with pytest.raises(ValueError, match="E_RETAINED_ARTIFACT"):
+                gate._verify_retained_typescript_graph(row, current, "E_TEST_GRAPH")
+    finally:
+        gate._RETAINED_ARTIFACTS.reset(token)

@@ -354,3 +354,12 @@ W08 native owned-job cleanup repair for r11:
   edge case before freeze; two additional failing-then-passing tests cover it.
 - Focused native browser regression and canonical declarations precede a fresh
   r11 freeze. Historical evidence and all real-source/live gates remain unchanged.
+
+
+### W08 verification performance repair — r12 source checkpoint
+
+User authorized reducing repeated verification without weakening security, followed by new qualification/sealing. Browser graph verification now reuses the existing operation-scoped source/compiler binding with byte revalidation at exit; retained module bytes are still checked on every call. Full repair semantic validation shares that scope across its mandatory replay/mutation/release checks. Canonical retained locator prefix filtering preserves the exact module set.
+
+Focused validation: 62 tests passed, including compiler same-stat drift and retained-byte tampering. Two existing positive fixture builders now include the already-required durable_idb.js module; no validator allowlist was relaxed. The unchanged test-file baseline has five mypy errors; modified implementation modules and new batching tests pass scoped mypy. Canonical ownership adds three existing source/test entries (1236 total).
+
+New evidence: /home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r12. New host delivery: /home/thenam176/betting-helper/part-b-review-host-r12. Preserve r11 evidence, sealed pack and old A authorization; none admits this changed source. Full qualification/seal pending at this pre-commit checkpoint; actual commits and final results are recorded externally and in .local/part-b/execution-state.json. Provider/operator/live attempts remain zero; no model or money activation.

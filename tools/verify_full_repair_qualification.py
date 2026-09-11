@@ -47,7 +47,11 @@ def _load_inventory(path: Path) -> dict[str, object]:
 def _semantic_validation(aggregate: dict[str, Any], artifacts: RetainedArtifactIO) -> None:
     from moj_discovery.durability_release import validate_full_durability_release
     from tools.run_indexeddb_crash_matrix import validate_full_mutation_reports
-    from tools.verify_repair_evidence import aggregate_repair_evidence, full_required_ids
+    from tools.verify_repair_evidence import (
+        _clock_validation_scope,
+        aggregate_repair_evidence,
+        full_required_ids,
+    )
 
     required = full_required_ids()
     records = aggregate.get("records")
@@ -55,31 +59,32 @@ def _semantic_validation(aggregate: dict[str, Any], artifacts: RetainedArtifactI
     clock = aggregate.get("clock_report")
     if not isinstance(records, list) or not isinstance(owners, dict) or not isinstance(clock, dict):
         raise ValueError("E_FULL_REPAIR_QUALIFICATION")
-    replay = aggregate_repair_evidence(required, records, artifacts=artifacts)
-    mutations = validate_full_mutation_reports(
-        Path(__file__).resolve().parents[1] / "vendor/hybrid-discovery-v6.3.6",
-        owners,
-        clock,
-        artifacts=artifacts,
-    )
-    release = validate_full_durability_release(
-        required,
-        required,
-        mutation_survivors=0,
-        evidence=records,
-        mutation_summary=mutations,
-        mutation_evidence={"owner_reports": owners, "clock_report": clock},
-        artifacts=artifacts,
-    )
-    if (
-        replay.get("result") != "PASS"
-        or replay.get("status_counts") != {"PASS": 111}
-        or mutations != {"required": 105, "verified": 105, "survivors": 0, "complete": True}
-        or release.get("result") != "PASS"
-        or aggregate.get("result") != "PASS"
-        or aggregate.get("release_gate") != release
-    ):
-        raise ValueError("E_FULL_REPAIR_QUALIFICATION")
+    with _clock_validation_scope():
+        replay = aggregate_repair_evidence(required, records, artifacts=artifacts)
+        mutations = validate_full_mutation_reports(
+            Path(__file__).resolve().parents[1] / "vendor/hybrid-discovery-v6.3.6",
+            owners,
+            clock,
+            artifacts=artifacts,
+        )
+        release = validate_full_durability_release(
+            required,
+            required,
+            mutation_survivors=0,
+            evidence=records,
+            mutation_summary=mutations,
+            mutation_evidence={"owner_reports": owners, "clock_report": clock},
+            artifacts=artifacts,
+        )
+        if (
+            replay.get("result") != "PASS"
+            or replay.get("status_counts") != {"PASS": 111}
+            or mutations != {"required": 105, "verified": 105, "survivors": 0, "complete": True}
+            or release.get("result") != "PASS"
+            or aggregate.get("result") != "PASS"
+            or aggregate.get("release_gate") != release
+        ):
+            raise ValueError("E_FULL_REPAIR_QUALIFICATION")
 
 
 def verify_full_repair_qualification(

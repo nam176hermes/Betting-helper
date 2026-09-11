@@ -289,8 +289,8 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host/workspaces/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r12/workspaces/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r12/workspaces/review-b"
               ]
             }
           ]
@@ -320,8 +320,8 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host/results/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host/results/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r12/results/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r12/results/review-b"
               ]
             }
           ]

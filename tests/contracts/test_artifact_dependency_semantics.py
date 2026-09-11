@@ -25,8 +25,8 @@ def test_consumer_cannot_precede_creation_owner() -> None:
     registry, manifest, schema = _inputs()
     assert validate_artifact_lifecycle(registry, manifest, schema=schema) == {
         "result": "PASS",
-        # W00 inventory plus explicit native cleanup producer/test ownership.
-        "artifact_count": 1233,
+        # W00 inventory plus three explicit verification-repair source/test entries.
+        "artifact_count": 1236,
     }
     changed = copy.deepcopy(registry)
     entry = next(row for row in changed["entries"] if row["creation_owner"] == "V636-P01-T02")

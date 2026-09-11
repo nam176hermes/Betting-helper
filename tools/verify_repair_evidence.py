@@ -1083,48 +1083,50 @@ def _verify_retained_typescript_graph(
     row: dict[str, Any], current: dict[str, Any], error: str
 ) -> None:
     """Verify the immutable module graph actually loaded by the retained browser case."""
-    extension = Path(row["case_directory"]) / "test-extension"
-    modules = row["module_hashes"]
-    expected = {
-        "indexeddb-crash-child.js",
-        "repair-probe.js",
-        "src/canonical.js",
-        "src/canonicalize.js",
-        "src/errors.js",
-        "src/spool.js",
-        "src/storage/durable_idb.js",
-        "src/offline/validators.js",
-    }
-    artifacts = _RETAINED_ARTIFACTS.get()
-    actual_names = (
-        {
-            str(Path(locator).relative_to(extension))
-            for locator in artifacts.recorded_locators()
-            if Path(locator).is_relative_to(extension) and locator.endswith(".js")
+    with _clock_validation_scope():
+        extension = Path(row["case_directory"]) / "test-extension"
+        modules = row["module_hashes"]
+        expected = {
+            "indexeddb-crash-child.js",
+            "repair-probe.js",
+            "src/canonical.js",
+            "src/canonicalize.js",
+            "src/errors.js",
+            "src/spool.js",
+            "src/storage/durable_idb.js",
+            "src/offline/validators.js",
         }
-        if artifacts is not None
-        else {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
-    )
-    if (
-        set(modules) != expected
-        or set(modules) != actual_names
-        or any(
-            hashlib.sha256(_read_retained(extension / name)).hexdigest() != digest
-            for name, digest in modules.items()
+        artifacts = _RETAINED_ARTIFACTS.get()
+        prefix = str(extension) + "/"
+        actual_names = (
+            {
+                locator.removeprefix(prefix)
+                for locator in artifacts.recorded_locators()
+                if locator.startswith(prefix) and locator.endswith(".js")
+            }
+            if artifacts is not None
+            else {str(path.relative_to(extension)) for path in extension.rglob("*.js")}
         )
-        or modules.get("src/spool.js") != row["identity"]["module_sha256"]
-        or modules != _compiled_browser_module_hashes(_typescript_compile_binding(current))
-    ):
-        raise ValueError(error)
-    execution_binding = row.get("typescript_execution_binding")
-    descriptor = row.get("typescript_execution_binding_artifact")
-    if (
-        execution_binding != {"before": modules, "after": modules}
-        or _sqlite_descriptor(row, descriptor, error) != execution_binding
-        or 'from "./canonicalize.js"'
-        not in _read_retained(extension / "src/canonical.js").decode()
-    ):
-        raise ValueError(error)
+        if (
+            set(modules) != expected
+            or set(modules) != actual_names
+            or any(
+                hashlib.sha256(_read_retained(extension / name)).hexdigest() != digest
+                for name, digest in modules.items()
+            )
+            or modules.get("src/spool.js") != row["identity"]["module_sha256"]
+            or modules != _compiled_browser_module_hashes(_clock_compile_binding(current))
+        ):
+            raise ValueError(error)
+        execution_binding = row.get("typescript_execution_binding")
+        descriptor = row.get("typescript_execution_binding_artifact")
+        if (
+            execution_binding != {"before": modules, "after": modules}
+            or _sqlite_descriptor(row, descriptor, error) != execution_binding
+            or 'from "./canonicalize.js"'
+            not in _read_retained(extension / "src/canonical.js").decode()
+        ):
+            raise ValueError(error)
 
 
 def _verify_browser_ack(
