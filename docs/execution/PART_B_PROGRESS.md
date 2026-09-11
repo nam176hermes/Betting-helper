@@ -250,3 +250,17 @@ W08 current host inputs and package security follow-up:
   entry; the three materialization tests pass. Current qualification continues in
   the separately declared `part-b-one-ready-r5` evidence root. The r4 failure and
   installed candidate remain preserved, with no qualification inferred.
+
+W08 ready-marker publication repair:
+
+- The `4f47e79` r5 campaign stopped at P03-T06 when the parent observed an empty
+  mutation launch marker before the child completed its write. The child now
+  publishes it with the existing temporary-file/rename pattern. Identity checks
+  and the input-mutation rejection remain unchanged.
+- A deterministic interrupted-write regression reproduced the failure. All 21
+  gap crash/recovery tests pass with fixed inputs, alongside nine declaration
+  regressions and 75 authoring tests plus 117 subtests. A run overlapping input
+  regeneration correctly failed stale-binding checks and is retained separately.
+- Current qualification moves to the source-owned `part-b-one-ready-r6` root.
+  Earlier campaigns are historical; no real credential, provider, operator or
+  live access occurred. Formal host review and real-source admission remain pending.

@@ -1,11 +1,13 @@
 import copy
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 import pytest
 
 from moj_discovery.vendor import pack_root
+from tools import gap_coherence_crash_child
 from tools.run_gap_coherence_crash_matrix import (
     _validate_snapshot_ddl,
     run_gap_coherence_crash_matrix,
@@ -22,6 +24,51 @@ IDS = [
     ]
     if row["harness"] == "GAP_GENERATION_COHERENCE"
 ]
+
+
+def test_mutation_launch_publishes_complete_identity(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    ready = tmp_path / "launch-ready.json"
+    (tmp_path / "scenario.json").write_text(json.dumps({"run_id": "test", "delivery": {}}))
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "child",
+            "--hold",
+            "--ready",
+            str(tmp_path / "checkpoint.json"),
+            "--launch-ready",
+            str(ready),
+            "--run-id",
+            "test",
+            "--test-nonce",
+            "publication",
+        ],
+    )
+    monkeypatch.setattr(gap_coherence_crash_child, "_bootstrap", lambda *_: None)
+    original_write = Path.write_text
+
+    def interrupted_write(path: Path, data: str, **kwargs: object) -> int:
+        original_write(path, "{")
+        assert not ready.exists(), "parent can observe incomplete launch identity"
+        return original_write(path, data)
+
+    def release_child(_: float) -> None:
+        identity = json.loads(ready.read_text())
+        assert identity["run_id"] == "test" and identity["test_nonce"] == "publication"
+        original_write(tmp_path / "launch-continue.json", "{}")
+
+    def stop_after_launch(*_: object, **__: object) -> None:
+        raise RuntimeError("TEST_STOP_AFTER_LAUNCH")
+
+    monkeypatch.setattr(Path, "write_text", interrupted_write)
+    monkeypatch.setattr(gap_coherence_crash_child, "sleep", release_child)
+    monkeypatch.setattr(gap_coherence_crash_child, "validate_artifact", stop_after_launch)
+    with pytest.raises(RuntimeError, match="TEST_STOP_AFTER_LAUNCH"):
+        gap_coherence_crash_child.main()
 
 
 @pytest.fixture(scope="module")

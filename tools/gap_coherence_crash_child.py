@@ -531,7 +531,9 @@ def main() -> None:
     database = case / scenario["run_id"] / "run.sqlite3"
     store = RunStore(database) if database.is_file() else _bootstrap(scenario, database)
     if args.launch_ready:
-        args.launch_ready.write_text(json.dumps(_identity(args), sort_keys=True))
+        temporary = args.launch_ready.with_suffix(".tmp")
+        temporary.write_text(json.dumps(_identity(args), sort_keys=True))
+        temporary.replace(args.launch_ready)
         release = args.launch_ready.with_name("launch-continue.json")
         while not release.is_file():
             sleep(0.02)
