@@ -450,3 +450,10 @@ User authorized reducing repeated verification without weakening security, follo
 Focused validation: 62 tests passed, including compiler same-stat drift and retained-byte tampering. Two existing positive fixture builders now include the already-required durable_idb.js module; no validator allowlist was relaxed. The unchanged test-file baseline has five mypy errors; modified implementation modules and new batching tests pass scoped mypy. Canonical ownership adds three existing source/test entries (1236 total).
 
 New evidence: /home/thenam176/betting-helper/authoring-evidence/part-b-one-ready-r12. New host delivery: /home/thenam176/betting-helper/part-b-review-host-r12. Preserve r11 evidence, sealed pack and old A authorization; none admits this changed source. Full qualification/seal pending at this pre-commit checkpoint; actual commits and final results are recorded externally and in .local/part-b/execution-state.json. Provider/operator/live attempts remain zero; no model or money activation.
+
+
+### R21 qualification retry; host destination remains R20
+
+User requested qualification/P08/P09, seal, new launch and prepared A/B workspaces for `56c0c38`. Its R20 full controller stopped at CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT: the Windows owned-process cleanup query exceeded the existing 10-second deadline. A fresh isolated diagnostic passed on unchanged source; this does not replace the failed qualification. Preserve R20 logs and receipts.
+
+The controller requires an unused declared evidence root. The canonical generator now selects `/home/thenam176/betting-helper/authoring-evidence/part-b-qualification-retry-r21`; the requested host destination remains `/home/thenam176/betting-helper/part-b-review-host-r20`. Application/test code, quotas, cleanup deadlines and eight-hour review lifetime are unchanged. New declaration/config bytes require a new local candidate commit and fresh qualification; exact commits and outcomes are recorded in the external R21 checkpoint. No provider/operator/live access or independent judgment is implied.
