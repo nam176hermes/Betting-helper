@@ -60,16 +60,21 @@ Observed user-terminal attempt counts and run hashes are in the current private 
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.
 
-Current first-live preparation, r14:
+Current first-live preparation, r15:
 
 - Starts from runtime e3c8237c and authoring 4bf40f59. Actual commits, source/config
   hashes, command exits and resumable state are recorded outside tracked source at
-  `/home/thenam176/betting-helper/authoring-evidence/part-b-first-live-r14` and
-  `.local/part-b/execution-state.json`. Existing r12/r13 evidence remains immutable.
+  `/home/thenam176/betting-helper/authoring-evidence/part-b-first-live-r15` and
+  `.local/part-b/execution-state.json`. Existing r12/r13/r14 evidence remains immutable.
 - The r13 full campaign stopped at an inherited ownership-count oracle (1236).
   Auditing the declaration delta identified exactly eight added scoped-review
   artifacts and no removals. Both affected count oracles now require 1244;
   unowned-artifact and lifecycle-order rejection tests remain mandatory.
+- The r14 release regression passed 523 cases and found one stale test caller.
+  The URL-scope test now supplies preverified evidence to the current admission
+  interface, retains rejection before claim, and checks that missing evidence
+  fails closed without repeating full verification after consent. Production
+  admission code is unchanged by this test repair.
 - Review broker attests the actual isolated process, bounds framed messages and
   output pipes, and enforces monotonic plus UTC expiry with owned-group cleanup.
   Large legitimate SQLite/compiler artifacts are not constrained by the log cap.

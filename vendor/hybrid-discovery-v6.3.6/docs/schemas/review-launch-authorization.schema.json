@@ -289,13 +289,13 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host-r14/workspaces/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host-r14/workspaces/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-b"
               ]
             },
             {
               "type": "string",
-              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r14/workspaces/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
             }
           ]
         },
@@ -324,13 +324,13 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host-r14/results/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host-r14/results/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r15/results/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r15/results/review-b"
               ]
             },
             {
               "type": "string",
-              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r14/results/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r15/results/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
             }
           ]
         },

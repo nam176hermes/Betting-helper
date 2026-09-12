@@ -75,13 +75,23 @@ def test_direct_live_admission_rejects_intent_url_before_claim(
             }
         ],
     )
-    monkeypatch.setattr(gate, "load_evidence", lambda config: evidence)
+    # This seam isolates URL rejection; external review verification is tested separately.
     monkeypatch.setattr(
-        gate, "evaluate_live_readiness", lambda *args: SimpleNamespace(live_read_only_ready=True)
+        gate, "load_evidence", lambda _config: pytest.fail("full verify after consent")
     )
+    checked: list[Any] = []
+
+    def recheck(given_config: Any, given_evidence: Any) -> None:
+        assert given_config is config and given_evidence is evidence
+        checked.append(given_evidence)
+
+    monkeypatch.setattr(gate, "recheck_live_evidence", recheck)
     monkeypatch.setattr(gate, "verify_receipt", lambda *args: None)
     monkeypatch.setattr(
         gate, "claim_receipt", lambda *args: pytest.fail("mismatched scope claimed")
     )
-    with pytest.raises(ValueError, match="E_LIVE_INTENT_OPERATOR_URL"):
+    with pytest.raises(ValueError, match="E_LIVE_ADMISSION_PENDING"):
         gate.admit_live_run(config, receipt)
+    with pytest.raises(ValueError, match="E_LIVE_INTENT_OPERATOR_URL"):
+        gate.admit_live_run(config, receipt, verified=evidence)
+    assert checked == [evidence]
