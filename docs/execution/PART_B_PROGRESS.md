@@ -34,6 +34,22 @@ preparation evidence is tracked under
 `/home/thenam176/betting-helper/authoring-evidence/part-b-workspace-retry-r19`.
 No r17/r18 receipt is relabeled as current acceptance.
 
+Review finding repair (r20): A/B HANDOFF results for aa865744 remain HOLD.
+The current repair addresses A-P06-001, A-P06-002, A-REVIEW-001,
+B-DEPENDENCY-PROJECTION, B-EXECUTION-ENVIRONMENT, B-PNPM-PROJECTION and
+B-PREPARATION-PROVENANCE. Collection evidence now records actual selected
+pytest node IDs and compiler input inventories, including the declared external
+bootstrap test; it does not activate inherited future-phase failure tests.
+Both roles validate prepared dependencies and record their explicit child
+process environment. Preparation evidence is retained in controller custody.
+A real isolated B execution also exposed a missing writable cache location in
+the current security adapter; that child now uses its own temporary directory.
+Source checks, exact HEAD and remaining gates are recorded in
+`/home/thenam176/betting-helper/authoring-evidence/part-b-review-findings-r20`.
+Old signed launches, receipts and sealed files are not changed or reused as
+acceptance for these new bytes. Formal qualification/seal and accepted fresh
+independent A/B review remain separate from local repair tests.
+
 External gates:
 
 - PB-18 PROVIDER_PROBE_PASS: the user-confirmed exact-fixture run authenticated

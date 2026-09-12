@@ -267,7 +267,14 @@ def aggregate_independent_reviews(
         if current
         else "independent-review-result/v1",
         "review_role": "AGGREGATE_REVIEWER",
-        "review_outcome": "PASS" if passed else "HOLD",
+        "review_outcome": "PASS"
+        if passed
+        else (
+            "REJECTED"
+            if "REJECTED"
+            in (implementation.get("review_outcome"), cybersecurity.get("review_outcome"))
+            else "HOLD"
+        ),
         "findings": finding_rows,
         "pack_zip_sha256": implementation["pack_zip_sha256"],
         **(

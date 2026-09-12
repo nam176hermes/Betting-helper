@@ -281,7 +281,11 @@ def _preparation_environment(
 
 
 def _run_preparation(
-    config: dict[str, object], commands: list[dict[str, object]], *, execute: Run = subprocess.run
+    config: dict[str, object],
+    commands: list[dict[str, object]],
+    *,
+    execute: Run = subprocess.run,
+    log_root: Path | None = None,
 ) -> list[dict[str, object]]:
     _copy_node_inputs(config)
     environment = _environment(config)
@@ -304,6 +308,10 @@ def _run_preparation(
             env=command_environment,
             capture_output=True,
         )
+        if log_root is not None:
+            for stream in ("stdout", "stderr"):
+                with (log_root / f"{len(records):02d}.{stream}").open("xb") as output:
+                    output.write(getattr(completed, stream))
         after = {path: _sha256(cwd / path) for path in snapshots}
         if completed.returncode != command["expected_exit"] or snapshots != after:
             raise ValueError("E_REVIEW_PREPARATION")
@@ -417,7 +425,16 @@ def _tool_mounts(
 ) -> tuple[list[tuple[Path, Path]], list[tuple[str, str]]]:
     names = {cast(list[str], command["argv"])[0] for command in commands}
     if any(
-        command.get("command_id") in {"A_CHECK_BASELINE", "A_CHECK_DESCENDANT"}
+        command.get("command_id")
+        in {
+            "A_CHECK_BASELINE",
+            "A_CHECK_DESCENDANT",
+            "SEC_CDP_REACHABILITY",
+            "SEC_DYNAMIC_DISPATCH",
+            "SEC_TARGET_ESCAPE",
+            "SEC_MESSAGE_SMUGGLING",
+            "SEC_OUTBOUND_NETWORK",
+        }
         for command in commands
     ):
         names.update({"node", "pnpm"})
@@ -534,10 +551,41 @@ def _python_runtime_projection(config: dict[str, object]) -> tuple[Path, str] | 
     return root, digest
 
 
+def _validate_prepared_dependencies(config: dict[str, object]) -> None:
+    qualified = RUNTIME_ROOT / ".venv"
+    prepared = _prepared_python_environment(config)
+    _reject_unvalidated_python_bytecode(prepared)
+    for alias in ("python", "python3", "python3.12"):
+        path = prepared / "bin" / alias
+        if not path.is_symlink() or path.resolve(strict=True) != (
+            qualified / "bin" / alias
+        ).resolve(strict=True):
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    if (prepared / "pyvenv.cfg").read_bytes() != (qualified / "pyvenv.cfg").read_bytes():
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    if _dependency_projection(qualified / "lib", qualified, python=True) != _dependency_projection(
+        prepared / "lib", prepared, python=True
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    node_environment = cast(dict[str, object], config["node_environment"])
+    project = Path(cast(str, node_environment["project_root"]))
+    for item in cast(list[dict[str, str]], node_environment["project_inputs"]):
+        if (project / item["destination"]).read_bytes() != Path(item["source"]).read_bytes():
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    if _dependency_projection(RUNTIME_ROOT / "node_modules", RUNTIME_ROOT, python=False) != (
+        _dependency_projection(project / "node_modules", project, python=False)
+    ) or _dependency_projection(
+        RUNTIME_ROOT / "extension/node_modules", RUNTIME_ROOT, python=False
+    ) != _dependency_projection(project / "extension/node_modules", project, python=False):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+
+
 def _producer_projection(
     config: dict[str, object], commands: list[dict[str, object]],
 ) -> tuple[list[tuple[Path, Path]], list[tuple[str, str]], dict[str, str]]:
     """Validate source-owned exact live identities before creating read-only projections."""
+    if config.get("schema_version") in {"review-config/v2", "review-config/v3"}:
+        _validate_prepared_dependencies(config)
     if not any(row.get("command_id") == "A_CHECK_DESCENDANT" for row in commands):
         return [], [], {}
     from tools.run_environment_qualification import NATIVE
@@ -621,21 +669,6 @@ def _producer_projection(
         )
         if checked.returncode:
             raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    if _dependency_projection(qualified / "lib", qualified, python=True) != _dependency_projection(
-        prepared / "lib", prepared, python=True
-    ):
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    node_environment = cast(dict[str, object], config["node_environment"])
-    project = Path(cast(str, node_environment["project_root"]))
-    for item in cast(list[dict[str, str]], node_environment["project_inputs"]):
-        if (project / item["destination"]).read_bytes() != Path(item["source"]).read_bytes():
-            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    if _dependency_projection(RUNTIME_ROOT / "node_modules", RUNTIME_ROOT, python=False) != (
-        _dependency_projection(project / "node_modules", project, python=False)
-    ) or _dependency_projection(
-        RUNTIME_ROOT / "extension/node_modules", RUNTIME_ROOT, python=False
-    ) != _dependency_projection(project / "extension/node_modules", project, python=False):
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     dependency = dependency_binding()  # Includes independent wheel, lock and rfc8785 provenance.
     preparation = json.loads((DEPENDENCIES / "preparation.json").read_text())
     expected_files = {
@@ -1138,6 +1171,11 @@ def _execute_in_namespace(
         _authority_state(authorization, authority, consume=False)
         if context is not None:
             recheck_review_context(context)
+            _validate_prepared_dependencies(config)
+        from tools.run_review_a_checks import review_environment
+
+        if kwargs.get("env") != review_environment(config):
+            raise ValueError("E_REVIEW_EXECUTION_ENVIRONMENT")
         result = _namespace_request(
             Path(cast(str, state["socket_path"])),
             {
@@ -1243,20 +1281,14 @@ def _run_broker_command(
 def _broker_environment(
     config: dict[str, object], commands: dict[str, dict[str, object]],
 ) -> dict[str, str]:
-    environment = _environment(config)
-    environment["PATH"] = "/review-bin:/usr/bin"
-    if "A_CHECK_DESCENDANT" in commands:
-        declaration = cast(dict[str, str], config["producer_environment"])
-        projected = {
-            "PATH": str(Path(declaration["node_lookup"]).parent) + ":/review-bin:/usr/bin",
-            "UV_PROJECT_ENVIRONMENT": declaration["python_environment"],
-            "WSL_DISTRO_NAME": declaration["wsl_distro"],
-        }
-        # The host validated and bwrap installed exactly these three values.
-        # No other ambient variable enters a leaf subprocess.
-        if any(os.environ.get(name) != value for name, value in projected.items()):
-            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-        environment.update(projected)
+    from tools.run_review_a_checks import review_environment
+
+    environment = review_environment({**config, "mechanical_command_ids": list(commands)})
+    if "A_CHECK_DESCENDANT" in commands and any(
+        os.environ.get(name) != environment[name]
+        for name in ("PATH", "UV_PROJECT_ENVIRONMENT", "WSL_DISTRO_NAME")
+    ):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     return environment
 
 
@@ -1350,6 +1382,9 @@ def _consume(
     if execute:
         _regular(attestation_path)
         prior = json.loads(attestation_path.read_text())
+        from tools.finalize_review import validate_host_preparation
+
+        validate_host_preparation(authorization, authority, prior)
         registry = json.loads(Path(cast(str, config["command_registry_path"])).read_text())
         runner = (
             run_review_a_checks
@@ -1394,7 +1429,22 @@ def _consume(
         else prepare_review_workspace(config)
     )
     commands = _preparation_commands(config)
-    records = _run_preparation(config, commands)
+    preparation_root = review_execution_root(authorization, authority).with_name(
+        str(authorization["review_run_id"]) + "-preparation"
+    )
+    preparation_root.mkdir(parents=True, exist_ok=False, mode=0o700)
+    records = _run_preparation(config, commands, log_root=preparation_root)
+    with (preparation_root / "preparation.json").open("x") as stream:
+        json.dump(
+            {
+                "authorization_id": authorization["authorization_id"],
+                "commands": records,
+                "preparation_commands_root": _preparation_root(records),
+            },
+            stream,
+            sort_keys=True,
+        )
+        stream.write("\n")
     namespace = _start_namespace(config, authorization)
     now = datetime.now(UTC).isoformat()
     attestation = {

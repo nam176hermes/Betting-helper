@@ -80,3 +80,25 @@ def test_current_source_b_keeps_exact_sec14_and_no_descendant_execution() -> Non
     with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
         _registered_leaf_commands(config, authorization)
     assert path.read_bytes() == raw
+
+
+def test_record_binds_exact_child_environment_without_ambient_values(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("REVIEW_TEST_AMBIENT", "must-not-propagate")
+    config = _config()
+    config.update(schema_version="review-config/v3", scratch_root="/review/scratch")
+    seen = []
+
+    def execute(argv: list[str], **kwargs: Any) -> SimpleNamespace:
+        seen.append(kwargs["env"])
+        return SimpleNamespace(returncode=0, stdout=b"ok", stderr=b"")
+
+    first = cast(dict[str, Any], run_review_b_checks(config, _registry(), execute=execute))
+    assert all(row["environment"] == env for row, env in zip(first["commands"], seen, strict=True))
+    assert all("REVIEW_TEST_AMBIENT" not in env for env in seen)
+    assert seen[0]["PATH"] == "/review-bin:/usr/bin"
+    assert seen[0]["HOME"] == "/review/scratch/home"
+    config["scratch_root"] = "/review/other"
+    second = run_review_b_checks(config, _registry(), execute=execute)
+    assert first["commands_executed_root"] != second["commands_executed_root"]

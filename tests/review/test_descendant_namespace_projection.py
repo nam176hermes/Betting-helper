@@ -13,7 +13,7 @@ from copy import deepcopy
 from pathlib import Path
 from shutil import which
 from tempfile import TemporaryDirectory
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -423,3 +423,72 @@ def test_real_test_only_namespace_preserves_descendant_producer_identity(
         package.write_bytes(original + b"\n# changed scratch package\n")
         with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
             workspace.build_bubblewrap_argv(config, leaf, leaf_commands=[leaf])
+
+
+@pytest.mark.parametrize("damage", ["python", "node", "bytecode"])
+def test_review_b_rejects_prepared_dependency_tampering(
+    cache_projection: tuple[dict[str, Any], Path],
+    damage: str,
+) -> None:
+    config, prepared = cache_projection
+    config["role"] = "CYBERSECURITY_REVIEWER"
+    if damage == "python":
+        path = prepared / "lib/python3.12/site-packages/rfc8785/_impl.py"
+        data = path.read_bytes()
+        path.unlink()
+        path.write_bytes(data + b"\n# TEST_ONLY altered installed bytes\n")
+    elif damage == "node":
+        path = (
+            Path(config["node_environment"]["project_root"])
+            / "extension/node_modules/typescript/lib/typescript.js"
+        )
+        # Offline pnpm may hardlink store files: replace this disposable inode first.
+        data = path.read_bytes()
+        path.unlink()
+        path.write_bytes(data + b"\n// TEST_ONLY modified\n")
+    else:
+        (prepared / "unvalidated.pyc").write_bytes(b"TEST_ONLY")
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        workspace._producer_projection(config, [{"command_id": "SEC_SUPPLY_CHAIN"}])
+
+
+def test_real_b_namespace_runs_current_security_package_leaves(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    with TemporaryDirectory(prefix="test-only-b-security-", dir=ROOT / ".local") as temporary:
+        config, prepared = cast(Any, cache_projection).__wrapped__(Path(temporary), monkeypatch)
+        config["role"] = "CYBERSECURITY_REVIEWER"
+        config.pop("producer_environment", None)
+        scratch = prepared.parent
+        output = scratch / "TEST_ONLY-output"
+        output.mkdir()
+        for name in ("home", "control", "tmp"):
+            (scratch / name).mkdir(exist_ok=True)
+        config["output_root"] = str(output)
+        config["input_mounts"] = [
+            {"source_root": str(ROOT), "workspace_mount": str(ROOT), "mode": "READ_ONLY"}
+        ]
+        registry = json.loads(
+            (
+                ROOT
+                / "vendor/hybrid-discovery-v6.3.6/docs/registries"
+                / "cybersecurity-command-registry.v1.json"
+            ).read_bytes()
+        )
+        commands = registry["commands"]
+        names = {
+            "SEC_CDP_REACHABILITY",
+            "SEC_DYNAMIC_DISPATCH",
+            "SEC_TARGET_ESCAPE",
+            "SEC_MESSAGE_SMUGGLING",
+            "SEC_OUTBOUND_NETWORK",
+        }
+        config["mechanical_command_ids"] = [row["command_id"] for row in commands]
+        for row in commands:
+            if row["command_id"] not in names:
+                continue
+            argv = workspace.build_bubblewrap_argv(config, row, leaf_commands=commands)
+            completed = subprocess.run(  # noqa: S603 -- fixed local security leaves in bwrap.
+                argv, capture_output=True, text=True, timeout=120, check=False
+            )
+            assert completed.returncode == 0, completed.stderr[-4000:] + completed.stdout[-8000:]

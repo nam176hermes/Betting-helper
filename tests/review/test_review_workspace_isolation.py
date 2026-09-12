@@ -94,7 +94,18 @@ def test_broker_preserves_only_validated_producer_environment(
         review_workspace._broker_environment(config, {"A_CHECK_DESCENDANT": {}})
 
 
-@pytest.mark.parametrize("leaf", ["A_CHECK_BASELINE", "A_CHECK_DESCENDANT"])
+@pytest.mark.parametrize(
+    "leaf",
+    [
+        "A_CHECK_BASELINE",
+        "A_CHECK_DESCENDANT",
+        "SEC_CDP_REACHABILITY",
+        "SEC_DYNAMIC_DISPATCH",
+        "SEC_TARGET_ESCAPE",
+        "SEC_MESSAGE_SMUGGLING",
+        "SEC_OUTBOUND_NETWORK",
+    ],
+)
 def test_baseline_check_mounts_transitive_node_toolchain(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, leaf: str
 ) -> None:
@@ -728,7 +739,19 @@ def test_finalizer_uses_jcs_hashes_for_the_bound_human_result() -> None:
         finalize_review(authorization, result, attestation, Ed25519PrivateKey.generate())
 
 
-@pytest.mark.parametrize("mutation", ["zero-root", "missing", "extra", "stdout", "coverage"])
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "zero-root",
+        "missing",
+        "extra",
+        "stdout",
+        "coverage",
+        "preparation",
+        "preparation-cwd",
+        "preparation-environment",
+    ],
+)
 def test_finalizer_recomputes_host_leaf_evidence(tmp_path: Path, mutation: str) -> None:
     from uuid import uuid4
 
@@ -785,7 +808,39 @@ def test_finalizer_recomputes_host_leaf_evidence(tmp_path: Path, mutation: str) 
     execution = run_review_a_checks(config, registry, execute=execute)
     record = {"authorization_id": authorization["authorization_id"], **execution}
     (host / "execution.json").write_text(json.dumps(record))
-    attestation = {"commands_executed_root": execution["commands_executed_root"]}
+    prep = host.with_name(host.name + "-preparation")
+    prep.mkdir()
+    records = []
+    for index in range(2):
+        row = {
+            "command_id": ["A_INSTALL_PYTHON", "A_INSTALL_NODE"][index],
+            "argv": [
+                ["uv", "sync", "--frozen", "--offline"],
+                ["pnpm", "install", "--frozen-lockfile", "--offline", "--ignore-scripts"],
+            ][index],
+            "cwd": str(tmp_path),
+            "environment": {"HOME": str(tmp_path)},
+            "exit_code": 0,
+        }
+        for stream in ("stdout", "stderr"):
+            data = b"TEST_ONLY preparation observation"
+            (prep / f"{index:02d}.{stream}").write_bytes(data)
+            row[stream + "_sha256"] = __import__("hashlib").sha256(data).hexdigest()
+        records.append(row)
+    attestation = {
+        "commands_executed_root": execution["commands_executed_root"],
+        "preparation_commands": records,
+        "preparation_commands_root": _preparation_root(records),
+    }
+    (prep / "preparation.json").write_text(
+        json.dumps(
+            {
+                "authorization_id": authorization["authorization_id"],
+                "commands": records,
+                "preparation_commands_root": _preparation_root(records),
+            }
+        )
+    )
     validate_host_execution(authorization, authority, config, attestation)
     if mutation == "zero-root":
         attestation["commands_executed_root"] = "0" * 64
@@ -795,6 +850,19 @@ def test_finalizer_recomputes_host_leaf_evidence(tmp_path: Path, mutation: str) 
         (host / "99.stdout").write_bytes(b"")
     elif mutation == "stdout":
         (host / "00.stdout").write_bytes(b"FORGED")
+    elif mutation.startswith("preparation"):
+        from tools.finalize_review import _validate_preparation
+
+        forged = cast(list[dict[str, object]], attestation["preparation_commands"])
+        if mutation == "preparation":
+            forged[0]["stdout_sha256"] = "f" * 64
+        elif mutation == "preparation-cwd":
+            forged[0]["cwd"] = "/TEST_ONLY/forged-cwd"
+        else:
+            forged[0]["environment"] = {"HOME": "/TEST_ONLY/forged-home"}
+        attestation["preparation_commands_root"] = _preparation_root(forged)
+        # Well-formed, coherently rehashed claims still cannot replace host evidence.
+        _validate_preparation(attestation, "IMPLEMENTATION_READINESS_REVIEWER")
     else:
         record["commands"] = record["commands"][:-1]
         (host / "execution.json").write_text(json.dumps(record))

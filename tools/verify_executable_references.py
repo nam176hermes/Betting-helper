@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -93,7 +94,37 @@ def _symbol(path: Path, symbol: str, *, recorded_suffix: str | None = None) -> b
     except (OSError, SyntaxError) as error:
         raise ValueError("E_EXECUTABLE_REFERENCE") from error
     if tree is None:
-        return symbol in path.read_text()
+        from tools.prepare_review_workspace import _node_binary
+
+        # Parse transported source as its recorded language; never execute it.
+        script = """
+const ts = require(process.argv[1]);
+const text = require('fs').readFileSync(0, 'utf8');
+const source = ts.createSourceFile('reference.ts', text, ts.ScriptTarget.Latest, true);
+if (source.parseDiagnostics.length) process.exit(2);
+const names = source.statements.flatMap(n =>
+  ts.isVariableStatement(n) ? n.declarationList.declarations
+    .filter(d => ts.isIdentifier(d.name)).map(d => d.name.text) :
+  (ts.isFunctionDeclaration(n) || ts.isClassDeclaration(n) || ts.isInterfaceDeclaration(n) ||
+   ts.isTypeAliasDeclaration(n) || ts.isEnumDeclaration(n)) && n.name ? [n.name.text] : []);
+process.stdout.write(JSON.stringify(names));
+"""
+        checked = subprocess.run(  # noqa: S603 -- fixed compiler parser; source is stdin data.
+            [
+                str(_node_binary()),
+                "-e",
+                script,
+                str(RUNTIME_ROOT / "extension/node_modules/typescript"),
+            ],
+            input=path.read_text(),
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+        if checked.returncode:
+            raise ValueError("E_EXECUTABLE_REFERENCE")
+        return symbol in json.loads(checked.stdout)
     callables = {
         node.name
         for node in tree.body

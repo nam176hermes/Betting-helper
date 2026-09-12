@@ -886,7 +886,17 @@ def test_current_finalizer_cli_confines_delivery_after_real_authentication(
     ]
     # Install/namespace execution are separate TEST_ONLY boundaries, not actual reviews.
     monkeypatch.setattr(preparation, "_preparation_commands", lambda *_: [])
-    monkeypatch.setattr(preparation, "_run_preparation", lambda *_: records)
+    def fixture_preparation(*_args: object, log_root: Path) -> list[dict[str, object]]:
+        # This auth/delivery test substitutes installs, with explicitly TEST_ONLY
+        # observations retained through the same host custody path as real installs.
+        for index, record in enumerate(records):
+            for stream in ("stdout", "stderr"):
+                raw = b"TEST_ONLY simulated preparation output"
+                (log_root / f"{index:02d}.{stream}").write_bytes(raw)
+                record[stream + "_sha256"] = sha256(raw).hexdigest()
+        return records
+
+    monkeypatch.setattr(preparation, "_run_preparation", fixture_preparation)
     monkeypatch.setattr(
         preparation, "_start_namespace", lambda *_: {"TEST_ONLY_NOT_EXECUTED": True}
     )

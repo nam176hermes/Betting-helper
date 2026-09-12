@@ -278,3 +278,23 @@ def test_every_executable_reference_resolves_without_placeholder() -> None:
 
     with pytest.raises(ValueError, match="E_EXECUTABLE_REFERENCE"):
         verify_executable_references(runtime_root=Path("/missing"))
+
+
+@pytest.mark.parametrize(
+    "source, present",
+    [
+        ("// testSecurityBoundary\nexport const other = 1;", False),
+        ('export const text = "testSecurityBoundary";', False),
+        ("export function testSecurityBoundaryRenamed() {}", False),
+        ("export function testSecurityBoundary() {}", True),
+        ("export const testSecurityBoundary = () => {};", True),
+    ],
+)
+def test_typescript_reference_requires_declaration(
+    tmp_path: Path, source: str, present: bool
+) -> None:
+    from tools.verify_executable_references import _symbol
+
+    path = tmp_path / "transport.bin"
+    path.write_text(source)
+    assert _symbol(path, "testSecurityBoundary", recorded_suffix=".ts") is present

@@ -8,6 +8,22 @@ import json
 def issue_executable_reference_complete_receipt(
     reference_result: dict[str, object], topology_result: dict[str, object]
 ) -> dict[str, object]:
+    discovery = topology_result.get("discovery_evidence")
+    if (
+        not isinstance(discovery, dict)
+        or not isinstance(discovery.get("coverage"), dict)
+        or (
+            len(discovery["coverage"]) != 11
+            or not all(discovery["coverage"].values())
+            or not isinstance(discovery.get("observations"), list)
+            or not discovery["observations"]
+            or topology_result.get("discovery_sha256")
+            != hashlib.sha256(
+                json.dumps(discovery, sort_keys=True, separators=(",", ":")).encode()
+            ).hexdigest()
+        )
+    ):
+        raise ValueError("E_EXECUTABLE_REFERENCE_COMPLETE")
     task_count = reference_result.get("task_count")
     command_count = reference_result.get("command_count")
     if (

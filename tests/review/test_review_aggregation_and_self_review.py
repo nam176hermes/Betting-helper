@@ -439,3 +439,32 @@ def test_result_must_match_own_authorization(
         )
     with pytest.raises(ValueError, match="E_REVIEW_RESULT_BINDING"):
         _aggregate_current(signed_current)
+
+
+@pytest.mark.parametrize(
+    "rejecting_role", ["IMPLEMENTATION_READINESS_REVIEWER", "CYBERSECURITY_REVIEWER"]
+)
+def test_authenticated_rejection_is_preserved(rejecting_role: str) -> None:
+    a, b = _review("IMPLEMENTATION_READINESS_REVIEWER"), _review("CYBERSECURITY_REVIEWER")
+    rejected = a if rejecting_role == a["review_role"] else b
+    rejected["review_outcome"] = "REJECTED"
+    rejected["content_hash"] = review_content_hash(rejected)
+    private = Ed25519PrivateKey.generate()
+    aa = _authorization(
+        a,
+        "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a",
+        "1" * 32,
+        private,
+    )
+    ab = _authorization(
+        b,
+        "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b",
+        "2" * 32,
+        private,
+    )
+    result = _aggregate(a, b, _receipt(a, aa, private), _receipt(b, ab, private), aa, ab, private)
+    assert result["review_outcome"] == "REJECTED"
+    assert isinstance(result["verdicts"], dict)
+    assert result["verdicts"]["READY_TO_IMPLEMENT_DISCOVERY_PACK"] == "NO"

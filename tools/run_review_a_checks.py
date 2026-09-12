@@ -17,6 +17,29 @@ EXPECTED_IDS = ("A_CHECK_SOURCE", "A_CHECK_EVIDENCE", "A_CHECK_BASELINE")
 COMMAND_DOMAIN = b"HD636/REVIEW-COMMANDS/v1\0"
 
 
+def review_environment(config: dict[str, object]) -> dict[str, str]:
+    """One explicit environment for host records and the namespace child."""
+    supplied = config.get("environment")
+    if not isinstance(supplied, dict) or not all(
+        isinstance(k, str) and isinstance(v, str) for k, v in supplied.items()
+    ):
+        raise ValueError("E_REVIEW_EXECUTION_ENVIRONMENT")
+    environment = dict(cast(dict[str, str], supplied))
+    if "scratch_root" in config:
+        environment["HOME"] = str(Path(cast(str, config["scratch_root"])) / "home")
+        environment["PATH"] = "/review-bin:/usr/bin"
+        if "A_CHECK_DESCENDANT" in cast(list[str], config["mechanical_command_ids"]):
+            declaration = cast(dict[str, str], config["producer_environment"])
+            environment.update(
+                {
+                    "PATH": str(Path(declaration["node_lookup"]).parent) + ":/review-bin:/usr/bin",
+                    "UV_PROJECT_ENVIRONMENT": declaration["python_environment"],
+                    "WSL_DISTRO_NAME": declaration["wsl_distro"],
+                }
+            )
+    return environment
+
+
 def _command_map(registry: dict[str, object]) -> dict[str, dict[str, object]]:
     commands = registry.get("commands")
     if not isinstance(commands, list):
@@ -57,6 +80,7 @@ def run_review_a_checks(
         isinstance(key, str) and isinstance(value, str) for key, value in environment.items()
     ):
         raise ValueError("E_REVIEW_A_CONFIG")
+    environment = review_environment(config)
     commands = _command_map(registry)
     records: list[dict[str, object]] = []
     for command_id in expected_ids:
@@ -79,7 +103,7 @@ def run_review_a_checks(
             raise ValueError("E_REVIEW_A_REGISTRY")
         if not all(isinstance(token, str) and token for token in argv):
             raise ValueError("E_REVIEW_A_REGISTRY")
-        completed = execute(argv, cwd=cwd, env={**os.environ, **environment}, capture_output=True)
+        completed = execute(argv, cwd=cwd, env=environment, capture_output=True)
         stdout = bytes(getattr(completed, "stdout", b""))
         stderr = bytes(getattr(completed, "stderr", b""))
         exit_code = getattr(completed, "returncode", None)

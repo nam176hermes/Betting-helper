@@ -42,6 +42,7 @@ export function verifyCurrentSurface(): void {
   assert.deepEqual(verifyCapabilityGraph(emitted), []);
   const environment: NodeJS.ProcessEnv = {
     PATH: process.env["PATH"], UV_OFFLINE: "1", PYTHONDONTWRITEBYTECODE: "1",
+    HOME: resolve(scratch, "home"), UV_CACHE_DIR: resolve(scratch, "uv-cache"),
   };
   const pythonEnvironment = process.env["UV_PROJECT_ENVIRONMENT"];
   if (pythonEnvironment) environment["UV_PROJECT_ENVIRONMENT"] = pythonEnvironment;

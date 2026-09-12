@@ -147,6 +147,43 @@ def _validate_consumed_authorization(
         raise ValueError("E_REVIEW_FINALIZE_BINDING") from error
 
 
+def validate_host_preparation(
+    authorization: dict[str, object],
+    authority: dict[str, object],
+    attestation: dict[str, object],
+) -> None:
+    root = review_execution_root(authorization, authority).with_name(
+        str(authorization["review_run_id"]) + "-preparation"
+    )
+    try:
+        _regular_hash(root / "preparation.json")
+        record = json.loads((root / "preparation.json").read_bytes())
+        records = attestation.get("preparation_commands")
+        if (
+            not isinstance(records, list)
+            or len(records) != 2
+            or record
+            != {
+                "authorization_id": authorization["authorization_id"],
+                "commands": records,
+                "preparation_commands_root": _preparation_root(records),
+            }
+            or attestation.get("preparation_commands_root") != record["preparation_commands_root"]
+        ):
+            raise ValueError("E_REVIEW_EXECUTION")
+        expected = {"preparation.json"}
+        for index, row in enumerate(records):
+            for stream in ("stdout", "stderr"):
+                name = f"{index:02d}.{stream}"
+                expected.add(name)
+                if _regular_hash(root / name) != row.get(stream + "_sha256"):
+                    raise ValueError("E_REVIEW_EXECUTION")
+        if {p.name for p in root.iterdir()} != expected:
+            raise ValueError("E_REVIEW_EXECUTION")
+    except (OSError, ValueError, TypeError, KeyError) as error:
+        raise ValueError("E_REVIEW_EXECUTION") from error
+
+
 def validate_host_execution(
     authorization: dict[str, object],
     authority: dict[str, object],
@@ -156,6 +193,7 @@ def validate_host_execution(
     from tools.run_review_a_checks import run_review_a_checks
     from tools.run_review_b_checks import run_review_b_checks
 
+    validate_host_preparation(authorization, authority, attestation)
     root = review_execution_root(authorization, authority)
     record_path = root / "execution.json"
     _regular_hash(record_path)
@@ -184,6 +222,7 @@ def validate_host_execution(
         if (
             row.get("argv") != argv
             or row.get("cwd") != kwargs.get("cwd")
+            or row.get("environment") != kwargs.get("env")
             or type(row.get("exit_code")) is not int
         ):
             raise ValueError("E_REVIEW_EXECUTION")
