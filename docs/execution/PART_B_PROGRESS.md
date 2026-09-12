@@ -94,6 +94,26 @@ Current first-live preparation, r15:
   remain separate gates until their actual current receipts exist. No real
   provider call, operator capture or live session follows from these source edits.
 
+Current manual A/B launch amendment, r17:
+
+- New scoped v3 launches last 28800 seconds (8 hours). Signed descendant launches
+  with 14400 seconds remain valid only until their original expiry; legacy v1
+  remains four hours. Aggregation stays within 3600 seconds after the later
+  completion and before either launch expires. Boot, revocation, signatures,
+  input hashes and human fresh-session requirements remain enforced.
+- The project Python executable and standard library are copied into a named
+  read-only toolchain directory. Its complete source projection is declared in
+  review configuration and checked before preparation and namespace mounting.
+  Prepared environments use that exact interpreter. Host OS shared libraries
+  remain platform dependencies; no global update policy is changed.
+- Current checkpoints, regression logs, source/config hashes and new qualification
+  are outside tracked source in
+  `/home/thenam176/betting-helper/authoring-evidence/part-b-review-eight-hours-r17`.
+  r15 remains historical: its later launch failed after a system Python update.
+- The user will start the two fresh reviewer sessions. Mechanical namespace
+  isolation does not attest native Codex task containment or independent judgment.
+  Actual A/B result files, human attestation and host receipts remain required.
+
 Historical review-input amendment at 80106f4 (isolated descendant of 62150ea):
 
 - Runtime checkout: `/home/thenam176/betting-helper/discovery-runtime-part-b-review`.

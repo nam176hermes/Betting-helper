@@ -285,6 +285,9 @@ def _run_preparation(
 ) -> list[dict[str, object]]:
     _copy_node_inputs(config)
     environment = _environment(config)
+    runtime = _python_runtime_projection(config)
+    if runtime is not None:
+        environment["UV_PYTHON"] = str(runtime[0] / "bin/python3.12")
     records: list[dict[str, object]] = []
     for command in commands:
         command_environment = _preparation_environment(command, environment)
@@ -513,6 +516,24 @@ def _dependency_projection(root: Path, boundary: Path, *, python: bool) -> dict[
     return result
 
 
+def _python_runtime_projection(config: dict[str, object]) -> tuple[Path, str] | None:
+    """Verify the finite source-declared standalone Python tree before mounting it."""
+    declared = config.get("python_runtime")
+    if declared is None:
+        return None
+    if not isinstance(declared, dict) or set(declared) != {"root", "sha256"}:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    root = Path(str(declared["root"]))
+    if not root.is_absolute() or root != root.resolve(strict=True):
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    _reject_unvalidated_python_bytecode(root)
+    projection = _dependency_projection(root, root, python=True)
+    digest = hashlib.sha256(rfc8785.dumps(cast(Any, projection))).hexdigest()
+    if digest != declared["sha256"]:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    return root, digest
+
+
 def _producer_projection(
     config: dict[str, object], commands: list[dict[str, object]],
 ) -> tuple[list[tuple[Path, Path]], list[tuple[str, str]], dict[str, str]]:
@@ -694,6 +715,9 @@ def build_bubblewrap_argv(
         if scratch not in source.parents or source.is_symlink() or not source.is_dir():
             raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
         readonly.append((source, target))
+    python_runtime = _python_runtime_projection(config)
+    if python_runtime is not None:
+        readonly.append((python_runtime[0], python_runtime[0]))
     prepared_python = _prepared_python_environment(config) if leaf_commands is not None else None
     if prepared_python is not None:
         readonly.append((prepared_python, prepared_python))
@@ -802,7 +826,7 @@ def _lease_deadline(expires_at: object) -> float:
     remaining = (expires.astimezone(UTC) - datetime.now(UTC)).total_seconds()
     if remaining <= 0:
         raise ValueError("E_REVIEW_NAMESPACE_EXPIRED")
-    return time.monotonic() + min(14400, remaining)
+    return time.monotonic() + min(28800, remaining)
 
 
 def _read_frame(connection: socket.socket, limit: int, deadline: float) -> dict[str, Any]:

@@ -418,7 +418,7 @@ def _regular_hash(path: Path) -> str:
 
 def _review_environment_binding(metadata: dict[str, object]) -> str:
     """Reuse the qualified byte projections, never executable names or stat caches."""
-    from tools.prepare_review_workspace import _dependency_projection, _sha256
+    from tools.prepare_review_workspace import _dependency_projection, _sha256, _python_runtime_projection
     from tools.run_native_ingestor_qualification import dependency_binding
     from tools.verify_repair_evidence import capture_binding, _typescript_compile_binding
 
@@ -443,7 +443,9 @@ def _review_environment_binding(metadata: dict[str, object]) -> str:
         declaration["python_executable"],
         declaration["node_executable"],
     ]
+    python_runtime = _python_runtime_projection(metadata)
     payload = {
+        "standalone_python": None if python_runtime is None else (str(python_runtime[0]), python_runtime[1]),
         "environment": current["environment"],
         "compiler": _typescript_compile_binding(current),
         "executables": executables,
@@ -827,6 +829,7 @@ def issue_review_launch_authorization(
     }:
         raise ValueError("E_REVIEW_LAUNCH_INPUT")
     trusted_now = (now or datetime.now(UTC)).astimezone(UTC)
+    duration = 28800 if config.get("schema_version") == "review-config/v3" else 14400
     run_id = str(uuid.uuid4())
     if config.get("schema_version") == "review-config/v3":
         if config != review_config_for_role(
@@ -844,7 +847,7 @@ def issue_review_launch_authorization(
             if scope is not None
             else {
                 "kind": "CANDIDATE_READINESS",
-                "expires_at": (trusted_now + timedelta(seconds=14400)).isoformat(),
+                "expires_at": (trusted_now + timedelta(seconds=duration)).isoformat(),
             },
             scope_inputs or [],
         )
@@ -910,8 +913,8 @@ def issue_review_launch_authorization(
         "command_registry_sha256": _regular_hash(Path(cast(str, config["command_registry_path"]))),
         "issued_at": trusted_now.isoformat(),
         "not_before": trusted_now.isoformat(),
-        "expires_at": (trusted_now + timedelta(seconds=14400)).isoformat(),
-        "maximum_duration_seconds": 14400,
+        "expires_at": (trusted_now + timedelta(seconds=duration)).isoformat(),
+        "maximum_duration_seconds": duration,
         "one_use_serial": serial,
         "nonce": secrets.token_urlsafe(32),
         "fresh_session_required": True,

@@ -966,3 +966,43 @@ def test_current_config_only_preparation_rejects_before_mkdir(
                 "sys.argv", ["prepare_review_workspace.py", "--config", str(config_path)]
             )
             review_workspace.main()
+
+
+def test_namespace_preserves_remaining_eight_hour_lease() -> None:
+    import time
+    from datetime import UTC, datetime, timedelta
+
+    from tools.prepare_review_workspace import _lease_deadline
+
+    expires = datetime.now(UTC) + timedelta(hours=7)
+    remaining = _lease_deadline(expires.isoformat()) - time.monotonic()
+    assert 7 * 3600 - 5 < remaining <= 7 * 3600
+
+
+@pytest.mark.parametrize("mutation", ["source", "bytecode", "escape"])
+def test_declared_python_runtime_rejects_drift(tmp_path: Path, mutation: str) -> None:
+    from hashlib import sha256
+
+    import rfc8785
+
+    from tools.prepare_review_workspace import _python_runtime_projection
+
+    root = tmp_path / "python-runtime"
+    root.mkdir()
+    source = root / "module.py"
+    source.write_bytes(b"value = 1\n")
+    projection = {"module.py": sha256(source.read_bytes()).hexdigest()}
+    digest = sha256(rfc8785.dumps(projection)).hexdigest()
+    config = {"python_runtime": {"root": str(root), "sha256": digest}}
+    assert _python_runtime_projection(config) == (root, digest)
+    if mutation == "source":
+        source.write_bytes(b"value = 2\n")
+    elif mutation == "bytecode":
+        (root / "module.pyc").write_bytes(b"UNVALIDATED")
+    else:
+        outside = tmp_path / "outside.py"
+        outside.write_bytes(b"value = 1\n")
+        source.unlink()
+        source.symlink_to(outside)
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        _python_runtime_projection(config)

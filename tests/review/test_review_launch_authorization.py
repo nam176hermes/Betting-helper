@@ -1200,3 +1200,58 @@ def test_receipt_has_a_separate_domain_and_exact_launch_binding() -> None:
             expected_trust_epoch=0,
             now=NOW + timedelta(seconds=3),
         )
+
+
+@pytest.mark.parametrize("seconds", [14400, 28800])
+def test_current_signed_review_lifetime_and_expiry(
+    signed_current: dict[str, Any], seconds: int
+) -> None:
+    private = signed_current["private"]
+    launch = dict(signed_current["launches"][0])
+    issued = datetime.fromisoformat(launch["issued_at"])
+    launch.update(
+        maximum_duration_seconds=seconds,
+        expires_at=(issued + timedelta(seconds=seconds)).isoformat(),
+    )
+    launch = sign_review_launch_authorization(launch, private)
+    args = (
+        launch,
+        private.public_key(),
+        launch["review_role"],
+        launch["workspace_root"],
+        launch["pack_zip_sha256"],
+    )
+    verify_review_launch_authorization(*args, now=issued + timedelta(seconds=seconds - 1))
+    with pytest.raises(ValueError, match="E_REVIEW_AUTH_BINDING"):
+        verify_review_launch_authorization(*args, now=issued + timedelta(seconds=seconds))
+    # A caller cannot extend an already issued launch by editing its timestamp.
+    launch["expires_at"] = (issued + timedelta(seconds=seconds + 1)).isoformat()
+    with pytest.raises(ValueError):
+        verify_review_launch_authorization(*args, now=issued + timedelta(seconds=1))
+    # Even a new signature cannot introduce an undeclared lifetime.
+    launch["maximum_duration_seconds"] = seconds + 1
+    bad = sign_review_launch_authorization(launch, private)
+    with pytest.raises(ValueError):
+        verify_review_launch_authorization(bad, *args[1:], now=issued + timedelta(seconds=1))
+
+
+def test_eight_hour_receipt_accepts_seven_hours_and_rejects_late_finish(
+    signed_current: dict[str, Any],
+) -> None:
+    private = signed_current["private"]
+    launch = dict(signed_current["launches"][0])
+    issued = datetime.fromisoformat(launch["issued_at"])
+    launch.update(maximum_duration_seconds=28800,
+                  expires_at=(issued + timedelta(hours=8)).isoformat())
+    launch = sign_review_launch_authorization(launch, private)
+    receipt = dict(signed_current["receipts"][0])
+    receipt.update(authorization_id=launch["authorization_id"],
+                   finished_at=(issued + timedelta(hours=7)).isoformat())
+    receipt = sign_review_execution_receipt(receipt, private)
+    verify_review_execution_receipt(receipt, launch, private.public_key(),
+        result_sha256=receipt["result_sha256"], now=issued + timedelta(hours=7, minutes=1))
+    receipt["finished_at"] = (issued + timedelta(hours=8, seconds=1)).isoformat()
+    receipt = sign_review_execution_receipt(receipt, private)
+    with pytest.raises(ValueError):
+        verify_review_execution_receipt(receipt, launch, private.public_key(),
+            result_sha256=receipt["result_sha256"], now=issued + timedelta(hours=8, seconds=2))

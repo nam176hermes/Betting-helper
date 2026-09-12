@@ -30,6 +30,7 @@
     "runtime/.contract-stub-registry.json": "V636-P05-T09",
     "runtime/docs/execution/PART_B_PROGRESS.md": "V636-P05-T09",
     "runtime/src/moj_discovery/canonical.py": "V636-P05-T09",
+    "runtime/src/moj_discovery/review_authorization.py": "V636-P05-T09",
     "runtime/src/moj_discovery/governance.py": "V636-P05-T09",
     "runtime/src/moj_discovery/secrets_local.py": "V636-P05-T09",
     "runtime/src/moj_discovery/windows_credential_store.py": "V636-P05-T09",
@@ -213,11 +214,30 @@
       "legacy_task_commands": "PRESERVED_V2_GENERAL_REVIEW_ONLY"
     },
     "resolved_outputs": {
-      "workspace": "/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-{role}/{review_run_id}",
-      "result": "/home/thenam176/betting-helper/part-b-review-host-r15/results/review-{role}/{review_run_id}",
-      "authorization": "/home/thenam176/betting-helper/part-b-review-host-r15/authorizations/{review_run_id}.json",
+      "workspace": "/home/thenam176/betting-helper/part-b-review-host-r17/workspaces/review-{role}/{review_run_id}",
+      "result": "/home/thenam176/betting-helper/part-b-review-host-r17/results/review-{role}/{review_run_id}",
+      "authorization": "/home/thenam176/betting-helper/part-b-review-host-r17/authorizations/{review_run_id}.json",
       "scope_inputs": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/{review_run_id}",
       "host_execution": "CONFIGURED_AUTHORITY_PUBLIC_KEY_PARENT/executions/{review_run_id}"
+    },
+    "python_runtime_projection": {
+      "config_field": "python_runtime",
+      "mount_mode": "READ_ONLY",
+      "role": "QUALIFIED_INTERPRETER_DEPENDENCY_NOT_EXTRA_REVIEW_DATA",
+      "verification": "COMPLETE_SOURCE_TREE_HASH_AND_NO_UNVALIDATED_BYTECODE",
+      "prepared_interpreter": "EXACT_DECLARED_ROOT/bin/python3.12",
+      "host_os_libraries": "STILL_PLATFORM_DEPENDENCIES"
+    },
+    "lifetime_amendment": {
+      "new_v3_launch_seconds": 28800,
+      "accepted_signed_descendant_seconds": [
+        14400,
+        28800
+      ],
+      "legacy_v1_seconds": 14400,
+      "aggregate_delay_seconds": 3600,
+      "overrides": "05-reviewer-independence.md fixed four-hour rule for new scoped launches only",
+      "existing_authorizations_extended": false
     },
     "reuse": "SAME_OPERATION_ONLY_WITH_BYTE_RECHECK",
     "authority": "NONE"

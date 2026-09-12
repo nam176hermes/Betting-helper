@@ -289,13 +289,13 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r17/workspaces/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r17/workspaces/review-b"
               ]
             },
             {
               "type": "string",
-              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r15/workspaces/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r17/workspaces/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
             }
           ]
         },
@@ -324,13 +324,13 @@
             },
             {
               "enum": [
-                "/home/thenam176/betting-helper/part-b-review-host-r15/results/review-a",
-                "/home/thenam176/betting-helper/part-b-review-host-r15/results/review-b"
+                "/home/thenam176/betting-helper/part-b-review-host-r17/results/review-a",
+                "/home/thenam176/betting-helper/part-b-review-host-r17/results/review-b"
               ]
             },
             {
               "type": "string",
-              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r15/results/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+              "pattern": "^/home/thenam176/betting-helper/part-b-review-host-r17/results/review-[ab]/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
             }
           ]
         },
@@ -356,7 +356,10 @@
         },
         "maximum_duration_seconds": {
           "type": "integer",
-          "const": 14400
+          "enum": [
+            14400,
+            28800
+          ]
         },
         "one_use_serial": {
           "type": "string",

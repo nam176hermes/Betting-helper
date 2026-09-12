@@ -174,6 +174,18 @@ def _verify_mounts(authorization: dict[str, object]) -> None:
         raise ValueError("E_REVIEW_AUTH_BINDING")
 
 
+def review_launch_duration(authorization: dict[str, object]) -> int:
+    """Honor the signed lifetime; never extend an existing four-hour launch."""
+    allowed = {
+        "review-launch-authorization/v1": (14400,),
+        "review-launch-authorization/v2": (14400, 28800),
+    }.get(str(authorization.get("schema_version")), ())
+    seconds = authorization.get("maximum_duration_seconds")
+    if type(seconds) is not int or seconds not in allowed:
+        raise ValueError("E_REVIEW_AUTH_EXPIRY")
+    return seconds
+
+
 def verify_review_launch_authorization(
     authorization: dict[str, object],
     public_key: Ed25519PublicKey,
@@ -198,6 +210,7 @@ def verify_review_launch_authorization(
     ) != key_id(public_key):
         raise ValueError("E_REVIEW_AUTH_BINDING")
     _verify_signature(authorization, public_key, LAUNCH_SIGN_DOMAIN)
+    duration = review_launch_duration(authorization)
     issued = _instant(authorization["issued_at"], "E_REVIEW_AUTH_EXPIRY")
     not_before = _instant(authorization["not_before"], "E_REVIEW_AUTH_EXPIRY")
     expires = _instant(authorization["expires_at"], "E_REVIEW_AUTH_EXPIRY")
@@ -208,9 +221,8 @@ def verify_review_launch_authorization(
         or authorization.get("audience") != "hybrid-discovery:independent-review-launcher:v1"
         or authorization.get("signature_algorithm") != "Ed25519"
         or authorization.get("fresh_session_required") is not True
-        or authorization.get("maximum_duration_seconds") != 14400
         or not (issued <= not_before <= trusted_now < expires)
-        or expires - issued != timedelta(seconds=14400)
+        or expires - issued != timedelta(seconds=duration)
         or authorization.get("review_role") != expected_role
         or authorization.get("workspace_root") != expected_workspace
         or authorization.get("pack_zip_sha256") != expected_pack_sha256
@@ -298,7 +310,7 @@ def verify_review_execution_receipt(
         or fresh.get("attested") is not True
         or fresh.get("procedural_not_cryptographic") is not True
         or not (consumed <= started <= finished <= expires and finished <= trusted_now)
-        or finished - started > timedelta(seconds=14400)
+        or finished - started > timedelta(seconds=review_launch_duration(authorization))
     ):
         raise ValueError("E_REVIEW_RECEIPT_BINDING")
     return {"result": "PASS", "receipt_id": expected_id}

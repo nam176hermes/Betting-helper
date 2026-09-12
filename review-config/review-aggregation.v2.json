@@ -7,11 +7,11 @@
   "require_distinct_output_roots": true,
   "require_identical_input_hashes": true,
   "require_human_fresh_session_attestation": true,
-  "maximum_launch_age_seconds": 14400,
+  "maximum_launch_age_seconds": 28800,
   "maximum_aggregate_delay_seconds": 3600,
   "authorized_production_phases": "NONE",
   "repository_identity": {
     "kind": "DESCENDANT",
-    "receipt": "/home/thenam176/betting-helper/part-b-review-host-r15/pack/docs/receipts/descendant-repository-qualification-receipt.json"
+    "receipt": "/home/thenam176/betting-helper/part-b-review-host-r17/pack/docs/receipts/descendant-repository-qualification-receipt.json"
   }
 }
