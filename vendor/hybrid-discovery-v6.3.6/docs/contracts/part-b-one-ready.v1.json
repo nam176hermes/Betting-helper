@@ -214,9 +214,9 @@
       "legacy_task_commands": "PRESERVED_V2_GENERAL_REVIEW_ONLY"
     },
     "resolved_outputs": {
-      "workspace": "/home/thenam176/betting-helper/part-b-review-host-r18/workspaces/review-{role}/{review_run_id}",
-      "result": "/home/thenam176/betting-helper/part-b-review-host-r18/results/review-{role}/{review_run_id}",
-      "authorization": "/home/thenam176/betting-helper/part-b-review-host-r18/authorizations/{review_run_id}.json",
+      "workspace": "/home/thenam176/betting-helper/part-b-review-host-r19/workspaces/review-{role}/{review_run_id}",
+      "result": "/home/thenam176/betting-helper/part-b-review-host-r19/results/review-{role}/{review_run_id}",
+      "authorization": "/home/thenam176/betting-helper/part-b-review-host-r19/authorizations/{review_run_id}.json",
       "scope_inputs": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/{review_run_id}",
       "host_execution": "CONFIGURED_AUTHORITY_PUBLIC_KEY_PARENT/executions/{review_run_id}"
     },

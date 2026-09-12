@@ -26,6 +26,14 @@ e8e7606 only. Both r17 launches were issued, but preparation A failed before a
 workspace attestation; no independent reviewer started. Current repair evidence:
 `/home/thenam176/betting-helper/authoring-evidence/part-b-namespace-start-r18`.
 
+Current campaign continuation (r19): r18 qualification stopped at a Windows
+owned-process cleanup observation timeout. The same isolated Windows browser
+probe subsequently passed without changing its ten-second cleanup budget.
+The namespace startup repair is unchanged. Fresh qualification and workspace
+preparation evidence is tracked under
+`/home/thenam176/betting-helper/authoring-evidence/part-b-workspace-retry-r19`.
+No r17/r18 receipt is relabeled as current acceptance.
+
 External gates:
 
 - PB-18 PROVIDER_PROBE_PASS: the user-confirmed exact-fixture run authenticated
