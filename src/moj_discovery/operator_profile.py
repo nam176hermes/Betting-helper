@@ -82,6 +82,7 @@ class ExtractionProfile:
     observed_markets: dict[str, list[dict[str, Any]]]
     profile_hash: str
     _real_admitted: bool = False
+    _review_proof: object = field(default=None, repr=False)
 
     @property
     def status(self) -> str:
@@ -310,6 +311,7 @@ def validate_extraction_profile(value: object, evidence: ProfileEvidence) -> Ext
         }
         markets = _samples(data, evidence, field_map)
         admitted = False
+        review_proof = None
         if data["status"] == "ACCEPTED":
             expires = datetime.fromisoformat(data["expires_at"])
             if (
@@ -326,12 +328,17 @@ def validate_extraction_profile(value: object, evidence: ProfileEvidence) -> Ext
                 raise ValueError()
             review = parse_strict_json(_private_bytes(evidence.review_path, evidence.root))
             # PB-16 verifies the external review authority. Its absence keeps the profile inert.
-            importlib.import_module("moj_discovery.live_preflight_batched").verify_profile_review(
-                data, review, evidence
-            )
+            review_proof = importlib.import_module(
+                "moj_discovery.live_preflight_batched"
+            ).verify_profile_review(data, review, evidence)
             admitted = True
         return ExtractionProfile(
-            data, field_map, markets, hashlib.sha256(rfc8785.dumps(data)).hexdigest(), admitted
+            data,
+            field_map,
+            markets,
+            hashlib.sha256(rfc8785.dumps(data)).hexdigest(),
+            admitted,
+            review_proof,
         )
     except Exception:
         raise ValueError("E_PROFILE_REJECTED") from None

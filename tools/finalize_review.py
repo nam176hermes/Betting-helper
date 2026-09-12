@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import sqlite3
+import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -34,6 +34,9 @@ from tools.issue_review_launch_authorization import (
     _regular_hash,
     authorized_review_context,
     recheck_review_context,
+    review_execution_root,
+    validate_review_authority_state,
+    validate_review_scope,
 )
 
 
@@ -138,25 +141,73 @@ def _validate_current_workspace(
 def _validate_consumed_authorization(
     authorization: dict[str, object], authority_config: dict[str, object]
 ) -> None:
-    state = Path(cast(str, authority_config["private_key_path"])).parent / "state.sqlite"
-    connection = sqlite3.connect(f"file:{state}?mode=ro", uri=True)
     try:
-        key_epoch = connection.execute(
-            "SELECT trust_epoch FROM authority_state WHERE key_id = ?",
-            (authorization["issuer_key_id"],),
-        ).fetchone()
-        consumed = connection.execute(
-            "SELECT 1 FROM consumed_serials WHERE authority_key_id = ? AND one_use_serial = ?",
-            (authorization["issuer_key_id"], authorization["one_use_serial"]),
-        ).fetchone()
-        revoked = connection.execute(
-            "SELECT 1 FROM revocations WHERE authorization_id = ?",
-            (authorization["authorization_id"],),
-        ).fetchone()
-    finally:
-        connection.close()
-    if key_epoch != (authorization["trust_epoch"],) or consumed is None or revoked is not None:
-        raise ValueError("E_REVIEW_FINALIZE_BINDING")
+        validate_review_authority_state(authorization, authority_config)
+    except ValueError as error:
+        raise ValueError("E_REVIEW_FINALIZE_BINDING") from error
+
+
+def validate_host_execution(
+    authorization: dict[str, object],
+    authority: dict[str, object],
+    config: dict[str, object],
+    attestation: dict[str, object],
+) -> None:
+    from tools.run_review_a_checks import run_review_a_checks
+    from tools.run_review_b_checks import run_review_b_checks
+
+    root = review_execution_root(authorization, authority)
+    record_path = root / "execution.json"
+    _regular_hash(record_path)
+    record = json.loads(record_path.read_bytes())
+    if (
+        not isinstance(record, dict)
+        or set(record) != {"authorization_id", "result", "commands", "commands_executed_root"}
+        or record["authorization_id"] != authorization["authorization_id"]
+    ):
+        raise ValueError("E_REVIEW_EXECUTION")
+    rows = record["commands"]
+    if not isinstance(rows, list) or len(rows) != len(
+        cast(list[str], config["mechanical_command_ids"])
+    ):
+        raise ValueError("E_REVIEW_EXECUTION")
+    expected_files = {"execution.json"} | {
+        f"{index:02d}.{stream}" for index in range(len(rows)) for stream in ("stdout", "stderr")
+    }
+    if {path.name for path in root.iterdir()} != expected_files:
+        raise ValueError("E_REVIEW_EXECUTION")
+    sequence = 0
+
+    def observed(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        nonlocal sequence
+        row = rows[sequence]
+        if (
+            row.get("argv") != argv
+            or row.get("cwd") != kwargs.get("cwd")
+            or type(row.get("exit_code")) is not int
+        ):
+            raise ValueError("E_REVIEW_EXECUTION")
+        values = []
+        for stream in ("stdout", "stderr"):
+            path = root / f"{sequence:02d}.{stream}"
+            _regular_hash(path)
+            if path.stat().st_size > 750000:
+                raise ValueError("E_REVIEW_EXECUTION")
+            values.append(path.read_bytes())
+        sequence += 1
+        return subprocess.CompletedProcess(argv, row["exit_code"], *values)
+
+    registry = json.loads(Path(cast(str, config["command_registry_path"])).read_bytes())
+    runner = (
+        run_review_a_checks
+        if config["role"] == "IMPLEMENTATION_READINESS_REVIEWER"
+        else run_review_b_checks
+    )
+    expected = runner(config, registry, execute=observed)
+    if record != {"authorization_id": authorization["authorization_id"], **expected} or (
+        attestation["commands_executed_root"] != expected["commands_executed_root"]
+    ):
+        raise ValueError("E_REVIEW_EXECUTION")
 
 
 def _validate_current_delivery(
@@ -278,6 +329,9 @@ def main() -> None:
         _validate_result(result, authorization.get("review_role"))
         verify_review_result_binding(result, authorization)
         _validate_current_workspace(authorization, attestation)
+        review_config = cast(dict[str, object], context["config"])
+        validate_review_scope(review_config, result)
+        validate_host_execution(authorization, authority, review_config, attestation)
         recheck_review_context(context)
     bootstrap_review_authority(authority, initialize_if_absent=False)
     _validate_consumed_authorization(authorization, authority)

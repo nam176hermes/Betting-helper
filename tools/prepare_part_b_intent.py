@@ -135,7 +135,7 @@ def execute_discovery(argv: list[str]) -> int:
             review.get("scope", {}).get("expires_at", ""),
         )
         # No prompt to grant capture until the real independent tool review verifies.
-        verify_external_review(review, scope, ROOT, datetime.now(UTC))
+        verified = verify_external_review(review, scope, ROOT, datetime.now(UTC))
         print("STAGE: OPERATOR_DISCOVERY")
         print("PROFILE: " + args.profile_name)
         print("EXACT_URL: " + scope["exact_url"])
@@ -152,7 +152,9 @@ def execute_discovery(argv: list[str]) -> int:
         receipt = consume_user_intent(intent, config, confirmation)
         output = ROOT / ".local/part-b/operator-discovery" / receipt.run_id / "result.json"
         result = asyncio.run(
-            serve_operator_discovery(receipt, selectors, args.profile_name, review, output)
+            serve_operator_discovery(
+                receipt, selectors, args.profile_name, review, output, verified_review=verified
+            )
         )
         print("DISCOVERY_RESULT: " + result["status"])
         print("PROFILE_ACCEPTED: false")

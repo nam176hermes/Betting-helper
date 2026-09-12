@@ -6,6 +6,7 @@ import importlib
 import json
 import os
 import subprocess
+import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -85,14 +86,59 @@ def _host_trust_binding(root: Path) -> str:
     )
 
 
+@dataclass(frozen=True)
+class _VerifiedExternalReview:
+    binding: str
+    root: Path
+    context: dict[str, Any]
+    authority: dict[str, Any]
+    trust_binding: str
+    expires_at: datetime
+    deadline_mono: float
+    _proof: object = field(repr=False)
+    _pid: int
+
+
+def recheck_external_review(
+    verified: _VerifiedExternalReview,
+    bundle: dict[str, Any],
+    scope: dict[str, Any],
+    root: Path,
+    now: datetime,
+) -> None:
+    from tools.issue_review_launch_authorization import (
+        recheck_review_context,
+        validate_review_authority_state,
+    )
+
+    if (
+        type(verified) is not _VerifiedExternalReview
+        or verified._proof is not _SEAL
+        or verified._pid != os.getpid()
+        or verified.root != root
+        or verified.binding != digest({"bundle": bundle, "scope": scope})
+        or now >= verified.expires_at
+        or time.monotonic() >= verified.deadline_mono
+        or _host_trust_binding(root) != verified.trust_binding
+    ):
+        raise ValueError("E_LIVE_EXTERNAL_REVIEW")
+    recheck_review_context(verified.context)
+    validate_review_authority_state(bundle["authorization"], verified.authority)
+    if datetime.now(UTC) >= verified.expires_at or time.monotonic() >= verified.deadline_mono:
+        raise ValueError("E_LIVE_REVIEW_EXPIRED")
+
+
 def verify_external_review(
     bundle: dict[str, Any], scope: dict[str, Any], root: Path, now: datetime
-) -> None:
+) -> _VerifiedExternalReview:
     """Consume existing host-signed receipts. Never initialize/sign host authority."""
     from tools.issue_review_launch_authorization import (
+        _scope_record,
         authorized_review_context,
         recheck_review_context,
         review_public_key,
+        validate_review_authority_state,
+        validate_review_scope,
     )
 
     from .review_aggregation import _review_is_well_formed
@@ -104,7 +150,7 @@ def verify_external_review(
         or digest(bundle["scope"]) != digest(scope)
     ):
         raise ValueError("E_LIVE_EXTERNAL_REVIEW")
-    _expires(scope["expires_at"], now)
+    expires = _expires(scope["expires_at"], now)
     result, authorization, receipt = (bundle[k] for k in ("result", "authorization", "receipt"))
     _review_is_well_formed(result, "CYBERSECURITY_REVIEWER", current=True)
     verify_review_result_binding(result, authorization)
@@ -119,10 +165,9 @@ def verify_external_review(
             for k, v in result["verdicts"].items()
         )
         or any(f["blocking"] for f in result["findings"])
+        or len([f for f in result["findings"] if f["finding_id"] == "PART-B-SCOPE"]) != 1
         or not any(
-            f["finding_id"] == "PART-B-SCOPE"
-            and f["evidence_ids"] == ["sha256:" + digest(scope)]
-            and not f["blocking"]
+            f["finding_id"] == "PART-B-SCOPE" and f["evidence_ids"] == ["sha256:" + digest(scope)]
             for f in result["findings"]
         )
     ):
@@ -134,6 +179,17 @@ def verify_external_review(
     authority = json.loads(authority_path.read_text())
     public, epoch = review_public_key(authority)
     context = authorized_review_context(authorization, authority, runtime_root=root)
+    review_config = context["config"]
+    if (
+        not isinstance(review_config, dict)
+        or review_config.get("schema_version") != "review-config/v3"
+    ):
+        raise ValueError("E_LIVE_REVIEW_SCOPE")
+    record, _ = _scope_record(review_config)
+    if digest(record["scope"]) != digest(scope):
+        raise ValueError("E_LIVE_REVIEW_SCOPE")
+    validate_review_scope(review_config, result)
+    validate_review_authority_state(authorization, authority)
     verify_review_execution_receipt(
         receipt,
         authorization,
@@ -144,11 +200,27 @@ def verify_external_review(
         now=now,
     )
     recheck_review_context(context)
+    validate_review_authority_state(authorization, authority)
+    expires = min(expires, datetime.fromisoformat(authorization["expires_at"]))
+    observed_now = datetime.now(UTC)
+    if observed_now >= expires:
+        raise ValueError("E_LIVE_REVIEW_EXPIRED")
+    return _VerifiedExternalReview(
+        digest({"bundle": bundle, "scope": scope}),
+        root,
+        context,
+        authority,
+        _host_trust_binding(root),
+        expires,
+        time.monotonic() + (expires - observed_now).total_seconds(),
+        _SEAL,
+        os.getpid(),
+    )
 
 
 def verify_profile_review(
     profile: dict[str, Any], review: dict[str, Any], evidence: ProfileEvidence
-) -> None:
+) -> _VerifiedExternalReview:
     scope = review.get("scope", {})
     expected = {
         "kind",
@@ -177,7 +249,7 @@ def verify_profile_review(
     }
     if scope["sample_refs"] != actual:
         raise ValueError("E_LIVE_CAPTURE_SAMPLES")
-    verify_external_review(review, scope, evidence.root, evidence.now_utc)
+    return verify_external_review(review, scope, evidence.root, evidence.now_utc)
 
 
 @dataclass(frozen=True)
@@ -195,6 +267,7 @@ class EvidenceIndex:
     _pid: int = field(default=0, repr=False)
     config_binding: str = ""
     trust_binding: str = ""
+    review_proofs: dict[str, _VerifiedExternalReview] = field(default_factory=dict, repr=False)
 
 
 @dataclass(frozen=True)
@@ -208,13 +281,13 @@ class Readiness:
 
 
 def evaluate_live_readiness(
-    config: LiveConfig, verified: EvidenceIndex, key_present: bool
+    config: LiveConfig, verified: EvidenceIndex, key_present: bool | None
 ) -> Readiness:
     """Pure decision over a locally verified snapshot; never tests a real credential."""
     if (
         type(config) is not LiveConfig
         or type(verified) is not EvidenceIndex
-        or type(key_present) is not bool
+        or (key_present is not None and type(key_present) is not bool)
     ):
         raise ValueError("E_LIVE_PREFLIGHT_TYPE")
     trusted = (
@@ -236,7 +309,11 @@ def evaluate_live_readiness(
     return Readiness(
         not missing,
         tuple(missing),
-        "PRESENT_NOT_AUTHENTICATED" if key_present else "NOT_PRESENT",
+        "NOT_CHECKED"
+        if key_present is None
+        else "PRESENT_NOT_AUTHENTICATED"
+        if key_present
+        else "NOT_PRESENT",
         "VERIFIED_HOST_RECEIPT"
         if "security" in checks
         else "SELF_ONLY"
@@ -261,6 +338,7 @@ def load_evidence(config: LiveConfig, *, root: Path = ROOT) -> EvidenceIndex:
     checks: set[str] = set()
     profile = None
     trust_binding = ""
+    review_proofs = {}
     bindings: tuple[dict[str, Any], ...] = ()
     expiry = now + timedelta(
         minutes=1
@@ -321,6 +399,9 @@ def load_evidence(config: LiveConfig, *, root: Path = ROOT) -> EvidenceIndex:
         profile = validate_extraction_profile(
             value, ProfileEvidence(root, now, tuple(sample_paths), root / refs["capture"], bindings)
         )
+        if type(profile._review_proof) is not _VerifiedExternalReview:
+            raise ValueError("E_LIVE_CAPTURE_REVIEW")
+        review_proofs["capture"] = profile._review_proof
         if (
             not profile._real_admitted
             or profile.public["max_matches"] != cfg["runtime"]["max_matches"]
@@ -421,7 +502,7 @@ def load_evidence(config: LiveConfig, *, root: Path = ROOT) -> EvidenceIndex:
             "expires_at": scope["expires_at"],
             "previous_scope_refs": scope.get("previous_scope_refs", {}),
         }
-        verify_external_review(review, expected, root, now)
+        review_proofs["security"] = verify_external_review(review, expected, root, now)
         if cfg["runtime"]["max_matches"] != 1:
             # PB-22's actual preceding bounded run must be verified before larger capacity.
             importlib.import_module("tools.qualify_live_readonly").verify_preceding_scope(
@@ -451,6 +532,7 @@ def load_evidence(config: LiveConfig, *, root: Path = ROOT) -> EvidenceIndex:
         os.getpid(),
         digest(config.public),
         trust_binding,
+        review_proofs,
     )
 
 
@@ -479,6 +561,14 @@ def _admission_binding(admitted: Any) -> str:
     )
 
 
+def _check_live_review_authority(verified: EvidenceIndex) -> None:
+    from tools.issue_review_launch_authorization import validate_review_authority_state
+
+    authority = json.loads((verified.root / "review-config/review-authority.v1.json").read_bytes())
+    for name in ("capture", "security"):
+        validate_review_authority_state(verified.artifacts[name]["authorization"], authority)
+
+
 def verify_live_receipt(receipt: RunIntentReceipt) -> _LiveAuthority:
     authority = receipt._live_authority
     if (
@@ -498,6 +588,7 @@ def verify_live_receipt(receipt: RunIntentReceipt) -> _LiveAuthority:
     for path, expected in verified.paths.items():
         if _read(verified.root / path, verified.root)[1] != expected:
             raise ValueError("E_LIVE_AUTHORITY_DRIFT")
+    _check_live_review_authority(verified)
     return authority
 
 
@@ -521,17 +612,36 @@ def verify_receiver_authority(context: dict[str, Any]) -> None:
         raise ValueError("E_LIVE_RECEIVER_AUTHORITY")
 
 
-def admit_live_run(config: LiveConfig, receipt: RunIntentReceipt) -> Any:
+def recheck_live_evidence(config: LiveConfig, verified: EvidenceIndex) -> None:
+    if (
+        not evaluate_live_readiness(config, verified, True).live_read_only_ready
+        or set(verified.review_proofs) != {"capture", "security"}
+        or source_tree_hash(verified.root) != verified.source_sha256
+    ):
+        raise ValueError("E_LIVE_ADMISSION_PENDING")
+    for path, expected in verified.paths.items():
+        if _read(verified.root / path, verified.root)[1] != expected:
+            raise ValueError("E_LIVE_AUTHORITY_DRIFT")
+    for name, proof in verified.review_proofs.items():
+        bundle = verified.artifacts[name]
+        recheck_external_review(proof, bundle, bundle["scope"], verified.root, datetime.now(UTC))
+    if not evaluate_live_readiness(config, verified, True).live_read_only_ready:
+        raise ValueError("E_LIVE_ADMISSION_PENDING")
+
+
+def admit_live_run(
+    config: LiveConfig,
+    receipt: RunIntentReceipt,
+    *,
+    verified: EvidenceIndex | None = None,
+) -> Any:
     from tools.qualify_chrome_indexeddb import _extension_id
 
     from .live_service import RunAdmission
 
-    verified = load_evidence(config)
-    if (
-        not evaluate_live_readiness(config, verified, True).live_read_only_ready
-        or verified.profile is None
-    ):
+    if verified is None or verified.profile is None:
         raise ValueError("E_LIVE_ADMISSION_PENDING")
+    recheck_live_evidence(config, verified)
     verify_receipt(receipt, "LIVE_READ_ONLY")
     if receipt.config.sha256 != config.sha256 or receipt.intent.root != ROOT:
         raise ValueError("E_LIVE_ADMISSION_CONFIG")

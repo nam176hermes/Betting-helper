@@ -336,6 +336,7 @@ def verify_sealed_review_pack(
     recorded_config_locator: str | None = None,
     retained_manifest: Path | None = None,
     retained_root: Path | None = None,
+    context_out: dict[str, Any] | None = None,
 ) -> dict[str, object]:
     """Independently reconstruct in owned temporary storage, without input writes."""
     from tools.compute_governed_content_root import compute_governed_content_root
@@ -365,7 +366,7 @@ def verify_sealed_review_pack(
                 retained_root,
             )
             _current_external_paths(pack, (zip_path, sidecar_path, attestation_path))
-            _validate_inputs(pack, config, artifacts)
+            receipt = _validate_inputs(pack, config, artifacts)
         elif any(value is not None for value in context):
             raise ValueError("E_SEAL_PACK")
         digest = _sha256(zip_path)
@@ -395,33 +396,26 @@ def verify_sealed_review_pack(
                 rebuilt,
                 rebuilt / "docs/registries/seal-exclusions.v1.json",
             )
-            rebuilt_config, rebuilt_artifacts = None, None
             if current:
-                from tools.build_self_review import build_runtime_self_review
-
-                assert recorded_config_locator is not None
-                rebuilt_config, rebuilt_artifacts = load_sealed_assembly_context(
-                    rebuilt,
-                    rebuilt / "docs/configs/full-verifier-controller.v2.json",
-                    recorded_config_locator,
-                    rebuilt / "evidence/retained-artifact-manifest.json",
-                    rebuilt / "evidence/retained",
+                # The original descendant chain was fully verified above. Rebuild
+                # its deterministic envelope from that measured record, without
+                # recursively verifying the same chain again in each writer.
+                expected_json, expected_markdown = _self_review_bytes(receipt)
+                (rebuilt / "SELF_REVIEW_REPORT.json").write_bytes(expected_json)
+                (rebuilt / "SELF_REVIEW_REPORT.md").write_bytes(expected_markdown)
+                manifest = _write_manifest(rebuilt)
+                _write_zip(rebuilt, root / zip_path.name)
+                (root / sidecar_path.name).write_text(
+                    f"{_sha256(root / zip_path.name)}  {zip_path.name}\n"
                 )
-                build_runtime_self_review(
-                    rebuilt / "GOVERNED_CONTENT_ROOT.json",
-                    rebuilt / DESCENDANT_RECEIPT,
+                expected = _attestation(rebuilt, root / zip_path.name, manifest, receipt)
+            else:
+                expected = seal_review_pack(
                     rebuilt,
-                    config=rebuilt_config,
-                    artifacts=rebuilt_artifacts,
+                    root / zip_path.name,
+                    root / sidecar_path.name,
+                    root / attestation_path.name,
                 )
-            expected = seal_review_pack(
-                rebuilt,
-                root / zip_path.name,
-                root / sidecar_path.name,
-                root / attestation_path.name,
-                config=rebuilt_config,
-                artifacts=rebuilt_artifacts,
-            )
             expected["created_at"] = attestation["created_at"]
             if (
                 expected != attestation
@@ -436,6 +430,9 @@ def verify_sealed_review_pack(
                 or (root / sidecar_path.name).read_bytes() != sidecar_path.read_bytes()
             ):
                 raise ValueError("E_SEAL_PACK")
+        if context_out is not None:
+            context_out.clear()
+            context_out.update(controller=config, artifacts=artifacts)
         return attestation
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         raise ValueError("E_SEAL_PACK") from error

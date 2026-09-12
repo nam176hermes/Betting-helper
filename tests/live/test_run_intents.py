@@ -129,6 +129,7 @@ def test_discovery_loopback_exchange_and_tamper_with_synthetic_review_seam(
         )
     monkeypatch.setattr(live_intent, "controlling_tty", contextlib.nullcontext)
     monkeypatch.setattr(live_preflight_batched, "verify_external_review", lambda *args: None)
+    monkeypatch.setattr(live_preflight_batched, "recheck_external_review", lambda *args: None)
     receipt = live_intent.consume_user_intent(intent, config, "ALLOW OPERATOR OBSERVATION")
     output = tmp_path / ".local/part-b/discovery/result.json"
     if write_failure:

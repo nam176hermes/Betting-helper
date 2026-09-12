@@ -112,9 +112,12 @@ def test_readiness_key_presence_requires_matching_generation(
     from tools import launch_part_b
 
     configured = {"generation": "TEST_ONLY_GENERATION"}
-    config = SimpleNamespace(public={"credentials": configured}, fixture_ids=(101,))
+    raw = load_live_config(Path("config/live-batched.example.json")).public
+    raw["credentials"] = configured
+    config = SimpleNamespace(public=raw, fixture_ids=(101,), sha256="a" * 64)
     monkeypatch.setattr(live_config, "load_live_config", lambda path: config)
-    monkeypatch.setattr(live_preflight_batched, "load_evidence", lambda config: object())
+    monkeypatch.setattr(live_preflight_batched, "load_evidence",
+                        lambda config: SimpleNamespace(source_sha256="b" * 64))
     seen = []
 
     def evaluate(config: Any, evidence: Any, key_present: bool) -> Any:

@@ -20,9 +20,11 @@ from tools.finalize_review import _validate_consumed_authorization
 from tools.full_verifier_config import FullVerifierConfig
 from tools.issue_review_launch_authorization import (
     _regular_hash,
+    _scope_record,
     authorized_review_context,
     recheck_review_context,
     review_public_key,
+    validate_review_scope,
 )
 from tools.retained_artifact_io import RetainedArtifactIO
 
@@ -87,6 +89,21 @@ def main() -> None:
             cast(dict[str, str], context["snapshots"])[str(named)] = _regular_hash(named)
             recheck_review_context(context)
         public_key, epoch = review_public_key(authority)
+        configs = [cast(dict[str, object], context["config"]) for context in (context_a, context_b)]
+        if any(
+            selected.get("schema_version") == "review-config/v3" for selected in configs
+        ) and any(
+            selected.get("schema_version") != "review-config/v3"
+            or _scope_record(selected)[0]["scope"]["kind"] != "CANDIDATE_READINESS"
+            for selected in configs
+        ):
+            raise ValueError("E_REVIEW_AUTH_BINDING")
+        validate_review_scope(
+            cast(dict[str, object], context_a["config"]), json.loads(args.review_a.read_bytes())
+        )
+        validate_review_scope(
+            cast(dict[str, object], context_b["config"]), json.loads(args.review_b.read_bytes())
+        )
         result = aggregate_independent_reviews(
             json.loads(args.review_a.read_text()),
             json.loads(args.review_b.read_text()),
@@ -126,7 +143,10 @@ def main() -> None:
         assert context_b is not None
         recheck_review_context(context_b)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n")
+    if args.output != args.output.resolve():
+        raise ValueError("E_REVIEW_AUTH_BINDING")
+    with args.output.open("x") as output:
+        output.write(json.dumps(result, sort_keys=True, separators=(",", ":")) + "\n")
     print(json.dumps(result, sort_keys=True))
 
 

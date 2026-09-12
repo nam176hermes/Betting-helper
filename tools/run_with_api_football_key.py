@@ -7,6 +7,7 @@ import os
 import sys
 from collections.abc import Callable
 from contextlib import ExitStack
+from functools import partial
 from pathlib import Path
 from typing import Any, Never
 
@@ -37,7 +38,14 @@ def _load_action(
     if action == "probe":
         dispatch = importlib.import_module("tools.probe_football_provider").run_probe
     else:
-        dispatch = importlib.import_module("tools.run_live_readonly").run_live_session
+        gate = importlib.import_module("moj_discovery.live_preflight_batched")
+        verified = gate.load_evidence(config)
+        if not gate.evaluate_live_readiness(config, verified, True).live_read_only_ready:
+            raise ValueError("E_LIVE_ADMISSION_PENDING")
+        dispatch = partial(
+            importlib.import_module("tools.run_live_readonly").run_live_session,
+            verified_evidence=verified,
+        )
     return intent, intents.consume_user_intent, dispatch
 
 

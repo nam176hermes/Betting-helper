@@ -60,6 +60,31 @@ Observed user-terminal attempt counts and run hashes are in the current private 
 MODEL_ENABLED: false. MONEY_READY: NO. Production authority: NONE.
 No pushes, deployments, new baseline, history rewrite, wager or Cashout authority.
 
+Current first-live preparation, r13:
+
+- Starts from runtime e3c8237c and authoring 4bf40f59. Actual commits, source/config
+  hashes, command exits and resumable state are recorded outside tracked source at
+  `/home/thenam176/betting-helper/authoring-evidence/part-b-first-live-r13` and
+  `.local/part-b/execution-state.json`. Existing r12 receipts remain immutable.
+- Review broker attests the actual isolated process, bounds framed messages and
+  output pipes, and enforces monotonic plus UTC expiry with owned-group cleanup.
+  Large legitimate SQLite/compiler artifacts are not constrained by the log cap.
+- Governed v3 review templates derive fresh UUID workspaces/results and bind a
+  closed scope to exact config, profile and sample bytes. Host-owned leaf logs
+  are required before finalization; candidate A/B findings remain distinct.
+- Same-operation verification reuse rehashes sealed inputs, source inventory,
+  installed compiler/dependency/native identities and public trust state. It
+  never accepts an external PASS flag or unchanged stat metadata as authority.
+  Full live evidence verification runs before terminal consent; admission still
+  rechecks integrity, expiry and revocation before any request.
+- The existing Windows Credential Manager flow remains backend-only. The launcher
+  shows the selected configuration and limits; a read-only check reports unknown
+  key presence as NOT_CHECKED. An installed package must match the current source.
+- Focused checks and real isolated namespace tests are recorded in this campaign.
+  Fresh full qualification, seal, formal independent A/B and scoped live reviews
+  remain separate gates until their actual current receipts exist. No real
+  provider call, operator capture or live session follows from these source edits.
+
 Historical review-input amendment at 80106f4 (isolated descendant of 62150ea):
 
 - Runtime checkout: `/home/thenam176/betting-helper/discovery-runtime-part-b-review`.

@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         config = load_live_config(args.config)
-        result = evaluate_live_readiness(config, load_evidence(config), key_present=False)
+        result = evaluate_live_readiness(config, load_evidence(config), key_present=None)
     except Exception:
         print("WAITING_REVIEW: invalid or unavailable public evidence")
         return 2

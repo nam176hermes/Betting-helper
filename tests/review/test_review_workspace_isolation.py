@@ -1,8 +1,12 @@
 import base64
 import json
+import os
+import signal
 import socket
+import struct
 import subprocess
 import sys
+import threading
 import time
 from copy import deepcopy
 from datetime import UTC, datetime, timedelta
@@ -18,7 +22,6 @@ import tools.prepare_review_workspace as review_workspace
 from tests.review.test_review_aggregation_and_self_review import signed_current as signed_current
 from tools.finalize_review import finalize_review, review_content_hash
 from tools.prepare_review_workspace import (
-    NAMESPACE_SOCKET,
     RUNTIME_ROOT,
     _environment,
     _namespace_request,
@@ -72,6 +75,25 @@ def test_broker_environment_accepts_only_mounted_tools(
     assert environment["PATH"] == "/bin:/review-bin:/usr/bin"
 
 
+def test_broker_preserves_only_validated_producer_environment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = {"scratch_root": str(tmp_path), "environment": {},
+              "producer_environment": {"node_lookup": "/qualified/bin/node",
+                  "python_environment": "/qualified/.venv", "wsl_distro": "Ubuntu"}}
+    expected = {"PATH": "/qualified/bin:/review-bin:/usr/bin",
+                "UV_PROJECT_ENVIRONMENT": "/qualified/.venv", "WSL_DISTRO_NAME": "Ubuntu"}
+    for name, value in expected.items():
+        monkeypatch.setenv(name, value)
+    monkeypatch.setenv("TEST_ONLY_UNAPPROVED_AMBIENT", "must not reach leaf")
+    result = review_workspace._broker_environment(config, {"A_CHECK_DESCENDANT": {}})
+    assert {name: result[name] for name in expected} == expected
+    assert "TEST_ONLY_UNAPPROVED_AMBIENT" not in result
+    monkeypatch.setenv("UV_PROJECT_ENVIRONMENT", "/wrong")
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        review_workspace._broker_environment(config, {"A_CHECK_DESCENDANT": {}})
+
+
 @pytest.mark.parametrize("leaf", ["A_CHECK_BASELINE", "A_CHECK_DESCENDANT"])
 def test_baseline_check_mounts_transitive_node_toolchain(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, leaf: str
@@ -93,67 +115,19 @@ def test_baseline_check_mounts_transitive_node_toolchain(
     assert {target.name for _source, target in mounts} == {"node", "pnpm", "uv"}
 
 
-@pytest.mark.parametrize("version", [1, 2])
-def test_namespace_reuses_home_created_by_preparation(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, version: int
+def test_namespace_rejects_mismatched_config_before_start(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    scratch = tmp_path / "scratch"
-    (scratch / "home").mkdir(parents=True)
-    python = scratch / "python-env/bin/python"
-    python.parent.mkdir(parents=True)
-    python.write_text("")
-    socket_path = scratch / "tmp/namespace.sock"
-
-    class Process:
-        pid = 123
-
-        def poll(self) -> None:
-            return None
-
-    monkeypatch.setattr(review_workspace, "_registered_leaf_commands", lambda *_: [])
-    monkeypatch.setattr(
-        review_workspace, "_prepared_python_environment", lambda _: python.parent.parent
-    )
-    brokers = []
-    monkeypatch.setattr(
-        review_workspace,
-        "build_bubblewrap_argv",
-        lambda _config, broker, **_kwargs: brokers.append(broker) or [],
-    )
-    monkeypatch.setattr(
-        "tools.prepare_review_workspace.subprocess.Popen",
-        lambda *_args, **_kwargs: socket_path.write_text("") or Process(),
-    )
-    monkeypatch.setattr(
-        review_workspace,
-        "_namespace_facts",
-        lambda _pid: {"pid": 123, "start_ticks": "1", "namespaces": {}},
-    )
-
-    config: dict[str, Any] = {
-        "scratch_root": str(scratch),
-        "role": "IMPLEMENTATION_READINESS_REVIEWER",
-        "schema_version": f"review-config/v{version}",
-    }
-    directory = tmp_path / "review-config"
-    directory.mkdir()
-    (directory / f"review-a.v{version}.json").write_text(json.dumps(config))
-    monkeypatch.setattr(review_workspace, "RUNTIME_ROOT", tmp_path)
-    launch: dict[str, Any] = {
-        "schema_version": f"review-launch-authorization/v{version}",
-        "authorization_id": "REVIEW-LAUNCH:" + "a" * 64,
-        "command_registry_sha256": "b" * 64,
-        "expires_at": "2030-01-01T00:00:00+00:00",
-    }
-    if version == 2:
-        with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
-            _start_namespace({**config, "schema_version": "review-config/v1"}, launch)
-        assert not (scratch / "control").exists()
-    result = _start_namespace(config, launch)
-
-    assert result["pid"] == 123
-    assert (scratch / "tmp").is_dir()
-    assert str(directory / f"review-a.v{version}.json") in brokers[0]["argv"]
+    config = {"role": "IMPLEMENTATION_READINESS_REVIEWER", "schema_version": "review-config/v2"}
+    monkeypatch.setattr(review_workspace, "_config_for_role", lambda *_: config)
+    with pytest.raises(ValueError, match="E_REVIEW_WORKSPACE_ISOLATION"):
+        _start_namespace(
+            {**config, "schema_version": "review-config/v1"},
+            {
+                "schema_version": "review-launch-authorization/v2",
+            },
+        )
+    assert list(tmp_path.iterdir()) == []
 
 
 def test_namespace_client_uses_short_proc_fd_socket_path(
@@ -176,11 +150,14 @@ def test_namespace_client_uses_short_proc_fd_socket_path(
         def connect(self, endpoint: str) -> None:
             observed.append(endpoint)
 
+        def getsockopt(self, *_args: object) -> bytes:
+            return struct.pack("3i", os.getpid(), os.getuid(), os.getgid())
+
         def sendall(self, _payload: bytes) -> None:
             return None
 
         def recv(self, _size: int) -> bytes:
-            return b'{"exit_code":0,"stdout":"","stderr":""}'
+            return b'{"exit_code":0,"stdout":"","stderr":""}\n'
 
     monkeypatch.setattr("tools.prepare_review_workspace.socket.socket", lambda *_args: Connection())
 
@@ -188,6 +165,252 @@ def test_namespace_client_uses_short_proc_fd_socket_path(
 
     assert result.returncode == 0
     assert observed[0].startswith("/proc/self/fd/") and len(observed[0]) < 108
+
+
+def test_namespace_client_reads_fragmented_reply(tmp_path: Path) -> None:
+    endpoint = tmp_path / "reply.sock"
+    ready = threading.Event()
+
+    def respond() -> None:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as server:
+            server.bind(str(endpoint))
+            server.listen(1)
+            ready.set()
+            connection, _ = server.accept()
+            with connection:
+                connection.recv(4096)
+                try:
+                    connection.sendall(b'{"exit_code":0,')
+                    time.sleep(0.03)
+                    connection.sendall(b'"stdout":"b2s=","stderr":""}\n')
+                except BrokenPipeError:
+                    pass  # The predecessor incorrectly closes after the first fragment.
+
+    worker = threading.Thread(target=respond, daemon=True)
+    worker.start()
+    assert ready.wait(2)
+    try:
+        result = _namespace_request(endpoint, {})
+        assert result.returncode == 0 and result.stdout == b"ok"
+    finally:
+        worker.join(timeout=2)
+    assert not worker.is_alive()
+
+
+@pytest.mark.parametrize("payload", [b"{}\n{}\n", b'{"a":1,"a":2}\n', b"x" * 4097])
+def test_namespace_frame_rejects_ambiguous_or_oversize_input(payload: bytes) -> None:
+    reader, writer = socket.socketpair()
+    with reader, writer:
+        writer.sendall(payload)
+        with pytest.raises(ValueError):
+            review_workspace._read_frame(reader, 4096, time.monotonic() + 1)
+
+
+def test_namespace_frame_deadline_is_not_reset_by_partial_input() -> None:
+    reader, writer = socket.socketpair()
+    with reader, writer:
+        writer.sendall(b"{")
+        started = time.monotonic()
+        with pytest.raises(TimeoutError):
+            review_workspace._read_frame(reader, 4096, started + 0.05)
+        assert time.monotonic() - started < 1
+
+
+@pytest.mark.parametrize(
+    "program,limit,error",
+    [
+        ("import time; time.sleep(30)", 0.1, "E_REVIEW_NAMESPACE_EXPIRED"),
+        ("print('x' * 750001)", 2, "E_REVIEW_NAMESPACE_OUTPUT_LIMIT"),
+    ],
+)
+def test_broker_command_bounds_time_and_output(
+    tmp_path: Path,
+    program: str,
+    limit: float,
+    error: str,
+) -> None:
+    with pytest.raises(ValueError, match=error):
+        review_workspace._run_broker_command(
+            {"argv": [sys.executable, "-c", program], "cwd": str(tmp_path)},
+            {},
+            time.monotonic() + limit,
+            datetime.now(UTC) + timedelta(minutes=1),
+        )
+
+
+def test_broker_stream_limit_allows_large_artifacts(tmp_path: Path) -> None:
+    result = review_workspace._run_broker_command(
+        {
+            "argv": [
+                sys.executable,
+                "-c",
+                "from pathlib import Path; Path('artifact').write_bytes(b'x'*1000000); print('ok')",
+            ],
+            "cwd": str(tmp_path),
+        },
+        {},
+        time.monotonic() + 5,
+        datetime.now(UTC) + timedelta(minutes=1),
+    )
+    assert result["exit_code"] == 0
+    assert base64.b64decode(result["stdout"]) == b"ok\n"
+    assert (tmp_path / "artifact").stat().st_size == 1000000
+
+
+def test_broker_stops_running_leaf_on_forward_wall_clock_jump(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    now = datetime.now(UTC)
+    observations = iter([now, now + timedelta(minutes=2)])
+
+    class JumpedClock:
+        @staticmethod
+        def now(tz: object) -> datetime:
+            return next(observations, now + timedelta(minutes=2))
+
+    monkeypatch.setattr(review_workspace, "datetime", JumpedClock)
+    started = time.monotonic()
+    with pytest.raises(ValueError, match="E_REVIEW_NAMESPACE_TIMEOUT"):
+        review_workspace._run_broker_command(
+            {"argv": [sys.executable, "-c", "import time; time.sleep(30)"], "cwd": str(tmp_path)},
+            {},
+            started + 30,
+            now + timedelta(minutes=1),
+        )
+    assert time.monotonic() - started < 2
+
+
+@pytest.mark.parametrize("version", [1, 2, 3])
+def test_real_namespace_attests_broker_after_preparer_exit(tmp_path: Path, version: int) -> None:
+    """Real bwrap/peer/IPC; isolated test commands confer no host review authority."""
+    config_root = tmp_path / "review-config"
+    config_root.mkdir()
+    scratch = tmp_path / "scratch"
+    registry = tmp_path / "registry.json"
+    registry.write_text(
+        json.dumps(
+            {
+                "commands": [
+                    {
+                        "command_id": "ONE",
+                        "kind": "review-leaf",
+                        "argv": [sys.executable, "-c", "print('isolated-review')"],
+                        "cwd": str(tmp_path),
+                    }
+                ]
+            }
+        )
+    )
+    config = {
+        "schema_version": f"review-config/v{version}",
+        "role": "IMPLEMENTATION_READINESS_REVIEWER",
+        "scratch_root": str(scratch),
+        "network": "DENY",
+        "environment": {},
+        "command_registry_path": str(registry),
+        "mechanical_command_ids": ["ONE"],
+    }
+    if version == 3:
+        config.update(
+            workspace_root=str(tmp_path / "workspace"),
+            scratch_root=str(tmp_path / "workspace/scratch"),
+            output_root=str(tmp_path / "results"),
+            authorization_path=str(tmp_path / "authorizations/a.json"),
+            prompt_path=str(tmp_path / "prompt.md"),
+            scope_input_root=str(tmp_path / ".local/part-b/review-inputs"),
+        )
+    (config_root / f"review-a.v{version}.json").write_text(json.dumps(config))
+    authorization = {
+        "schema_version": f"review-launch-authorization/v{min(version, 2)}",
+        "authorization_id": "REVIEW-LAUNCH:" + "a" * 64,
+        "review_run_id": "11111111-1111-4111-8111-111111111111",
+        "command_registry_sha256": sha256(registry.read_bytes()).hexdigest(),
+        "expires_at": (datetime.now(UTC) + timedelta(seconds=15)).isoformat(),
+    }
+    if version == 3:
+        config = review_workspace.resolve_review_run(config, authorization["review_run_id"])
+        scratch = Path(config["scratch_root"])
+    (scratch / "home").mkdir(parents=True)
+    setup = r"""
+import json,sys
+from pathlib import Path
+import tools.prepare_review_workspace as w
+fixture=Path(sys.argv[1]); version=sys.argv[3]
+config=json.loads((fixture/f'review-config/review-a.v{version}.json').read_text())
+authorization=json.loads(sys.argv[2]); runtime=w.RUNTIME_ROOT
+if version=="3": config=w.resolve_review_run(config,authorization["review_run_id"])
+scratch=Path(config["scratch_root"])
+w.RUNTIME_ROOT=fixture
+w._registered_leaf_commands=lambda *_: []
+w._prepared_python_environment=lambda _: Path(sys.prefix)
+def actual_bwrap(_config, command, **_kwargs):
+    argv=['/usr/bin/bwrap','--unshare-user','--unshare-pid','--unshare-net',
+          '--unshare-ipc','--unshare-uts','--new-session','--cap-drop','ALL','--clearenv']
+    for root in dict.fromkeys(['/usr','/lib','/lib64',str(runtime),sys.base_prefix]):
+        argv += ['--ro-bind',root,root]
+    argv += ['--bind',str(scratch/'tmp'),'/tmp','--ro-bind',str(fixture),str(fixture),
+             '--bind',str(scratch/'control'),str(scratch/'control'),
+             '--proc','/proc','--dev','/dev',
+             '--setenv','PYTHONDONTWRITEBYTECODE','1','--chdir',str(fixture),'--',*command['argv']]
+    return argv
+w.build_bubblewrap_argv=actual_bwrap
+original_popen=w.subprocess.Popen
+def logged_popen(*args, **kwargs):
+    with (fixture/'startup.stderr').open('wb') as error:
+        kwargs['stderr']=error
+        return original_popen(*args, **kwargs)
+w.subprocess.Popen=logged_popen
+print(json.dumps(w._start_namespace(config,authorization)))
+"""
+    prepared = subprocess.run(  # noqa: S603 - local isolated regression, fixed helper
+        [sys.executable, "-c", setup, str(tmp_path), json.dumps(authorization), str(version)],
+        cwd=RUNTIME_ROOT,
+        capture_output=True,
+        text=True,
+        timeout=12,
+        check=False,
+    )
+    endpoint = scratch / "tmp/namespace.sock"
+    try:
+        assert prepared.returncode == 0, prepared.stderr + (tmp_path / "startup.stderr").read_text()
+        state = json.loads(prepared.stdout)
+        assert all(
+            inode != os.stat(f"/proc/self/ns/{name}").st_ino
+            for name, inode in state["namespaces"].items()
+        ), "attestation names host namespaces instead of the isolated broker"
+        assert review_workspace._active_namespace(config, authorization) == state
+        execution = review_workspace._namespace_request(
+            endpoint,
+            {
+                "authorization_id": authorization["authorization_id"],
+                "sequence": 0,
+                "command_id": "ONE",
+            },
+        )
+        assert execution.stdout == b"isolated-review\n"
+    finally:
+        if endpoint.exists():
+            directory = os.open(endpoint.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as peer:
+                    peer.connect(f"/proc/self/fd/{directory}/{endpoint.name}")
+                    pid, _, _ = struct.unpack(
+                        "3i",
+                        peer.getsockopt(
+                            socket.SOL_SOCKET, socket.SO_PEERCRED, struct.calcsize("3i")
+                        ),
+                    )
+                    if (
+                        pid > 1
+                        and os.stat(f"/proc/{pid}/ns/pid").st_ino
+                        != os.stat("/proc/self/ns/pid").st_ino
+                    ):
+                        os.kill(pid, signal.SIGTERM)
+            except (ConnectionRefusedError, FileNotFoundError, ProcessLookupError):
+                pass
+            finally:
+                os.close(directory)
 
 
 def test_authoring_tree_and_peer_review_output_are_not_mounted(tmp_path: Path) -> None:
@@ -301,7 +524,10 @@ def _broker_process(config: Path, endpoint: Path) -> subprocess.Popen[bytes]:
     return subprocess.Popen(  # noqa: S603 - local test fixture executes the checked-in broker
         [
             sys.executable,
-            str(RUNTIME_ROOT / "tools/prepare_review_workspace.py"),
+            "-c",
+            "import sys; from pathlib import Path; import tools.prepare_review_workspace as w; "
+            "w.NAMESPACE_SOCKET=Path(sys.argv.pop(1)); w.main()",
+            str(endpoint),
             "--namespace-broker",
             "--config",
             str(config),
@@ -325,7 +551,8 @@ def _broker_process(config: Path, endpoint: Path) -> subprocess.Popen[bytes]:
 def _broker_request(endpoint: Path, request: dict[str, object]) -> bytes:
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
         connection.connect(str(endpoint))
-        connection.sendall(json.dumps(request, sort_keys=True).encode())
+        connection.settimeout(5)
+        connection.sendall(json.dumps(request, sort_keys=True).encode() + b"\n")
         return connection.recv(4096)
 
 
@@ -366,7 +593,7 @@ def test_broker_reuses_one_namespace_and_rejects_client_command_injection(tmp_pa
             }
         )
     )
-    endpoint = NAMESPACE_SOCKET
+    endpoint = tmp_path / "broker.sock"
     endpoint.unlink(missing_ok=True)
     process = _broker_process(config, endpoint)
     for _ in range(100):
@@ -488,6 +715,80 @@ def test_finalizer_uses_jcs_hashes_for_the_bound_human_result() -> None:
     cast(list[dict[str, object]], attestation["preparation_commands"])[1]["argv"] = ["pnpm"]
     with pytest.raises(ValueError, match="E_REVIEW_FINALIZE_BINDING"):
         finalize_review(authorization, result, attestation, Ed25519PrivateKey.generate())
+
+
+@pytest.mark.parametrize("mutation", ["zero-root", "missing", "extra", "stdout", "coverage"])
+def test_finalizer_recomputes_host_leaf_evidence(tmp_path: Path, mutation: str) -> None:
+    from uuid import uuid4
+
+    from tools.finalize_review import validate_host_execution
+    from tools.issue_review_launch_authorization import review_execution_root
+    from tools.run_review_a_checks import run_review_a_checks
+
+    public = tmp_path / "authority/public.json"
+    public.parent.mkdir()
+    public.write_text("{}")
+    authority = {"public_key_path": str(public)}
+    authorization = {
+        "review_run_id": str(uuid4()),
+        "authorization_id": "TEST_ONLY_AUTH",
+        "input_mounts": [{"source_root": str(tmp_path / "read-only-runtime")}],
+    }
+    host = review_execution_root(authorization, authority)
+    host.mkdir(parents=True)
+    registry = {
+        "commands": [
+            {
+                "command_id": name,
+                "argv": [sys.executable, "-c", f"print({name!r})"],
+                "cwd": str(tmp_path),
+                "expected_exit": 0,
+                "kind": "review-leaf",
+                "network": "DENY",
+                "authenticated_operator_access": "DENY",
+                "provider_access": "DENY",
+            }
+            for name in ("A_CHECK_SOURCE", "A_CHECK_EVIDENCE", "A_CHECK_DESCENDANT")
+        ]
+    }
+    registry_path = tmp_path / "registry.json"
+    registry_path.write_text(json.dumps(registry))
+    config = {
+        "schema_version": "review-config/v3",
+        "role": "IMPLEMENTATION_READINESS_REVIEWER",
+        "network": "DENY",
+        "mechanical_command_ids": [r["command_id"] for r in registry["commands"]],
+        "environment": {},
+        "command_registry_path": str(registry_path),
+    }
+    count = 0
+
+    def execute(argv: list[str], **kwargs: Any) -> subprocess.CompletedProcess[bytes]:
+        nonlocal count
+        completed = subprocess.run(argv, **kwargs, timeout=3)  # noqa: S603 - fixed local test commands
+        for stream in ("stdout", "stderr"):
+            (host / f"{count:02d}.{stream}").write_bytes(getattr(completed, stream))
+        count += 1
+        return completed
+
+    execution = run_review_a_checks(config, registry, execute=execute)
+    record = {"authorization_id": authorization["authorization_id"], **execution}
+    (host / "execution.json").write_text(json.dumps(record))
+    attestation = {"commands_executed_root": execution["commands_executed_root"]}
+    validate_host_execution(authorization, authority, config, attestation)
+    if mutation == "zero-root":
+        attestation["commands_executed_root"] = "0" * 64
+    elif mutation == "missing":
+        (host / "01.stderr").unlink()
+    elif mutation == "extra":
+        (host / "99.stdout").write_bytes(b"")
+    elif mutation == "stdout":
+        (host / "00.stdout").write_bytes(b"FORGED")
+    else:
+        record["commands"] = record["commands"][:-1]
+        (host / "execution.json").write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="E_REVIEW_EXECUTION"):
+        validate_host_execution(authorization, authority, config, attestation)
 
 
 def test_current_finalizer_binds_external_seal_and_human_workspace(

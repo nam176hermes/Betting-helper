@@ -94,10 +94,16 @@ def enable_local_repair(service: LiveService) -> Callable[[], None]:
     return close
 
 
-def run_live_session(config: LiveConfig, secret: SecretValue, receipt: object) -> dict[str, Any]:
+def run_live_session(
+    config: LiveConfig,
+    secret: SecretValue,
+    receipt: object,
+    *,
+    verified_evidence: Any = None,
+) -> dict[str, Any]:
     try:
         gate = importlib.import_module("moj_discovery.live_preflight_batched")
-        admission = gate.admit_live_run(config, receipt)
+        admission = gate.admit_live_run(config, receipt, verified=verified_evidence)
     except Exception:
         raise ValueError("E_LIVE_RUN_ADMISSION") from None
     result = run_live_service(config, secret, admission, on_ready=enable_local_repair)

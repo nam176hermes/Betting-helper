@@ -1,5 +1,5 @@
 {
-  "schema_version": "review-config/v2",
+  "schema_version": "review-config/v3",
   "role": "IMPLEMENTATION_READINESS_REVIEWER",
   "prompt_path": "/home/thenam176/betting-helper/part-b-review-host-r13/pack/docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
   "mechanical_command_ids": [
@@ -142,5 +142,6 @@
       "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/METADATA",
       "/home/thenam176/.cache/uv/archive-v0/Xo7YHE9oUI4WKOJwPLa0q/rfc8785-0.1.4.dist-info/RECORD"
     ]
-  }
+  },
+  "scope_input_root": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs"
 }

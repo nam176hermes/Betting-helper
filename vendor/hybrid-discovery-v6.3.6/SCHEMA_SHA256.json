@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "9dbfcbddecf0eb1ecfd031728d0c2f26b626e5a0e18b0b8195ded1d15835e6a7",
+  "tree_sha256": "ef54153031d0ce9be4e3c27faf4ee8fb533b5854031f223fd816e20ee3013fde",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -21,8 +21,8 @@
     },
     {
       "path": "docs/configs/full-verifier-controller.v2.json",
-      "size_bytes": 3293,
-      "sha256": "dbc8acec35210ee93b2e7fe289a04426a94919158593a8d431f2c91852baccb7"
+      "size_bytes": 3306,
+      "sha256": "aa44ccdb9e7b46b4c7a63abd3e90179b3fe22ef7a5a89ee6250f56975f592fde"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -32,7 +32,12 @@
     {
       "path": "docs/configs/review-a.v2.json",
       "size_bytes": 8293,
-      "sha256": "78e570775261c6b9591d4b2c1c4781a90270c5614a2fa800bedee23e594c48a5"
+      "sha256": "6bcdf08399f1df48fc4ea9b08b5b707966af7c150a7922f16deb114664af467a"
+    },
+    {
+      "path": "docs/configs/review-a.v3.json",
+      "size_bytes": 8394,
+      "sha256": "325e5836c6ae953f9332d10218ed37331f5f2ecb63f50125a31454d84ed73c4a"
     },
     {
       "path": "docs/configs/review-aggregation.v1.json",
@@ -42,7 +47,7 @@
     {
       "path": "docs/configs/review-aggregation.v2.json",
       "size_bytes": 686,
-      "sha256": "2ab34517290c727e6f53d8ce5960b8db59f302fec6834111340b2bf089d556a6"
+      "sha256": "79c69cec4b1766893b3476f70270c2f944495baa705f15047e4a6e54ecf11716"
     },
     {
       "path": "docs/configs/review-authority.v1.json",
@@ -57,7 +62,12 @@
     {
       "path": "docs/configs/review-b.v2.json",
       "size_bytes": 5306,
-      "sha256": "723aab3ad6f166b51263997f91669f9e402e4f0749fd462cee1d1cb31440cefd"
+      "sha256": "26393d59bfc00f8356a79ce9fb8bbf3539b7232e404a3d896fd982eb138e4f84"
+    },
+    {
+      "path": "docs/configs/review-b.v3.json",
+      "size_bytes": 5407,
+      "sha256": "98cd93d91b99e0916d6607b0bbf678eb18ff2efdda5f41467cdbcc51e52d5ba7"
     },
     {
       "path": "docs/configs/runtime-pyproject.toml",
@@ -136,8 +146,8 @@
     },
     {
       "path": "docs/contracts/part-b-one-ready.v1.json",
-      "size_bytes": 9200,
-      "sha256": "2c4bb1d350905912edc9ba65e6ecc5e7b9278799ad76cc1575c5ec43221c5687"
+      "size_bytes": 12359,
+      "sha256": "caff379ca7fc6171a80d42720e3ef794ce9824788428f6f90119853e77be3cd7"
     },
     {
       "path": "docs/fixtures/inherited/v6.2/plan-manifest.json",
@@ -181,8 +191,8 @@
     },
     {
       "path": "docs/registries/artifact-ownership.v1.json",
-      "size_bytes": 546100,
-      "sha256": "566e1a89b7465866435ed04599e3b605332f7e5011f3af585f7707a0c4f3913c"
+      "size_bytes": 550014,
+      "sha256": "96fb2ee26c2d9f1dbe3930655d15ec82960d6f0c9b8091fb28617ac2800115a3"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -206,8 +216,8 @@
     },
     {
       "path": "docs/registries/command-io.v1.json",
-      "size_bytes": 134106,
-      "sha256": "a8005ee78412004d3cb7f7a397fdf884537a6822e08ed9b231ce6c2c51515451"
+      "size_bytes": 134801,
+      "sha256": "2ebfc5f2fafe035c4ddbd12c6504e90e711e2649673259cdbec6eff406d0aa27"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -251,23 +261,23 @@
     },
     {
       "path": "docs/registries/normative-source-map.v1.json",
-      "size_bytes": 25536,
-      "sha256": "50c1a00a3645b7c82166b7dff2fe678e3359f20f408f4ebdde96c047783e89b4"
+      "size_bytes": 25784,
+      "sha256": "d116c752d026b0e13cbfe0da4fc9f7e0ed2635d49a60ec28cd7d07d578ff01ec"
     },
     {
       "path": "docs/registries/path-registry.v1.json",
       "size_bytes": 1095,
-      "sha256": "96b65de100f44d8d9823b0c1f58ad93a8c9421593fc5b356fe93ecc4dbf5afba"
+      "sha256": "fff8a72f5442f6642d4789702a295862b391bd71409014ab00a7d44688061553"
     },
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
-      "size_bytes": 15848,
-      "sha256": "4a3ac116b564a5f0b1a61a768f7632806de2bffbb1c8b225bdccdf5ad5bcc811"
+      "size_bytes": 15864,
+      "sha256": "3b2c5eab21c2e96f866643467538131ea20485a54c6ab189932b330322562b57"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
       "size_bytes": 12950,
-      "sha256": "609cb3a0cbc84bc02f9395aa0856169d941cd5e176e4cffb307820e66d685ad1"
+      "sha256": "a74d9e223b3b27e76e673c2f85909b4f083693a044d4813e2961f2d0955e9e42"
     },
     {
       "path": "docs/registries/reviewer-role-registry.v1.json",
@@ -301,8 +311,8 @@
     },
     {
       "path": "docs/registries/task-command-registry.v1.json",
-      "size_bytes": 107344,
-      "sha256": "4ca91c8646f04acd3ff6c06e847a866703a3590e37eb83b1c31cd730aa3f0a70"
+      "size_bytes": 107363,
+      "sha256": "96410b0b83e4716a92f5318c7a01bd009e26238103f785b8fcc785034b4e0420"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -356,8 +366,8 @@
     },
     {
       "path": "docs/schemas/review-launch-authorization.schema.json",
-      "size_bytes": 10959,
-      "sha256": "4ec628cef643d4aba4506b6e029392604a9bad2121e1ede4916ce41b3e96cc60"
+      "size_bytes": 11426,
+      "sha256": "3b877e7cc961358db37c47c15e2a1bdd9aa9a01109adb33cd2a1d0e7f1e71749"
     },
     {
       "path": "docs/schemas/review-result.schema.json",
@@ -381,8 +391,8 @@
     },
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
-      "size_bytes": 328845,
-      "sha256": "932ee780362485118d7aacab3506028efa4759ea65d0823c75debce9d64191b1"
+      "size_bytes": 331067,
+      "sha256": "55699a965bbecf7c9fdbab6680de9a5c35193613e2e4f1d61861ae8c1a918db1"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",

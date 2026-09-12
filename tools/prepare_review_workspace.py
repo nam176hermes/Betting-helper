@@ -9,14 +9,19 @@ import csv
 import hashlib
 import json
 import os
+import select
+import selectors
 import shutil
+import signal
 import socket
 import sqlite3
 import stat
+import struct
 import subprocess
 import sys
 import time
 from collections.abc import Callable
+from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 from typing import Any, cast
@@ -27,11 +32,15 @@ sys.path[:0] = [str(RUNTIME_ROOT), str(RUNTIME_ROOT / "src")]
 import rfc8785
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
+from moj_discovery.canonical import parse_strict_json
 from moj_discovery.review_authorization import verify_review_launch_authorization
 from tools.issue_review_launch_authorization import (
     measure_review_context,
     recheck_review_context,
+    resolve_review_run,
+    review_config_for_authorization,
     review_config_for_role,
+    review_execution_root,
     review_public_key,
 )
 from tools.run_review_a_checks import run_review_a_checks
@@ -60,7 +69,7 @@ def _sha256(path: Path) -> str:
 
 
 def prepare_review_workspace(config: dict[str, object]) -> dict[str, object]:
-    if config.get("schema_version") == "review-config/v2":
+    if config.get("schema_version") in {"review-config/v2", "review-config/v3"}:
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     return _prepare_review_directories(config)
 
@@ -83,15 +92,29 @@ def _prepare_review_directories(config: dict[str, object]) -> dict[str, object]:
             raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
     workspace = Path(cast(str, config["workspace_root"]))
     output = Path(cast(str, config["output_root"]))
-    if workspace.is_symlink() or output.is_symlink():
+    if workspace != workspace.resolve() or output != output.resolve():
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
-    workspace.mkdir(parents=True, exist_ok=True)
-    output.mkdir(parents=True, exist_ok=True)
+    reuse_legacy = config.get("schema_version") != "review-config/v3"
+    workspace.mkdir(parents=True, exist_ok=reuse_legacy)
+    output.mkdir(parents=True, exist_ok=reuse_legacy)
     return {"result": "PASS", "workspace_root": str(workspace), "output_root": str(output)}
 
 
 def _config_for_role(role: str, version: int = 1) -> dict[str, object]:
     return review_config_for_role(role, version, runtime_root=RUNTIME_ROOT)
+
+
+def _config_template(config: dict[str, object]) -> dict[str, object]:
+    version = 3 if config.get("schema_version") == "review-config/v3" else 2
+    template = _config_for_role(cast(str, config["role"]), version)
+    expected = (
+        resolve_review_run(template, cast(str, config["review_run_id"]))
+        if version == 3
+        else template
+    )
+    if config != expected:
+        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    return template
 
 
 def _public_key(authority_config: dict[str, object]) -> tuple[Ed25519PublicKey, int]:
@@ -181,6 +204,11 @@ def _preparation_commands(config: dict[str, object]) -> list[dict[str, object]]:
             or not all(isinstance(token, str) and token for token in argv)
         ):
             raise ValueError("E_REVIEW_PREPARATION")
+    if config.get("schema_version") == "review-config/v3":
+        template = _config_template(config)
+        before = cast(dict[str, object], template["node_environment"])["project_root"]
+        after = cast(dict[str, object], config["node_environment"])["project_root"]
+        result = [{**row, "cwd": after} if row["cwd"] == before else row for row in result]
     return result
 
 
@@ -496,10 +524,9 @@ def _producer_projection(
     from tools.run_native_ingestor_qualification import DEPENDENCIES, dependency_binding
     from tools.verify_repair_evidence import _resolved_node_executable
 
-    if config.get("schema_version") != "review-config/v2" or config != _config_for_role(
-        cast(str, config["role"]), 2
-    ):
+    if config.get("schema_version") not in {"review-config/v2", "review-config/v3"}:
         raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    _config_template(config)
     declaration = config.get("producer_environment")
     if not isinstance(declaration, dict) or set(declaration) != {
         "schema_version", "mode", "python_environment", "python_executable",
@@ -747,16 +774,116 @@ def _namespace_state_path(config: dict[str, object]) -> Path:
 
 
 def _namespace_facts(pid: int) -> dict[str, object]:
-    stat_path = Path(f"/proc/{pid}/stat")
-    if not stat_path.exists():
+    if type(pid) is not int or pid <= 1:
         raise ValueError("E_REVIEW_NAMESPACE_STALE")
-    fields = stat_path.read_text().rsplit(") ", 1)
-    if len(fields) != 2 or len(fields[1].split()) < 20:
-        raise ValueError("E_REVIEW_NAMESPACE_STALE")
-    namespaces = {
-        name: os.stat(f"/proc/{pid}/ns/{name}").st_ino for name in ("user", "pid", "mnt", "net")
-    }
+    try:
+        fields = Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)
+        if len(fields) != 2 or len(fields[1].split()) < 20 or fields[1].split()[0] == "Z":
+            raise ValueError("E_REVIEW_NAMESPACE_STALE")
+        namespaces = {
+            name: os.stat(f"/proc/{pid}/ns/{name}").st_ino for name in ("user", "pid", "mnt", "net")
+        }
+    except OSError as error:
+        raise ValueError("E_REVIEW_NAMESPACE_STALE") from error
     return {"pid": pid, "start_ticks": fields[1].split()[19], "namespaces": namespaces}
+
+
+def _remaining(deadline: float) -> float:
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise ValueError("E_REVIEW_NAMESPACE_EXPIRED")
+    return remaining
+
+
+def _lease_deadline(expires_at: object) -> float:
+    expires = datetime.fromisoformat(str(expires_at))
+    if expires.tzinfo is None:
+        raise ValueError("E_REVIEW_NAMESPACE_EXPIRED")
+    remaining = (expires.astimezone(UTC) - datetime.now(UTC)).total_seconds()
+    if remaining <= 0:
+        raise ValueError("E_REVIEW_NAMESPACE_EXPIRED")
+    return time.monotonic() + min(14400, remaining)
+
+
+def _read_frame(connection: socket.socket, limit: int, deadline: float) -> dict[str, Any]:
+    raw = bytearray()
+    while b"\n" not in raw:
+        connection.settimeout(_remaining(deadline))
+        chunk = connection.recv(min(65536, limit + 1 - len(raw)))
+        if not chunk:
+            raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+        raw.extend(chunk)
+        if len(raw) > limit:
+            raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    if raw.count(b"\n") != 1 or not raw.endswith(b"\n"):
+        raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    value = parse_strict_json(bytes(raw))
+    if not isinstance(value, dict):
+        raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    return cast(dict[str, Any], value)
+
+
+def _namespace_exchange(
+    socket_path: Path,
+    payload: dict[str, object],
+    deadline: float,
+    expected_peer: dict[str, object] | None = None,
+) -> tuple[dict[str, Any], int]:
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode() + b"\n"
+    if len(encoded) > 4096:
+        raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    directory = os.open(socket_path.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+            connection.settimeout(_remaining(deadline))
+            connection.connect(f"/proc/self/fd/{directory}/{socket_path.name}")
+            pid, uid, _gid = struct.unpack(
+                "3i", connection.getsockopt(socket.SOL_SOCKET, socket.SO_PEERCRED, 12)
+            )
+            if uid != os.getuid():
+                raise ValueError("E_REVIEW_NAMESPACE_STALE")
+            if expected_peer is not None:
+                facts = _namespace_facts(pid)
+                if any(expected_peer.get(name) != value for name, value in facts.items()):
+                    raise ValueError("E_REVIEW_NAMESPACE_STALE")
+            connection.sendall(encoded)
+            response = _read_frame(connection, 1 << 20, deadline)
+            _remaining(deadline)
+            return response, pid
+    finally:
+        os.close(directory)
+
+
+def _namespace_status(
+    socket_path: Path,
+    authorization: dict[str, object],
+    deadline: float,
+    expected_peer: dict[str, object] | None = None,
+) -> dict[str, object]:
+    response, pid = _namespace_exchange(
+        socket_path,
+        {"authorization_id": authorization["authorization_id"], "kind": "STATUS"},
+        deadline,
+        expected_peer,
+    )
+    expected = {
+        name: authorization[name]
+        for name in ("authorization_id", "command_registry_sha256", "expires_at")
+    }
+    if (
+        set(response) != {*expected, "sequence"}
+        or any(response.get(key) != value for key, value in expected.items())
+        or type(response["sequence"]) is not int
+        or response["sequence"] != 0
+    ):
+        raise ValueError("E_REVIEW_NAMESPACE_STALE")
+    facts = _namespace_facts(pid)
+    if any(
+        inode == os.stat(f"/proc/self/ns/{name}").st_ino
+        for name, inode in cast(dict[str, int], facts["namespaces"]).items()
+    ):
+        raise ValueError("E_REVIEW_NAMESPACE_STALE")
+    return facts
 
 
 def _write_json(path: Path, value: dict[str, object]) -> None:
@@ -769,9 +896,13 @@ def _write_json(path: Path, value: dict[str, object]) -> None:
 def _start_namespace(
     config: dict[str, object], authorization: dict[str, object]
 ) -> dict[str, object]:
-    version = 2 if authorization.get("schema_version") == "review-launch-authorization/v2" else 1
-    if version == 2 and _config_for_role(cast(str, config["role"]), version) != config:
-        raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+    version = (
+        3
+        if config.get("schema_version") == "review-config/v3"
+        else (2 if authorization.get("schema_version") == "review-launch-authorization/v2" else 1)
+    )
+    if version >= 2:
+        _config_template(config)
     commands = _registered_leaf_commands(config, authorization)
     scratch = Path(cast(str, config["scratch_root"]))
     control, home, temporary = scratch / "control", scratch / "home", scratch / "tmp"
@@ -798,31 +929,88 @@ def _start_namespace(
             str(NAMESPACE_SOCKET),
             "--expires-at",
             str(authorization["expires_at"]),
+            *(["--review-run-id", str(authorization["review_run_id"])] if version == 3 else []),
         ],
         "cwd": str(RUNTIME_ROOT),
     }
-    process = subprocess.Popen(  # noqa: S603 - closed Bubblewrap argv and registry-derived tools
-        build_bubblewrap_argv(config, broker, leaf_commands=commands),
-        stdin=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
-    deadline = time.monotonic() + 5
-    while time.monotonic() < deadline:
-        if socket_path.exists() and process.poll() is None:
-            state = {
-                "schema_version": "review-namespace/v1",
-                "authorization_id": authorization["authorization_id"],
-                "command_registry_sha256": authorization["command_registry_sha256"],
-                "expires_at": authorization["expires_at"],
-                "socket_path": str(socket_path),
-                **_namespace_facts(process.pid),
-            }
-            _write_json(_namespace_state_path(config), state)
-            return state
-        time.sleep(0.02)
-    process.terminate()
-    process.wait(timeout=5)
+    deadline = min(time.monotonic() + 5, _lease_deadline(authorization["expires_at"]))
+    reader, writer = os.pipe()
+    process = None
+    sandbox: dict[str, object] | None = None
+    sandbox_fd = -1
+    try:
+        argv = build_bubblewrap_argv(config, broker, leaf_commands=commands)
+        argv[1:1] = ["--info-fd", str(writer)]
+        with (control / "broker.stderr").open("xb") as error:
+            os.fchmod(error.fileno(), 0o600)
+            process = subprocess.Popen(  # noqa: S603 - fixed bwrap and signed registry
+                argv,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=error,
+                start_new_session=True,
+                pass_fds=(writer,),
+            )
+        os.close(writer)
+        writer = -1
+        info = bytearray()
+        while True:
+            ready, _, _ = select.select([reader], [], [], _remaining(deadline))
+            if not ready:
+                raise ValueError("E_REVIEW_NAMESPACE_START")
+            chunk = os.read(reader, 4097 - len(info))
+            if not chunk:
+                break
+            info.extend(chunk)
+            if len(info) > 4096:
+                raise ValueError("E_REVIEW_NAMESPACE_START")
+        decoded = parse_strict_json(bytes(info))
+        if not isinstance(decoded, dict) or type(decoded.get("child-pid")) is not int:
+            raise ValueError("E_REVIEW_NAMESPACE_START")
+        sandbox = _namespace_facts(decoded["child-pid"])
+        sandbox_fd = os.pidfd_open(decoded["child-pid"])
+        while _remaining(deadline):
+            if process.poll() is not None:
+                raise ValueError("E_REVIEW_NAMESPACE_START")
+            if socket_path.exists():
+                peer = _namespace_status(socket_path, authorization, deadline)
+                # bwrap can enter its final user namespace after writing --info-fd.
+                ready_sandbox = _namespace_facts(cast(int, sandbox["pid"]))
+                if (
+                    ready_sandbox["start_ticks"] != sandbox["start_ticks"]
+                    or peer["namespaces"] != ready_sandbox["namespaces"]
+                ):
+                    raise ValueError("E_REVIEW_NAMESPACE_START")
+                state = {
+                    "schema_version": "review-namespace/v2",
+                    "authorization_id": authorization["authorization_id"],
+                    "command_registry_sha256": authorization["command_registry_sha256"],
+                    "expires_at": authorization["expires_at"],
+                    "socket_path": str(socket_path),
+                    "host_boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+                    **peer,
+                }
+                _write_json(_namespace_state_path(config), state)
+                return state
+            time.sleep(min(0.02, _remaining(deadline)))
+    except (OSError, ValueError) as error:
+        if sandbox_fd != -1:
+            with suppress(OSError):
+                signal.pidfd_send_signal(sandbox_fd, signal.SIGTERM)
+        if process is not None and process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=1)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=1)
+        raise ValueError("E_REVIEW_NAMESPACE_START") from error
+    finally:
+        os.close(reader)
+        if writer != -1:
+            os.close(writer)
+        if sandbox_fd != -1:
+            os.close(sandbox_fd)
     raise ValueError("E_REVIEW_NAMESPACE_START")
 
 
@@ -835,11 +1023,12 @@ def _active_namespace(
     if not isinstance(state, dict):
         raise ValueError("E_REVIEW_NAMESPACE_STALE")
     expected = {
-        "schema_version": "review-namespace/v1",
+        "schema_version": "review-namespace/v2",
         "authorization_id": authorization["authorization_id"],
         "command_registry_sha256": authorization["command_registry_sha256"],
         "expires_at": authorization["expires_at"],
         "socket_path": str(Path(cast(str, config["scratch_root"])) / "tmp/namespace.sock"),
+        "host_boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
     }
     if any(state.get(key) != value for key, value in expected.items()) or not isinstance(
         state.get("pid"), int
@@ -851,41 +1040,44 @@ def _active_namespace(
         or state.get("namespaces") != facts["namespaces"]
     ):
         raise ValueError("E_REVIEW_NAMESPACE_STALE")
-    if not Path(cast(str, state["socket_path"])).exists():
-        raise ValueError("E_REVIEW_NAMESPACE_STALE")
+    _namespace_status(
+        Path(cast(str, state["socket_path"])),
+        authorization,
+        min(time.monotonic() + 5, _lease_deadline(authorization["expires_at"])),
+        state,
+    )
     return state
 
 
 def _namespace_request(
-    socket_path: Path, payload: dict[str, object]
+    socket_path: Path,
+    payload: dict[str, object],
+    *,
+    deadline: float | None = None,
+    expected_peer: dict[str, object] | None = None,
 ) -> subprocess.CompletedProcess[bytes]:
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode() + b"\n"
-    if len(encoded) > 4096:
-        raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
-    directory = os.open(socket_path.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    decoded, _pid = _namespace_exchange(
+        socket_path,
+        payload,
+        deadline if deadline is not None else time.monotonic() + 60,
+        expected_peer,
+    )
     try:
-        endpoint = f"/proc/self/fd/{directory}/{socket_path.name}"
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
-            connection.settimeout(60)
-            connection.connect(endpoint)
-            connection.sendall(encoded)
-            response = connection.recv(1 << 20)
-    finally:
-        os.close(directory)
-    try:
-        decoded = json.loads(response)
         stdout = base64.b64decode(decoded["stdout"], validate=True)
         stderr = base64.b64decode(decoded["stderr"], validate=True)
     except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
         raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL") from error
-    if set(decoded) != {"exit_code", "stdout", "stderr"} or not isinstance(
-        decoded["exit_code"], int
-    ):
+    if set(decoded) != {"exit_code", "stdout", "stderr"} or type(decoded["exit_code"]) is not int:
         raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
     return subprocess.CompletedProcess([], decoded["exit_code"], stdout, stderr)
 
 
-def _execute_in_namespace(config: dict[str, object], authorization: dict[str, object]) -> Run:
+def _execute_in_namespace(
+    config: dict[str, object],
+    authorization: dict[str, object],
+    context: dict[str, object] | None = None,
+    log_root: Path | None = None,
+) -> Run:
     commands = _registered_leaf_commands(config, authorization)
     mapped = {
         (
@@ -896,6 +1088,7 @@ def _execute_in_namespace(config: dict[str, object], authorization: dict[str, ob
     }
     sequence = 0
     state = _active_namespace(config, authorization)
+    deadline = _lease_deadline(authorization["expires_at"])
 
     def execute(argv: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
         nonlocal sequence
@@ -905,6 +1098,20 @@ def _execute_in_namespace(config: dict[str, object], authorization: dict[str, ob
         command_id = mapped.get((tuple(argv), cwd))
         if command_id is None:
             raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+        authority = json.loads(Path(cast(str, config["authority_config"])).read_bytes())
+        public, epoch = _public_key(authority)
+        verify_review_launch_authorization(
+            authorization,
+            public,
+            cast(str, config["role"]),
+            cast(str, config["workspace_root"]),
+            cast(str, authorization["pack_zip_sha256"]),
+            expected_host_boot_id=Path("/proc/sys/kernel/random/boot_id").read_text().strip(),
+            expected_trust_epoch=epoch,
+        )
+        _authority_state(authorization, authority, consume=False)
+        if context is not None:
+            recheck_review_context(context)
         result = _namespace_request(
             Path(cast(str, state["socket_path"])),
             {
@@ -912,7 +1119,13 @@ def _execute_in_namespace(config: dict[str, object], authorization: dict[str, ob
                 "sequence": sequence,
                 "command_id": command_id,
             },
+            deadline=min(deadline, _lease_deadline(authorization["expires_at"])),
+            expected_peer=state,
         )
+        if log_root is not None:
+            for stream, data in (("stdout", result.stdout), ("stderr", result.stderr)):
+                with (log_root / f"{sequence:02d}.{stream}").open("xb") as output:
+                    output.write(data)
         sequence += 1
         return result
 
@@ -943,55 +1156,144 @@ def _broker_commands(
     return selected
 
 
+def _run_broker_command(
+    command: dict[str, object],
+    environment: dict[str, str],
+    deadline: float,
+    expires_at: datetime,
+) -> dict[str, object]:
+    def remaining() -> float:
+        if expires_at.tzinfo is None or datetime.now(UTC) >= expires_at:
+            raise ValueError("E_REVIEW_NAMESPACE_TIMEOUT")
+        return _remaining(deadline)
+
+    remaining()
+    child = subprocess.Popen(  # noqa: S603 - exact signed registry argv, never client argv
+        cast(list[str], command["argv"]),
+        cwd=cast(str, command["cwd"]),
+        env=environment,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        start_new_session=True,
+    )
+    assert child.stdout is not None and child.stderr is not None
+    output = {"stdout": bytearray(), "stderr": bytearray()}
+    try:
+        with child.stdout, child.stderr, selectors.DefaultSelector() as selector:
+            for stream, name in ((child.stdout, "stdout"), (child.stderr, "stderr")):
+                os.set_blocking(stream.fileno(), False)
+                selector.register(stream, selectors.EVENT_READ, name)
+            while selector.get_map() or child.returncode is None:
+                # Keep the leader unreaped until its group is stopped: no PID reuse.
+                if (
+                    child.returncode is None
+                    and os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                    is not None
+                ):
+                    with suppress(ProcessLookupError):
+                        os.killpg(child.pid, signal.SIGKILL)
+                    child.wait(timeout=1)
+                for ready, _ in selector.select(min(0.05, remaining())):
+                    chunk = os.read(ready.fd, 65536)
+                    if not chunk:
+                        selector.unregister(ready.fileobj)
+                    else:
+                        output[ready.data].extend(chunk)
+                        if sum(map(len, output.values())) > 750000:
+                            raise ValueError("E_REVIEW_NAMESPACE_OUTPUT_LIMIT")
+            remaining()
+            return {
+                "exit_code": child.returncode,
+                **{name: base64.b64encode(value).decode() for name, value in output.items()},
+            }
+    finally:
+        if child.returncode is None:
+            with suppress(ProcessLookupError):
+                os.killpg(child.pid, signal.SIGKILL)
+            child.wait(timeout=1)
+
+
+def _broker_environment(
+    config: dict[str, object], commands: dict[str, dict[str, object]],
+) -> dict[str, str]:
+    environment = _environment(config)
+    environment["PATH"] = "/review-bin:/usr/bin"
+    if "A_CHECK_DESCENDANT" in commands:
+        declaration = cast(dict[str, str], config["producer_environment"])
+        projected = {
+            "PATH": str(Path(declaration["node_lookup"]).parent) + ":/review-bin:/usr/bin",
+            "UV_PROJECT_ENVIRONMENT": declaration["python_environment"],
+            "WSL_DISTRO_NAME": declaration["wsl_distro"],
+        }
+        # The host validated and bwrap installed exactly these three values.
+        # No other ambient variable enters a leaf subprocess.
+        if any(os.environ.get(name) != value for name, value in projected.items()):
+            raise ValueError("E_REVIEW_WORKSPACE_ISOLATION")
+        environment.update(projected)
+    return environment
+
+
 def _run_namespace_broker(args: argparse.Namespace) -> None:
     config = json.loads(Path(args.config).read_text())
     if not isinstance(config, dict) or config.get("network") != "DENY":
         raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    if config.get("schema_version") == "review-config/v3":
+        config = resolve_review_run(config, args.review_run_id)
+    elif args.review_run_id is not None:
+        raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
     commands = _broker_commands(config, args.registry_sha256)
     expected = list(cast(list[str], config["mechanical_command_ids"]))
-    environment = _environment(config)
-    environment["PATH"] = "/review-bin:/usr/bin"
+    environment = _broker_environment(config, commands)
     endpoint = Path(args.socket)
     if endpoint != NAMESPACE_SOCKET or endpoint.exists():
         raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+    deadline = _lease_deadline(args.expires_at)
     with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as server:
         server.bind(str(endpoint))
         os.chmod(endpoint, 0o600)
         server.listen(1)
-        for sequence, command_id in enumerate(expected):
+        sequence = 0
+        while sequence < len(expected):
+            server.settimeout(_remaining(deadline))
             connection, _ = server.accept()
             with connection:
-                raw = connection.recv(4096)
-                try:
-                    request = json.loads(raw)
-                except json.JSONDecodeError as error:
-                    raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL") from error
+                request = _read_frame(connection, 4096, min(deadline, time.monotonic() + 5))
+                if request == {"authorization_id": args.authorization_id, "kind": "STATUS"}:
+                    reply = {
+                        "authorization_id": args.authorization_id,
+                        "command_registry_sha256": args.registry_sha256,
+                        "expires_at": args.expires_at,
+                        "sequence": sequence,
+                    }
+                    connection.settimeout(_remaining(deadline))
+                    connection.sendall(json.dumps(reply, sort_keys=True).encode() + b"\n")
+                    continue
+                command_id = expected[sequence]
                 if (
                     not isinstance(request, dict)
                     or set(request) != {"authorization_id", "sequence", "command_id"}
                     or request.get("authorization_id") != args.authorization_id
+                    or type(request.get("sequence")) is not int
                     or request.get("sequence") != sequence
                     or request.get("command_id") != command_id
                 ):
                     raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
                 if datetime.now(UTC) >= datetime.fromisoformat(args.expires_at).astimezone(UTC):
                     raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
-                command = commands[command_id]
-                completed = subprocess.run(  # noqa: S603 - closed signed registry command
-                    cast(list[str], command["argv"]),
-                    cwd=cast(str, command["cwd"]),
-                    env=environment,
-                    check=False,
-                    capture_output=True,
+                if _broker_commands(config, args.registry_sha256) != commands:
+                    raise ValueError("E_REVIEW_NAMESPACE_PROTOCOL")
+                reply = _run_broker_command(
+                    commands[command_id],
+                    environment,
+                    min(deadline, _lease_deadline(args.expires_at)),
+                    datetime.fromisoformat(args.expires_at),
                 )
-                reply = {
-                    "exit_code": completed.returncode,
-                    "stdout": base64.b64encode(completed.stdout).decode(),
-                    "stderr": base64.b64encode(completed.stderr).decode(),
-                }
+                connection.settimeout(_remaining(min(deadline, _lease_deadline(args.expires_at))))
                 connection.sendall(
-                    json.dumps(reply, sort_keys=True, separators=(",", ":")).encode()
+                    json.dumps(reply, sort_keys=True, separators=(",", ":")).encode() + b"\n"
                 )
+                sequence += 1
 
 
 def _consume(
@@ -1011,10 +1313,9 @@ def _consume(
         expected_trust_epoch=trust_epoch,
     )
     context = None
-    if (
-        authorization.get("schema_version") == "review-launch-authorization/v2"
-        or config.get("schema_version") == "review-config/v2"
-    ):
+    if authorization.get("schema_version") == "review-launch-authorization/v2" or config.get(
+        "schema_version"
+    ) in {"review-config/v2", "review-config/v3"}:
         context = measure_review_context(config, authorization)
         recheck_review_context(context)
     _authority_state(authorization, cast(dict[str, object], authority), consume=not execute)
@@ -1029,7 +1330,29 @@ def _consume(
             if config["role"] == "IMPLEMENTATION_READINESS_REVIEWER"
             else run_review_b_checks
         )
-        execution = runner(config, registry, execute=_execute_in_namespace(config, authorization))
+        host_root = review_execution_root(authorization, authority)
+        host_root.mkdir(parents=True, exist_ok=False, mode=0o700)
+        execution = runner(
+            config,
+            registry,
+            execute=_execute_in_namespace(
+                config,
+                authorization,
+                context,
+                host_root,
+            ),
+        )
+        if context is not None:
+            recheck_review_context(context)
+        _authority_state(authorization, authority, consume=False)
+        with (host_root / "execution.json").open("x") as stream:
+            json.dump(
+                {"authorization_id": authorization["authorization_id"], **execution},
+                stream,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            stream.write("\n")
         prior.update(
             {
                 "commands_executed_root": execution["commands_executed_root"],
@@ -1080,6 +1403,7 @@ def main() -> None:
     parser.add_argument("--registry-sha256")
     parser.add_argument("--socket")
     parser.add_argument("--expires-at")
+    parser.add_argument("--review-run-id")
     args = parser.parse_args()
     if args.namespace_broker:
         if not all(
@@ -1094,10 +1418,7 @@ def main() -> None:
     elif args.authorization is not None and args.config is None:
         authorization = json.loads(args.authorization.read_text())
         result = _consume(
-            _config_for_role(
-                cast(str, authorization["review_role"]),
-                2 if authorization.get("schema_version") == "review-launch-authorization/v2" else 1,
-            ),
+            review_config_for_authorization(authorization, runtime_root=RUNTIME_ROOT),
             authorization,
             execute=args.execute,
         )

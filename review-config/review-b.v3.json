@@ -1,5 +1,5 @@
 {
-  "schema_version": "review-config/v2",
+  "schema_version": "review-config/v3",
   "role": "CYBERSECURITY_REVIEWER",
   "prompt_path": "/home/thenam176/betting-helper/part-b-review-host-r13/pack/docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
   "mechanical_command_ids": [
@@ -116,5 +116,6 @@
   "repository_identity": {
     "kind": "DESCENDANT",
     "receipt": "/home/thenam176/betting-helper/part-b-review-host-r13/pack/docs/receipts/descendant-repository-qualification-receipt.json"
-  }
+  },
+  "scope_input_root": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs"
 }

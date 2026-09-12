@@ -40,14 +40,15 @@ def run_review_a_checks(
     command_ids = config.get("mechanical_command_ids")
     expected_ids = (
         ("A_CHECK_SOURCE", "A_CHECK_EVIDENCE", "A_CHECK_DESCENDANT")
-        if config.get("schema_version") == "review-config/v2"
+        if config.get("schema_version") in {"review-config/v2", "review-config/v3"}
         else EXPECTED_IDS
     )
     if (
         config.get("role") != "IMPLEMENTATION_READINESS_REVIEWER"
         or config.get("network") != "DENY"
         or not isinstance(command_ids, list)
-        or config.get("schema_version") not in {None, "review-config/v1", "review-config/v2"}
+        or config.get("schema_version")
+        not in {None, "review-config/v1", "review-config/v2", "review-config/v3"}
         or tuple(command_ids) != expected_ids
     ):
         raise ValueError("E_REVIEW_A_CONFIG")

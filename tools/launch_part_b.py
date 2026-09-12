@@ -115,19 +115,34 @@ def readiness(path: Path) -> bool:
     from moj_discovery.live_preflight_batched import evaluate_live_readiness, load_evidence
 
     config = load_live_config(path)
-    state = "ABSENT"
+    state = "NOT_CHECKED"
     try:
         configured = config.public.get("credentials")
         actual = key_metadata() if configured else None
         state = (
-            "STORED" if configured and actual == configured else "ROTATED" if actual else "ABSENT"
+            "STORED"
+            if configured and actual == configured
+            else "ROTATED"
+            if actual
+            else "NOT_CHECKED"
         )
     except (ValueError, OSError, subprocess.SubprocessError) as error:
         state = str(error) if str(error) in {"ABSENT", "IN_USE"} else "UNAVAILABLE"
-    present = state == "STORED"
-    result = evaluate_live_readiness(config, load_evidence(config), key_present=present)
+    present = None if state in {"NOT_CHECKED", "UNAVAILABLE"} else state == "STORED"
+    evidence = load_evidence(config)
+    result = evaluate_live_readiness(config, evidence, key_present=present)
+    print("Cấu hình đang dùng: " + str(path))
+    print("CONFIG_SHA256: " + config.sha256)
+    print("SOURCE_SHA256: " + evidence.source_sha256)
     print("Kho key: " + state + "; chưa kiểm tra xác thực với provider")
     print("Fixture: " + ", ".join(map(str, config.fixture_ids)))
+    print(
+        "Giới hạn cấu hình: "
+        + str(config.public["runtime"]["max_run_minutes"])
+        + " phút / "
+        + str(config.public["provider"]["max_requests_per_run"])
+        + " lần gọi"
+    )
     for name, value in asdict(result).items():
         if name != "live_read_only_ready":
             print(name + ": " + json.dumps(value, ensure_ascii=False))
@@ -203,6 +218,7 @@ def windows_menu() -> int:
     runtime = Path(WINDOWS_RUNTIME)
     helper = runtime / "tools/windows_credential_helper.py"
     while True:
+        print("Candidate: " + record["source_commit"])
         choice = public_input(
             "\nBETTING HELPER — CHỈ ĐỌC\n1. Mở ứng dụng / tiếp tục\n"
             "2. Lưu hoặc thay API key một lần\n3. Xóa API key đã lưu\n0. Thoát"
@@ -317,6 +333,7 @@ def wsl_menu() -> int:
             raise ValueError("E_LAUNCHER_SETTINGS")
         path = local_config_path(json.loads(settings.read_text())["config"])
     while True:
+        print("Cấu hình đang chọn: " + str(path))
         choice = public_input(
             "\n1. Chọn 1 trận mới để probe\n2. Kiểm tra các điều kiện còn thiếu\n"
             "3. Probe provider (xác nhận riêng, tối đa 20 lần / 5 phút)\n"

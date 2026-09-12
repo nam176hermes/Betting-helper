@@ -553,6 +553,14 @@
     {
       "plan_source": "docs/contracts/10-part-b-security-surface.md",
       "vendor_relative": "docs/contracts/10-part-b-security-surface.md"
+    },
+    {
+      "plan_source": "docs/configs/review-a.v3.json",
+      "vendor_relative": "docs/configs/review-a.v3.json"
+    },
+    {
+      "plan_source": "docs/configs/review-b.v3.json",
+      "vendor_relative": "docs/configs/review-b.v3.json"
     }
   ],
   "vendor_prefix": "runtime/vendor/hybrid-discovery-v6.3.6/",

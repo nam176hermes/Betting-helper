@@ -38,12 +38,228 @@ def test_current_role_selector_and_transport_reject_unknown_family(
         ("IMPLEMENTATION_READINESS_REVIEWER", "review-a"),
         ("CYBERSECURITY_REVIEWER", "review-b"),
     ):
-        for version in (1, 2):
+        for version in (1, 2, 3):
             record = {"schema_version": f"review-config/v{version}", "role": role}
             (directory / f"{name}.v{version}.json").write_text(json.dumps(record))
             assert launch.review_config_for_role(role, version, runtime_root=tmp_path) == record
     with pytest.raises(ValueError, match="E_REVIEW_LAUNCH_INPUT"):
-        launch.review_config_for_role("CYBERSECURITY_REVIEWER", 3, runtime_root=tmp_path)
+        launch.review_config_for_role("CYBERSECURITY_REVIEWER", 4, runtime_root=tmp_path)
+
+
+def test_scoped_run_copies_exact_inputs_and_rejects_changed_bytes_or_reuse(tmp_path: Path) -> None:
+    import os
+    import uuid
+
+    from tools.issue_review_launch_authorization import (
+        _scope_record,
+        prepare_review_scope,
+        recheck_review_context,
+        resolve_review_run,
+        validate_review_scope,
+    )
+
+    private = tmp_path / ".local/part-b"
+    private.mkdir(parents=True)
+    source = private / "synthetic-config.json"
+    source.write_text('{"TEST_ONLY":true}')
+    prompt = tmp_path / "sealed-prompt.md"
+    prompt.write_text("Synthetic scoped review test; no authority.")
+    template = {
+        "schema_version": "review-config/v3",
+        "role": "CYBERSECURITY_REVIEWER",
+        "workspace_root": str(tmp_path / "workspaces/review-b"),
+        "output_root": str(tmp_path / "results/review-b"),
+        "scratch_root": str(tmp_path / "workspaces/review-b/scratch"),
+        "authorization_path": str(tmp_path / "authorizations/review-b.json"),
+        "scope_input_root": str(private / "review-inputs"),
+        "prompt_path": str(prompt),
+        "input_roots": [str(tmp_path / "pack"), str(tmp_path)],
+    }
+    run_id = str(uuid.uuid4())
+    config = resolve_review_run(template, run_id)
+    assert config["workspace_root"] == template["workspace_root"] + "/" + run_id
+    assert config["scratch_root"] == config["workspace_root"] + "/scratch"
+    assert resolve_review_run(template, str(uuid.uuid4()))["output_root"] != config["output_root"]
+    scope = {
+        "kind": "OPERATOR_DISCOVERY_TOOL",
+        "expires_at": (datetime.now(UTC) + timedelta(hours=1)).isoformat(),
+        "source_tree_sha256": "a" * 64,
+        "capture_source_sha256": "b" * 64,
+        "config_sha256": sha256(source.read_bytes()).hexdigest(),
+        "fixture_ids": [101],
+        "exact_url": "https://miseojeuplus.espacejeux.com/sports/test-only",
+        "selectors": {"selection_mode": "USER_SELECTED_REGION_V1"},
+        "profile_name": "TEST_ONLY",
+        "max_duration_seconds": 600,
+        "max_http_attempts": 0,
+    }
+    prepare_review_scope(config, scope, [source])
+    record, snapshots = _scope_record(config)
+    assert record["files"][0]["sha256"] == sha256(source.read_bytes()).hexdigest()
+    findings = [
+        {
+            "finding_id": "PART-B-SCOPE",
+            "evidence_ids": ["sha256:" + sha256(rfc8785.dumps(scope)).hexdigest()],
+            "blocking": False,
+        }
+    ]
+    validate_review_scope(config, {"findings": findings})
+    with pytest.raises(ValueError, match="E_REVIEW_SCOPE_INPUT"):
+        validate_review_scope(config, {"findings": findings * 2})
+    with pytest.raises(FileExistsError):
+        prepare_review_scope(config, scope, [source])
+    for bad in (run_id + "/..", run_id.upper(), str(uuid.uuid1())):
+        with pytest.raises(ValueError):
+            resolve_review_run(template, bad)
+    copied = Path(config["scope_path"]).parent / "input-00.json"
+    before = copied.stat()
+    copied.write_text('{"TEST_ONLY":null}')
+    os.utime(copied, ns=(before.st_atime_ns, before.st_mtime_ns))
+    with pytest.raises(ValueError):
+        recheck_review_context({"config": config, "snapshots": snapshots})
+
+
+def test_scoped_inputs_require_complete_role_path_and_hash_mapping() -> None:
+    from tools.issue_review_launch_authorization import _scope_finding_id, _validate_scope_inputs
+
+    role = "CYBERSECURITY_REVIEWER"
+    profile, sample = b'{ "profile": "TEST_ONLY" }', b'{"sample":"TEST_ONLY"}'
+    scope = {
+        "kind": "CAPTURE_PROFILE",
+        "expires_at": "2030-01-01T00:00:00+00:00",
+        "source_tree_sha256": "a" * 64,
+        "capture_source_sha256": "b" * 64,
+        "profile_sha256": sha256(rfc8785.dumps(json.loads(profile))).hexdigest(),
+        "bindings": [],
+        "max_matches": 1,
+        "sample_refs": {".local/part-b/sample.json": sha256(sample).hexdigest()},
+    }
+    supplied = {".local/part-b/profile.json": profile, ".local/part-b/sample.json": sample}
+    _validate_scope_inputs(role, scope, supplied)
+    for bad in (
+        {},
+        {".local/part-b/profile.json": profile},
+        {**supplied, ".local/part-b/extra.json": b"{}"},
+        {**supplied, ".local/part-b/sample.json": b"{}"},
+    ):
+        with pytest.raises(ValueError, match="E_REVIEW_SCOPE_INPUT"):
+            _validate_scope_inputs(role, scope, bad)
+    candidate = {"kind": "CANDIDATE_READINESS", "expires_at": scope["expires_at"]}
+    _validate_scope_inputs(role, candidate, {})
+    assert {
+        _scope_finding_id(r, candidate) for r in ("IMPLEMENTATION_READINESS_REVIEWER", role)
+    } == {"PART-B-CANDIDATE-A", "PART-B-CANDIDATE-B"}
+    with pytest.raises(ValueError, match="E_REVIEW_SCOPE_INPUT"):
+        _validate_scope_inputs("IMPLEMENTATION_READINESS_REVIEWER", scope, supplied)
+
+
+def test_scoped_security_inputs_follow_the_exact_configured_artifact_paths() -> None:
+    from tools.issue_review_launch_authorization import _validate_scope_inputs
+
+    refs = {
+        name: f".local/part-b/{name}.json"
+        for name in ("provider", "capture", "profile", "platform", "offline")
+    }
+    cfg = {
+        "gates": {
+            "provider_feasibility_path": refs["provider"],
+            "capture_review_path": refs["capture"],
+            "offline_result_path": refs["offline"],
+        },
+        "operator": {"capture_profile_path": refs["profile"]},
+        "runtime": {"platform_qualification_path": refs["platform"]},
+    }
+    raw = json.dumps(cfg).encode()
+    data = {path: json.dumps({"TEST_ONLY": name}).encode() for name, path in refs.items()}
+    data[".local/part-b/config.json"] = raw
+    scope = {
+        "kind": "LIVE_SECURITY",
+        "expires_at": "2030-01-01T00:00:00+00:00",
+        "source_tree_sha256": "a" * 64,
+        "config_sha256": sha256(raw).hexdigest(),
+        "max_matches": 1,
+        "previous_scope_refs": {},
+        "artifacts": {name: sha256(data[path]).hexdigest() for name, path in refs.items()},
+    }
+    _validate_scope_inputs("CYBERSECURITY_REVIEWER", scope, data)
+    bad = dict(data)
+    bad[".local/part-b/wrong-path.json"] = bad.pop(refs["provider"])
+    with pytest.raises(ValueError, match="E_REVIEW_SCOPE_INPUT"):
+        _validate_scope_inputs("CYBERSECURITY_REVIEWER", scope, bad)
+
+
+def test_consumed_authority_is_checked_again_after_revocation(tmp_path: Path) -> None:
+    import sqlite3
+
+    from tools.issue_review_launch_authorization import validate_review_authority_state
+
+    authority = {"public_key_path": str(tmp_path / "public.json")}
+    authorization = {
+        "issuer_key_id": "TEST_ONLY",
+        "one_use_serial": "test",
+        "trust_epoch": 0,
+        "authorization_id": "TEST_ONLY_AUTH",
+    }
+    state = tmp_path / "state.sqlite"
+    with sqlite3.connect(state) as db:
+        db.execute("CREATE TABLE authority_state(key_id TEXT, trust_epoch INTEGER)")
+        db.execute("CREATE TABLE consumed_serials(authority_key_id TEXT, one_use_serial TEXT)")
+        db.execute("CREATE TABLE revocations(authorization_id TEXT)")
+        db.execute("INSERT INTO authority_state VALUES ('TEST_ONLY',0)")
+        db.execute("INSERT INTO consumed_serials VALUES ('TEST_ONLY','test')")
+    validate_review_authority_state(authorization, authority)
+    with sqlite3.connect(state) as db:
+        db.execute("INSERT INTO revocations VALUES ('TEST_ONLY_AUTH')")
+    with pytest.raises(ValueError, match="E_REVIEW_AUTHORITY_STATE"):
+        validate_review_authority_state(authorization, authority)
+
+
+def test_review_reuse_detects_changed_installed_compiler_bytes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from tools import issue_review_launch_authorization as launch
+    from tools import run_native_ingestor_qualification as native
+    from tools import verify_repair_evidence as repair
+
+    executable = tmp_path / "synthetic-executable"
+    executable.write_bytes(b"TEST_ONLY")
+    # Qualified package managers can hardlink immutable cache payloads.
+    os.link(executable, tmp_path / "synthetic-cache-link")
+    qualified = tmp_path / ".venv"
+    for folder in (
+        qualified / "lib",
+        tmp_path / "node_modules",
+        tmp_path / "extension/node_modules",
+    ):
+        folder.mkdir(parents=True)
+        (folder / "implementation.js").write_bytes(b"TEST_ONLY_V1")
+    metadata = {
+        "input_roots": [str(tmp_path / "pack"), str(tmp_path)],
+        "producer_environment": {
+            "python_environment": str(qualified),
+            "live_files": [str(executable)],
+            "path_translation_executable": str(executable),
+            "python_executable": str(executable),
+            "node_executable": str(executable),
+        },
+    }
+    monkeypatch.setattr(launch.shutil, "which", lambda name: str(executable))
+    monkeypatch.setattr(repair, "capture_binding", lambda: {"environment": "TEST_ONLY"})
+    monkeypatch.setattr(repair, "_typescript_compile_binding", lambda current: "TEST_ONLY")
+    monkeypatch.setattr(native, "dependency_binding", lambda: {"TEST_ONLY": True})
+    context = {
+        "snapshots": {},
+        "environment_config": metadata,
+        "environment_binding": launch._review_environment_binding(metadata),
+    }
+    launch.recheck_review_context(context)
+    compiler = tmp_path / "extension/node_modules/implementation.js"
+    before = compiler.stat()
+    compiler.write_bytes(b"TEST_ONLY_V2")
+    os.utime(compiler, ns=(before.st_atime_ns, before.st_mtime_ns))
+    with pytest.raises(ValueError, match="E_REVIEW_LAUNCH_INPUT"):
+        launch.recheck_review_context(context)
 
 
 @pytest.mark.parametrize(
@@ -282,6 +498,14 @@ def measured_current_pack(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> di
     from tests.seal.test_deterministic_seal import _current_self_review, _seal_current
     from tests.seal.test_pack_assembly import current_chain
     from tests.seal.test_self_review_binding import descendant_pack
+    from tools import issue_review_launch_authorization as launch
+
+    # Same synthetic environment-owner seam as the retained fixture qualification.
+    # Production byte projection and its compiler-drift rejection have a separate test above.
+    environment = tmp_path / "TEST_ONLY_ENVIRONMENT"
+    environment.write_bytes(b"TEST_ONLY_NOT_QUALIFIED")
+    monkeypatch.setattr(launch, "_review_environment_binding",
+                        lambda config: sha256(environment.read_bytes()).hexdigest())
 
     original_sync = receipt_tests._sync_fixture_sources
     delivery = tmp_path / "review-pack"
@@ -761,6 +985,11 @@ def test_current_finalizer_cli_confines_delivery_after_real_authentication(
             str(logical_output / "execution-receipt.json"),
         ],
     )
+    with pytest.raises(ValueError, match="E_REVIEW_LAUNCH_INPUT"):
+        finalizer.main()
+    # Delivery-only positive seam; no real leaf execution or host receipt is claimed.
+    # Actual closed host logs and tamper rejection are covered in workspace-isolation tests.
+    monkeypatch.setattr(finalizer, "validate_host_execution", lambda *_: None)
     finalizer.main()
     emitted = json.loads(receipt.read_bytes())
     auth_library.verify_review_execution_receipt(

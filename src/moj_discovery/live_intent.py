@@ -106,6 +106,8 @@ async def serve_operator_discovery(
     profile_name: str,
     review: dict[str, Any],
     output: Path,
+    *,
+    verified_review: Any = None,
 ) -> dict[str, Any]:
     """One reviewed, consented, keyless exchange with the fixed extension reader."""
     import asyncio
@@ -119,7 +121,7 @@ async def serve_operator_discovery(
 
     from tools.qualify_chrome_indexeddb import _extension_id
 
-    from .live_preflight_batched import verify_external_review
+    from .live_preflight_batched import recheck_external_review, verify_external_review
 
     verify_receipt(receipt, "OPERATOR_DISCOVERY")
     scope = discovery_review_scope(
@@ -129,7 +131,20 @@ async def serve_operator_discovery(
         profile_name,
         review.get("scope", {}).get("expires_at", ""),
     )
-    verify_external_review(review, scope, receipt.intent.root, datetime.now(UTC))
+    if verified_review is None:
+        verified_review = await asyncio.to_thread(
+            verify_external_review, review, scope, receipt.intent.root, datetime.now(UTC)
+        )
+    else:
+        await asyncio.to_thread(
+            recheck_external_review,
+            verified_review,
+            review,
+            scope,
+            receipt.intent.root,
+            datetime.now(UTC),
+        )
+    verify_receipt(receipt, "OPERATOR_DISCOVERY")
     # Claim only after actual tool review. An accepted capture profile is not required.
     claim_receipt(receipt, "OPERATOR_DISCOVERY")
     path = private_path(str(output.relative_to(receipt.intent.root)), root=receipt.intent.root)
@@ -147,11 +162,21 @@ async def serve_operator_discovery(
     result: dict[str, Any] = {"status": "NOT_OBSERVED", "profile_accepted": False}
     claimed = False
 
-    def current() -> None:
+    async def current() -> None:
         verify_receipt(receipt, "OPERATOR_DISCOVERY")
         if time.monotonic() >= deadline:
             raise ValueError("E_DISCOVERY_EXPIRED")
-        verify_external_review(review, scope, receipt.intent.root, datetime.now(UTC))
+        await asyncio.to_thread(
+            recheck_external_review,
+            verified_review,
+            review,
+            scope,
+            receipt.intent.root,
+            datetime.now(UTC),
+        )
+        verify_receipt(receipt, "OPERATOR_DISCOVERY")
+        if time.monotonic() >= deadline:
+            raise ValueError("E_DISCOVERY_EXPIRED")
 
     async def exchange(ws: Any) -> None:
         nonlocal claimed, result
@@ -162,7 +187,7 @@ async def serve_operator_discovery(
         nonce = secrets.token_hex(32)
         try:
             async with asyncio.timeout(max(0.001, deadline - time.monotonic())):
-                current()
+                await current()
                 await ws.send(json.dumps({"run_id": receipt.run_id, "nonce": nonce}))
                 auth = parse_strict_json((await asyncio.wait_for(ws.recv(), 5)).encode())
                 if (
@@ -173,7 +198,7 @@ async def serve_operator_discovery(
                     )
                 ):
                     raise ValueError("E_DISCOVERY_AUTH")
-                current()
+                await current()
                 plan = dict(
                     exactUrl=scope["exact_url"],
                     sourceKind="OBSERVED_REAL",
@@ -204,7 +229,7 @@ async def serve_operator_discovery(
                     raise ValueError("E_DISCOVERY_SAMPLE_MAC")
                 sample = parse_strict_json(frame["payload"].encode())
                 validate_discovery_sample(sample, plan)
-                current()
+                await current()
                 candidate = dict(
                     status="UNADMITTED_SAMPLE",
                     profile_accepted=False,

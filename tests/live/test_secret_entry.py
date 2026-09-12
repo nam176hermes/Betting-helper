@@ -79,6 +79,35 @@ def test_launcher_missing_owner_does_not_read_key(monkeypatch: Any, capsys: Any)
     assert "REQUEST_ATTEMPTS: 0" in output
 
 
+def test_live_full_verification_precedes_confirmation_and_dispatch(monkeypatch: Any) -> None:
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    from moj_discovery import live_intent, live_preflight_batched
+    from tools import run_live_readonly
+
+    calls = []
+    proof = object()
+    monkeypatch.setattr(live_intent, "load_run_intent", lambda *args: SimpleNamespace(public={}))
+    monkeypatch.setattr(
+        live_preflight_batched, "load_evidence", lambda config: calls.append("full") or proof
+    )
+    monkeypatch.setattr(
+        live_preflight_batched,
+        "evaluate_live_readiness",
+        lambda *args: SimpleNamespace(live_read_only_ready=True),
+    )
+    monkeypatch.setattr(
+        run_live_readonly,
+        "run_live_session",
+        lambda *args, **kwargs: calls.append(kwargs["verified_evidence"]),
+    )
+    _, _, dispatch = launcher._load_action("live-readonly", SimpleNamespace(), Path("TEST_ONLY"))
+    assert calls == ["full"]
+    dispatch(None, None, None)
+    assert calls == ["full", proof]
+
+
 def test_declined_confirmation_zero_requests(monkeypatch: Any, capsys: Any) -> None:
     calls = []
     intent = type(

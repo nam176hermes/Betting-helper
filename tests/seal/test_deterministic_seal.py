@@ -141,21 +141,19 @@ def test_descendant_seal_verifies_from_closed_copy_without_original_roots(
         if path.is_file()
     }
     before.update({path: (path.read_bytes(), path.stat().st_mtime_ns) for path in paths})
-    seal, compute = sealing.seal_review_pack, governing.compute_governed_content_root
+    write_zip, compute = sealing._write_zip, governing.compute_governed_content_root
     observed = []
 
-    def temporary_seal(rebuilt: Path, *args: Any, **kwargs: Any) -> Any:
+    def temporary_zip(rebuilt: Path, target: Path) -> None:
         assert rebuilt != closed and not rebuilt.is_relative_to(closed)
-        assert kwargs["artifacts"].physical_root == rebuilt / "evidence/retained"
-        assert kwargs["config"].source_path == chain["config"].source_path
         observed.append(rebuilt)
-        return seal(rebuilt, *args, **kwargs)
+        write_zip(rebuilt, target)
 
     def temporary_root(rebuilt: Path, *args: Any) -> Any:
         assert rebuilt != closed and not rebuilt.is_relative_to(closed)
         return compute(rebuilt, *args)
 
-    monkeypatch.setattr(sealing, "seal_review_pack", temporary_seal)
+    monkeypatch.setattr(sealing, "_write_zip", temporary_zip)
     monkeypatch.setattr(governing, "compute_governed_content_root", temporary_root)
     assert _verify_current(chain, closed, paths) == attestation
     assert observed

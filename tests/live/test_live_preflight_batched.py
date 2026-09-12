@@ -57,6 +57,8 @@ def test_pure_verified_snapshot_scope_and_expiry() -> None:
         LiveConfig(mutation, config.sha256), verified, True
     ).live_read_only_ready
     assert not evaluate_live_readiness(config, verified, False).live_read_only_ready
+    unknown = evaluate_live_readiness(config, verified, None)
+    assert not unknown.live_read_only_ready and unknown.key_status == "NOT_CHECKED"
     with pytest.raises(ValueError):
         evaluate_live_readiness(config, verified, 1)  # type: ignore[arg-type]
 
@@ -91,6 +93,58 @@ def test_missing_and_symlink_evidence_is_pending_without_io(
     assert set(gate.REQUIRED.values()) <= set(result.missing_inputs)
 
 
+def test_review_reuse_rehashes_bytes_scope_clock_and_revocation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import hashlib
+    import time
+
+    from tools import issue_review_launch_authorization as launch
+
+    evidence = tmp_path / "TEST_ONLY.json"
+    evidence.write_bytes(b'{"value":1}')
+    stamp = evidence.stat()
+    context = {"snapshots": {str(evidence): hashlib.sha256(evidence.read_bytes()).hexdigest()}}
+    bundle, scope = {"authorization": {}}, {"TEST_ONLY": True}
+    now = datetime.now(UTC)
+    verified = gate._VerifiedExternalReview(
+        gate.digest({"bundle": bundle, "scope": scope}),
+        tmp_path,
+        context,
+        {},
+        "test-trust",
+        now + timedelta(minutes=1),
+        time.monotonic() + 60,
+        gate._SEAL,
+        os.getpid(),
+    )
+    monkeypatch.setattr(gate, "_host_trust_binding", lambda root: "test-trust")
+    monkeypatch.setattr(launch, "validate_review_authority_state", lambda *args: None)
+    gate.recheck_external_review(verified, bundle, scope, tmp_path, now)
+    for changed in (
+        replace(verified, _proof=None),
+        replace(verified, _pid=-1),
+        replace(verified, deadline_mono=time.monotonic() - 1),
+    ):
+        with pytest.raises(ValueError):
+            gate.recheck_external_review(changed, bundle, scope, tmp_path, now)
+    with pytest.raises(ValueError):
+        gate.recheck_external_review(verified, bundle, {"TEST_ONLY": False}, tmp_path, now)
+    evidence.write_bytes(b'{"value":2}')
+    os.utime(evidence, ns=(stamp.st_atime_ns, stamp.st_mtime_ns))
+    with pytest.raises(ValueError):
+        gate.recheck_external_review(verified, bundle, scope, tmp_path, now)
+    evidence.write_bytes(b'{"value":1}')
+
+    def revoked(*args: object) -> None:
+        raise ValueError("TEST_ONLY_REVOKED")
+
+    monkeypatch.setattr(launch, "validate_review_authority_state", revoked)
+    with pytest.raises(ValueError, match="REVOKED"):
+        gate.recheck_external_review(verified, bundle, scope, tmp_path, now)
+
+
 def test_provider_scope_allows_gate_publication_but_not_poll_or_quota_drift() -> None:
     config = load_live_config(Path("config/live-batched.example.json"))
     raw = config.public
@@ -115,7 +169,7 @@ def test_readonly_cli_reports_pending_without_credential_lookup(
     assert main(["--config", "config/live-batched.example.json"]) == 2
     result = json.loads(capsys.readouterr().out)
     assert result["live_read_only_ready"] is False
-    assert result["key_status"] == "NOT_PRESENT"
+    assert result["key_status"] == "NOT_CHECKED"
     assert result["model_enabled"] is False and result["money_ready"] is False
 
 
@@ -172,10 +226,14 @@ def test_admission_composition_pins_receiver_and_streams_in_synthetic_seam(
         config_binding=gate.digest(raw),
     )
     # This seam exercises composition only; it does not mint or verify an external receipt.
-    monkeypatch.setattr(gate, "load_evidence", lambda _config: index)
+    monkeypatch.setattr(
+        gate, "load_evidence", lambda _config: pytest.fail("full verify after consent")
+    )
+    monkeypatch.setattr(gate, "recheck_live_evidence", lambda _config, _index: None)
     monkeypatch.setattr(gate, "ROOT", tmp_path)
     monkeypatch.setattr(gate, "_host_trust_binding", lambda _root: "")
-    admitted = gate.admit_live_run(config, receipt)
+    monkeypatch.setattr(gate, "_check_live_review_authority", lambda _index: None)
+    admitted = gate.admit_live_run(config, receipt, verified=index)
     context: dict[str, Any] = dict(
         run_id=admitted.run_id,
         allowed_extension_origin=admitted.extension_origin,
