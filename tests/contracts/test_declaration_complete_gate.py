@@ -18,8 +18,8 @@ def test_materialized_contracts_valid_gate_passes() -> None:
     assert receipt["gate"] == "MATERIALIZED_CONTRACTS_VALID"
     assert receipt["result"] == "PASS"
     assert receipt["task_count"] == 62
-    # W00 inventory plus three explicit verification-repair source/test entries.
-    assert receipt["artifact_count"] == 1236
+    # Prior inventory (1236) plus eight declared scoped-review artifacts.
+    assert receipt["artifact_count"] == 1244
     assert receipt["command_count"] == 222
     assert receipt["schema_reference_count"] == 13
     assert receipt["authorized_production_phases"] == "NONE"
