@@ -281,8 +281,13 @@ def test_broker_stops_running_leaf_on_forward_wall_clock_jump(
     assert time.monotonic() - started < 2
 
 
-@pytest.mark.parametrize("version", [1, 2, 3])
-def test_real_namespace_attests_broker_after_preparer_exit(tmp_path: Path, version: int) -> None:
+@pytest.mark.parametrize(
+    "version, projection_delay, lease_seconds",
+    [(1, 0, 15), (2, 0, 15), (3, 0, 15), (3, 6, 15), (3, 6, 3)],
+)
+def test_real_namespace_attests_broker_after_preparer_exit(
+    tmp_path: Path, version: int, projection_delay: int, lease_seconds: int
+) -> None:
     """Real bwrap/peer/IPC; isolated test commands confer no host review authority."""
     config_root = tmp_path / "review-config"
     config_root.mkdir()
@@ -326,7 +331,7 @@ def test_real_namespace_attests_broker_after_preparer_exit(tmp_path: Path, versi
         "authorization_id": "REVIEW-LAUNCH:" + "a" * 64,
         "review_run_id": "11111111-1111-4111-8111-111111111111",
         "command_registry_sha256": sha256(registry.read_bytes()).hexdigest(),
-        "expires_at": (datetime.now(UTC) + timedelta(seconds=15)).isoformat(),
+        "expires_at": (datetime.now(UTC) + timedelta(seconds=lease_seconds)).isoformat(),
     }
     if version == 3:
         config = review_workspace.resolve_review_run(config, authorization["review_run_id"])
@@ -345,6 +350,7 @@ w.RUNTIME_ROOT=fixture
 w._registered_leaf_commands=lambda *_: []
 w._prepared_python_environment=lambda _: Path(sys.prefix)
 def actual_bwrap(_config, command, **_kwargs):
+    __import__("time").sleep(int(sys.argv[4]))
     argv=['/usr/bin/bwrap','--unshare-user','--unshare-pid','--unshare-net',
           '--unshare-ipc','--unshare-uts','--new-session','--cap-drop','ALL','--clearenv']
     for root in dict.fromkeys(['/usr','/lib','/lib64',str(runtime),sys.base_prefix]):
@@ -364,7 +370,8 @@ w.subprocess.Popen=logged_popen
 print(json.dumps(w._start_namespace(config,authorization)))
 """
     prepared = subprocess.run(  # noqa: S603 - local isolated regression, fixed helper
-        [sys.executable, "-c", setup, str(tmp_path), json.dumps(authorization), str(version)],
+        [sys.executable, "-c", setup, str(tmp_path), json.dumps(authorization),
+         str(version), str(projection_delay)],
         cwd=RUNTIME_ROOT,
         capture_output=True,
         text=True,
@@ -372,6 +379,10 @@ print(json.dumps(w._start_namespace(config,authorization)))
         check=False,
     )
     endpoint = scratch / "tmp/namespace.sock"
+    if lease_seconds < projection_delay:
+        assert prepared.returncode != 0 and "E_REVIEW_NAMESPACE_START" in prepared.stderr
+        assert not (tmp_path / "startup.stderr").exists(), "Expired lease must not spawn a broker"
+        return
     try:
         assert prepared.returncode == 0, prepared.stderr + (tmp_path / "startup.stderr").read_text()
         state = json.loads(prepared.stdout)

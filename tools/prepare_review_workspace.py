@@ -957,7 +957,7 @@ def _start_namespace(
         ],
         "cwd": str(RUNTIME_ROOT),
     }
-    deadline = min(time.monotonic() + 5, _lease_deadline(authorization["expires_at"]))
+    lease_deadline = _lease_deadline(authorization["expires_at"])
     reader, writer = os.pipe()
     process = None
     sandbox: dict[str, object] | None = None
@@ -965,6 +965,8 @@ def _start_namespace(
     try:
         argv = build_bubblewrap_argv(config, broker, leaf_commands=commands)
         argv[1:1] = ["--info-fd", str(writer)]
+        deadline = min(time.monotonic() + 5, lease_deadline)
+        _remaining(deadline)
         with (control / "broker.stderr").open("xb") as error:
             os.fchmod(error.fileno(), 0o600)
             process = subprocess.Popen(  # noqa: S603 - fixed bwrap and signed registry

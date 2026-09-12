@@ -17,6 +17,15 @@ implemented and locally tested; no real run is claimed. PB-23 release/report
 and PB-24 performance-blind manifest code are implemented. The current private
 checkpoint records whether final verification has completed on the frozen bytes.
 
+Current namespace startup repair (r18): the five-second broker handshake budget
+starts after dependency projection validation. The signed launch lease remains
+bounded across validation and startup; expiry during validation denies spawning.
+A real-bwrap regression covers both slow validation and expiry during validation.
+The r17 full/mock/platform/P08/P09 and sealed pack remain evidence for commit
+e8e7606 only. Both r17 launches were issued, but preparation A failed before a
+workspace attestation; no independent reviewer started. Current repair evidence:
+`/home/thenam176/betting-helper/authoring-evidence/part-b-namespace-start-r18`.
+
 External gates:
 
 - PB-18 PROVIDER_PROBE_PASS: the user-confirmed exact-fixture run authenticated
