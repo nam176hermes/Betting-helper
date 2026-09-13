@@ -94,7 +94,7 @@ def _symbol(path: Path, symbol: str, *, recorded_suffix: str | None = None) -> b
     except (OSError, SyntaxError) as error:
         raise ValueError("E_EXECUTABLE_REFERENCE") from error
     if tree is None:
-        from tools.prepare_review_workspace import _node_binary
+        from tools.verify_repair_evidence import _resolved_node_executable
 
         # Parse transported source as its recorded language; never execute it.
         script = """
@@ -111,7 +111,7 @@ process.stdout.write(JSON.stringify(names));
 """
         checked = subprocess.run(  # noqa: S603 -- fixed compiler parser; source is stdin data.
             [
-                str(_node_binary()),
+                str(_resolved_node_executable()),
                 "-e",
                 script,
                 str(RUNTIME_ROOT / "extension/node_modules/typescript"),

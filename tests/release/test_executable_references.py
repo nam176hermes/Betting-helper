@@ -298,3 +298,22 @@ def test_typescript_reference_requires_declaration(
     path = tmp_path / "transport.bin"
     path.write_text(source)
     assert _symbol(path, "testSecurityBoundary", recorded_suffix=".ts") is present
+
+
+def test_typescript_reference_uses_projected_node_without_mise(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from shutil import which
+
+    from tools.verify_executable_references import _symbol
+
+    binary = which("node")
+    assert binary is not None
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    (bin_dir / "node").symlink_to(Path(binary).resolve())
+    monkeypatch.setenv("PATH", str(bin_dir))
+    source = tmp_path / "transport.bin"
+    source.write_text("export const testSecurityBoundary = () => {};\n")
+    assert _symbol(source, "testSecurityBoundary", recorded_suffix=".ts")
+    assert not _symbol(source, "missing", recorded_suffix=".ts")

@@ -281,6 +281,11 @@ def test_real_test_only_namespace_preserves_descendant_producer_identity(
             assert forbidden not in mounted_sources
         readonly_probe = (
             "import json,os; from pathlib import Path; "
+            "from shutil import which; from tools.verify_executable_references import _symbol; "
+            "assert which('mise') is None; "
+            "symbol_path = Path('extension/test/security/cdp-reachability.test.ts'); "
+            "assert _symbol(symbol_path, 'testSecurityBoundary'); "
+            "assert not _symbol(symbol_path, 'missing'); "
             "from tools.run_environment_qualification import "
             "environment_live_roots,winpath,localpath,NATIVE; "
             "from tools.run_native_ingestor_qualification import dependency_binding; "

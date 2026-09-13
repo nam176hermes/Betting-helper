@@ -19,7 +19,7 @@ def test_materialized_contracts_valid_gate_passes() -> None:
     assert receipt["result"] == "PASS"
     assert receipt["task_count"] == 62
     # Scoped-review inventory plus the declared namespace-projection test.
-    assert receipt["artifact_count"] == 1245
+    assert receipt["artifact_count"] == 1243
     assert receipt["command_count"] == 222
     assert receipt["schema_reference_count"] == 13
     assert receipt["authorized_production_phases"] == "NONE"

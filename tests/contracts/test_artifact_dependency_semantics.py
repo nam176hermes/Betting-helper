@@ -26,7 +26,7 @@ def test_consumer_cannot_precede_creation_owner() -> None:
     assert validate_artifact_lifecycle(registry, manifest, schema=schema) == {
         "result": "PASS",
         # Scoped-review inventory plus the declared namespace-projection test.
-        "artifact_count": 1245,
+        "artifact_count": 1243,
     }
     changed = copy.deepcopy(registry)
     entry = next(row for row in changed["entries"] if row["creation_owner"] == "V636-P01-T02")

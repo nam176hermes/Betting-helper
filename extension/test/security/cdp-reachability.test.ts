@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import test from "node:test";
@@ -14,13 +14,23 @@ export const testSecurityBoundary = (): void => {
     mutate: "SEC_CDP_REACHABILITY-MUTATE",
   };
   assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
-  for (const [name, source] of [
-    [vectors.deny, "chrome.debugger.sendCommand(target,'Runtime.evaluate',{})"],
-    [vectors.mutate, "chrome.debugger.sendCommand(target,'Network.enable',{maxPostDataSize:1})"],
+  const root = mkdtempSync(resolve(tmpdir(), "sec-cdp-"));
+  mkdirSync(resolve(root, "src/security"), { recursive: true });
+  const broker = resolve(root, "src/security/cdp-broker.ts");
+  const bounded = "{maxTotalBufferSize:33554432,maxResourceBufferSize:2097152,maxPostDataSize:0}";
+  for (const [name, method, parameters, expected] of [
+    [vectors.allow, "Network.enable", bounded, []],
+    [vectors.allow, "Network.disable", "{}", []],
+    [vectors.deny, "Runtime.evaluate", "{}", ["E_CDP_METHOD_DENIED"]],
+    [vectors.deny, "Input.dispatchMouseEvent", "{}", ["E_CDP_DOMAIN_DENIED"]],
+    [vectors.deny, "Page.navigate", "{}", ["E_CDP_METHOD_DENIED"]],
+    [vectors.mutate, "Network.enable", "{maxPostDataSize:1}", ["E_CDP_PARAMETER_MISMATCH"]],
   ] as const) {
-    const root = mkdtempSync(resolve(tmpdir(), "sec-cdp-"));
-    writeFileSync(resolve(root, "fixture.ts"), source);
-    assert.notDeepEqual(verifyCapabilityGraph(root), [], name);
+    writeFileSync(broker, `export const sendLiteralCommand = (authorization: DiscoveryRunAuthorization) => {
+      const selectedTabId = authorization.browser_binding.tab_id;
+      chrome.debugger.sendCommand({tabId:selectedTabId}, ${JSON.stringify(method)}, ${parameters});
+    };`);
+    assert.deepEqual(verifyCapabilityGraph(root), expected, `${name}: ${method}`);
   }
 };
 
