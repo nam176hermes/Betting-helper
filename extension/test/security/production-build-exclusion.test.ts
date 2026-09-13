@@ -3,6 +3,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSyn
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import test from "node:test";
+import { spawnSync } from "node:child_process";
 
 import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
 
@@ -30,6 +31,44 @@ export const testSecurityBoundary = (): void => {
     verifyCapabilityGraph(resolve(root, "extension/src")).includes("E_COMPILED_CHUNK_SET"),
     vectors.mutate,
   );
+
+  const liveScratch = mkdtempSync(resolve(tmpdir(), "live-package-exclusion-"));
+  const environment: NodeJS.ProcessEnv = {PATH: process.env["PATH"], UV_OFFLINE: "1",
+    PYTHONDONTWRITEBYTECODE: "1", HOME: resolve(liveScratch, "home"),
+    UV_CACHE_DIR: resolve(liveScratch, "uv-cache")};
+  if (process.env["UV_PROJECT_ENVIRONMENT"]) environment["UV_PROJECT_ENVIRONMENT"] = process.env["UV_PROJECT_ENVIRONMENT"];
+  const script = `
+import sys
+from pathlib import Path
+from tools.qualify_live_platform import build_live_extension
+from tools.verify_live_package import verify_live_package
+package, _ = build_live_extension(Path(sys.argv[1]))
+assert verify_live_package(package)['result'] == 'PASS'
+def denied(code):
+    try:
+        verify_live_package(package)
+    except ValueError as error:
+        assert str(error) == code, str(error)
+    else:
+        raise AssertionError('TEST_ONLY_PRIVILEGED_PACKAGE_ACCEPTED')
+harness = package / 'src/live/test-harness/privileged.js'
+harness.parent.mkdir()
+harness.write_text('export const TEST_ONLY_privileged = true;')
+denied('E_LIVE_PACKAGE_INVENTORY')
+harness.unlink()
+module = package / 'src/live/background.js'
+original = module.read_text()
+for dependency in ('./test-harness/privileged.js', 'node:fs'):
+    module.write_text(original + '\\nimport "' + dependency + '";\\n')
+    denied('E_LIVE_PACKAGE_IMPORT')
+module.write_text(original)
+assert verify_live_package(package)['result'] == 'PASS'
+print('CURRENT_LIVE_PACKAGE_EXCLUSION_PASS')
+`;
+  const checked = spawnSync("uv", ["run", "--frozen", "--offline", "python", "-B", "-c", script,
+    resolve(liveScratch, "build")], {cwd: process.cwd(), env: environment, encoding: "utf8", timeout: 90000});
+  assert.equal(checked.status, 0, checked.stderr);
+  assert.equal(checked.stdout.trim(), "CURRENT_LIVE_PACKAGE_EXCLUSION_PASS");
 };
 
 void test("production compilation excludes review and harness inputs", testSecurityBoundary);

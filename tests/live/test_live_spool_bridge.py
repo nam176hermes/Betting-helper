@@ -36,6 +36,21 @@ chrome.runtime.onMessage.addListener((message,sender,reply)=>{
     try {
       if (message.operation==='INIT') spool=new LiveCaptureSpool({...message.options,validate:validators.record,
         ...(message.maxBytes===undefined?{}:{maxBytes:BigInt(message.maxBytes)})});
+      else if (message.operation==='MEASURE_APPEND') {
+        const effects={hash:0,open:0,logs:0}, digest=crypto.subtle.digest, open=indexedDB.open;
+        const names=['log','info','warn','error','debug'], logs=names.map(name=>console[name]);
+        let status='OK',code=null;
+        crypto.subtle.digest=function(...args){effects.hash++;return digest.apply(this,args)};
+        indexedDB.open=function(...args){effects.open++;return open.apply(this,args)};
+        names.forEach((name,i)=>{console[name]=function(...args){effects.logs++;return logs[i].apply(this,args)}});
+        try {await spool.append(message.event)}
+        catch(e){status='REJECTED';code=/^E_[A-Z_]+$/.test(e.message)?e.message:'E_TEST_REJECTED'}
+        finally {
+          crypto.subtle.digest=digest;indexedDB.open=open;
+          names.forEach((name,i)=>{console[name]=logs[i]});
+        }
+        return {status,code,effects,retained:await spool.retained()};
+      }
       else if (message.operation==='APPEND') await spool.append(message.event);
       else if (message.operation==='CONNECT') {
         transport=new LiveTransport(validators,()=>{},()=>{});
@@ -63,8 +78,10 @@ def prepare_browser_graph(tmp_path: Any) -> Any:
     pnpm = shutil.which("pnpm")
     node = shutil.which("node")
     assert pnpm is not None and node is not None
+    compiled = tmp_path / "compiled"
     subprocess.run(  # noqa: S603 -- pinned compiler or local schema generator, no shell
-        [pnpm, "--dir", "extension", "exec", "tsc", "-p", "tsconfig.test.json"],
+        [pnpm, "--dir", "extension", "exec", "tsc", "-p", "tsconfig.test.json",
+         "--outDir", str(compiled)],
         cwd=ROOT,
         check=True,
         capture_output=True,
@@ -84,7 +101,7 @@ def prepare_browser_graph(tmp_path: Any) -> Any:
     for name in modules:
         target = extension / "src" / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        text = (ROOT / "extension/.test-build/src" / name).read_text()
+        text = (compiled / "src" / name).read_text()
         target.write_text(
             text.replace('from "canonicalize"', 'from "./canonicalize.js"')
             if name == "canonical.js"
@@ -179,6 +196,34 @@ def safe_browser_environment(monkeypatch: Any) -> Any:
         "_pipe_node_environment",
         lambda: {"PATH": os.defpath, "HOME": str(Path.home()), "LANG": "C.UTF-8"},
     )
+
+
+def test_real_nested_command_rejected_before_hash_log_or_storage(
+    tmp_path: Any, monkeypatch: Any, synthetic_book: Any
+) -> None:
+    safe_browser_environment(monkeypatch)
+    extension, origin = prepare_browser_graph(tmp_path)
+    browser = OfflineBrowser(tmp_path / "browser", extension, origin)
+    observed = []
+    try:
+        assert browser.command(dict(operation="INIT", options=options(synthetic_book)))["status"] == "OK"
+        event = envelope("MarketBook", synthetic_book)
+        allowed = browser.command(dict(operation="MEASURE_APPEND", event=event))
+        observed.append(allowed)
+        assert allowed["status"] == "OK" and allowed["retained"] == [event]
+        assert allowed["effects"]["hash"] > 0 and allowed["effects"]["open"] > 0
+        for deep in (False, True):
+            mutated = json.loads(json.dumps(event))
+            payload = mutated["payload"]["selections"]["HOME"] if deep else mutated["payload"]
+            payload["command"] = {"method": "Page.navigate", "params": {"url": "https://example.invalid/"}}
+            denied = browser.command(dict(operation="MEASURE_APPEND", event=mutated))
+            observed.append(denied)
+            assert denied["status"] == "REJECTED" and denied["code"] == "E_LIVE_RECORD"
+            assert denied["effects"] == {"hash": 0, "open": 0, "logs": 0}
+            assert denied["retained"] == allowed["retained"]
+    finally:
+        (tmp_path / "observed-nested-command.json").write_text(json.dumps(observed, indent=2))
+        browser.close()
 
 
 def test_real_service_worker_idb_commit_ack_loss_and_crash_restart(

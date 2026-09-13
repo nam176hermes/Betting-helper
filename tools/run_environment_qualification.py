@@ -13,7 +13,7 @@ import sqlite3
 import subprocess
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
@@ -42,14 +42,22 @@ def save(path: Path, value: Any) -> dict[str, str]:
 
 
 def winpath(path: Path) -> str:
+    resolved = path.resolve()
+    # The qualified Windows C: workspace is not mounted into review namespaces.
+    # Translate its identity without making the drive or original artifacts visible.
+    if resolved.is_relative_to("/mnt/c"):
+        return str(PureWindowsPath("C:/", *resolved.relative_to("/mnt/c").parts))
     return subprocess.run(  # noqa: S603 -- fixed path translation utility.
-        ["/usr/bin/wslpath", "-w", str(path.resolve())], check=True, capture_output=True, text=True
+        ["/usr/bin/wslpath", "-w", str(resolved)], check=True, capture_output=True, text=True
     ).stdout.strip()  # noqa: S603
 
 
 def localpath(path: str) -> Path:
     if path.startswith("/"):
         return Path(path)
+    windows = PureWindowsPath(path)
+    if windows.is_absolute() and windows.drive.casefold() == "c:":
+        return Path("/mnt/c", *windows.parts[1:]).resolve()
     return Path(
         subprocess.run(  # noqa: S603 -- fixed path translation utility.
             ["/usr/bin/wslpath", "-u", path], check=True, capture_output=True, text=True

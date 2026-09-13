@@ -279,6 +279,12 @@ def test_real_test_only_namespace_preserves_descendant_producer_identity(
         }
         for forbidden in (str(Path.home()), "/mnt/c/Users/thenam", "/home/thenam176/.cache"):
             assert forbidden not in mounted_sources
+        from tools.run_environment_qualification import WINDOWS_PARENT, winpath
+
+        # A retained native workspace is deliberately not mounted in the reviewer.
+        # Its identity must still match the host's drive path, not a namespace UNC alias.
+        native_path = WINDOWS_PARENT / "TEST_ONLY-unmounted-owner" / "input.json"
+        native_translation = winpath(native_path)
         readonly_probe = (
             "import json,os; from pathlib import Path; "
             "from shutil import which; from tools.verify_executable_references import _symbol; "
@@ -294,6 +300,9 @@ def test_real_test_only_namespace_preserves_descendant_producer_identity(
             "assert all(p.exists() for p in environment_live_roots()); "
             "assert localpath(winpath(NATIVE)) == NATIVE; "
             f"assert localpath(winpath(Path({str(ROOT)!r}))) == Path({str(ROOT)!r}); "
+            f"assert not Path({str(native_path)!r}).exists(); "
+            f"assert winpath(Path({str(native_path)!r})) == {native_translation!r}; "
+            f"assert localpath({native_translation!r}) == Path({str(native_path)!r}); "
             "assert not Path('/run/WSL').exists(); "
             "assert 'WSL_INTEROP' not in os.environ; "
             "assert not Path('/proc/sys/fs/binfmt_misc/WSLInterop').exists(); "

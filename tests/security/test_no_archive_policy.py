@@ -1,4 +1,5 @@
 from pathlib import Path
+from shutil import copytree
 
 import pytest
 
@@ -11,6 +12,21 @@ def test_security_boundary(tmp_path: Path) -> None:
         "deny": "SEC_NO_ARCHIVE-DENY",
         "mutate": "SEC_NO_ARCHIVE-MUTATE",
     }
+    root = Path(__file__).resolve().parents[2]
+    validate_runtime_custody_prohibitions(root)
+    copied = tmp_path / "candidate"
+    for relative in ("src", "tools", "extension/src"):
+        copytree(root / relative, copied / relative)
+    validate_runtime_custody_prohibitions(copied)
+    for relative in ("src", "tools", "extension/src"):
+        suffix = ".ts" if relative == "extension/src" else ".py"
+        mutation = copied / relative / ("TEST_ONLY_custody_mutation" + suffix)
+        mutation.write_text("function automatic_archive() {}\n" if suffix == ".ts"
+                            else "def automatic_archive(): pass\n")
+        with pytest.raises(AssertionError) as denied:
+            validate_runtime_custody_prohibitions(copied)
+        assert str(denied.value) == f"E_CUSTODY_PATH_DENIED:{mutation.relative_to(copied)}"
+        mutation.unlink()
     source = tmp_path / "src"
     source.mkdir()
     candidate = source / "receipt.py"

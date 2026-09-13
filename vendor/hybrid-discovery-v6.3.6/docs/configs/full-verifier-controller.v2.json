@@ -4,9 +4,9 @@
   "accepted_authoring_ancestor": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
   "current_checkout_root": "/home/thenam176/betting-helper/part-b-candidate",
   "governed_source_pack": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
-  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23",
+  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24",
   "external_authoring_tests": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
-  "external_authoring_source_sha256": "798713914c5cf5b912fef98252a9f8509de7e75ceceae551e1e76133e03b85a6",
+  "external_authoring_source_sha256": "b23d94a5e8b86a28e565a9e168fda4b7b352b6a29602baa7d7cfdd1d9ad2f9ca",
   "external_authoring_command": {
     "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
     "argv": [
@@ -39,20 +39,20 @@
     "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
   },
   "receipts": {
-    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
-    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/V636-P07-T01.json",
-    "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/V636-P07-T02.json",
-    "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/V636-P07-T03.json",
-    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/CANDIDATE_QUALIFICATION.json",
-    "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+    "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+    "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+    "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json"
   },
   "audited_runtime_ancestor": "7cd7ab14652458608386d940bdc7764910044f6a",
   "qualification_evidence": {
-    "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/full-repair/aggregate.json",
-    "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/full-repair/inventory.json",
-    "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/environment/environment-aggregate.json",
-    "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/environment/inventory.json",
-    "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/V636-P03-T07.json",
-    "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-proof-repair-r23/V636-P04-T04.json"
+    "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+    "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+    "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+    "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+    "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+    "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json"
   }
 }
