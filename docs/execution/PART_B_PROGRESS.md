@@ -457,3 +457,10 @@ New evidence: /home/thenam176/betting-helper/authoring-evidence/part-b-one-ready
 User requested qualification/P08/P09, seal, new launch and prepared A/B workspaces for `56c0c38`. Its R20 full controller stopped at CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT: the Windows owned-process cleanup query exceeded the existing 10-second deadline. A fresh isolated diagnostic passed on unchanged source; this does not replace the failed qualification. Preserve R20 logs and receipts.
 
 The controller requires an unused declared evidence root. The canonical generator now selects `/home/thenam176/betting-helper/authoring-evidence/part-b-qualification-retry-r21`; the requested host destination remains `/home/thenam176/betting-helper/part-b-review-host-r20`. Application/test code, quotas, cleanup deadlines and eight-hour review lifetime are unchanged. New declaration/config bytes require a new local candidate commit and fresh qualification; exact commits and outcomes are recorded in the external R21 checkpoint. No provider/operator/live access or independent judgment is implied.
+
+
+### R22 inventory expectation correction
+
+R21 on `5f4a156` passed supplemental native/Linux/Windows environment capture, then stopped at TEST_V636_P02_T02: two contract tests still expected the old 1244-artifact inventory. The declared namespace-projection test makes the current inventory 1245. Both positive counts now match the reviewed declaration; negative owner/order/unowned/schema-pointer tests remain unchanged. A broad exploratory contracts run reported 30 PASS and 11 intentionally unimplemented future-phase failures; these are not activated or claimed PASS.
+
+Fresh qualification uses `/home/thenam176/betting-helper/authoring-evidence/part-b-qualification-retry-r22`, with the requested `/home/thenam176/betting-helper/part-b-review-host-r20` destination unchanged. Preserve R20/R21 failures and all old receipts. No application behavior or security limit was changed. Current commit/hash/check evidence is external and in the local execution checkpoint.

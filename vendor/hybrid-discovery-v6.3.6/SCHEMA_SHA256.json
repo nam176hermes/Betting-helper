@@ -2,7 +2,7 @@
   "schema_version": "schema-sha256/v1",
   "algorithm": "SHA-256",
   "self_excluded_path": "SCHEMA_SHA256.json",
-  "tree_sha256": "00632cb666375fd81b0f18404b7ecfb358260a1ab3490d9f8a1ab5398dc8c82d",
+  "tree_sha256": "6e24447b28b40abbc69c48b739354787efeb4e7d625ee37d704973f88f8580b1",
   "files": [
     {
       "path": "cdp/browser_protocol.json",
@@ -22,7 +22,7 @@
     {
       "path": "docs/configs/full-verifier-controller.v2.json",
       "size_bytes": 3539,
-      "sha256": "fdffbcca6411e2efebbbaf952bc45bc44c202bc4dc2925970068f6d929ee9095"
+      "sha256": "22c67bb802fd9b16c6264ce8e1c446dd2f9a1c8512fc26ec55f6a4ac80bfc8ac"
     },
     {
       "path": "docs/configs/review-a.v1.json",
@@ -192,7 +192,7 @@
     {
       "path": "docs/registries/artifact-ownership.v1.json",
       "size_bytes": 551959,
-      "sha256": "a3a61d5eb02bc41a35d6e1935bfbe2126773545f3da71a06f6082642c985b89b"
+      "sha256": "d501cec148829d454d33f4550c76218099c5b1cfd5c8006f06046fefc6a2e093"
     },
     {
       "path": "docs/registries/baseline-replay-command-registry.v1.json",
@@ -217,7 +217,7 @@
     {
       "path": "docs/registries/command-io.v1.json",
       "size_bytes": 137888,
-      "sha256": "9f1c09364c10e21060519ec4c3cde429bf370faec77f2bd894509c52c0b05656"
+      "sha256": "91f36fa51e93cedb63ac2a9df6c60a0de6cd41bcda2d7ec26973974431a701b0"
     },
     {
       "path": "docs/registries/config-materialization.v1.json",
@@ -272,7 +272,7 @@
     {
       "path": "docs/registries/proof-coverage-matrix.v1.json",
       "size_bytes": 16008,
-      "sha256": "16b359302e367cf5137a6fea9751e808c00c8fba76cba4e1b04e41dc775e7a57"
+      "sha256": "51d0db12c5740dd8436a96bc999cb1969ef04ac53f419423c707d57de6e65ad9"
     },
     {
       "path": "docs/registries/review-command-registry.v1.json",
@@ -312,7 +312,7 @@
     {
       "path": "docs/registries/task-command-registry.v1.json",
       "size_bytes": 107725,
-      "sha256": "2f7af908baeb6b54962c394a717ad603b2c7bd177717ea2b3210617de09f05c8"
+      "sha256": "7058fea33e36fa3d953c04f2de1ef9e023761aaab772ae69000effd16f34e8ad"
     },
     {
       "path": "docs/registries/verification-topology.v1.json",
@@ -392,7 +392,7 @@
     {
       "path": "docs/tasks/task-manifest.v6.3.6.json",
       "size_bytes": 335923,
-      "sha256": "5336d2aeb156a32a4461443719bb619f8a2b872802514c4c63a58b48a5b6e5fd"
+      "sha256": "2c2ad831f78307cca6ec8b48f1fd7f530a7f8e835d85fc8e43ace660513f42e1"
     },
     {
       "path": "docs/vectors/inherited/clock-coherence-v6.2.json",
