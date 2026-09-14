@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "repomix",
+    ".",
+    "--include",
+    "REVIEW_START_HERE.md,docs/**,review-config/**,registries/**,task-command-registry.json,review-context/*.md,review-context/SOURCE_STATE.json,review-context/original-part-b-plan/**,review-context/authoring/authoring-tools/**,review-context/authoring/authoring-tests/**,review-context/authoring/pack/docs/contracts/**,review-context/authoring/pack/docs/registries/**,review-context/authoring/pack/docs/tasks/**,review-context/authoring/pack/docs/schemas/**,review-context/evidence/latest-audit/DANH_GIA_LIVE_DAU_TIEN_VI.md,review-context/evidence/reviews-r24/**",
+    "--style",
+    "xml",
+    "--parsable-style",
+    "--split-output",
+    "3mb",
+    "--no-git-sort-by-changes",
+    "--output",
+    "review-context/ai-packs/governance.xml"
+  ],
+  "exit": 0,
+  "seconds": 1.4853347929893062,
+  "log": "repomix-governance.log"
+}

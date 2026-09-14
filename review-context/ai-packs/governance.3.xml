@@ -1,0 +1,3388 @@
+<repomix><file_summary>This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+The content has been processed where content has been formatted for parsing in xml style.<purpose>This file contains a packed representation of a subset of the repository&apos;s contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.</purpose><file_format>The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Repository files, each consisting of:
+  - File path as an attribute
+  - Full contents of the file</file_format><usage_guidelines>- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.</usage_guidelines><notes>- Some files may have been excluded based on .gitignore rules and Repomix&apos;s configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: REVIEW_START_HERE.md, docs/**, review-config/**, registries/**, task-command-registry.json, review-context/*.md, review-context/SOURCE_STATE.json, review-context/original-part-b-plan/**, review-context/authoring/authoring-tools/**, review-context/authoring/authoring-tests/**, review-context/authoring/pack/docs/contracts/**, review-context/authoring/pack/docs/registries/**, review-context/authoring/pack/docs/tasks/**, review-context/authoring/pack/docs/schemas/**, review-context/evidence/latest-audit/DANH_GIA_LIVE_DAU_TIEN_VI.md, review-context/evidence/reviews-r24/**
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been formatted for parsing in xml style</notes></file_summary><directory_structure>docs/
+  execution/
+    OFFLINE_AUTORUN_SCOPE.md
+    OFFLINE_HANDOFF.md
+    PART_B_PROGRESS.md
+    PART_B_SCOPE.md
+    PROGRESS.md
+  live/
+    live-admission-review.md
+    mock-handoff.md
+    multimatch-qualification.md
+    operator-capability-report.md
+    PART_B_HANDOFF.md
+    part-a-entry-review.md
+    platform-qualification.md
+    pre-live-security-review.md
+    provider-feasibility.md
+    read-only-qualification.md
+    research-scope.md
+  repairs/
+    baseline-7cd7ab1.md
+    evidence-status.md
+    external-evidence-index.md
+    offline-slice-review.md
+    repair-closure-review.md
+  runbooks/
+    API_FOOTBALL_KEY.md
+    INSTALL_PART_B_VI.md
+    RUN_ONE_MATCH_VI.md
+    START_LIVE_READ_ONLY.md
+registries/
+  offline-cases.json
+review-config/
+  review-a.v1.json
+  review-a.v2.json
+  review-a.v3.json
+  review-aggregation.v1.json
+  review-aggregation.v2.json
+  review-authority.v1.json
+  review-b.v1.json
+  review-b.v2.json
+  review-b.v3.json
+review-context/
+  authoring/
+    authoring-tests/
+      test_artifact_ownership.py
+      test_authority_graph.py
+      test_command_registry_generation.py
+      test_current_authoring_receipt.py
+      test_current_phase_inputs.py
+      test_declaration_gate.py
+      test_descendant_qualification_followup.py
+      test_full_verifier_controller_config.py
+      test_full_verifier_followup_amendment.py
+      test_normative_sync.py
+      test_one_ready_inputs.py
+      test_part_b_review_inputs.py
+      test_review_source_import.py
+      test_successor_migration_receipt.py
+      test_successor_workspace.py
+      test_task_manifest_semantics.py
+      test_v62_source_identity.py
+      test_version_rebinding.py
+    authoring-tools/
+      apply_descendant_qualification_followup.py
+      apply_full_verifier_followup.py
+      build_task_command_registry.py
+      create_successor_workspace.py
+      import_review_sources.py
+      issue_current_authoring_repository_receipt.py
+      issue_declaration_gate.py
+      prepare_one_ready_inputs.py
+      prepare_part_b_review_inputs.py
+      rebind_successor.py
+      sync_normative_bundle.py
+      validate_artifact_ownership.py
+      validate_authority_graph.py
+      validate_current_phase_inputs.py
+      validate_task_manifest.py
+      verify_successor_migration.py
+      verify_v62_source.py
+    pack/
+      docs/
+        contracts/
+          00-sealing-and-attestation.md
+          01-artifact-lifecycle.md
+          02-authority-graph.md
+          02-successor-migration-rebinding.md
+          03-task-exactness.md
+          04-verification-coverage.md
+          05-reviewer-independence.md
+          06-cybersecurity-review.md
+          07-command-and-config-lifecycle.md
+          08-execution-and-ownership.md
+          09-inherited-baseline-qualification.md
+          10-part-b-security-surface.md
+          part-b-one-ready.v1.json
+        registries/
+          artifact-ownership.v1.json
+          baseline-replay-command-registry.v1.json
+          baseline-source-files.v1.json
+          clock-failure-precedence.v1.json
+          clock-vector-coverage.v1.json
+          command-io.v1.json
+          config-materialization.v1.json
+          crash-child-command-registry.v1.json
+          crash-harness-registry.v1.json
+          cybersecurity-attack-matrix.v1.json
+          cybersecurity-command-registry.v1.json
+          delivery-map.v1.json
+          inherited-baseline-qualification.v1.json
+          migration-source.v1.json
+          normative-source-map.v1.json
+          path-registry.v1.json
+          proof-coverage-matrix.v1.json
+          review-command-registry.v1.json
+          reviewer-role-registry.v1.json
+          schema-pointer-normalization.v1.json
+          schema-reference-registry.v1.json
+          seal-exclusions.v1.json
+          seed-artifacts.v1.json
+          source-inputs.v1.json
+          task-command-registry.v1.json
+          verification-topology.v1.json
+          version-rebinding.v1.json
+        schemas/
+          artifact-ownership.schema.json
+          command-registry.schema.json
+          descendant-repository-qualification-receipt.schema.json
+          external-seal-attestation.schema.json
+          full-verifier-controller.schema.json
+          migration-receipt.schema.json
+          proof-coverage.schema.json
+          review-execution-receipt.schema.json
+          review-launch-authorization.schema.json
+          review-result.schema.json
+          self-review-record.schema.json
+          task-card-v6.3.6.schema.json
+        tasks/
+          task-manifest.v6.3.6.json
+  evidence/
+    latest-audit/
+      DANH_GIA_LIVE_DAU_TIEN_VI.md
+    reviews-r24/
+      review-a/
+        ed622e15-194e-4177-9ea0-d2b168e5193a/
+          result.json
+          workspace-attestation.json
+      review-b/
+        cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/
+          result.json
+          workspace-attestation.json
+  original-part-b-plan/
+    assets/
+      config/
+        live-batched.example.json
+      contracts/
+        live_readonly/
+          v1/
+            config.schema.json
+            intent-store.sql
+            live-store.sql
+            operator-profile.schema.json
+            quota-store.sql
+            records.schema.json
+            run-intent.schema.json
+            wire.schema.json
+    reference/
+      request_budget.py
+      test_request_budget.py
+    registries/
+      acceptance-cases.json
+      sources.json
+      tasks.json
+    tasks/
+      PB-00.md
+      PB-01.md
+      PB-02.md
+      PB-03.md
+      PB-04.md
+      PB-05.md
+      PB-06.md
+      PB-07.md
+      PB-08.md
+      PB-09.md
+      PB-10.md
+      PB-11.md
+      PB-12.md
+      PB-13.md
+      PB-14.md
+      PB-15.md
+      PB-16.md
+      PB-17.md
+      PB-18.md
+      PB-19.md
+      PB-20.md
+      PB-21.md
+      PB-22.md
+      PB-23.md
+      PB-24.md
+    validation/
+      validate_plan.py
+    01_SCOPE_AND_MIGRATION.md
+    02_PROVIDER_AND_BUDGET.md
+    03_KEY_GUIDE_VI.md
+    04_LIVE_CONTRACTS.md
+    05_OPERATOR_AND_UI.md
+    06_EVIDENCE_AND_RUNS.md
+    CHANGELOG_FROM_OLD_PART_B.md
+    CODEX_PART_B_AUTORUN_PROMPT.md
+    CODEX_RESUME_PROMPT.md
+    CODEX_REVIEW_PROMPT.md
+    CONTRACT_SEMANTICS.md
+    IMPLEMENTATION_PLAN.md
+    INPUT_PROVENANCE.json
+    MANIFEST_SHA256.json
+    PLAN_VALIDATION.md
+    plan-manifest.json
+    README_VI.md
+    SELF_REVIEW.md
+    SOURCES.md
+    validation-result.json
+  AI_REVIEW_PROMPT.md
+  LOCAL_CHECKS.md
+  README.md
+  SOURCE_STATE.json
+REVIEW_START_HERE.md
+task-command-registry.json</directory_structure><files>This section contains the contents of the repository&apos;s files.<file path="task-command-registry.json">{
+  &quot;schema_version&quot;: &quot;command-registry/v1&quot;,
+  &quot;commands&quot;: [
+    {
+      &quot;command_id&quot;: &quot;BOOT0_CREATE_WORKSPACE&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;bootstrap/create_authoring_workspace.py&quot;,
+        &quot;--plan-root&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+        &quot;--authoring-root&quot;,
+        &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Create exact authoring workspace&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;DECLARED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BOOT0_EXTRACT_PLAN&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;-c&quot;,
+        &quot;\&quot;\&quot;\&quot;This exact stdlib source is also frozen inline in BOOT0_EXTRACT_PLAN argv.\&quot;\&quot;\&quot;\nfrom pathlib import Path, PurePosixPath\nimport argparse\nimport hashlib\nimport json\nimport stat\nimport unicodedata\nimport zipfile\n\ndef extract(archive, destination, sidecar):\n    archive, destination, sidecar = Path(archive), Path(destination), Path(sidecar)\n    for path in [archive, destination, sidecar]:\n        if any(p.is_symlink() for p in [path, *path.parents]):\n            raise ValueError(&apos;E_BOOT0_SYMLINK&apos;)\n    if destination.exists():\n        raise ValueError(&apos;E_BOOT0_DESTINATION_EXISTS&apos;)\n    side = sidecar.read_text().split()\n    if len(side) != 2 or side[1] != archive.name or hashlib.sha256(archive.read_bytes()).hexdigest() != side[0]:\n        raise ValueError(&apos;E_BOOT0_SIDECAR&apos;)\n    expected_root = &apos;hybrid-discovery-v6.3.6-authoritative-design-plan&apos;\n    with zipfile.ZipFile(archive) as z:\n        infos = z.infolist()\n        if not infos or len(infos) &gt; 4096 or sum(i.file_size for i in infos) &gt; 64 * 1024 * 1024:\n            raise ValueError(&apos;E_BOOT0_ARCHIVE_LIMIT&apos;)\n        payload = {}\n        for i in infos:\n            n = PurePosixPath(i.filename)\n            if (n.is_absolute() or n.as_posix() != i.filename or len(n.parts) &lt; 2 or\n                    n.parts[0] != expected_root or any(x in {&apos;&apos;, &apos;.&apos;, &apos;..&apos;, &apos;.git&apos;, &apos;.env&apos;} for x in n.parts) or\n                    &apos;\\\\&apos; in i.filename or any(ord(x) &lt; 32 or ord(x) == 127 for x in i.filename) or\n                    unicodedata.normalize(&apos;NFC&apos;, i.filename) != i.filename or\n                    i.is_dir() or stat.S_IFMT(i.external_attr &gt;&gt; 16) not in {0, stat.S_IFREG} or\n                    i.flag_bits &amp; 1):\n                raise ValueError(&apos;E_BOOT0_ARCHIVE_PATH&apos;)\n            rel = &apos;/&apos;.join(n.parts[1:])\n            if rel in payload:\n                raise ValueError(&apos;E_BOOT0_DUPLICATE&apos;)\n            payload[rel] = z.read(i)\n        rows = json.loads(payload[&apos;MANIFEST_SHA256.json&apos;])[&apos;entries&apos;]\n        names = [r[&apos;path&apos;] for r in rows]\n        if len(names) != len(set(names)) or set(payload) != set(names) | {&apos;MANIFEST_SHA256.json&apos;}:\n            raise ValueError(&apos;E_BOOT0_MANIFEST_FILE_SET&apos;)\n        for r in rows:\n            b = payload[r[&apos;path&apos;]]\n            if len(b) != r[&apos;size&apos;] or hashlib.sha256(b).hexdigest() != r[&apos;sha256&apos;]:\n                raise ValueError(&apos;E_BOOT0_MANIFEST_BYTES&apos;)\n        destination.mkdir(parents=True, exist_ok=False)\n        for name, b in payload.items():\n            f = destination / name\n            f.parent.mkdir(parents=True, exist_ok=True)\n            with f.open(&apos;xb&apos;) as stream:\n                stream.write(b)\n            f.chmod(0o644)\n\nif __name__ == &apos;__main__&apos;:\n    parser = argparse.ArgumentParser()\n    parser.add_argument(&apos;--zip&apos;, required=True)\n    parser.add_argument(&apos;--destination&apos;, required=True)\n    parser.add_argument(&apos;--sidecar&apos;, required=True)\n    a = parser.parse_args()\n    extract(a.zip, a.destination, a.sidecar)\n&quot;,
+        &quot;--zip&quot;,
+        &quot;/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip&quot;,
+        &quot;--sidecar&quot;,
+        &quot;/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip.sha256&quot;,
+        &quot;--destination&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;
+      ],
+      &quot;purpose&quot;: &quot;BOOT0_EXTRACT_PLAN&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;bootstrap&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BOOT0_INIT_AUTHORING_REPO&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan/bootstrap/initialize_authoring_repository.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Initialize authoring Git repository&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;DECLARED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BOOT0_VERIFY_EXTRACTED&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;bootstrap/verify_extracted_plan.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Verify extracted plan manifest&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;DECLARED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BOOT0_VERIFY_SIDECAR&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;sha256sum&quot;,
+        &quot;-c&quot;,
+        &quot;hybrid-discovery-v6.3.6-authoritative-design-plan.zip.sha256&quot;
+      ],
+      &quot;purpose&quot;: &quot;Verify plan ZIP from sidecar&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;DECLARED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;COMPILE_V636_P04_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.test.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Compile TypeScript for V636-P04-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_01_BEFORE_EXTENSION_ACK_TRANSACTION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_02_DURING_EXTENSION_ACK_TRANSACTION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-02-DURING-EXTENSION-ACK-TRANSACTION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-02-DURING-EXTENSION-ACK-TRANSACTION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_03_AFTER_EXTENSION_ACK_TRANSACTION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-03-AFTER-EXTENSION-ACK-TRANSACTION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-03-AFTER-EXTENSION-ACK-TRANSACTION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_04_BEFORE_BACKEND_CONFIRMATION_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_05_AFTER_BACKEND_CONFIRMATION_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_ACK_06_DUPLICATE_IDENTICAL&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;ACK-06-DUPLICATE-IDENTICAL&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector ACK-06-DUPLICATE-IDENTICAL&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_CAPACITY_01_NORMAL_LIMIT_REACHED&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;CAPACITY-01-NORMAL-LIMIT-REACHED&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector CAPACITY-01-NORMAL-LIMIT-REACHED&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_CLOCK_01_AFTER_MAPPING_CLOSURE_INSERT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_CLOCK_02_AFTER_CLOSURE_COMMIT_BEFORE_SHOCK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_CONFLICT_01_SAME_POSITION_DIFFERENT_HASH&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;CONFLICT-01-SAME-POSITION-DIFFERENT-HASH&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector CONFLICT-01-SAME-POSITION-DIFFERENT-HASH&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_01A_AFTER_CONSUMPTION_BEFORE_INTENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_01_BEFORE_AUTHORITY&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-01-BEFORE-AUTHORITY&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-01-BEFORE-AUTHORITY&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_02_AFTER_INTENT_BEFORE_DELETION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-02-AFTER-INTENT-BEFORE-DELETION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-02-AFTER-INTENT-BEFORE-DELETION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_03_AFTER_EXTENSION_DELETION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-03-AFTER-EXTENSION-DELETION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-03-AFTER-EXTENSION-DELETION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_04_AFTER_BACKEND_DELETION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-04-AFTER-BACKEND-DELETION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-04-AFTER-BACKEND-DELETION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_05_AFTER_BOTH_DELETIONS_BEFORE_PROOF&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_DESTROY_06_AFTER_PROOF&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/destruction_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;DESTROY-06-AFTER-PROOF&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector DESTROY-06-AFTER-PROOF&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_EPOCH_01_AFTER_SHOCK_BEFORE_CLOSE_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_EPOCH_02_AFTER_SHOCK_CLOSE_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_EPOCH_03_AFTER_PENDING_WRITES_BEFORE_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_EPOCH_04_DURING_NEW_EPOCH_OPEN_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_EPOCH_05_NEW_SHOCK_WHILE_PENDING&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;EPOCH-05-NEW-SHOCK-WHILE-PENDING&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector EPOCH-05-NEW-SHOCK-WHILE-PENDING&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_01_AFTER_GAP_INSERT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-01-AFTER-GAP-INSERT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-01-AFTER-GAP-INSERT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_02_AFTER_SHOCK_INSERT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-02-AFTER-SHOCK-INSERT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-02-AFTER-SHOCK-INSERT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_03_AFTER_COHERENCE_TRANSITION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-03-AFTER-COHERENCE-TRANSITION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-03-AFTER-COHERENCE-TRANSITION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_04_AFTER_CONTROLLER_CLOSE&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-04-AFTER-CONTROLLER-CLOSE&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-04-AFTER-CONTROLLER-CLOSE&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_05_AFTER_EPOCH_BINDING&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-05-AFTER-EPOCH-BINDING&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-05-AFTER-EPOCH-BINDING&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_06_AFTER_PREDECESSOR_CLOSE&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-06-AFTER-PREDECESSOR-CLOSE&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-06-AFTER-PREDECESSOR-CLOSE&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_07_AFTER_GENERATION_TRANSITION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-07-AFTER-GENERATION-TRANSITION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-07-AFTER-GENERATION-TRANSITION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_08_AFTER_SUCCESSOR_INSERT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-08-AFTER-SUCCESSOR-INSERT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-08-AFTER-SUCCESSOR-INSERT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_09_DURING_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-09-DURING-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-09-DURING-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_10_AFTER_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-10-AFTER-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-10-AFTER-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_GAP_11_REPEATED_GAP_IN_SUCCESSOR&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;GAP-11-REPEATED-GAP-IN-SUCCESSOR&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector GAP-11-REPEATED-GAP-IN-SUCCESSOR&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_IDB_01_BEFORE_TRANSACTION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;extension/.test-build/test-harness/indexeddb-crash-child.js&quot;,
+        &quot;--vector-id&quot;,
+        &quot;IDB-01-BEFORE-TRANSACTION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector IDB-01-BEFORE-TRANSACTION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_IDB_02_DURING_SEQUENCE_ALLOCATION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;extension/.test-build/test-harness/indexeddb-crash-child.js&quot;,
+        &quot;--vector-id&quot;,
+        &quot;IDB-02-DURING-SEQUENCE-ALLOCATION&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector IDB-02-DURING-SEQUENCE-ALLOCATION&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_IDB_03_DURING_ROW_PUT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;extension/.test-build/test-harness/indexeddb-crash-child.js&quot;,
+        &quot;--vector-id&quot;,
+        &quot;IDB-03-DURING-ROW-PUT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector IDB-03-DURING-ROW-PUT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_IDB_04_AFTER_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;extension/.test-build/test-harness/indexeddb-crash-child.js&quot;,
+        &quot;--vector-id&quot;,
+        &quot;IDB-04-AFTER-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector IDB-04-AFTER-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_LATE_01_MISSING_POSITION_AFTER_GAP&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/gap_coherence_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;LATE-01-MISSING-POSITION-AFTER-GAP&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector LATE-01-MISSING-POSITION-AFTER-GAP&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SEND_01_AFTER_SEND_BEFORE_BACKEND_BEGIN&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/loopback_ack_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_01_AFTER_RAW_COMMIT_STATEMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-01-AFTER-RAW-COMMIT-STATEMENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-01-AFTER-RAW-COMMIT-STATEMENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_02_AFTER_APPLICATION_STATEMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-02-AFTER-APPLICATION-STATEMENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-02-AFTER-APPLICATION-STATEMENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_03_AFTER_DERIVED_REVISION_STATEMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-03-AFTER-DERIVED-REVISION-STATEMENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-03-AFTER-DERIVED-REVISION-STATEMENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_04_AFTER_REDUCER_CURSOR_STATEMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-04-AFTER-REDUCER-CURSOR-STATEMENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-04-AFTER-REDUCER-CURSOR-STATEMENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_05_AFTER_ACK_OUTBOX_STATEMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-05-AFTER-ACK-OUTBOX-STATEMENT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-05-AFTER-ACK-OUTBOX-STATEMENT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_06_DURING_COMMIT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-06-DURING-COMMIT&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-06-DURING-COMMIT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CRASH_VECTOR_SQL_07_AFTER_COMMIT_BEFORE_ACK_SEND&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/sqlite_crash_child.py&quot;,
+        &quot;--vector-id&quot;,
+        &quot;SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute exact inherited crash vector SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;crash-child&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;FINALIZE_A_V636_P10_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/finalize_review.py&quot;,
+        &quot;--authorization&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json&quot;,
+        &quot;--result&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P10-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;FINALIZE_B_V636_P10_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/finalize_review.py&quot;,
+        &quot;--authorization&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json&quot;,
+        &quot;--result&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P10-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;ISSUE_V636_P00_T05&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/issue_declaration_gate.py&quot;,
+        &quot;--tasks&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--ownership&quot;,
+        &quot;pack/docs/registries/artifact-ownership.v1.json&quot;,
+        &quot;--commands&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--output&quot;,
+        &quot;pack/docs/receipts/declaration-complete.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Issue declaration-complete receipt&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_TS_V636_P04_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;extension/.test-build/test/clock/clock-vectors.test.js&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact TypeScript test for V636-P04-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_runtime_layout.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_declared_stubs.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_normative_artifacts.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_harness_entrypoints.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T05&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_review_release_tools.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T05&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P01_T06&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/materialization/test_materialization_gate.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P01-T06&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P02_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/contracts/test_task_manifest_semantics.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P02-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P02_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/contracts/test_artifact_dependency_semantics.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P02-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P02_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/contracts/test_declaration_complete_gate.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P02-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_crash_registry.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_chrome_indexeddb_environment.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_indexeddb_process_crash.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_loopback_ack_process_crash.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T05&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_sqlite_process_crash.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T05&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T06&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/durability/test_gap_generation_process_crash.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P03-T06&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P03_T07&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/run_full_repair_qualification.py&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--aggregate&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json&quot;,
+        &quot;--inventory&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json&quot;,
+        &quot;--proof&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute and retain the exact 111-control and 105-mutation qualification campaign&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P04_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/clock/test_failure_precedence_registry.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P04-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P04_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/clock/test_python_clock_vectors.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P04-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P04_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/verify_full_repair_qualification.py&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--aggregate&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json&quot;,
+        &quot;--inventory&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Verify the 65 clock records from the exact immutable P03 aggregate&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/exactness/test_task_symbols.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/coverage/test_proof_coverage_matrix.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/security/test_cybersecurity_command_registry.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_launch_authorization.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T05&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_workspace_isolation.py&quot;,
+        &quot;tests/review/test_descendant_namespace_projection.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T05&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T06&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_a_runner.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T06&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T07&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_b_runner.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T07&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P05_T08&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_aggregation_and_self_review.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P05-T08&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P06_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/release/test_executable_references.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P06-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P06_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/release/test_verification_topology.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P06-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_V636_P06_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/release/test_executable_complete_gate.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact tests for V636-P06-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_REVIEW_AUTHORITY_BOOTSTRAP&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/review/test_review_authority_bootstrap.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Verify external host review-authority custody and trust-root contract&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/verify_v62_source.py&quot;,
+        &quot;--config&quot;,
+        &quot;pack/docs/registries/migration-source.v1.json&quot;,
+        &quot;--source-inventory&quot;,
+        &quot;pack/docs/registries/baseline-source-files.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/create_successor_workspace.py&quot;,
+        &quot;--config&quot;,
+        &quot;pack/docs/registries/path-registry.v1.json&quot;,
+        &quot;--source-inventory&quot;,
+        &quot;pack/docs/registries/baseline-source-files.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/rebind_successor.py&quot;,
+        &quot;--registry&quot;,
+        &quot;pack/docs/registries/version-rebinding.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/sync_normative_bundle.py&quot;,
+        &quot;--source&quot;,
+        &quot;pack/docs&quot;,
+        &quot;--mapping&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--destination&quot;,
+        &quot;runtime/vendor/hybrid-discovery-v6.3.6&quot;,
+        &quot;--lock&quot;,
+        &quot;runtime/schema-lock.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T05&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/build_task_command_registry.py&quot;,
+        &quot;--tasks&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--output&quot;,
+        &quot;runtime/task-command-registry.json&quot;,
+        &quot;--source-registry&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--review-config-source&quot;,
+        &quot;pack/docs/configs&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T05&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_MIG0_T06&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/verify_successor_migration.py&quot;,
+        &quot;--registry&quot;,
+        &quot;pack/docs/registries/version-rebinding.v1.json&quot;,
+        &quot;--receipt&quot;,
+        &quot;pack/docs/receipts/migration-receipt.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-MIG0-T06&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P00_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/import_review_sources.py&quot;,
+        &quot;--config&quot;,
+        &quot;pack/docs/registries/source-inputs.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P00-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P00_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/validate_authority_graph.py&quot;,
+        &quot;--executable&quot;,
+        &quot;pack/docs/graphs/executable-discovery-graph.v1.json&quot;,
+        &quot;--future&quot;,
+        &quot;pack/docs/graphs/non-authoritative-future-roadmap.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P00-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P00_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/validate_task_manifest.py&quot;,
+        &quot;--manifest&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--schema&quot;,
+        &quot;pack/docs/schemas/task-card-v6.3.6.schema.json&quot;,
+        &quot;--commands&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--ownership&quot;,
+        &quot;pack/docs/registries/artifact-ownership.v1.json&quot;,
+        &quot;--vectors&quot;,
+        &quot;pack/docs/vectors/plan-contract-negative.v1.json&quot;,
+        &quot;--review-commands&quot;,
+        &quot;pack/docs/registries/review-command-registry.v1.json&quot;,
+        &quot;--security-commands&quot;,
+        &quot;pack/docs/registries/cybersecurity-command-registry.v1.json&quot;,
+        &quot;--command-io&quot;,
+        &quot;pack/docs/registries/command-io.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P00-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P00_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/validate_artifact_ownership.py&quot;,
+        &quot;--registry&quot;,
+        &quot;pack/docs/registries/artifact-ownership.v1.json&quot;,
+        &quot;--tasks&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--commands&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--review-commands&quot;,
+        &quot;pack/docs/registries/review-command-registry.v1.json&quot;,
+        &quot;--security-commands&quot;,
+        &quot;pack/docs/registries/cybersecurity-command-registry.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P00-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P07_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/run_command_registry.py&quot;,
+        &quot;--mode&quot;,
+        &quot;candidate-qualification&quot;,
+        &quot;--registry&quot;,
+        &quot;task-command-registry.json&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P07-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P07_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/verify_proof_coverage.py&quot;,
+        &quot;--matrix&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json&quot;,
+        &quot;--evidence-root&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24&quot;,
+        &quot;--stage&quot;,
+        &quot;CANDIDATE&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P07-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P07_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/build_candidate_qualification_receipt.py&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--source&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--command-evidence&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P07-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P08_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/qualify_descendant_repository.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T01.json&quot;,
+        &quot;--preflight&quot;
+      ],
+      &quot;purpose&quot;: &quot;Preflight the current descendant repository without mutation&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P08_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/qualify_descendant_repository.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--issue&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T02.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Exclusively issue the descendant repository qualification receipt&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P08_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/qualify_descendant_repository.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--check-only&quot;,
+        &quot;--receipt&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T03.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Revalidate the descendant receipt without writing repository state&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P09_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-B&quot;,
+        &quot;tools/assemble_review_pack.py&quot;,
+        &quot;--source&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack&quot;,
+        &quot;--destination&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--retained-manifest&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json&quot;,
+        &quot;--retained-root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P09-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P09_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-B&quot;,
+        &quot;tools/compute_governed_content_root.py&quot;,
+        &quot;--pack&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack&quot;,
+        &quot;--registry&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/registries/seal-exclusions.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P09-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P09_T03&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-B&quot;,
+        &quot;tools/build_self_review.py&quot;,
+        &quot;--governed-root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/GOVERNED_CONTENT_ROOT.json&quot;,
+        &quot;--repository-receipt&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/receipts/descendant-repository-qualification-receipt.json&quot;,
+        &quot;--output-dir&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--recorded-config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--retained-manifest&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json&quot;,
+        &quot;--retained-root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P09-T03&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P09_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-B&quot;,
+        &quot;tools/seal_review_pack.py&quot;,
+        &quot;--pack&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--recorded-config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--retained-manifest&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json&quot;,
+        &quot;--retained-root&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained&quot;,
+        &quot;--zip&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip&quot;,
+        &quot;--sidecar&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256&quot;,
+        &quot;--attestation&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact authoring verifier for V636-P09-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P10_T01&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/issue_review_launch_authorization.py&quot;,
+        &quot;--config&quot;,
+        &quot;review-config/review-a.v2.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P10-T01&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P10_T02&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/issue_review_launch_authorization.py&quot;,
+        &quot;--config&quot;,
+        &quot;review-config/review-b.v2.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P10-T02&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_V636_P10_T04&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;python&quot;,
+        &quot;tools/aggregate_reviews.py&quot;,
+        &quot;--config&quot;,
+        &quot;review-config/review-aggregation.v2.json&quot;,
+        &quot;--review-a&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json&quot;,
+        &quot;--receipt-a&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json&quot;,
+        &quot;--authorization-a&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json&quot;,
+        &quot;--review-b&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json&quot;,
+        &quot;--receipt-b&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json&quot;,
+        &quot;--authorization-b&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-review-host-r24/results/aggregate/result.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Run exact verifier for V636-P10-T04&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BOOT0_PREPARE_INPUT_DIRS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper&quot;,
+      &quot;argv&quot;: [
+        &quot;mkdir&quot;,
+        &quot;-p&quot;,
+        &quot;/home/thenam176/betting-helper/inputs&quot;,
+        &quot;/home/thenam176/betting-helper/plan-input&quot;
+      ],
+      &quot;purpose&quot;: &quot;BOOT0_PREPARE_INPUT_DIRS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;bootstrap&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;PLAN_PREFLIGHT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;plan_tools/check_plan.py&quot;,
+        &quot;--root&quot;,
+        &quot;.&quot;
+      ],
+      &quot;purpose&quot;: &quot;PLAN_PREFLIGHT&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;plan-check&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;PLAN_SCHEMA_TESTS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;-m&quot;,
+        &quot;unittest&quot;,
+        &quot;discover&quot;,
+        &quot;-s&quot;,
+        &quot;plan_tests&quot;,
+        &quot;-v&quot;
+      ],
+      &quot;purpose&quot;: &quot;PLAN_SCHEMA_TESTS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;plan-check&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T07_SYNC&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/sync_normative_bundle.py&quot;,
+        &quot;--source&quot;,
+        &quot;pack/docs&quot;,
+        &quot;--mapping&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--destination&quot;,
+        &quot;runtime/vendor/hybrid-discovery-v6.3.6&quot;,
+        &quot;--lock&quot;,
+        &quot;runtime/schema-lock.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;V636_MIG0_T07_SYNC&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T07_CHECK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/sync_normative_bundle.py&quot;,
+        &quot;--source&quot;,
+        &quot;pack/docs&quot;,
+        &quot;--mapping&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--destination&quot;,
+        &quot;runtime/vendor/hybrid-discovery-v6.3.6&quot;,
+        &quot;--lock&quot;,
+        &quot;runtime/schema-lock.json&quot;,
+        &quot;--check&quot;
+      ],
+      &quot;purpose&quot;: &quot;V636_MIG0_T07_CHECK&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T08_SYNC&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/sync_normative_bundle.py&quot;,
+        &quot;--source&quot;,
+        &quot;pack/docs&quot;,
+        &quot;--mapping&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--destination&quot;,
+        &quot;runtime/vendor/hybrid-discovery-v6.3.6&quot;,
+        &quot;--lock&quot;,
+        &quot;runtime/schema-lock.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;V636_MIG0_T08_SYNC&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T08_CHECK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/sync_normative_bundle.py&quot;,
+        &quot;--source&quot;,
+        &quot;pack/docs&quot;,
+        &quot;--mapping&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--destination&quot;,
+        &quot;runtime/vendor/hybrid-discovery-v6.3.6&quot;,
+        &quot;--lock&quot;,
+        &quot;runtime/schema-lock.json&quot;,
+        &quot;--check&quot;
+      ],
+      &quot;purpose&quot;: &quot;V636_MIG0_T08_CHECK&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_UV_LOCK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;lock&quot;,
+        &quot;--offline&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_UV_LOCK&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_PNPM_LOCK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;install&quot;,
+        &quot;--lockfile-only&quot;,
+        &quot;--offline&quot;,
+        &quot;--ignore-scripts&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_PNPM_LOCK&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_UV_SYNC&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;sync&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_UV_SYNC&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_PNPM_INSTALL&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;install&quot;,
+        &quot;--frozen-lockfile&quot;,
+        &quot;--offline&quot;,
+        &quot;--ignore-scripts&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_PNPM_INSTALL&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;COMPILE_CRASH_HARNESS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.harness.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;COMPILE_CRASH_HARNESS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;COMPILE_ALL_TESTS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.test.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;COMPILE_ALL_TESTS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_RELEASE_TOOLS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/release/test_candidate_command_registry.py&quot;,
+        &quot;tests/release/test_candidate_qualification_receipt.py&quot;,
+        &quot;tests/release/test_full_proof_coverage.py&quot;,
+        &quot;tests/release/test_post_commit_baseline.py&quot;,
+        &quot;tests/release/test_zero_parent_export.py&quot;,
+        &quot;tests/release/test_zero_parent_repository.py&quot;,
+        &quot;tests/seal/test_deterministic_seal.py&quot;,
+        &quot;tests/seal/test_governed_content_root.py&quot;,
+        &quot;tests/seal/test_pack_assembly.py&quot;,
+        &quot;tests/seal/test_self_review_binding.py&quot;,
+        &quot;tests/repairs/test_phase_evidence.py&quot;,
+        &quot;tests/live&quot;
+      ],
+      &quot;purpose&quot;: &quot;TEST_RELEASE_TOOLS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_SECURITY_PY&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/security/test_authorization_trust.py&quot;,
+        &quot;tests/security/test_bubblewrap_isolation.py&quot;,
+        &quot;tests/security/test_canonical_hashing.py&quot;,
+        &quot;tests/security/test_capability_manifest.py&quot;,
+        &quot;tests/security/test_credential_evidence_boundary.py&quot;,
+        &quot;tests/security/test_cybersecurity_command_registry.py&quot;,
+        &quot;tests/security/test_no_archive_policy.py&quot;,
+        &quot;tests/security/test_replay_revocation.py&quot;,
+        &quot;tests/security/test_supply_chain_integrity.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;TEST_SECURITY_PY&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TEST_SECURITY_TS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;--test&quot;,
+        &quot;extension/.test-build/test/security/cdp-reachability.test.js&quot;,
+        &quot;extension/.test-build/test/security/dynamic-dispatch.test.js&quot;,
+        &quot;extension/.test-build/test/security/message-smuggling.test.js&quot;,
+        &quot;extension/.test-build/test/security/outbound-network.test.js&quot;,
+        &quot;extension/.test-build/test/security/production-build-exclusion.test.js&quot;,
+        &quot;extension/.test-build/test/security/target-escape.test.js&quot;
+      ],
+      &quot;purpose&quot;: &quot;TEST_SECURITY_TS&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_UV_SYNC_REFRESH&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;sync&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_UV_SYNC_REFRESH&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;MIG0_PNPM_INSTALL_REFRESH&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;install&quot;,
+        &quot;--frozen-lockfile&quot;,
+        &quot;--offline&quot;,
+        &quot;--ignore-scripts&quot;
+      ],
+      &quot;purpose&quot;: &quot;MIG0_PNPM_INSTALL_REFRESH&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T07_BINDINGS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/build_task_command_registry.py&quot;,
+        &quot;--tasks&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--output&quot;,
+        &quot;runtime/task-command-registry.json&quot;,
+        &quot;--source-registry&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--review-config-source&quot;,
+        &quot;pack/docs/configs&quot;
+      ],
+      &quot;purpose&quot;: &quot;Regenerate MIG0-owned task/config bindings&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;V636_MIG0_T08_BINDINGS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/build_task_command_registry.py&quot;,
+        &quot;--tasks&quot;,
+        &quot;pack/docs/tasks/task-manifest.v6.3.6.json&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/task-command-registry.json&quot;,
+        &quot;--source-registry&quot;,
+        &quot;pack/docs/registries/task-command-registry.v1.json&quot;,
+        &quot;--review-config-source&quot;,
+        &quot;pack/docs/configs&quot;,
+        &quot;--review-config-profile&quot;,
+        &quot;scoped&quot;
+      ],
+      &quot;purpose&quot;: &quot;Regenerate MIG0-owned task/config bindings&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;HOST_REVIEW_AUTHORITY_BOOTSTRAP&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/bootstrap_review_authority.py&quot;,
+        &quot;--config&quot;,
+        &quot;review-config/review-authority.v1.json&quot;,
+        &quot;--initialize-if-absent&quot;
+      ],
+      &quot;purpose&quot;: &quot;Explicit human-only host key/state bootstrap; never candidate replay or automatic task authority&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;SEALED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;external-bootstrap&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;TYPECHECK_MATERIALIZED_TS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.test.json&quot;,
+        &quot;--noEmit&quot;
+      ],
+      &quot;purpose&quot;: &quot;Compile-check every materialized TypeScript source without emitting future build outputs&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.harness.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Rebuild implemented child before Chrome qualification and crash consumers&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;QUALIFY_INHERITED_BOOTSTRAP_PY&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests/bootstrap&quot;
+      ],
+      &quot;expected_exit&quot;: 0,
+      &quot;purpose&quot;: &quot;QUALIFY_INHERITED_BOOTSTRAP_PY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;QUALIFY_INHERITED_BOOTSTRAP_TS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;node&quot;,
+        &quot;--test&quot;,
+        &quot;extension/.test-build/test/bootstrap.test.js&quot;,
+        &quot;extension/.test-build/test/bootstrap/canonical-vectors.test.js&quot;,
+        &quot;extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js&quot;,
+        &quot;extension/.test-build/test/schema-vendor.test.js&quot;,
+        &quot;extension/.test-build/test/security/capability-reachability.bootstrap.test.js&quot;
+      ],
+      &quot;expected_exit&quot;: 0,
+      &quot;purpose&quot;: &quot;QUALIFY_INHERITED_BOOTSTRAP_TS&quot;,
+      &quot;kind&quot;: &quot;verification&quot;,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;QUALIFY_INHERITED_CANONICAL_PY&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;tests-red/test_canonical_hash_red.py&quot;
+      ],
+      &quot;expected_exit&quot;: 0,
+      &quot;purpose&quot;: &quot;QUALIFY_INHERITED_CANONICAL_PY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/verify_normative_bundle.py&quot;,
+        &quot;--pack&quot;,
+        &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack&quot;,
+        &quot;--runtime&quot;,
+        &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;
+      ],
+      &quot;expected_exit&quot;: 0,
+      &quot;purpose&quot;: &quot;QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS&quot;,
+      &quot;kind&quot;: &quot;verification&quot;,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/run_command_registry.py&quot;,
+        &quot;--self-check&quot;
+      ],
+      &quot;expected_exit&quot;: 0,
+      &quot;purpose&quot;: &quot;QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK&quot;,
+      &quot;kind&quot;: &quot;verification&quot;,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_FINAL_MIGRATION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring&quot;,
+      &quot;argv&quot;: [
+        &quot;python3.12&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/verify_successor_migration.py&quot;,
+        &quot;--registry&quot;,
+        &quot;pack/docs/registries/version-rebinding.v1.json&quot;,
+        &quot;--stage&quot;,
+        &quot;final&quot;,
+        &quot;--runtime&quot;,
+        &quot;runtime&quot;,
+        &quot;--ownership&quot;,
+        &quot;pack/docs/registries/artifact-ownership.v1.json&quot;,
+        &quot;--normative-map&quot;,
+        &quot;pack/docs/registries/normative-source-map.v1.json&quot;,
+        &quot;--task-evidence-root&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6&quot;,
+        &quot;--receipt&quot;,
+        &quot;pack/docs/receipts/migration-final-receipt.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Final migration owner, legacy literal and native lock binding validation&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;QUALIFIED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;migration&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;COMPILE_PRODUCTION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;--dir&quot;,
+        &quot;extension&quot;,
+        &quot;exec&quot;,
+        &quot;tsc&quot;,
+        &quot;-p&quot;,
+        &quot;tsconfig.build.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Compile exact src-only production output inventory&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BASELINE_INSTALL_PYTHON&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;sync&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;
+      ],
+      &quot;purpose&quot;: &quot;BASELINE_INSTALL_PYTHON&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;BASELINE_INSTALL_NODE&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;pnpm&quot;,
+        &quot;install&quot;,
+        &quot;--frozen-lockfile&quot;,
+        &quot;--offline&quot;,
+        &quot;--ignore-scripts&quot;
+      ],
+      &quot;purpose&quot;: &quot;BASELINE_INSTALL_NODE&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;ISSUE_CURRENT_AUTHORING_REPOSITORY_RECEIPT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;python3&quot;,
+        &quot;authoring-tools/issue_current_authoring_repository_receipt.py&quot;,
+        &quot;--root&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+        &quot;--output&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json&quot;,
+        &quot;--accepted-ancestor&quot;,
+        &quot;5249e84b57b7bc4d30abc24f41ead64174ab7549&quot;
+      ],
+      &quot;purpose&quot;: &quot;Issue a receipt for the existing clean descendant authoring repository&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VERIFY_EXTERNAL_AUTHORING_SOURCES&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--project&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-I&quot;,
+        &quot;-B&quot;,
+        &quot;-m&quot;,
+        &quot;pytest&quot;,
+        &quot;-q&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests&quot;,
+        &quot;-c&quot;,
+        &quot;/dev/null&quot;,
+        &quot;--confcutdir&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+        &quot;-o&quot;,
+        &quot;cache_dir=/tmp/bh-v636-authoring-tests&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs/plan-input/bootstrap/test_bootstrap_tools.py&quot;
+      ],
+      &quot;purpose&quot;: &quot;Execute the closed exported authoring suite against the governed pack&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;tools/run_environment_qualification.py&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;,
+        &quot;--workspace&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment&quot;,
+        &quot;--aggregate&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json&quot;,
+        &quot;--inventory&quot;,
+        &quot;/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Capture the supplemental environment aggregate and closed retained inventory&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VALIDATE_CURRENT_DECLARATION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/validate_current_phase_inputs.py&quot;,
+        &quot;--mode&quot;,
+        &quot;declaration&quot;,
+        &quot;--runtime&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--contract&quot;,
+        &quot;pack/docs/contracts/part-b-one-ready.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Validate current declaration inputs; preserve historical receipts&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;VALIDATE_CURRENT_DESCENDANT_MIGRATION&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/authoring-part-b-review-inputs&quot;,
+      &quot;argv&quot;: [
+        &quot;/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python&quot;,
+        &quot;-B&quot;,
+        &quot;authoring-tools/validate_current_phase_inputs.py&quot;,
+        &quot;--mode&quot;,
+        &quot;migration&quot;,
+        &quot;--runtime&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+        &quot;--contract&quot;,
+        &quot;pack/docs/contracts/part-b-one-ready.v1.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Validate current migration inputs; preserve historical receipts&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;verification&quot;
+    },
+    {
+      &quot;command_id&quot;: &quot;ISSUE_CURRENT_PHASE_PROOFS&quot;,
+      &quot;cwd&quot;: &quot;/home/thenam176/betting-helper/part-b-candidate&quot;,
+      &quot;argv&quot;: [
+        &quot;uv&quot;,
+        &quot;run&quot;,
+        &quot;--frozen&quot;,
+        &quot;--offline&quot;,
+        &quot;python&quot;,
+        &quot;-m&quot;,
+        &quot;tools.phase_evidence&quot;,
+        &quot;--config&quot;,
+        &quot;/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json&quot;
+      ],
+      &quot;purpose&quot;: &quot;Issue current phase evidence from retained actual registered invocations&quot;,
+      &quot;expected_exit&quot;: 0,
+      &quot;available_at&quot;: &quot;MATERIALIZED&quot;,
+      &quot;network&quot;: &quot;DENY&quot;,
+      &quot;authenticated_operator_access&quot;: &quot;DENY&quot;,
+      &quot;provider_access&quot;: &quot;DENY&quot;,
+      &quot;kind&quot;: &quot;operation&quot;
+    }
+  ]
+}</file></files></repomix>

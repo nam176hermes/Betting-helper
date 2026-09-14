@@ -1,0 +1,87 @@
+[
+  {
+    "path": "authoring-controller-config-worktree/AGENTS.md",
+    "sha256": "667b8868670fce68c348e6667ef2cb9cb1dd702ddaeb1503fcc0ce97f24a9f02",
+    "bytes": 543
+  },
+  {
+    "path": "discovery-runtime-v6.3.6/AGENTS.md",
+    "sha256": "10009b3025d7f07e4aaadddf738ca1fb1d665628f09232f80c4b47332e610280",
+    "bytes": 1817
+  },
+  {
+    "path": "docs/codex/phase3-2026-09-08.md",
+    "sha256": "561aa647b9aee58439e01d7332bb87a68e7ff5213b65b235858da0404bf671f2",
+    "bytes": 25226
+  },
+  {
+    "path": "docs/codex/phase3-evidence/capabilities.json",
+    "sha256": "6ebc05c0be9f232a98cc52433f50b330292789ead8d8042865ad0796399d0539",
+    "bytes": 8656
+  },
+  {
+    "path": "docs/codex/phase3-evidence/complex-control.json",
+    "sha256": "8e00af7228bd804180a1fbb22a3e93ebad59b506ae34bb52c9cd26e9d27bae3d",
+    "bytes": 445
+  },
+  {
+    "path": "docs/codex/phase3-evidence/crossover.json",
+    "sha256": "c839539ea1a94c30fd06d10f043d3ff3750a991aa1d25ad6ee11fcf1a6d896b0",
+    "bytes": 109208
+  },
+  {
+    "path": "docs/codex/phase3-evidence/duplication.json",
+    "sha256": "1133ec304945c6b8b9d68ccce0a4d977cf29a8d20cc47a28bddf6304ee621f67",
+    "bytes": 5127
+  },
+  {
+    "path": "docs/codex/phase3-evidence/executed-harness.txt",
+    "sha256": "912fdc9c9a93a9abe7c8091c8c2bc31877506c1747ba54afd466ed021ee02039",
+    "bytes": 4225
+  },
+  {
+    "path": "docs/codex/phase3-evidence/offline-decomposition.json",
+    "sha256": "d6be0da8292d3dc88ef60e57d0e4001338486240c407f3fd90cac65ddf7cc78b",
+    "bytes": 148000
+  },
+  {
+    "path": "docs/codex/phase3-evidence/phase3a-decision.md",
+    "sha256": "0de56144aa1945858e266cf63c5e10f06873bc1db8ed73ed3cf55c94a81bd663",
+    "bytes": 5225
+  },
+  {
+    "path": "docs/codex/phase3-evidence/validation.json",
+    "sha256": "0738ab87888607cff060664e4a914ec3540bb2053a94a88037619cee704ed6c9",
+    "bytes": 8939
+  },
+  {
+    "path": "docs/codex/workflow.md",
+    "sha256": "3acaf47a656ee17e828772cf1404a22d4fca39f2f5b3f1097a5de124d87e56a1",
+    "bytes": 15883
+  },
+  {
+    "path": "hybrid-discovery-v6.3.6-authoring/AGENTS.md",
+    "sha256": "667b8868670fce68c348e6667ef2cb9cb1dd702ddaeb1503fcc0ce97f24a9f02",
+    "bytes": 543
+  },
+  {
+    "path": "scripts/analyze_codex_context.py",
+    "sha256": "5817f7c59d49bc19ed3e6dc0aadd0c196932628190384ff76a4dfdb32b651554",
+    "bytes": 10639
+  },
+  {
+    "path": "scripts/benchmark_codex.py",
+    "sha256": "dc4404fd6123d2521d2a69c8d514dde7d0b82916375cf99371318e9299542c3b",
+    "bytes": 12650
+  },
+  {
+    "path": "scripts/codex_task.py",
+    "sha256": "505e5d77781cba4bab605dc24cd5e4bd3d8377adb1f35f6578800a272c4485fc",
+    "bytes": 33719
+  },
+  {
+    "path": "scripts/test_codex_task.py",
+    "sha256": "e6fcac0e974b4adf6a47fb2a5b9d21b0a3c4aef776868fb770b378ea6c4076d1",
+    "bytes": 10667
+  }
+]

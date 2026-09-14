@@ -1,0 +1,3056 @@
+{
+  "evaluations": {
+    "B": {
+      "argv": [
+        "/mnt/c/Users/thenam/.codex/bin/wsl/b53f5e5f7452dd19/codex",
+        "exec",
+        "--json",
+        "-s",
+        "workspace-write",
+        "-C",
+        "/tmp/bh-phase3/normal-B",
+        "-m",
+        "gpt-5.6-terra",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "-"
+      ],
+      "case": "normal",
+      "corner": "B",
+      "effort": "medium",
+      "event_sha256": "2f94707f84f919b4a97c0b007e128c86a935d86b2ea830b9181aacc91613e4bc",
+      "exit": 0,
+      "fixture_blobs": {
+        "oracle.py": "776c764e6a29f953c6211ec4f09f38aaa2e200e030537fac03582b94b580528f",
+        "validation.py": "8f257ebed34649e0bf452d09baa9d03d5aa30088c7fc0f0154f12bdd74ac079e"
+      },
+      "helper_sha256": "23a3c5f927826764e0b5d4b3ff7b939618d4c17c0bfca5792f3897060f3043d6",
+      "metrics": {
+        "commands": [
+          "/bin/bash -lc \"pwd && rg -n -i -C 2 'valid_port|betting-helper|phase.?3' /mnt/c/Users/thenam/.codex/memories/MEMORY.md || true && find .. -name AGENTS.md -print && git status --short --branch && git rev-parse HEAD\"",
+          "/bin/bash -lc \"sed -n '1,240p' /mnt/c/Users/thenam/.codex/plugins/cache/ponytail/ponytail/4.9.0/skills/ponytail/SKILL.md && sed -n '1,240p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/codex-engineering-guardrails/1.1.1/skills/code-work/SKILL.md && sed -n '1,240p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/using-superpowers/SKILL.md && rg --files -g '\"'!*oracle.py'\"' -g '\"'!*.pyc'\"' && rg -n -C 3 'valid_port' .\"",
+          "/bin/bash -lc \"sed -n '1,260p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/systematic-debugging/SKILL.md && sed -n '1,260p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/test-driven-development/SKILL.md && sed -n '1,220p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/verification-before-completion/SKILL.md && sed -n '1,200p' /mnt/c/Users/thenam/.codex/plugins/cache/openai-curated-remote/superpowers/6.3.0/skills/references/codex-tools.md && sed -n '1,80p' validation.py && sed -n '1,80p' oracle.py\"",
+          "/bin/bash -lc 'python3 oracle.py'",
+          "/bin/bash -lc 'python3 oracle.py && git diff --check && git diff -- validation.py && git status --short'",
+          "/bin/bash -lc \"find __pycache__ -maxdepth 1 -type f -printf '%f\\\\n' && rmdir __pycache__\"",
+          "/bin/bash -lc 'unlink __pycache__/validation.cpython-312.pyc && rmdir __pycache__ && PYTHONDONTWRITEBYTECODE=1 python3 oracle.py && git diff --check && git status --short'"
+        ],
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "Fixed `valid_port` in `validation.py` to accept only exact integers `1..65535`; booleans and other types reject.\n\nVerified: `PYTHONDONTWRITEBYTECODE=1 python3 oracle.py` and `git diff --check` both pass. `oracle.py` unchanged.\n\n",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 52541,
+        "read_command_invocations": 3,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08056-a332-73c1-ad6f-2b9642d56d23",
+        "spawns": 0,
+        "test_invocations_proxy": 3,
+        "text_and_command_output_bytes": 50947,
+        "tool_calls": 8,
+        "transcript_bytes": 59134,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 360960,
+            "input_tokens": 398804,
+            "output_tokens": 2393,
+            "reasoning_output_tokens": 882
+          }
+        ],
+        "waits": 0
+      },
+      "model": "gpt-5.6-terra",
+      "model_override": "Explicit experimental argv; risk/check plan unchanged",
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "prompt_bytes": 9064,
+      "prompt_sha256": "ab4620cd26bb0443d24c3775d7d6aeeb6748eea559742e14e3cda1b38f5ec08f",
+      "quality": "PASS",
+      "decomposition": {
+        "source": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T05-25-56-01a08056-a332-73c1-ad6f-2b9642d56d23.jsonl",
+        "source_sha256": "e2f6fb50faabe8d8aca0b53db195ee6da73ddbb3b6d74d781ab22025c34ec119",
+        "components": {
+          "model_base_instructions": {
+            "bytes": 17766,
+            "characters": 17730,
+            "lines": 167,
+            "normalized_sha256": "b66a711d3ee15f8284b694b212b5ab0babb9ff71674012c74c0034027135e99f"
+          },
+          "cli_version": "0.153.4",
+          "developer_line_3": {
+            "bytes": 39412,
+            "characters": 39406,
+            "lines": 510,
+            "normalized_sha256": "a8b9ea76c7839543bf6d236a8b6fd761817126f3992e621c6ad696dda4866348"
+          },
+          "skill_section_inclusive": {
+            "bytes": 22219,
+            "characters": 22217,
+            "lines": 266,
+            "normalized_sha256": "a4051cbe8d41fa5ae2ffbb0ddbf02a36aafc335a4e905ffdf59031967b383f9f"
+          },
+          "skill_catalog_subset": {
+            "bytes": 20253,
+            "characters": 20251,
+            "lines": 243,
+            "normalized_sha256": "c7327166eef092d7e9be6b4d48875975ecf1571f421990da868c60dcf94677e6"
+          },
+          "developer_line_4": {
+            "bytes": 2264,
+            "characters": 2264,
+            "lines": 32,
+            "normalized_sha256": "19bffc588595c16d046c8c160005f83cd2cb553a6287e0151613990414d410a1"
+          },
+          "developer_line_5": {
+            "bytes": 271,
+            "characters": 271,
+            "lines": 1,
+            "normalized_sha256": "6ded806e3cdbb35599ecaf8742574bc5274908472b1729090010c404c2151e8e"
+          },
+          "user_line_6": {
+            "bytes": 10931,
+            "characters": 10931,
+            "lines": 177,
+            "normalized_sha256": "5e5f00621d08f5e4f73c45e90c9820899047cc94f6d2beedd77e30910cb4bbc9"
+          },
+          "recommended_plugins_subset": {
+            "bytes": 3038,
+            "characters": 3038,
+            "lines": 48,
+            "normalized_sha256": "1ff3d7d975fd6f783bffb113020275ed6dd6313637edee2b1041f97ce0720592"
+          },
+          "recommended_plugin_count": 45,
+          "machine_agents_subset": {
+            "bytes": 7005,
+            "characters": 7005,
+            "lines": 121,
+            "normalized_sha256": "afefdf7b3fcd3ebc3b7af46d8b3b0b0459f788f80acbfbabccd5d6828ef83575"
+          },
+          "model": "gpt-5.6-terra",
+          "effort": "medium",
+          "developer_line_9": {
+            "bytes": 267,
+            "characters": 267,
+            "lines": 1,
+            "normalized_sha256": "5e61f2e0409be53bd38fddb04d40a30e4d068d0c5096ce7617db5182fa254794"
+          },
+          "developer_line_10": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "ponytail_body_subset": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "user_line_11": {
+            "bytes": 9064,
+            "characters": 9056,
+            "lines": 145,
+            "normalized_sha256": "0ff47a1fea3cc8763e013a2f7ac6ce7964329a7583a57423b511e21a92fe76a8"
+          },
+          "task_prompt": {
+            "bytes": 9064,
+            "characters": 9056,
+            "lines": 145,
+            "normalized_sha256": "0ff47a1fea3cc8763e013a2f7ac6ce7964329a7583a57423b511e21a92fe76a8"
+          },
+          "task_specific_prefix_subset": {
+            "bytes": 306,
+            "characters": 306,
+            "lines": 2,
+            "normalized_sha256": "5e08744473ddb8d6304a36a61b224a10bfd35d24cd171f2b9336ed7eec3f0819"
+          },
+          "frozen_workflow_subset": {
+            "bytes": 8732,
+            "characters": 8724,
+            "lines": 143,
+            "normalized_sha256": "9fe309b769b26e61c3a0c326ac0f08c7a42e88e8eda086992e48c77d1afe3db2"
+          }
+        },
+        "packet_fields": {},
+        "catalog_skill_count": 242,
+        "catalog_skill_names": [
+          "imagegen",
+          "openai-docs",
+          "plugin-creator",
+          "skill-creator",
+          "skill-installer",
+          "adaptyv",
+          "aeon",
+          "agent-reach",
+          "anndata",
+          "arboreto",
+          "astropy",
+          "autoskill",
+          "benchling-integration",
+          "bgpt-paper-search",
+          "biopython",
+          "bioservices",
+          "brandkit",
+          "build-web-apps:frontend-app-builder",
+          "build-web-apps:frontend-testing-debugging",
+          "build-web-apps:react-best-practices",
+          "build-web-apps:shadcn",
+          "build-web-apps:stripe-best-practices",
+          "build-web-apps:supabase-postgres-best-practices",
+          "build-web-data-visualization:data-visualization",
+          "canva:canva-brand-check",
+          "canva:canva-branded-presentation",
+          "canva:canva-bulk-create",
+          "canva:canva-design-feedback",
+          "canva:canva-edit-design",
+          "canva:canva-implement-feedback",
+          "canva:canva-resize-for-social-media",
+          "canva:canva-translate-design",
+          "cellxgene-census",
+          "circleci:chunk",
+          "circleci:circleci-builds",
+          "circleci:circleci-cli",
+          "circleci:circleci-config",
+          "cirq",
+          "citation-management",
+          "clinical-decision-support",
+          "clinical-reports",
+          "cloudflare:agents-sdk",
+          "cloudflare:building-ai-agent-on-cloudflare",
+          "cloudflare:building-mcp-server-on-cloudflare",
+          "cloudflare:cloudflare",
+          "cloudflare:durable-objects",
+          "cloudflare:sandbox-sdk",
+          "cloudflare:web-perf",
+          "cloudflare:workers-best-practices",
+          "cloudflare:wrangler",
+          "cobrapy",
+          "codex-engineering-guardrails:code-verification",
+          "codex-engineering-guardrails:code-work",
+          "codex-usage-and-resets:cuar",
+          "computer-use:computer-use",
+          "consciousness-council",
+          "cybersecurity-skill-library",
+          "dask",
+          "database-lookup",
+          "datamol",
+          "deep-research-work:deep-research",
+          "deepchem",
+          "deeptools",
+          "depmap",
+          "design-taste-frontend",
+          "design-taste-frontend-v1",
+          "dhdna-profiler",
+          "diffdock",
+          "dnanexus-integration",
+          "docx",
+          "ecc-operator-system",
+          "esm",
+          "etetoolkit",
+          "exa-search",
+          "exploratory-data-analysis",
+          "flowio",
+          "fluidsim",
+          "full-output-enforcement",
+          "generate-image",
+          "geniml",
+          "geomaster",
+          "geopandas",
+          "get-available-resources",
+          "gget",
+          "ginkgo-cloud-lab",
+          "glycoengineering",
+          "google-drive:google-docs",
+          "google-drive:google-drive",
+          "google-drive:google-drive-comments",
+          "google-drive:google-sheets",
+          "google-drive:google-slides",
+          "gpt-taste",
+          "gtars",
+          "high-end-visual-design",
+          "histolab",
+          "hugging-science",
+          "hyperframes:gsap",
+          "hyperframes:hyperframes",
+          "hyperframes:hyperframes-cli",
+          "hyperframes:hyperframes-registry",
+          "hyperframes:website-to-hyperframes",
+          "hypogenic",
+          "hypothesis-generation",
+          "image-to-code",
+          "imagegen-frontend-mobile",
+          "imagegen-frontend-web",
+          "imaging-data-commons",
+          "industrial-brutalist-ui",
+          "infographics",
+          "iso-13485-certification",
+          "labarchive-integration",
+          "lamindb",
+          "latchbio-integration",
+          "latex-posters",
+          "latex:latex-compile",
+          "latex:latex-doctor",
+          "latex:texlive-runtime-installer",
+          "literature-review",
+          "markdown-mermaid-writing",
+          "market-research-reports",
+          "markitdown",
+          "matchms",
+          "matlab",
+          "matplotlib",
+          "medchem",
+          "minimalist-ui",
+          "modal",
+          "molecular-dynamics",
+          "molfeat",
+          "networkx",
+          "neurokit2",
+          "neuropixels-analysis",
+          "omero-integration",
+          "open-notebook",
+          "openai-developers:agents-sdk",
+          "openai-developers:build-chatgpt-app",
+          "openai-developers:chatgpt-app-submission",
+          "openai-developers:openai-api-troubleshooting",
+          "openai-developers:openai-platform-api-key",
+          "opentrons-integration",
+          "optimize-for-gpu",
+          "paper-lookup",
+          "paperzilla",
+          "parallel-web",
+          "pathml",
+          "pdf",
+          "pdf",
+          "peer-review",
+          "pennylane",
+          "phylogenetics",
+          "planning-contract",
+          "playwright",
+          "plugin-management:plugin-management",
+          "polars",
+          "polars-bio",
+          "ponytail:ponytail",
+          "ponytail:ponytail-audit",
+          "ponytail:ponytail-debt",
+          "ponytail:ponytail-gain",
+          "ponytail:ponytail-help",
+          "ponytail:ponytail-review",
+          "pptx",
+          "pptx-posters",
+          "primekg",
+          "protocolsio-integration",
+          "pufferlib",
+          "pydeseq2",
+          "pydicom",
+          "pyhealth",
+          "pylabrobot",
+          "pymatgen",
+          "pymc",
+          "pymoo",
+          "pyopenms",
+          "pysam",
+          "pytdc",
+          "pytorch-lightning",
+          "pyzotero",
+          "qiskit",
+          "qutip",
+          "rdkit",
+          "redesign-existing-projects",
+          "repo-researcher",
+          "research-grants",
+          "rowan",
+          "scanpy",
+          "scholar-evaluation",
+          "scientific-brainstorming",
+          "scientific-critical-thinking",
+          "scientific-schematics",
+          "scientific-slides",
+          "scientific-visualization",
+          "scientific-writing",
+          "scikit-bio",
+          "scikit-learn",
+          "scikit-survival",
+          "scvelo",
+          "scvi-tools",
+          "seaborn",
+          "sentry:sentry",
+          "shap",
+          "simpy",
+          "sites:sites-building",
+          "sites:sites-hosting",
+          "stable-baselines3",
+          "statistical-analysis",
+          "statsmodels",
+          "stitch-design-taste",
+          "supabase:supabase",
+          "supabase:supabase-postgres-best-practices",
+          "superpowers:brainstorming",
+          "superpowers:dispatching-parallel-agents",
+          "superpowers:executing-plans",
+          "superpowers:finishing-a-development-branch",
+          "superpowers:receiving-code-review",
+          "superpowers:requesting-code-review",
+          "superpowers:subagent-driven-development",
+          "superpowers:systematic-debugging",
+          "superpowers:test-driven-development",
+          "superpowers:using-git-worktrees",
+          "superpowers:using-superpowers",
+          "superpowers:verification-before-completion",
+          "superpowers:writing-plans",
+          "superpowers:writing-skills",
+          "sympy",
+          "test-android-apps:android-emulator-qa",
+          "test-android-apps:android-performance",
+          "tiledbvcf",
+          "timesfm-forecasting",
+          "torch-geometric",
+          "torchdrug",
+          "transformers",
+          "treatment-plans",
+          "umap-learn",
+          "usfiscaldata",
+          "vaex",
+          "venue-templates",
+          "visualize:visualize",
+          "website-cloner",
+          "what-if-oracle",
+          "xlsx",
+          "zarr-python"
+        ],
+        "model_requests": 10,
+        "request_usage": [
+          {
+            "line": 18,
+            "usage": {
+              "input_tokens": 29073,
+              "cached_input_tokens": 11008,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 381,
+              "reasoning_output_tokens": 200,
+              "total_tokens": 29454
+            }
+          },
+          {
+            "line": 25,
+            "usage": {
+              "input_tokens": 32835,
+              "cached_input_tokens": 28416,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 278,
+              "reasoning_output_tokens": 48,
+              "total_tokens": 33113
+            }
+          },
+          {
+            "line": 34,
+            "usage": {
+              "input_tokens": 36900,
+              "cached_input_tokens": 32512,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 415,
+              "reasoning_output_tokens": 86,
+              "total_tokens": 37315
+            }
+          },
+          {
+            "line": 41,
+            "usage": {
+              "input_tokens": 42051,
+              "cached_input_tokens": 36608,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 174,
+              "reasoning_output_tokens": 116,
+              "total_tokens": 42225
+            }
+          },
+          {
+            "line": 50,
+            "usage": {
+              "input_tokens": 42349,
+              "cached_input_tokens": 41728,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 178,
+              "reasoning_output_tokens": 7,
+              "total_tokens": 42527
+            }
+          },
+          {
+            "line": 57,
+            "usage": {
+              "input_tokens": 42551,
+              "cached_input_tokens": 41728,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 90,
+              "reasoning_output_tokens": 16,
+              "total_tokens": 42641
+            }
+          },
+          {
+            "line": 64,
+            "usage": {
+              "input_tokens": 42765,
+              "cached_input_tokens": 41728,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 366,
+              "reasoning_output_tokens": 272,
+              "total_tokens": 43131
+            }
+          },
+          {
+            "line": 72,
+            "usage": {
+              "input_tokens": 43236,
+              "cached_input_tokens": 41728,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 162,
+              "reasoning_output_tokens": 31,
+              "total_tokens": 43398
+            }
+          },
+          {
+            "line": 79,
+            "usage": {
+              "input_tokens": 43444,
+              "cached_input_tokens": 42752,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 129,
+              "reasoning_output_tokens": 32,
+              "total_tokens": 43573
+            }
+          },
+          {
+            "line": 87,
+            "usage": {
+              "input_tokens": 43600,
+              "cached_input_tokens": 42752,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 220,
+              "reasoning_output_tokens": 74,
+              "total_tokens": 43820
+            }
+          }
+        ],
+        "total_usage": {
+          "input_tokens": 398804,
+          "cached_input_tokens": 360960,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 2393,
+          "reasoning_output_tokens": 882,
+          "uncached_input_tokens": 37844,
+          "cache_hit_ratio": 0.9051062677405443
+        },
+        "model_visible_tool_outputs": [
+          {
+            "line": 20,
+            "bytes": 11860,
+            "characters": 11833,
+            "lines": 125,
+            "normalized_sha256": "6e5842fd3f96cfb090e7097e5b7edb90ae6514b08b1b6c8ac92d5d2c77d528f7",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 27,
+            "bytes": 17404,
+            "characters": 17371,
+            "lines": 288,
+            "normalized_sha256": "1b6f75d3b740436efff197fecb2701fb5e6533d795152aa3d3e3444cf9300c41",
+            "contains_code_work_body": true,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 36,
+            "bytes": 19741,
+            "characters": 19657,
+            "lines": 645,
+            "normalized_sha256": "45e604e5afe1140e6350e297ab2e0b4777c4394f80868b0420fce05f38528fa3",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 43,
+            "bytes": 492,
+            "characters": 492,
+            "lines": 9,
+            "normalized_sha256": "bd447184645c37c99c3d2cf0d8b77e95b6c314f9b46c2b81251f97b2a2875c2d",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 52,
+            "bytes": 50,
+            "characters": 50,
+            "lines": 5,
+            "normalized_sha256": "21cb45e36d8c13c7714f1aa85ae8ca4d77ec98a491288730abe21812881b55a6",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 59,
+            "bytes": 348,
+            "characters": 348,
+            "lines": 14,
+            "normalized_sha256": "757419fc7cd0720f1919f387d905f2c857b0f1d8659dd4648347a93f38060b26",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 65,
+            "bytes": 343,
+            "characters": 343,
+            "lines": 6,
+            "normalized_sha256": "f55cb836934555517954dcc2dad2c9c83454e1ff7709cfdf24c620fbd9849662",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 74,
+            "bytes": 134,
+            "characters": 134,
+            "lines": 6,
+            "normalized_sha256": "9a662e41f3a2a788ec9e178b6ae6ad71ba21796efc172f30006b6b2bd5a88bde",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 81,
+            "bytes": 65,
+            "characters": 65,
+            "lines": 5,
+            "normalized_sha256": "fe73a15dc636a685cb4e368b7b6be377fb3f3ad3fdbf2d526c8877b776d87cbc",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          }
+        ],
+        "visible_tool_output_bytes": 50437,
+        "orchestrator_calls": [
+          {
+            "line": 17,
+            "name": "exec",
+            "bytes": 346,
+            "characters": 346,
+            "lines": 2,
+            "normalized_sha256": "3137a9f46142ed96836e41d6bab42e548d6f7a2fcaa21d8af51c0aa0d0d78edc",
+            "catalog_search": false
+          },
+          {
+            "line": 24,
+            "name": "exec",
+            "bytes": 602,
+            "characters": 602,
+            "lines": 2,
+            "normalized_sha256": "8f981e4a49b128ec02bfa8f2796ee2dc85e6f84bfb56fe258c9291c82c670ab6",
+            "catalog_search": false
+          },
+          {
+            "line": 33,
+            "name": "exec",
+            "bytes": 761,
+            "characters": 761,
+            "lines": 2,
+            "normalized_sha256": "4852d7c08ac13df6e56f54e38da0a9ec75140c6a620e24a3718e5927f9536b1e",
+            "catalog_search": false
+          },
+          {
+            "line": 40,
+            "name": "exec",
+            "bytes": 164,
+            "characters": 164,
+            "lines": 2,
+            "normalized_sha256": "a07cef001a6b78760a1103bccb8473c30d263cd976826a6f9bb94ff6739ec039",
+            "catalog_search": false
+          },
+          {
+            "line": 49,
+            "name": "exec",
+            "bytes": 344,
+            "characters": 344,
+            "lines": 3,
+            "normalized_sha256": "518f93822894f50eb7ec72e26308ebc00c3681d566ce636152b44296f25af818",
+            "catalog_search": false
+          },
+          {
+            "line": 56,
+            "name": "exec",
+            "bytes": 235,
+            "characters": 235,
+            "lines": 2,
+            "normalized_sha256": "4be5cb09a4ecd2257768842e4b1e6023ed59bfc8d6c751262dcf7d16459d5a0a",
+            "catalog_search": false
+          },
+          {
+            "line": 63,
+            "name": "exec",
+            "bytes": 278,
+            "characters": 278,
+            "lines": 2,
+            "normalized_sha256": "5fbc6b6e1638c2b86d3d23ffbed1b0074b123ee2b24b9eba405018877329f201",
+            "catalog_search": false
+          },
+          {
+            "line": 71,
+            "name": "exec",
+            "bytes": 220,
+            "characters": 220,
+            "lines": 2,
+            "normalized_sha256": "e29b5fb24f18cad714c431e2c4b8a22be69fbc4ae95e03e67f2bd7b246808eda",
+            "catalog_search": false
+          },
+          {
+            "line": 78,
+            "name": "exec",
+            "bytes": 302,
+            "characters": 302,
+            "lines": 2,
+            "normalized_sha256": "fd8399237babb9b7d70dd763e20135037243647e959cf3914e532175733551d5",
+            "catalog_search": false
+          }
+        ],
+        "assistant_messages": [
+          {
+            "line": 16,
+            "channel": null,
+            "bytes": 287,
+            "characters": 281,
+            "lines": 1,
+            "normalized_sha256": "1c01f049d975ef6325feecf67c718a1cc8822ed8d88b5a4716068dc452ec3fb1"
+          },
+          {
+            "line": 32,
+            "channel": null,
+            "bytes": 233,
+            "characters": 233,
+            "lines": 1,
+            "normalized_sha256": "9e562f58e7db08786f505053bdbed706abff0cec08ac0c76c0a3ee776798d0fd"
+          },
+          {
+            "line": 48,
+            "channel": null,
+            "bytes": 259,
+            "characters": 255,
+            "lines": 1,
+            "normalized_sha256": "d7ad5d46baa2af56c55ad4b70e5df12ed5fdde0db0d4c92910080060213f1e96"
+          },
+          {
+            "line": 70,
+            "channel": null,
+            "bytes": 232,
+            "characters": 230,
+            "lines": 1,
+            "normalized_sha256": "9f499c28f5d3465483074dfe6a44d11d90cd655c09931ab5c710cba269d51a30"
+          },
+          {
+            "line": 86,
+            "channel": null,
+            "bytes": 468,
+            "characters": 468,
+            "lines": 12,
+            "normalized_sha256": "4408fdccf52a81ce1463778e65077e07c3449bd3c2c59a49ce0e891e295e1aaf"
+          }
+        ],
+        "assistant_message_bytes": 1479,
+        "exact_duplicate_startup_block_hashes": {},
+        "wire_tool_schema_tokens": "NOT AVAILABLE; discovered descriptions are a separate observable subset",
+        "root_and_nested_agents_in_fixture": "ABSENT: disposable Git roots; machine AGENTS is separately present",
+        "attribution": "Bytes/characters/JSON measures overlap where labeled subset. Usage is per response; component token attribution unavailable."
+      }
+    },
+    "C": {
+      "argv": [
+        "/mnt/c/Users/thenam/.codex/bin/wsl/b53f5e5f7452dd19/codex",
+        "exec",
+        "--json",
+        "-s",
+        "workspace-write",
+        "-C",
+        "/tmp/bh-phase3/normal-C",
+        "-m",
+        "gpt-6-astra",
+        "-c",
+        "model_reasoning_effort=\"high\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "-c",
+        "model_verbosity=\"low\"",
+        "-"
+      ],
+      "case": "normal",
+      "corner": "C",
+      "effort": "high",
+      "event_sha256": "c99e67abc3487d751a9e4b845e0650a9d1b96b22e29488e937a889144eb7a4d9",
+      "exit": 0,
+      "fixture_blobs": {
+        "oracle.py": "776c764e6a29f953c6211ec4f09f38aaa2e200e030537fac03582b94b580528f",
+        "validation.py": "8f257ebed34649e0bf452d09baa9d03d5aa30088c7fc0f0154f12bdd74ac079e"
+      },
+      "helper_sha256": "23a3c5f927826764e0b5d4b3ff7b939618d4c17c0bfca5792f3897060f3043d6",
+      "metrics": {
+        "commands": [
+          "/bin/bash -lc \"pwd\nrg --files -g AGENTS.md -g '\"'!**/.git/**'\"' /tmp/bh-phase3 /tmp/AGENTS.md 2>/dev/null\n git status --short\n git diff -- validation.py oracle.py\nsed -n '1,160p' oracle.py\npython3 /home/thenam176/betting-helper/scripts/codex_task.py --help\"",
+          "/bin/bash -lc 'python3 /home/thenam176/betting-helper/scripts/codex_task.py check --help\nfor p in /AGENTS.md /tmp/AGENTS.md /tmp/bh-phase3/AGENTS.md /tmp/bh-phase3/normal-C/AGENTS.md; do if [ -f \"$p\" ]; then head -n 160 \"$p\"; fi; done'",
+          "/bin/bash -lc 'python3 /home/thenam176/betting-helper/scripts/codex_task.py check --state /tmp/bh-phase3/C.state.json oracle'",
+          "/bin/bash -lc \"python3 /home/thenam176/betting-helper/scripts/codex_task.py check --state /tmp/bh-phase3/C.state.json oracle --reason changed_inputs --new-information 'Attempt 0 failed because valid_port accepted booleans and zero. Updated validation.py to require exact int type and range 1..65535.'\ngit diff --check\ngit diff -- validation.py oracle.py\nsha256sum oracle.py\ngit status --short\""
+        ],
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "FINDING: `valid_port` accepted booleans and zero.\nEVIDENCE: Oracle failed before; passed after. Logs: `/tmp/bh-phase3/C.state-oracle-{0,1}.log`.\nACTION: Require exact `int` type and range 1\u201365535; API preserved.\nRESULT: Oracle unchanged; diff check passed.\nOPEN ISSUE: Review remains HOLD; authority NONE. Oracle created `__pycache__/`.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 23009,
+        "read_command_invocations": 2,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08056-be6e-7590-9031-2f282b25c910",
+        "spawns": 0,
+        "test_invocations_proxy": 0,
+        "text_and_command_output_bytes": 5844,
+        "tool_calls": 9,
+        "transcript_bytes": 28817,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 238464,
+            "input_tokens": 263065,
+            "output_tokens": 884,
+            "reasoning_output_tokens": 37
+          }
+        ],
+        "waits": 0
+      },
+      "model": "gpt-6-astra",
+      "model_override": "Explicit experimental argv; risk/check plan unchanged",
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "prompt_bytes": 10786,
+      "prompt_sha256": "a655bb70f0e127764e0f6186cdf0adb5c6e9ba170680fed631e1c6e676db9ec7",
+      "quality": "PASS",
+      "decomposition": {
+        "source": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T05-26-03-01a08056-be6e-7590-9031-2f282b25c910.jsonl",
+        "source_sha256": "0dc93388ef8ebcc1e90cc9d395855cb882505d1e1211895af78e07fce530691f",
+        "components": {
+          "model_base_instructions": {
+            "bytes": 21269,
+            "characters": 21261,
+            "lines": 170,
+            "normalized_sha256": "32c8720853ad9df63d39be1a152a8b9510548c37f866578cdb6f22769ed36c7e"
+          },
+          "cli_version": "0.153.4",
+          "developer_line_3": {
+            "bytes": 39079,
+            "characters": 39073,
+            "lines": 511,
+            "normalized_sha256": "f1e12e1f08a6be31b53f4440879bdce3bf00e3c16ae5bf9b0c74235bc14b8ff7"
+          },
+          "skill_section_inclusive": {
+            "bytes": 22219,
+            "characters": 22217,
+            "lines": 266,
+            "normalized_sha256": "a4051cbe8d41fa5ae2ffbb0ddbf02a36aafc335a4e905ffdf59031967b383f9f"
+          },
+          "skill_catalog_subset": {
+            "bytes": 20253,
+            "characters": 20251,
+            "lines": 243,
+            "normalized_sha256": "c7327166eef092d7e9be6b4d48875975ecf1571f421990da868c60dcf94677e6"
+          },
+          "developer_line_4": {
+            "bytes": 2429,
+            "characters": 2429,
+            "lines": 33,
+            "normalized_sha256": "353baa039968e033b67eee43da85eceb713cf037b2cad044049817a19352eab7"
+          },
+          "developer_line_5": {
+            "bytes": 271,
+            "characters": 271,
+            "lines": 1,
+            "normalized_sha256": "6ded806e3cdbb35599ecaf8742574bc5274908472b1729090010c404c2151e8e"
+          },
+          "user_line_6": {
+            "bytes": 10931,
+            "characters": 10931,
+            "lines": 177,
+            "normalized_sha256": "bde306ebf7f0b6ab1702a665d10b94d128c50454e516a8389aec26514e4f6370"
+          },
+          "recommended_plugins_subset": {
+            "bytes": 3038,
+            "characters": 3038,
+            "lines": 48,
+            "normalized_sha256": "1ff3d7d975fd6f783bffb113020275ed6dd6313637edee2b1041f97ce0720592"
+          },
+          "recommended_plugin_count": 45,
+          "machine_agents_subset": {
+            "bytes": 7005,
+            "characters": 7005,
+            "lines": 121,
+            "normalized_sha256": "afefdf7b3fcd3ebc3b7af46d8b3b0b0459f788f80acbfbabccd5d6828ef83575"
+          },
+          "model": "gpt-6-astra",
+          "effort": "high",
+          "developer_line_9": {
+            "bytes": 267,
+            "characters": 267,
+            "lines": 1,
+            "normalized_sha256": "5e61f2e0409be53bd38fddb04d40a30e4d068d0c5096ce7617db5182fa254794"
+          },
+          "developer_line_10": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "ponytail_body_subset": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "user_line_11": {
+            "bytes": 10786,
+            "characters": 10786,
+            "lines": 124,
+            "normalized_sha256": "23fe90b065212fa89e449f01c99cc4981dc8982696cf843da9970756e1c24e62"
+          },
+          "injected_policy_subset": {
+            "bytes": 847,
+            "characters": 847,
+            "lines": 10,
+            "normalized_sha256": "e20bb6a2ac822b1f5de32a9a3300a4be69fa7d2a8d1b4282a91a857bc2031cbc"
+          },
+          "task_packet_subset": {
+            "bytes": 1158,
+            "characters": 1158,
+            "lines": 1,
+            "normalized_sha256": "3b044af99a2c84ba69da87df17c7170cb2d8cd3952a22393c539b3e91b79e33f"
+          },
+          "helper_capability_skill_subset": {
+            "bytes": 8750,
+            "characters": 8750,
+            "lines": 111,
+            "normalized_sha256": "4e4f2a576ad92a94d2a30f06618d3749d24b92403d043c480189e4b94d14fc77"
+          },
+          "task_prompt": {
+            "bytes": 10786,
+            "characters": 10786,
+            "lines": 124,
+            "normalized_sha256": "23fe90b065212fa89e449f01c99cc4981dc8982696cf843da9970756e1c24e62"
+          },
+          "preloaded_required_skill_subset": {
+            "bytes": 7498,
+            "characters": 7498,
+            "lines": 97,
+            "normalized_sha256": "40cce339fe0fc405c9aaeaca142caa6836903b1f11a871be14e3dc0882606379"
+          }
+        },
+        "packet_fields": {
+          "task": {
+            "bytes": 308,
+            "characters": 308,
+            "lines": 1,
+            "normalized_sha256": "b87f0468215476c232eb1bfc237b6165cb31cae64eacdf1a55d411235a45ab54"
+          },
+          "expected_output": {
+            "bytes": 41,
+            "characters": 41,
+            "lines": 1,
+            "normalized_sha256": "3ebb2466dcb5866721a57d49514dcbd0096259a7cb505ea5ea2a1a988d99858e"
+          },
+          "target": {
+            "bytes": 276,
+            "characters": 276,
+            "lines": 1,
+            "normalized_sha256": "52105a66aa4db40a09401d2f1612c19382602417353913ee81e7555847d70999"
+          },
+          "role": {
+            "bytes": 16,
+            "characters": 16,
+            "lines": 1,
+            "normalized_sha256": "2ad47ffa2c44e63f601770d25d4ca879bf9edef3a1ead64bcf60f905f33496f0"
+          },
+          "authority": {
+            "bytes": 6,
+            "characters": 6,
+            "lines": 1,
+            "normalized_sha256": "c44e6dd700593104019ffce7eeda189212379ba13862b09d70cab34c513210d9"
+          },
+          "required_checks": {
+            "bytes": 60,
+            "characters": 60,
+            "lines": 1,
+            "normalized_sha256": "3103be77e2f3a363d055247a9e91aa43f3e3be13070f93d9343fb8f741bc75e0"
+          },
+          "route": {
+            "bytes": 145,
+            "characters": 145,
+            "lines": 1,
+            "normalized_sha256": "3defd057277ab33106887eca64ba01289367314206f96686140ad36f7966a7c4"
+          },
+          "exit_condition": {
+            "bytes": 38,
+            "characters": 38,
+            "lines": 1,
+            "normalized_sha256": "dcbec2e4b669938e2a12929e64cb5b5e29a16d45a32ac3a149c130943c7c5842"
+          },
+          "constraints": {
+            "bytes": 45,
+            "characters": 45,
+            "lines": 1,
+            "normalized_sha256": "17a4578a26950c1123b04042fdfff4c63e590dfd81d948a057c92f919c986d61"
+          },
+          "known_verified_facts": {
+            "bytes": 79,
+            "characters": 79,
+            "lines": 1,
+            "normalized_sha256": "1ed23e9894ef2060a29cc05b32dbf52bbd2505b7f662e45bf6e23f00e2dc5266"
+          }
+        },
+        "catalog_skill_count": 242,
+        "catalog_skill_names": [
+          "imagegen",
+          "openai-docs",
+          "plugin-creator",
+          "skill-creator",
+          "skill-installer",
+          "adaptyv",
+          "aeon",
+          "agent-reach",
+          "anndata",
+          "arboreto",
+          "astropy",
+          "autoskill",
+          "benchling-integration",
+          "bgpt-paper-search",
+          "biopython",
+          "bioservices",
+          "brandkit",
+          "build-web-apps:frontend-app-builder",
+          "build-web-apps:frontend-testing-debugging",
+          "build-web-apps:react-best-practices",
+          "build-web-apps:shadcn",
+          "build-web-apps:stripe-best-practices",
+          "build-web-apps:supabase-postgres-best-practices",
+          "build-web-data-visualization:data-visualization",
+          "canva:canva-brand-check",
+          "canva:canva-branded-presentation",
+          "canva:canva-bulk-create",
+          "canva:canva-design-feedback",
+          "canva:canva-edit-design",
+          "canva:canva-implement-feedback",
+          "canva:canva-resize-for-social-media",
+          "canva:canva-translate-design",
+          "cellxgene-census",
+          "circleci:chunk",
+          "circleci:circleci-builds",
+          "circleci:circleci-cli",
+          "circleci:circleci-config",
+          "cirq",
+          "citation-management",
+          "clinical-decision-support",
+          "clinical-reports",
+          "cloudflare:agents-sdk",
+          "cloudflare:building-ai-agent-on-cloudflare",
+          "cloudflare:building-mcp-server-on-cloudflare",
+          "cloudflare:cloudflare",
+          "cloudflare:durable-objects",
+          "cloudflare:sandbox-sdk",
+          "cloudflare:web-perf",
+          "cloudflare:workers-best-practices",
+          "cloudflare:wrangler",
+          "cobrapy",
+          "codex-engineering-guardrails:code-verification",
+          "codex-engineering-guardrails:code-work",
+          "codex-usage-and-resets:cuar",
+          "computer-use:computer-use",
+          "consciousness-council",
+          "cybersecurity-skill-library",
+          "dask",
+          "database-lookup",
+          "datamol",
+          "deep-research-work:deep-research",
+          "deepchem",
+          "deeptools",
+          "depmap",
+          "design-taste-frontend",
+          "design-taste-frontend-v1",
+          "dhdna-profiler",
+          "diffdock",
+          "dnanexus-integration",
+          "docx",
+          "ecc-operator-system",
+          "esm",
+          "etetoolkit",
+          "exa-search",
+          "exploratory-data-analysis",
+          "flowio",
+          "fluidsim",
+          "full-output-enforcement",
+          "generate-image",
+          "geniml",
+          "geomaster",
+          "geopandas",
+          "get-available-resources",
+          "gget",
+          "ginkgo-cloud-lab",
+          "glycoengineering",
+          "google-drive:google-docs",
+          "google-drive:google-drive",
+          "google-drive:google-drive-comments",
+          "google-drive:google-sheets",
+          "google-drive:google-slides",
+          "gpt-taste",
+          "gtars",
+          "high-end-visual-design",
+          "histolab",
+          "hugging-science",
+          "hyperframes:gsap",
+          "hyperframes:hyperframes",
+          "hyperframes:hyperframes-cli",
+          "hyperframes:hyperframes-registry",
+          "hyperframes:website-to-hyperframes",
+          "hypogenic",
+          "hypothesis-generation",
+          "image-to-code",
+          "imagegen-frontend-mobile",
+          "imagegen-frontend-web",
+          "imaging-data-commons",
+          "industrial-brutalist-ui",
+          "infographics",
+          "iso-13485-certification",
+          "labarchive-integration",
+          "lamindb",
+          "latchbio-integration",
+          "latex-posters",
+          "latex:latex-compile",
+          "latex:latex-doctor",
+          "latex:texlive-runtime-installer",
+          "literature-review",
+          "markdown-mermaid-writing",
+          "market-research-reports",
+          "markitdown",
+          "matchms",
+          "matlab",
+          "matplotlib",
+          "medchem",
+          "minimalist-ui",
+          "modal",
+          "molecular-dynamics",
+          "molfeat",
+          "networkx",
+          "neurokit2",
+          "neuropixels-analysis",
+          "omero-integration",
+          "open-notebook",
+          "openai-developers:agents-sdk",
+          "openai-developers:build-chatgpt-app",
+          "openai-developers:chatgpt-app-submission",
+          "openai-developers:openai-api-troubleshooting",
+          "openai-developers:openai-platform-api-key",
+          "opentrons-integration",
+          "optimize-for-gpu",
+          "paper-lookup",
+          "paperzilla",
+          "parallel-web",
+          "pathml",
+          "pdf",
+          "pdf",
+          "peer-review",
+          "pennylane",
+          "phylogenetics",
+          "planning-contract",
+          "playwright",
+          "plugin-management:plugin-management",
+          "polars",
+          "polars-bio",
+          "ponytail:ponytail",
+          "ponytail:ponytail-audit",
+          "ponytail:ponytail-debt",
+          "ponytail:ponytail-gain",
+          "ponytail:ponytail-help",
+          "ponytail:ponytail-review",
+          "pptx",
+          "pptx-posters",
+          "primekg",
+          "protocolsio-integration",
+          "pufferlib",
+          "pydeseq2",
+          "pydicom",
+          "pyhealth",
+          "pylabrobot",
+          "pymatgen",
+          "pymc",
+          "pymoo",
+          "pyopenms",
+          "pysam",
+          "pytdc",
+          "pytorch-lightning",
+          "pyzotero",
+          "qiskit",
+          "qutip",
+          "rdkit",
+          "redesign-existing-projects",
+          "repo-researcher",
+          "research-grants",
+          "rowan",
+          "scanpy",
+          "scholar-evaluation",
+          "scientific-brainstorming",
+          "scientific-critical-thinking",
+          "scientific-schematics",
+          "scientific-slides",
+          "scientific-visualization",
+          "scientific-writing",
+          "scikit-bio",
+          "scikit-learn",
+          "scikit-survival",
+          "scvelo",
+          "scvi-tools",
+          "seaborn",
+          "sentry:sentry",
+          "shap",
+          "simpy",
+          "sites:sites-building",
+          "sites:sites-hosting",
+          "stable-baselines3",
+          "statistical-analysis",
+          "statsmodels",
+          "stitch-design-taste",
+          "supabase:supabase",
+          "supabase:supabase-postgres-best-practices",
+          "superpowers:brainstorming",
+          "superpowers:dispatching-parallel-agents",
+          "superpowers:executing-plans",
+          "superpowers:finishing-a-development-branch",
+          "superpowers:receiving-code-review",
+          "superpowers:requesting-code-review",
+          "superpowers:subagent-driven-development",
+          "superpowers:systematic-debugging",
+          "superpowers:test-driven-development",
+          "superpowers:using-git-worktrees",
+          "superpowers:using-superpowers",
+          "superpowers:verification-before-completion",
+          "superpowers:writing-plans",
+          "superpowers:writing-skills",
+          "sympy",
+          "test-android-apps:android-emulator-qa",
+          "test-android-apps:android-performance",
+          "tiledbvcf",
+          "timesfm-forecasting",
+          "torch-geometric",
+          "torchdrug",
+          "transformers",
+          "treatment-plans",
+          "umap-learn",
+          "usfiscaldata",
+          "vaex",
+          "venue-templates",
+          "visualize:visualize",
+          "website-cloner",
+          "what-if-oracle",
+          "xlsx",
+          "zarr-python"
+        ],
+        "model_requests": 8,
+        "request_usage": [
+          {
+            "line": 16,
+            "usage": {
+              "input_tokens": 30268,
+              "cached_input_tokens": 12160,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 101,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 30369
+            }
+          },
+          {
+            "line": 21,
+            "usage": {
+              "input_tokens": 30432,
+              "cached_input_tokens": 30080,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 73,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 30505
+            }
+          },
+          {
+            "line": 26,
+            "usage": {
+              "input_tokens": 32086,
+              "cached_input_tokens": 30208,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 214,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 32300
+            }
+          },
+          {
+            "line": 35,
+            "usage": {
+              "input_tokens": 32943,
+              "cached_input_tokens": 31872,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 145,
+              "reasoning_output_tokens": 37,
+              "total_tokens": 33088
+            }
+          },
+          {
+            "line": 40,
+            "usage": {
+              "input_tokens": 33276,
+              "cached_input_tokens": 32768,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 56,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 33332
+            }
+          },
+          {
+            "line": 45,
+            "usage": {
+              "input_tokens": 34243,
+              "cached_input_tokens": 33152,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 79,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 34322
+            }
+          },
+          {
+            "line": 50,
+            "usage": {
+              "input_tokens": 34346,
+              "cached_input_tokens": 34048,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 121,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 34467
+            }
+          },
+          {
+            "line": 56,
+            "usage": {
+              "input_tokens": 35471,
+              "cached_input_tokens": 34176,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 95,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 35566
+            }
+          }
+        ],
+        "total_usage": {
+          "input_tokens": 263065,
+          "cached_input_tokens": 238464,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 884,
+          "reasoning_output_tokens": 37,
+          "uncached_input_tokens": 24601,
+          "cache_hit_ratio": 0.9064831885655636
+        },
+        "model_visible_tool_outputs": [
+          {
+            "line": 17,
+            "bytes": 184,
+            "characters": 184,
+            "lines": 5,
+            "normalized_sha256": "05d940e9be2551f1c6c427e67fcfaba86f77ba9d8ff330338ebf8d4f6b5c8961",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 23,
+            "bytes": 7048,
+            "characters": 7038,
+            "lines": 6,
+            "normalized_sha256": "bc8acae32e420ba2cc5d9db9d186692b4801dbd87924d909594823e249ee5db1",
+            "contains_code_work_body": false,
+            "contains_serena_manual": true
+          },
+          {
+            "line": 30,
+            "bytes": 2005,
+            "characters": 2005,
+            "lines": 7,
+            "normalized_sha256": "939614b7c9ef536b363aa6e24efc8e3e88edf427e2f6050e5db8d44fab85762c",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 37,
+            "bytes": 749,
+            "characters": 749,
+            "lines": 5,
+            "normalized_sha256": "89e9560e8d49d758923fa75f043149ffa05d69926938d84bcbac9b105911b70b",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 42,
+            "bytes": 2441,
+            "characters": 2441,
+            "lines": 5,
+            "normalized_sha256": "2b7972f9fc6fdeb019f058123f22ced23110f1857f2ab60597ea310f8a404941",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 47,
+            "bytes": 50,
+            "characters": 50,
+            "lines": 5,
+            "normalized_sha256": "21cb45e36d8c13c7714f1aa85ae8ca4d77ec98a491288730abe21812881b55a6",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 52,
+            "bytes": 2601,
+            "characters": 2601,
+            "lines": 5,
+            "normalized_sha256": "619c27c4f5a6405585aef9e41e24a8ed136c6349f2a30403d5fda53453beb3ff",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          }
+        ],
+        "visible_tool_output_bytes": 15078,
+        "orchestrator_calls": [
+          {
+            "line": 15,
+            "name": "exec",
+            "bytes": 188,
+            "characters": 188,
+            "lines": 1,
+            "normalized_sha256": "9e6123b231bd80c1b089c8153b3051cacff68fdc3977e9857cc9191fa1bf686e",
+            "catalog_search": true
+          },
+          {
+            "line": 19,
+            "name": "exec",
+            "bytes": 231,
+            "characters": 231,
+            "lines": 1,
+            "normalized_sha256": "1b4576cbec0dcdd749593ee23e8c406ed142352e54a11026e352c1a3b76983be",
+            "catalog_search": false
+          },
+          {
+            "line": 25,
+            "name": "exec",
+            "bytes": 723,
+            "characters": 723,
+            "lines": 5,
+            "normalized_sha256": "a4af50c3099c7b6a51df328f32125d1be595d00537e8a8e6238e7fe651a1065a",
+            "catalog_search": false
+          },
+          {
+            "line": 34,
+            "name": "exec",
+            "bytes": 289,
+            "characters": 289,
+            "lines": 1,
+            "normalized_sha256": "08772b1bfd1833a9ff6cfacd8b1cf0d7a9ebedd0287ad53800bd569f102f50bf",
+            "catalog_search": false
+          },
+          {
+            "line": 39,
+            "name": "exec",
+            "bytes": 174,
+            "characters": 174,
+            "lines": 1,
+            "normalized_sha256": "49578194a74dc55183ba0a1a551177f2ec6f6fd6b4c577e3548136e2115c8703",
+            "catalog_search": false
+          },
+          {
+            "line": 44,
+            "name": "exec",
+            "bytes": 241,
+            "characters": 241,
+            "lines": 1,
+            "normalized_sha256": "32ffeffefeafca36d1326358ee6a454d3ec10979af735b8d3f8d18e1d45d07d1",
+            "catalog_search": false
+          },
+          {
+            "line": 49,
+            "name": "exec",
+            "bytes": 446,
+            "characters": 446,
+            "lines": 1,
+            "normalized_sha256": "405898a4c93c4f7823330a83d1e76b976520b72db8c207cb389c28d8f7a013a0",
+            "catalog_search": false
+          }
+        ],
+        "assistant_messages": [
+          {
+            "line": 14,
+            "channel": null,
+            "bytes": 148,
+            "characters": 146,
+            "lines": 1,
+            "normalized_sha256": "b60399a13377390ac0788ec98be877e58bc9361ad41c2120eb6fe8530fefba1f"
+          },
+          {
+            "line": 55,
+            "channel": null,
+            "bytes": 338,
+            "characters": 336,
+            "lines": 5,
+            "normalized_sha256": "f3041f78445629bee3d198c02b4e0ad1034c49614b2b43a3159c1307a950f15e"
+          }
+        ],
+        "assistant_message_bytes": 486,
+        "exact_duplicate_startup_block_hashes": {},
+        "wire_tool_schema_tokens": "NOT AVAILABLE; discovered descriptions are a separate observable subset",
+        "root_and_nested_agents_in_fixture": "ABSENT: disposable Git roots; machine AGENTS is separately present",
+        "attribution": "Bytes/characters/JSON measures overlap where labeled subset. Usage is per response; component token attribution unavailable."
+      }
+    },
+    "Dnew": {
+      "argv": [
+        "/mnt/c/Users/thenam/.codex/bin/wsl/b53f5e5f7452dd19/codex",
+        "exec",
+        "--json",
+        "-s",
+        "workspace-write",
+        "-C",
+        "/tmp/bh-phase3/normal-Dnew",
+        "-m",
+        "gpt-5.6-terra",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "-c",
+        "model_verbosity=\"low\"",
+        "-"
+      ],
+      "bytecode_flag": "-B used only to prevent untracked cache files; oracle source/semantics unchanged",
+      "case": "normal",
+      "corner": "Dnew",
+      "effort": "medium",
+      "event_sha256": "46349b610e797cd4ad1e025f2844190a430391915e9b483d94ef77c561980f31",
+      "exit": 0,
+      "fixture_blobs": {
+        "oracle.py": "776c764e6a29f953c6211ec4f09f38aaa2e200e030537fac03582b94b580528f",
+        "validation.py": "8f257ebed34649e0bf452d09baa9d03d5aa30088c7fc0f0154f12bdd74ac079e"
+      },
+      "helper_sha256": "505e5d77781cba4bab605dc24cd5e4bd3d8377adb1f35f6578800a272c4485fc",
+      "metrics": {
+        "commands": [
+          "/bin/bash -lc 'python3 /home/thenam176/betting-helper/scripts/codex_task.py check --state /tmp/bh-phase3/Dnew.state.json oracle'",
+          "/bin/bash -lc 'git diff --check && git diff -- validation.py'"
+        ],
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "FINDING: `bool` passed as `int`; `0` was accepted.\n\nEVIDENCE: Bound oracle initially failed; sole caller inspected.\n\nACTION: Updated `validation.py` to require exact `int` values in `1..65535`.\n\nRESULT: `oracle` passed via required state helper; diff check passed.\n\nOPEN ISSUE: None.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 17782,
+        "read_command_invocations": 0,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a0805e-0f84-7711-8427-e0d4b532595a",
+        "spawns": 0,
+        "test_invocations_proxy": 0,
+        "text_and_command_output_bytes": 949,
+        "tool_calls": 7,
+        "transcript_bytes": 21448,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 236544,
+            "input_tokens": 263981,
+            "output_tokens": 986,
+            "reasoning_output_tokens": 327
+          }
+        ],
+        "waits": 0
+      },
+      "model": "gpt-5.6-terra",
+      "model_override": "Explicit experimental argv; risk/check plan unchanged",
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "preflight_exit": 1,
+      "preflight_invocations": 1,
+      "prompt_bytes": 11862,
+      "prompt_sha256": "6f16f1cd1ebc4cd6c532758de17c784ceaf85ca0974f8fec323a8071e8ee8966",
+      "quality": "PASS",
+      "decomposition": {
+        "source": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T05-34-03-01a0805e-0f84-7711-8427-e0d4b532595a.jsonl",
+        "source_sha256": "b266b9678cd3b69749f83f43ec0514e325d3d4e4669c6cb53fa42c3a37907061",
+        "components": {
+          "model_base_instructions": {
+            "bytes": 17766,
+            "characters": 17730,
+            "lines": 167,
+            "normalized_sha256": "b66a711d3ee15f8284b694b212b5ab0babb9ff71674012c74c0034027135e99f"
+          },
+          "cli_version": "0.153.4",
+          "developer_line_3": {
+            "bytes": 39415,
+            "characters": 39409,
+            "lines": 510,
+            "normalized_sha256": "e874007ade61328034794dd8050a6b076a2699d26930a20cdb8a3312e72576df"
+          },
+          "skill_section_inclusive": {
+            "bytes": 22219,
+            "characters": 22217,
+            "lines": 266,
+            "normalized_sha256": "a4051cbe8d41fa5ae2ffbb0ddbf02a36aafc335a4e905ffdf59031967b383f9f"
+          },
+          "skill_catalog_subset": {
+            "bytes": 20253,
+            "characters": 20251,
+            "lines": 243,
+            "normalized_sha256": "c7327166eef092d7e9be6b4d48875975ecf1571f421990da868c60dcf94677e6"
+          },
+          "developer_line_4": {
+            "bytes": 2264,
+            "characters": 2264,
+            "lines": 32,
+            "normalized_sha256": "19bffc588595c16d046c8c160005f83cd2cb553a6287e0151613990414d410a1"
+          },
+          "developer_line_5": {
+            "bytes": 271,
+            "characters": 271,
+            "lines": 1,
+            "normalized_sha256": "6ded806e3cdbb35599ecaf8742574bc5274908472b1729090010c404c2151e8e"
+          },
+          "user_line_6": {
+            "bytes": 10949,
+            "characters": 10949,
+            "lines": 177,
+            "normalized_sha256": "b5315967c6a7bbb71b0d0240b85b08e68a0bbdc1fe422d8341f237cada55944a"
+          },
+          "recommended_plugins_subset": {
+            "bytes": 3038,
+            "characters": 3038,
+            "lines": 48,
+            "normalized_sha256": "1ff3d7d975fd6f783bffb113020275ed6dd6313637edee2b1041f97ce0720592"
+          },
+          "recommended_plugin_count": 45,
+          "machine_agents_subset": {
+            "bytes": 7005,
+            "characters": 7005,
+            "lines": 121,
+            "normalized_sha256": "afefdf7b3fcd3ebc3b7af46d8b3b0b0459f788f80acbfbabccd5d6828ef83575"
+          },
+          "model": "gpt-5.6-terra",
+          "effort": "medium",
+          "developer_line_9": {
+            "bytes": 267,
+            "characters": 267,
+            "lines": 1,
+            "normalized_sha256": "5e61f2e0409be53bd38fddb04d40a30e4d068d0c5096ce7617db5182fa254794"
+          },
+          "developer_line_10": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "ponytail_body_subset": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "user_line_11": {
+            "bytes": 11862,
+            "characters": 11862,
+            "lines": 126,
+            "normalized_sha256": "f4b054db02829d8897ed5dbea8059940ca9f14e3553cd9c0c4c381c8ed428b42"
+          },
+          "injected_policy_subset": {
+            "bytes": 1051,
+            "characters": 1051,
+            "lines": 12,
+            "normalized_sha256": "d683988d3c0b553c667e5ff302352191fe7c53806f23c99422cfd6f5edfe0ebf"
+          },
+          "task_packet_subset": {
+            "bytes": 1992,
+            "characters": 1992,
+            "lines": 1,
+            "normalized_sha256": "6cf76261102f1060c03c74636ac78e151cf7dafbf8d5762a2d6369cf5379f497"
+          },
+          "helper_capability_skill_subset": {
+            "bytes": 8788,
+            "characters": 8788,
+            "lines": 111,
+            "normalized_sha256": "4fc74b1255be2d17f799e313462200abed8929912522fcb060f218855d29608c"
+          },
+          "task_prompt": {
+            "bytes": 11862,
+            "characters": 11862,
+            "lines": 126,
+            "normalized_sha256": "f4b054db02829d8897ed5dbea8059940ca9f14e3553cd9c0c4c381c8ed428b42"
+          },
+          "preloaded_required_skill_subset": {
+            "bytes": 7498,
+            "characters": 7498,
+            "lines": 97,
+            "normalized_sha256": "40cce339fe0fc405c9aaeaca142caa6836903b1f11a871be14e3dc0882606379"
+          }
+        },
+        "packet_fields": {
+          "task": {
+            "bytes": 308,
+            "characters": 308,
+            "lines": 1,
+            "normalized_sha256": "b87f0468215476c232eb1bfc237b6165cb31cae64eacdf1a55d411235a45ab54"
+          },
+          "expected_output": {
+            "bytes": 41,
+            "characters": 41,
+            "lines": 1,
+            "normalized_sha256": "3ebb2466dcb5866721a57d49514dcbd0096259a7cb505ea5ea2a1a988d99858e"
+          },
+          "target": {
+            "bytes": 404,
+            "characters": 404,
+            "lines": 1,
+            "normalized_sha256": "9acff197d6fd8e011ca33c18a81cdd9ab4b54c4632a4070641234c450ad18281"
+          },
+          "role": {
+            "bytes": 16,
+            "characters": 16,
+            "lines": 1,
+            "normalized_sha256": "2ad47ffa2c44e63f601770d25d4ca879bf9edef3a1ead64bcf60f905f33496f0"
+          },
+          "authority": {
+            "bytes": 6,
+            "characters": 6,
+            "lines": 1,
+            "normalized_sha256": "c44e6dd700593104019ffce7eeda189212379ba13862b09d70cab34c513210d9"
+          },
+          "required_checks": {
+            "bytes": 65,
+            "characters": 65,
+            "lines": 1,
+            "normalized_sha256": "186d4aacd60eb5559266d9df16d3e8f5bba69d22580489929b947dd6b7cc5bc2"
+          },
+          "route": {
+            "bytes": 149,
+            "characters": 149,
+            "lines": 1,
+            "normalized_sha256": "511813699031e63bde2b38cdd31ce1a788430865a3838afa2b3cc52a868f9c58"
+          },
+          "exit_condition": {
+            "bytes": 38,
+            "characters": 38,
+            "lines": 1,
+            "normalized_sha256": "dcbec2e4b669938e2a12929e64cb5b5e29a16d45a32ac3a149c130943c7c5842"
+          },
+          "constraints": {
+            "bytes": 45,
+            "characters": 45,
+            "lines": 1,
+            "normalized_sha256": "17a4578a26950c1123b04042fdfff4c63e590dfd81d948a057c92f919c986d61"
+          },
+          "known_verified_facts": {
+            "bytes": 79,
+            "characters": 79,
+            "lines": 1,
+            "normalized_sha256": "1ed23e9894ef2060a29cc05b32dbf52bbd2505b7f662e45bf6e23f00e2dc5266"
+          },
+          "preflight_checks": {
+            "bytes": 537,
+            "characters": 537,
+            "lines": 1,
+            "normalized_sha256": "a7613d4a71ca73a2aa224b70298e7fe71fa3f53fca404229fd1b8e9e7226d834"
+          },
+          "check_command_prefix": {
+            "bytes": 116,
+            "characters": 116,
+            "lines": 1,
+            "normalized_sha256": "44c051c65b6dddc5c44a98b69bb7dc678f54a12f2793041ecc21351f92308dcc"
+          }
+        },
+        "catalog_skill_count": 242,
+        "catalog_skill_names": [
+          "imagegen",
+          "openai-docs",
+          "plugin-creator",
+          "skill-creator",
+          "skill-installer",
+          "adaptyv",
+          "aeon",
+          "agent-reach",
+          "anndata",
+          "arboreto",
+          "astropy",
+          "autoskill",
+          "benchling-integration",
+          "bgpt-paper-search",
+          "biopython",
+          "bioservices",
+          "brandkit",
+          "build-web-apps:frontend-app-builder",
+          "build-web-apps:frontend-testing-debugging",
+          "build-web-apps:react-best-practices",
+          "build-web-apps:shadcn",
+          "build-web-apps:stripe-best-practices",
+          "build-web-apps:supabase-postgres-best-practices",
+          "build-web-data-visualization:data-visualization",
+          "canva:canva-brand-check",
+          "canva:canva-branded-presentation",
+          "canva:canva-bulk-create",
+          "canva:canva-design-feedback",
+          "canva:canva-edit-design",
+          "canva:canva-implement-feedback",
+          "canva:canva-resize-for-social-media",
+          "canva:canva-translate-design",
+          "cellxgene-census",
+          "circleci:chunk",
+          "circleci:circleci-builds",
+          "circleci:circleci-cli",
+          "circleci:circleci-config",
+          "cirq",
+          "citation-management",
+          "clinical-decision-support",
+          "clinical-reports",
+          "cloudflare:agents-sdk",
+          "cloudflare:building-ai-agent-on-cloudflare",
+          "cloudflare:building-mcp-server-on-cloudflare",
+          "cloudflare:cloudflare",
+          "cloudflare:durable-objects",
+          "cloudflare:sandbox-sdk",
+          "cloudflare:web-perf",
+          "cloudflare:workers-best-practices",
+          "cloudflare:wrangler",
+          "cobrapy",
+          "codex-engineering-guardrails:code-verification",
+          "codex-engineering-guardrails:code-work",
+          "codex-usage-and-resets:cuar",
+          "computer-use:computer-use",
+          "consciousness-council",
+          "cybersecurity-skill-library",
+          "dask",
+          "database-lookup",
+          "datamol",
+          "deep-research-work:deep-research",
+          "deepchem",
+          "deeptools",
+          "depmap",
+          "design-taste-frontend",
+          "design-taste-frontend-v1",
+          "dhdna-profiler",
+          "diffdock",
+          "dnanexus-integration",
+          "docx",
+          "ecc-operator-system",
+          "esm",
+          "etetoolkit",
+          "exa-search",
+          "exploratory-data-analysis",
+          "flowio",
+          "fluidsim",
+          "full-output-enforcement",
+          "generate-image",
+          "geniml",
+          "geomaster",
+          "geopandas",
+          "get-available-resources",
+          "gget",
+          "ginkgo-cloud-lab",
+          "glycoengineering",
+          "google-drive:google-docs",
+          "google-drive:google-drive",
+          "google-drive:google-drive-comments",
+          "google-drive:google-sheets",
+          "google-drive:google-slides",
+          "gpt-taste",
+          "gtars",
+          "high-end-visual-design",
+          "histolab",
+          "hugging-science",
+          "hyperframes:gsap",
+          "hyperframes:hyperframes",
+          "hyperframes:hyperframes-cli",
+          "hyperframes:hyperframes-registry",
+          "hyperframes:website-to-hyperframes",
+          "hypogenic",
+          "hypothesis-generation",
+          "image-to-code",
+          "imagegen-frontend-mobile",
+          "imagegen-frontend-web",
+          "imaging-data-commons",
+          "industrial-brutalist-ui",
+          "infographics",
+          "iso-13485-certification",
+          "labarchive-integration",
+          "lamindb",
+          "latchbio-integration",
+          "latex-posters",
+          "latex:latex-compile",
+          "latex:latex-doctor",
+          "latex:texlive-runtime-installer",
+          "literature-review",
+          "markdown-mermaid-writing",
+          "market-research-reports",
+          "markitdown",
+          "matchms",
+          "matlab",
+          "matplotlib",
+          "medchem",
+          "minimalist-ui",
+          "modal",
+          "molecular-dynamics",
+          "molfeat",
+          "networkx",
+          "neurokit2",
+          "neuropixels-analysis",
+          "omero-integration",
+          "open-notebook",
+          "openai-developers:agents-sdk",
+          "openai-developers:build-chatgpt-app",
+          "openai-developers:chatgpt-app-submission",
+          "openai-developers:openai-api-troubleshooting",
+          "openai-developers:openai-platform-api-key",
+          "opentrons-integration",
+          "optimize-for-gpu",
+          "paper-lookup",
+          "paperzilla",
+          "parallel-web",
+          "pathml",
+          "pdf",
+          "pdf",
+          "peer-review",
+          "pennylane",
+          "phylogenetics",
+          "planning-contract",
+          "playwright",
+          "plugin-management:plugin-management",
+          "polars",
+          "polars-bio",
+          "ponytail:ponytail",
+          "ponytail:ponytail-audit",
+          "ponytail:ponytail-debt",
+          "ponytail:ponytail-gain",
+          "ponytail:ponytail-help",
+          "ponytail:ponytail-review",
+          "pptx",
+          "pptx-posters",
+          "primekg",
+          "protocolsio-integration",
+          "pufferlib",
+          "pydeseq2",
+          "pydicom",
+          "pyhealth",
+          "pylabrobot",
+          "pymatgen",
+          "pymc",
+          "pymoo",
+          "pyopenms",
+          "pysam",
+          "pytdc",
+          "pytorch-lightning",
+          "pyzotero",
+          "qiskit",
+          "qutip",
+          "rdkit",
+          "redesign-existing-projects",
+          "repo-researcher",
+          "research-grants",
+          "rowan",
+          "scanpy",
+          "scholar-evaluation",
+          "scientific-brainstorming",
+          "scientific-critical-thinking",
+          "scientific-schematics",
+          "scientific-slides",
+          "scientific-visualization",
+          "scientific-writing",
+          "scikit-bio",
+          "scikit-learn",
+          "scikit-survival",
+          "scvelo",
+          "scvi-tools",
+          "seaborn",
+          "sentry:sentry",
+          "shap",
+          "simpy",
+          "sites:sites-building",
+          "sites:sites-hosting",
+          "stable-baselines3",
+          "statistical-analysis",
+          "statsmodels",
+          "stitch-design-taste",
+          "supabase:supabase",
+          "supabase:supabase-postgres-best-practices",
+          "superpowers:brainstorming",
+          "superpowers:dispatching-parallel-agents",
+          "superpowers:executing-plans",
+          "superpowers:finishing-a-development-branch",
+          "superpowers:receiving-code-review",
+          "superpowers:requesting-code-review",
+          "superpowers:subagent-driven-development",
+          "superpowers:systematic-debugging",
+          "superpowers:test-driven-development",
+          "superpowers:using-git-worktrees",
+          "superpowers:using-superpowers",
+          "superpowers:verification-before-completion",
+          "superpowers:writing-plans",
+          "superpowers:writing-skills",
+          "sympy",
+          "test-android-apps:android-emulator-qa",
+          "test-android-apps:android-performance",
+          "tiledbvcf",
+          "timesfm-forecasting",
+          "torch-geometric",
+          "torchdrug",
+          "transformers",
+          "treatment-plans",
+          "umap-learn",
+          "usfiscaldata",
+          "vaex",
+          "venue-templates",
+          "visualize:visualize",
+          "website-cloner",
+          "what-if-oracle",
+          "xlsx",
+          "zarr-python"
+        ],
+        "model_requests": 8,
+        "request_usage": [
+          {
+            "line": 18,
+            "usage": {
+              "input_tokens": 29646,
+              "cached_input_tokens": 11008,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 142,
+              "reasoning_output_tokens": 56,
+              "total_tokens": 29788
+            }
+          },
+          {
+            "line": 24,
+            "usage": {
+              "input_tokens": 29829,
+              "cached_input_tokens": 29440,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 79,
+              "reasoning_output_tokens": 16,
+              "total_tokens": 29908
+            }
+          },
+          {
+            "line": 32,
+            "usage": {
+              "input_tokens": 33065,
+              "cached_input_tokens": 29440,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 123,
+              "reasoning_output_tokens": 64,
+              "total_tokens": 33188
+            }
+          },
+          {
+            "line": 36,
+            "usage": {
+              "input_tokens": 33230,
+              "cached_input_tokens": 32512,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 85,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 33315
+            }
+          },
+          {
+            "line": 46,
+            "usage": {
+              "input_tokens": 34156,
+              "cached_input_tokens": 32512,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 259,
+              "reasoning_output_tokens": 122,
+              "total_tokens": 34415
+            }
+          },
+          {
+            "line": 53,
+            "usage": {
+              "input_tokens": 34439,
+              "cached_input_tokens": 33536,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 112,
+              "reasoning_output_tokens": 25,
+              "total_tokens": 34551
+            }
+          },
+          {
+            "line": 60,
+            "usage": {
+              "input_tokens": 34678,
+              "cached_input_tokens": 33536,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 110,
+              "reasoning_output_tokens": 44,
+              "total_tokens": 34788
+            }
+          },
+          {
+            "line": 66,
+            "usage": {
+              "input_tokens": 34938,
+              "cached_input_tokens": 34560,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 76,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 35014
+            }
+          }
+        ],
+        "total_usage": {
+          "input_tokens": 263981,
+          "cached_input_tokens": 236544,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 986,
+          "reasoning_output_tokens": 327,
+          "uncached_input_tokens": 27437,
+          "cache_hit_ratio": 0.8960644894897739
+        },
+        "model_visible_tool_outputs": [
+          {
+            "line": 19,
+            "bytes": 111,
+            "characters": 111,
+            "lines": 6,
+            "normalized_sha256": "90661353e60feb2b76f97da4e49fe1de95ab84742ea47f30483f4f6e1e1a13f1",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 27,
+            "bytes": 14153,
+            "characters": 14133,
+            "lines": 5,
+            "normalized_sha256": "2763f8eb7880d1bd26a3b0649b021260637a0baa29415ce51cd049fce11e6b72",
+            "contains_code_work_body": false,
+            "contains_serena_manual": true
+          },
+          {
+            "line": 33,
+            "bytes": 110,
+            "characters": 110,
+            "lines": 6,
+            "normalized_sha256": "9f20bda85d524ad84b05a1d478e2dd0580a3dd0bebc14cfdb7dfbb33fa594287",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 39,
+            "bytes": 2612,
+            "characters": 2612,
+            "lines": 5,
+            "normalized_sha256": "5f1c468bd4d42d8a911eb427e33bcc11229dbb7ec5610db20aebb907563c652f",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 48,
+            "bytes": 50,
+            "characters": 50,
+            "lines": 5,
+            "normalized_sha256": "21cb45e36d8c13c7714f1aa85ae8ca4d77ec98a491288730abe21812881b55a6",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 55,
+            "bytes": 344,
+            "characters": 344,
+            "lines": 5,
+            "normalized_sha256": "0c96e7cb79a09a7a2fe9364d188cbd9499fac295f7b0cc7507968e3241a55b77",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 62,
+            "bytes": 428,
+            "characters": 428,
+            "lines": 5,
+            "normalized_sha256": "57f0a2c217f9342a0934c38f4181b1046f0ef5936eafc01c08a16994c20ddadf",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          }
+        ],
+        "visible_tool_output_bytes": 17808,
+        "orchestrator_calls": [
+          {
+            "line": 17,
+            "name": "exec",
+            "bytes": 155,
+            "characters": 155,
+            "lines": 1,
+            "normalized_sha256": "b8011d09d21c7e3667ef061ee538e02c5834b3aa009fa7b1f110121eb2fafe34",
+            "catalog_search": true
+          },
+          {
+            "line": 23,
+            "name": "exec",
+            "bytes": 210,
+            "characters": 210,
+            "lines": 3,
+            "normalized_sha256": "fc21daf462ab5781c59dfc9343a4a6e09561cac21e286a8327c126ec79d1e322",
+            "catalog_search": false
+          },
+          {
+            "line": 31,
+            "name": "exec",
+            "bytes": 162,
+            "characters": 162,
+            "lines": 2,
+            "normalized_sha256": "9ff2e4ef48814a78891f583dfcf50e349744dc94d74c74ac4121e7e2e64e3068",
+            "catalog_search": true
+          },
+          {
+            "line": 35,
+            "name": "exec",
+            "bytes": 307,
+            "characters": 307,
+            "lines": 5,
+            "normalized_sha256": "99df681abecb188030b0f6be0d718e6b4e676653e3d844008151b0433b12b2cc",
+            "catalog_search": false
+          },
+          {
+            "line": 45,
+            "name": "exec",
+            "bytes": 328,
+            "characters": 328,
+            "lines": 3,
+            "normalized_sha256": "1d676359507bfc2235f77b50108c947037efd03b040a12e32fb666a4f1bb850c",
+            "catalog_search": false
+          },
+          {
+            "line": 52,
+            "name": "exec",
+            "bytes": 270,
+            "characters": 270,
+            "lines": 2,
+            "normalized_sha256": "eec4629083acea3f1c2b3376dacc0fa9b4b61f7c37e14b7d0f2616655e707e3a",
+            "catalog_search": false
+          },
+          {
+            "line": 59,
+            "name": "exec",
+            "bytes": 203,
+            "characters": 203,
+            "lines": 2,
+            "normalized_sha256": "f88f2d70a320907bc1af995f6f496acea2dc8ea6f61fe31b804b773a17ecd14f",
+            "catalog_search": false
+          }
+        ],
+        "assistant_messages": [
+          {
+            "line": 16,
+            "channel": null,
+            "bytes": 115,
+            "characters": 113,
+            "lines": 1,
+            "normalized_sha256": "3f3228ad93be7162f495ac340bbb5161e0b2d73996ca5bb34bd11f272ea07341"
+          },
+          {
+            "line": 44,
+            "channel": null,
+            "bytes": 122,
+            "characters": 122,
+            "lines": 1,
+            "normalized_sha256": "fac5a6f84493fc845283b1cb45c8b780aacac674650f05fd674601d9e3f69417"
+          },
+          {
+            "line": 65,
+            "channel": null,
+            "bytes": 283,
+            "characters": 283,
+            "lines": 9,
+            "normalized_sha256": "6d1319c9b6cb86a3c005abbbed6a3e06bddb404163f3a04685392f6b68cb722a"
+          }
+        ],
+        "assistant_message_bytes": 520,
+        "exact_duplicate_startup_block_hashes": {},
+        "wire_tool_schema_tokens": "NOT AVAILABLE; discovered descriptions are a separate observable subset",
+        "root_and_nested_agents_in_fixture": "ABSENT: disposable Git roots; machine AGENTS is separately present",
+        "attribution": "Bytes/characters/JSON measures overlap where labeled subset. Usage is per response; component token attribution unavailable."
+      }
+    },
+    "C2": {
+      "argv": [
+        "/mnt/c/Users/thenam/.codex/bin/wsl/b53f5e5f7452dd19/codex",
+        "exec",
+        "--json",
+        "-s",
+        "workspace-write",
+        "-C",
+        "/tmp/bh-phase3/normal-C2",
+        "-m",
+        "gpt-6-astra",
+        "-c",
+        "model_reasoning_effort=\"high\"",
+        "--disable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "-c",
+        "model_verbosity=\"low\"",
+        "-"
+      ],
+      "bytecode_flag": "-B used only to prevent untracked cache files; oracle source/semantics unchanged",
+      "case": "normal",
+      "corner": "C2",
+      "effort": "high",
+      "event_sha256": "e68fa8f662dfc93859fbb163ea1bd74aa4d5e99ff2231ce6425f581ecfe51f51",
+      "exit": 0,
+      "fixture_blobs": {
+        "oracle.py": "776c764e6a29f953c6211ec4f09f38aaa2e200e030537fac03582b94b580528f",
+        "validation.py": "8f257ebed34649e0bf452d09baa9d03d5aa30088c7fc0f0154f12bdd74ac079e"
+      },
+      "helper_sha256": "505e5d77781cba4bab605dc24cd5e4bd3d8377adb1f35f6578800a272c4485fc",
+      "metrics": {
+        "commands": [
+          "/bin/bash -lc \"sed -n '1,40p' oracle.py\"",
+          "/bin/bash -lc 'git diff -- validation.py oracle.py'",
+          "/bin/bash -lc 'sha256sum oracle.py'",
+          "/bin/bash -lc 'python3 /home/thenam176/betting-helper/scripts/codex_task.py check --state /tmp/bh-phase3/C2.state.json oracle'"
+        ],
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "FINDING: `valid_port` incorrectly accepted booleans and zero.\nEVIDENCE: Supplied precheck failed.\nACTION: Require exact `int` type and range 1\u201365535; API preserved.\nRESULT: Oracle passed (exit 0); `oracle.py` unchanged. [Log](/tmp/bh-phase3/C2.state-oracle-1.log).\nOPEN ISSUE: None for this fix; authority remains NONE.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 17962,
+        "read_command_invocations": 1,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a0805e-2975-7760-8c67-b2e07393cab4",
+        "spawns": 0,
+        "test_invocations_proxy": 0,
+        "text_and_command_output_bytes": 1100,
+        "tool_calls": 9,
+        "transcript_bytes": 22225,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 170752,
+            "input_tokens": 193283,
+            "output_tokens": 629,
+            "reasoning_output_tokens": 23
+          }
+        ],
+        "waits": 0
+      },
+      "model": "gpt-6-astra",
+      "model_override": "Explicit experimental argv; risk/check plan unchanged",
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "preflight_exit": 1,
+      "preflight_invocations": 1,
+      "prompt_bytes": 11848,
+      "prompt_sha256": "e0a1821ae6ac9128776176e6d40c356a0bf50de887f9cd5fd2b78e372936322e",
+      "quality": "PASS",
+      "decomposition": {
+        "source": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T05-34-09-01a0805e-2975-7760-8c67-b2e07393cab4.jsonl",
+        "source_sha256": "4f066edb0486b25465427f05ab87b08ab68ee00288ff148af40c3a8caf53ede8",
+        "components": {
+          "model_base_instructions": {
+            "bytes": 21269,
+            "characters": 21261,
+            "lines": 170,
+            "normalized_sha256": "32c8720853ad9df63d39be1a152a8b9510548c37f866578cdb6f22769ed36c7e"
+          },
+          "cli_version": "0.153.4",
+          "developer_line_3": {
+            "bytes": 39080,
+            "characters": 39074,
+            "lines": 511,
+            "normalized_sha256": "0fa1f2b7658538f2e5172ccda99789cea5ae1323a54f5596fcc53e65622ced41"
+          },
+          "skill_section_inclusive": {
+            "bytes": 22219,
+            "characters": 22217,
+            "lines": 266,
+            "normalized_sha256": "a4051cbe8d41fa5ae2ffbb0ddbf02a36aafc335a4e905ffdf59031967b383f9f"
+          },
+          "skill_catalog_subset": {
+            "bytes": 20253,
+            "characters": 20251,
+            "lines": 243,
+            "normalized_sha256": "c7327166eef092d7e9be6b4d48875975ecf1571f421990da868c60dcf94677e6"
+          },
+          "developer_line_4": {
+            "bytes": 2429,
+            "characters": 2429,
+            "lines": 33,
+            "normalized_sha256": "353baa039968e033b67eee43da85eceb713cf037b2cad044049817a19352eab7"
+          },
+          "developer_line_5": {
+            "bytes": 271,
+            "characters": 271,
+            "lines": 1,
+            "normalized_sha256": "6ded806e3cdbb35599ecaf8742574bc5274908472b1729090010c404c2151e8e"
+          },
+          "user_line_6": {
+            "bytes": 10937,
+            "characters": 10937,
+            "lines": 177,
+            "normalized_sha256": "0962c46afaf389bba60e903cfb6a9b446bebd9f45f5e23cde04880125842df6c"
+          },
+          "recommended_plugins_subset": {
+            "bytes": 3038,
+            "characters": 3038,
+            "lines": 48,
+            "normalized_sha256": "1ff3d7d975fd6f783bffb113020275ed6dd6313637edee2b1041f97ce0720592"
+          },
+          "recommended_plugin_count": 45,
+          "machine_agents_subset": {
+            "bytes": 7005,
+            "characters": 7005,
+            "lines": 121,
+            "normalized_sha256": "afefdf7b3fcd3ebc3b7af46d8b3b0b0459f788f80acbfbabccd5d6828ef83575"
+          },
+          "model": "gpt-6-astra",
+          "effort": "high",
+          "developer_line_9": {
+            "bytes": 267,
+            "characters": 267,
+            "lines": 1,
+            "normalized_sha256": "5e61f2e0409be53bd38fddb04d40a30e4d068d0c5096ce7617db5182fa254794"
+          },
+          "developer_line_10": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "ponytail_body_subset": {
+            "bytes": 5252,
+            "characters": 5229,
+            "lines": 99,
+            "normalized_sha256": "ff85190e0a9bce29ac9d547505beacc2b9f6f9b59d97104ce7e8bde86523f14b"
+          },
+          "user_line_11": {
+            "bytes": 11848,
+            "characters": 11848,
+            "lines": 126,
+            "normalized_sha256": "ed3f9cc66a3edc56300a43ca1302ca23c845ef66634ade694ba2a099dd37e064"
+          },
+          "injected_policy_subset": {
+            "bytes": 1051,
+            "characters": 1051,
+            "lines": 12,
+            "normalized_sha256": "d683988d3c0b553c667e5ff302352191fe7c53806f23c99422cfd6f5edfe0ebf"
+          },
+          "task_packet_subset": {
+            "bytes": 1980,
+            "characters": 1980,
+            "lines": 1,
+            "normalized_sha256": "f3b9f93c13a3983472ff15c076b2b55a6d986de0a6f8fa43cf3127944fd750f2"
+          },
+          "helper_capability_skill_subset": {
+            "bytes": 8786,
+            "characters": 8786,
+            "lines": 111,
+            "normalized_sha256": "052e4441c342681a353c8f3f096a7d47b843dc0d6839f65133bd58ff5bb53aeb"
+          },
+          "task_prompt": {
+            "bytes": 11848,
+            "characters": 11848,
+            "lines": 126,
+            "normalized_sha256": "ed3f9cc66a3edc56300a43ca1302ca23c845ef66634ade694ba2a099dd37e064"
+          },
+          "preloaded_required_skill_subset": {
+            "bytes": 7498,
+            "characters": 7498,
+            "lines": 97,
+            "normalized_sha256": "40cce339fe0fc405c9aaeaca142caa6836903b1f11a871be14e3dc0882606379"
+          }
+        },
+        "packet_fields": {
+          "task": {
+            "bytes": 308,
+            "characters": 308,
+            "lines": 1,
+            "normalized_sha256": "b87f0468215476c232eb1bfc237b6165cb31cae64eacdf1a55d411235a45ab54"
+          },
+          "expected_output": {
+            "bytes": 41,
+            "characters": 41,
+            "lines": 1,
+            "normalized_sha256": "3ebb2466dcb5866721a57d49514dcbd0096259a7cb505ea5ea2a1a988d99858e"
+          },
+          "target": {
+            "bytes": 402,
+            "characters": 402,
+            "lines": 1,
+            "normalized_sha256": "f9befad93af7117064a0441b3a13a0cd3fd86463b2246663905a38fc088d662b"
+          },
+          "role": {
+            "bytes": 16,
+            "characters": 16,
+            "lines": 1,
+            "normalized_sha256": "2ad47ffa2c44e63f601770d25d4ca879bf9edef3a1ead64bcf60f905f33496f0"
+          },
+          "authority": {
+            "bytes": 6,
+            "characters": 6,
+            "lines": 1,
+            "normalized_sha256": "c44e6dd700593104019ffce7eeda189212379ba13862b09d70cab34c513210d9"
+          },
+          "required_checks": {
+            "bytes": 65,
+            "characters": 65,
+            "lines": 1,
+            "normalized_sha256": "186d4aacd60eb5559266d9df16d3e8f5bba69d22580489929b947dd6b7cc5bc2"
+          },
+          "route": {
+            "bytes": 145,
+            "characters": 145,
+            "lines": 1,
+            "normalized_sha256": "3defd057277ab33106887eca64ba01289367314206f96686140ad36f7966a7c4"
+          },
+          "exit_condition": {
+            "bytes": 38,
+            "characters": 38,
+            "lines": 1,
+            "normalized_sha256": "dcbec2e4b669938e2a12929e64cb5b5e29a16d45a32ac3a149c130943c7c5842"
+          },
+          "constraints": {
+            "bytes": 45,
+            "characters": 45,
+            "lines": 1,
+            "normalized_sha256": "17a4578a26950c1123b04042fdfff4c63e590dfd81d948a057c92f919c986d61"
+          },
+          "known_verified_facts": {
+            "bytes": 79,
+            "characters": 79,
+            "lines": 1,
+            "normalized_sha256": "1ed23e9894ef2060a29cc05b32dbf52bbd2505b7f662e45bf6e23f00e2dc5266"
+          },
+          "preflight_checks": {
+            "bytes": 533,
+            "characters": 533,
+            "lines": 1,
+            "normalized_sha256": "ce81512c09c31704b3e09b2c72e25e6f70a734e1a36246a173ad8401c4ab0cba"
+          },
+          "check_command_prefix": {
+            "bytes": 114,
+            "characters": 114,
+            "lines": 1,
+            "normalized_sha256": "dcbaf843da5dcca21794b947581c6df6af59e5a4f06c5051bb90df570055f295"
+          }
+        },
+        "catalog_skill_count": 242,
+        "catalog_skill_names": [
+          "imagegen",
+          "openai-docs",
+          "plugin-creator",
+          "skill-creator",
+          "skill-installer",
+          "adaptyv",
+          "aeon",
+          "agent-reach",
+          "anndata",
+          "arboreto",
+          "astropy",
+          "autoskill",
+          "benchling-integration",
+          "bgpt-paper-search",
+          "biopython",
+          "bioservices",
+          "brandkit",
+          "build-web-apps:frontend-app-builder",
+          "build-web-apps:frontend-testing-debugging",
+          "build-web-apps:react-best-practices",
+          "build-web-apps:shadcn",
+          "build-web-apps:stripe-best-practices",
+          "build-web-apps:supabase-postgres-best-practices",
+          "build-web-data-visualization:data-visualization",
+          "canva:canva-brand-check",
+          "canva:canva-branded-presentation",
+          "canva:canva-bulk-create",
+          "canva:canva-design-feedback",
+          "canva:canva-edit-design",
+          "canva:canva-implement-feedback",
+          "canva:canva-resize-for-social-media",
+          "canva:canva-translate-design",
+          "cellxgene-census",
+          "circleci:chunk",
+          "circleci:circleci-builds",
+          "circleci:circleci-cli",
+          "circleci:circleci-config",
+          "cirq",
+          "citation-management",
+          "clinical-decision-support",
+          "clinical-reports",
+          "cloudflare:agents-sdk",
+          "cloudflare:building-ai-agent-on-cloudflare",
+          "cloudflare:building-mcp-server-on-cloudflare",
+          "cloudflare:cloudflare",
+          "cloudflare:durable-objects",
+          "cloudflare:sandbox-sdk",
+          "cloudflare:web-perf",
+          "cloudflare:workers-best-practices",
+          "cloudflare:wrangler",
+          "cobrapy",
+          "codex-engineering-guardrails:code-verification",
+          "codex-engineering-guardrails:code-work",
+          "codex-usage-and-resets:cuar",
+          "computer-use:computer-use",
+          "consciousness-council",
+          "cybersecurity-skill-library",
+          "dask",
+          "database-lookup",
+          "datamol",
+          "deep-research-work:deep-research",
+          "deepchem",
+          "deeptools",
+          "depmap",
+          "design-taste-frontend",
+          "design-taste-frontend-v1",
+          "dhdna-profiler",
+          "diffdock",
+          "dnanexus-integration",
+          "docx",
+          "ecc-operator-system",
+          "esm",
+          "etetoolkit",
+          "exa-search",
+          "exploratory-data-analysis",
+          "flowio",
+          "fluidsim",
+          "full-output-enforcement",
+          "generate-image",
+          "geniml",
+          "geomaster",
+          "geopandas",
+          "get-available-resources",
+          "gget",
+          "ginkgo-cloud-lab",
+          "glycoengineering",
+          "google-drive:google-docs",
+          "google-drive:google-drive",
+          "google-drive:google-drive-comments",
+          "google-drive:google-sheets",
+          "google-drive:google-slides",
+          "gpt-taste",
+          "gtars",
+          "high-end-visual-design",
+          "histolab",
+          "hugging-science",
+          "hyperframes:gsap",
+          "hyperframes:hyperframes",
+          "hyperframes:hyperframes-cli",
+          "hyperframes:hyperframes-registry",
+          "hyperframes:website-to-hyperframes",
+          "hypogenic",
+          "hypothesis-generation",
+          "image-to-code",
+          "imagegen-frontend-mobile",
+          "imagegen-frontend-web",
+          "imaging-data-commons",
+          "industrial-brutalist-ui",
+          "infographics",
+          "iso-13485-certification",
+          "labarchive-integration",
+          "lamindb",
+          "latchbio-integration",
+          "latex-posters",
+          "latex:latex-compile",
+          "latex:latex-doctor",
+          "latex:texlive-runtime-installer",
+          "literature-review",
+          "markdown-mermaid-writing",
+          "market-research-reports",
+          "markitdown",
+          "matchms",
+          "matlab",
+          "matplotlib",
+          "medchem",
+          "minimalist-ui",
+          "modal",
+          "molecular-dynamics",
+          "molfeat",
+          "networkx",
+          "neurokit2",
+          "neuropixels-analysis",
+          "omero-integration",
+          "open-notebook",
+          "openai-developers:agents-sdk",
+          "openai-developers:build-chatgpt-app",
+          "openai-developers:chatgpt-app-submission",
+          "openai-developers:openai-api-troubleshooting",
+          "openai-developers:openai-platform-api-key",
+          "opentrons-integration",
+          "optimize-for-gpu",
+          "paper-lookup",
+          "paperzilla",
+          "parallel-web",
+          "pathml",
+          "pdf",
+          "pdf",
+          "peer-review",
+          "pennylane",
+          "phylogenetics",
+          "planning-contract",
+          "playwright",
+          "plugin-management:plugin-management",
+          "polars",
+          "polars-bio",
+          "ponytail:ponytail",
+          "ponytail:ponytail-audit",
+          "ponytail:ponytail-debt",
+          "ponytail:ponytail-gain",
+          "ponytail:ponytail-help",
+          "ponytail:ponytail-review",
+          "pptx",
+          "pptx-posters",
+          "primekg",
+          "protocolsio-integration",
+          "pufferlib",
+          "pydeseq2",
+          "pydicom",
+          "pyhealth",
+          "pylabrobot",
+          "pymatgen",
+          "pymc",
+          "pymoo",
+          "pyopenms",
+          "pysam",
+          "pytdc",
+          "pytorch-lightning",
+          "pyzotero",
+          "qiskit",
+          "qutip",
+          "rdkit",
+          "redesign-existing-projects",
+          "repo-researcher",
+          "research-grants",
+          "rowan",
+          "scanpy",
+          "scholar-evaluation",
+          "scientific-brainstorming",
+          "scientific-critical-thinking",
+          "scientific-schematics",
+          "scientific-slides",
+          "scientific-visualization",
+          "scientific-writing",
+          "scikit-bio",
+          "scikit-learn",
+          "scikit-survival",
+          "scvelo",
+          "scvi-tools",
+          "seaborn",
+          "sentry:sentry",
+          "shap",
+          "simpy",
+          "sites:sites-building",
+          "sites:sites-hosting",
+          "stable-baselines3",
+          "statistical-analysis",
+          "statsmodels",
+          "stitch-design-taste",
+          "supabase:supabase",
+          "supabase:supabase-postgres-best-practices",
+          "superpowers:brainstorming",
+          "superpowers:dispatching-parallel-agents",
+          "superpowers:executing-plans",
+          "superpowers:finishing-a-development-branch",
+          "superpowers:receiving-code-review",
+          "superpowers:requesting-code-review",
+          "superpowers:subagent-driven-development",
+          "superpowers:systematic-debugging",
+          "superpowers:test-driven-development",
+          "superpowers:using-git-worktrees",
+          "superpowers:using-superpowers",
+          "superpowers:verification-before-completion",
+          "superpowers:writing-plans",
+          "superpowers:writing-skills",
+          "sympy",
+          "test-android-apps:android-emulator-qa",
+          "test-android-apps:android-performance",
+          "tiledbvcf",
+          "timesfm-forecasting",
+          "torch-geometric",
+          "torchdrug",
+          "transformers",
+          "treatment-plans",
+          "umap-learn",
+          "usfiscaldata",
+          "vaex",
+          "venue-templates",
+          "visualize:visualize",
+          "website-cloner",
+          "what-if-oracle",
+          "xlsx",
+          "zarr-python"
+        ],
+        "model_requests": 6,
+        "request_usage": [
+          {
+            "line": 16,
+            "usage": {
+              "input_tokens": 30530,
+              "cached_input_tokens": 12160,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 86,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 30616
+            }
+          },
+          {
+            "line": 21,
+            "usage": {
+              "input_tokens": 30679,
+              "cached_input_tokens": 30336,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 72,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 30751
+            }
+          },
+          {
+            "line": 26,
+            "usage": {
+              "input_tokens": 32334,
+              "cached_input_tokens": 30464,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 135,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 32469
+            }
+          },
+          {
+            "line": 35,
+            "usage": {
+              "input_tokens": 33001,
+              "cached_input_tokens": 32128,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 105,
+              "reasoning_output_tokens": 23,
+              "total_tokens": 33106
+            }
+          },
+          {
+            "line": 40,
+            "usage": {
+              "input_tokens": 33130,
+              "cached_input_tokens": 32768,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 137,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 33267
+            }
+          },
+          {
+            "line": 48,
+            "usage": {
+              "input_tokens": 33609,
+              "cached_input_tokens": 32896,
+              "cache_write_input_tokens": 0,
+              "output_tokens": 94,
+              "reasoning_output_tokens": 0,
+              "total_tokens": 33703
+            }
+          }
+        ],
+        "total_usage": {
+          "input_tokens": 193283,
+          "cached_input_tokens": 170752,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 629,
+          "reasoning_output_tokens": 23,
+          "uncached_input_tokens": 22531,
+          "cache_hit_ratio": 0.8834299964301051
+        },
+        "model_visible_tool_outputs": [
+          {
+            "line": 17,
+            "bytes": 184,
+            "characters": 184,
+            "lines": 5,
+            "normalized_sha256": "05d940e9be2551f1c6c427e67fcfaba86f77ba9d8ff330338ebf8d4f6b5c8961",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 23,
+            "bytes": 7050,
+            "characters": 7040,
+            "lines": 6,
+            "normalized_sha256": "8de068bc7030a2c8ca8187ba42d6055885dc3db2bcf0c149ef38e079f23b5530",
+            "contains_code_work_body": false,
+            "contains_serena_manual": true
+          },
+          {
+            "line": 30,
+            "bytes": 1614,
+            "characters": 1614,
+            "lines": 7,
+            "normalized_sha256": "b892effb699c42fb837d86ae3ed9838669da25b741f36ddfaeecbb043d34b481",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 37,
+            "bytes": 50,
+            "characters": 50,
+            "lines": 5,
+            "normalized_sha256": "21cb45e36d8c13c7714f1aa85ae8ca4d77ec98a491288730abe21812881b55a6",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          },
+          {
+            "line": 44,
+            "bytes": 967,
+            "characters": 967,
+            "lines": 7,
+            "normalized_sha256": "6d20ce7604fd27d1f7d5efe7cbe9fb62ec4106ac9ae1a26b7b1dce8a5a295ec4",
+            "contains_code_work_body": false,
+            "contains_serena_manual": false
+          }
+        ],
+        "visible_tool_output_bytes": 9865,
+        "orchestrator_calls": [
+          {
+            "line": 15,
+            "name": "exec",
+            "bytes": 155,
+            "characters": 155,
+            "lines": 1,
+            "normalized_sha256": "c9939fc08e36d5760525a9ffed0f0391194f9ad7d08084b8450a7c3d3f104f75",
+            "catalog_search": true
+          },
+          {
+            "line": 19,
+            "name": "exec",
+            "bytes": 200,
+            "characters": 200,
+            "lines": 3,
+            "normalized_sha256": "5b9e5dbc78625765fdd05907339d5dcd6a0398d04a56728665c125b8531e451d",
+            "catalog_search": false
+          },
+          {
+            "line": 25,
+            "name": "exec",
+            "bytes": 482,
+            "characters": 482,
+            "lines": 5,
+            "normalized_sha256": "797a161c9323b7d620d8e46b942be83330ec2268f7c78c230e1bbd77e46355f3",
+            "catalog_search": false
+          },
+          {
+            "line": 34,
+            "name": "exec",
+            "bytes": 242,
+            "characters": 242,
+            "lines": 1,
+            "normalized_sha256": "35cbb3b85ef60b2a3572ee830dbd6d122cea125fe766f39b67c98863a1e88040",
+            "catalog_search": false
+          },
+          {
+            "line": 39,
+            "name": "exec",
+            "bytes": 496,
+            "characters": 496,
+            "lines": 5,
+            "normalized_sha256": "43225df1632e1b496789626942c62a33d225276e96e664fd7df14e70053f9ea7",
+            "catalog_search": false
+          }
+        ],
+        "assistant_messages": [
+          {
+            "line": 14,
+            "channel": null,
+            "bytes": 115,
+            "characters": 113,
+            "lines": 1,
+            "normalized_sha256": "91e11d2e588b7d46e9c7052255eaa73458fe0120f72f7b5121b501a044d1a234"
+          },
+          {
+            "line": 47,
+            "channel": null,
+            "bytes": 321,
+            "characters": 319,
+            "lines": 5,
+            "normalized_sha256": "3d73eca807ccfb6b136a41b0f86be48a3e9f76b580fe0bda0444c0da7b722b46"
+          }
+        ],
+        "assistant_message_bytes": 436,
+        "exact_duplicate_startup_block_hashes": {},
+        "wire_tool_schema_tokens": "NOT AVAILABLE; discovered descriptions are a separate observable subset",
+        "root_and_nested_agents_in_fixture": "ABSENT: disposable Git roots; machine AGENTS is separately present",
+        "attribution": "Bytes/characters/JSON measures overlap where labeled subset. Usage is per response; component token attribution unavailable."
+      }
+    }
+  },
+  "ledger": [
+    {
+      "corner": "B",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "C",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "Dnew",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "C2",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    }
+  ],
+  "matrix": {
+    "A": "REUSED Phase 2 normal-before Astra/high",
+    "B": "NEW frozen workflow Terra/medium",
+    "C": "NEW C2 final revision Astra/high; C pilot retained separately",
+    "D": "NEW Dnew final revision Terra/medium; Phase 2 old-D remains historical comparator"
+  },
+  "controls": [
+    "Same initial validation.py and oracle.py bytes; same Codex 0.153.4 executable",
+    "No skills/MCPs deliberately disabled; no direct global config edit. Final config hash differs; preservation unverified.",
+    "C2/Dnew preflight executes oracle once with -B before model; count this separately",
+    "Independent oracle runs once after each model; model/request counters exclude harness bootstrap work",
+    "Model choice explicitly controlled via experimental argv; risk/verification floors unchanged"
+  ],
+  "limitations": [
+    "One evaluation per final corner, no significance or generalization claim",
+    "A reused earlier trace; current date/path/cache differences are not randomized",
+    "B performed extra selected-skill reads, memory discovery and bytecode cleanup recovery",
+    "C2/Dnew have an additional explicit failing-precheck delivery and required skill preload; task oracle/behavior unchanged",
+    "C/D prompt preservation is a code/byte control, not a new COMPLEX execution",
+    "No longer-task model evaluation: same-Astra synthetic acceptance not met",
+    "Global config changed during evaluations and has all four fixture trust entries; no original config body retained, so complete causal isolation is unverified. Machine AGENTS unchanged."
+  ]
+}

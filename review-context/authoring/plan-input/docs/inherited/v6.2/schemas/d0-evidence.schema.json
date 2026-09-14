@@ -1,0 +1,873 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+  "title": "Hybrid Discovery v6.2 D0 evidence",
+  "x-content-reference-type-bindings": [
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+      "artifact_type": "PROVIDER_PROBE_PROTOCOL",
+      "schema_version": "provider-probe-protocol/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:authorization-records#ProviderProbeProtocol"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1",
+      "artifact_type": "PROVIDER_OBSERVATION",
+      "schema_version": "provider-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:d0-evidence:v1#ProviderObservation"
+    }
+  ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ProviderObservation"
+    },
+    {
+      "$ref": "#/$defs/ProviderCorrectionLineage"
+    },
+    {
+      "$ref": "#/$defs/ProviderCallReceipt"
+    },
+    {
+      "$ref": "#/$defs/FootballProviderCapabilityReport"
+    },
+    {
+      "$ref": "#/$defs/FootballLatencyReport"
+    },
+    {
+      "$ref": "#/$defs/FootballCorrectionReport"
+    },
+    {
+      "$ref": "#/$defs/FootballIdentityReport"
+    }
+  ],
+  "$defs": {
+    "CodeArray": {
+      "type": "array",
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+      }
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+      }
+    },
+    "D0Bindings": {
+      "type": "object",
+      "required": [
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "capability_manifest_hash",
+        "provider_probe_protocol_hash",
+        "provider_call_receipt_id",
+        "discovery_run_id",
+        "production_authority"
+      ],
+      "properties": {
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "capability_manifest_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "provider_probe_protocol_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "provider_call_receipt_id": {
+          "type": "string",
+          "pattern": "^provider-call-receipt:[0-9a-f]{64}$"
+        },
+        "discovery_run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "FixtureMetadataObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_kind",
+        "provider_fixture_id",
+        "provider_competition_id",
+        "participant_a_id",
+        "participant_b_id",
+        "scheduled_start_utc",
+        "fixture_state_class"
+      ],
+      "properties": {
+        "observation_kind": {
+          "const": "FIXTURE_METADATA"
+        },
+        "provider_fixture_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "provider_competition_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "participant_a_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "participant_b_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "scheduled_start_utc": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "fixture_state_class": {
+          "enum": [
+            "SCHEDULED",
+            "ACTIVE",
+            "ENDED",
+            "POSTPONED",
+            "CANCELLED",
+            "UNKNOWN"
+          ]
+        }
+      }
+    },
+    "EventAvailabilityObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_kind",
+        "provider_fixture_id",
+        "event_class",
+        "availability",
+        "source_time_available",
+        "effective_time_available",
+        "first_observed_time_available"
+      ],
+      "properties": {
+        "observation_kind": {
+          "const": "EVENT_AVAILABILITY"
+        },
+        "provider_fixture_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "event_class": {
+          "enum": [
+            "PERIOD_TRANSITION",
+            "SCORE_CHANGE",
+            "CARD_CHANGE",
+            "SUSPENSION_CHANGE",
+            "FIXTURE_STATE_CHANGE"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "MISSING",
+            "NOT_IN_PROTOCOL",
+            "INCONCLUSIVE"
+          ]
+        },
+        "source_time_available": {
+          "type": "boolean"
+        },
+        "effective_time_available": {
+          "type": "boolean"
+        },
+        "first_observed_time_available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SchemaObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_kind",
+        "endpoint_template_id",
+        "provider_schema_version",
+        "required_field_ids",
+        "present_field_ids",
+        "schema_disposition"
+      ],
+      "properties": {
+        "observation_kind": {
+          "const": "SCHEMA_OBSERVATION"
+        },
+        "endpoint_template_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "provider_schema_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,64}$"
+        },
+        "required_field_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ProviderFieldId"
+          }
+        },
+        "present_field_ids": {
+          "type": "array",
+          "maxItems": 11,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ProviderFieldId"
+          }
+        },
+        "schema_disposition": {
+          "enum": [
+            "MATCHED",
+            "MISSING_FIELDS",
+            "DRIFTED",
+            "INCONCLUSIVE"
+          ]
+        }
+      }
+    },
+    "ProviderFieldId": {
+      "type": "string",
+      "enum": [
+        "PROVIDER_FIXTURE_ID",
+        "PROVIDER_COMPETITION_ID",
+        "PARTICIPANT_A_ID",
+        "PARTICIPANT_B_ID",
+        "SCHEDULED_START_UTC",
+        "FIXTURE_STATE_CLASS",
+        "EVENT_CLASS",
+        "SOURCE_TIME",
+        "EFFECTIVE_TIME",
+        "FIRST_OBSERVED_TIME",
+        "SCHEMA_VERSION"
+      ]
+    },
+    "OperationalObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_kind",
+        "endpoint_template_id",
+        "method",
+        "body_mode",
+        "response_class",
+        "received_bytes",
+        "latency_us",
+        "quota_units",
+        "cost_minor_units",
+        "currency"
+      ],
+      "properties": {
+        "observation_kind": {
+          "const": "OPERATIONAL_OBSERVATION"
+        },
+        "endpoint_template_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "method": {
+          "const": "GET"
+        },
+        "body_mode": {
+          "const": "NONE"
+        },
+        "response_class": {
+          "enum": [
+            "SUCCESS",
+            "CLIENT_REFUSAL",
+            "RATE_LIMITED",
+            "SERVER_FAILURE",
+            "TRANSPORT_FAILURE"
+          ]
+        },
+        "received_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "latency_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "quota_units": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "cost_minor_units": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      }
+    },
+    "ProviderObservation": {
+      "$anchor": "ProviderObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/D0Bindings"
+        },
+        {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "provider_observation_id",
+            "provider_role",
+            "sample_id",
+            "source_time",
+            "effective_time",
+            "first_observed_time",
+            "receive_clock",
+            "observation",
+            "content_hash"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "provider-observation/v1"
+            },
+            "provider_observation_id": {
+              "type": "string",
+              "pattern": "^provider-observation:[0-9a-f]{64}$"
+            },
+            "provider_role": {
+              "const": "FOOTBALL_FEASIBILITY_SOURCE"
+            },
+            "sample_id": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+            },
+            "source_time": {
+              "oneOf": [
+                {
+                  "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+                },
+                {
+                  "const": "NOT_OBSERVED"
+                }
+              ]
+            },
+            "effective_time": {
+              "oneOf": [
+                {
+                  "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+                },
+                {
+                  "const": "NOT_OBSERVED"
+                }
+              ]
+            },
+            "first_observed_time": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+            },
+            "receive_clock": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+            },
+            "observation": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/FixtureMetadataObservation"
+                },
+                {
+                  "$ref": "#/$defs/EventAvailabilityObservation"
+                },
+                {
+                  "$ref": "#/$defs/SchemaObservation"
+                },
+                {
+                  "$ref": "#/$defs/OperationalObservation"
+                }
+              ]
+            },
+            "content_hash": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ProviderCorrectionLineage": {
+      "$anchor": "ProviderCorrectionLineage",
+      "allOf": [
+        {
+          "$ref": "#/$defs/D0Bindings"
+        },
+        {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "lineage_id",
+            "lineage_sequence",
+            "action",
+            "subject_id",
+            "observation_ref",
+            "supersedes_lineage_id",
+            "reverses_lineage_id",
+            "effective_time",
+            "first_observed_time",
+            "append_only",
+            "content_hash"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "provider-correction-lineage/v1"
+            },
+            "lineage_id": {
+              "type": "string",
+              "pattern": "^provider-lineage:[0-9a-f]{64}$"
+            },
+            "lineage_sequence": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+            },
+            "action": {
+              "enum": [
+                "UPSERT",
+                "CORRECT",
+                "RETRACT"
+              ]
+            },
+            "subject_id": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+            },
+            "observation_ref": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+            },
+            "supersedes_lineage_id": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^provider-lineage:[0-9a-f]{64}$"
+                },
+                {
+                  "const": "NONE"
+                }
+              ]
+            },
+            "reverses_lineage_id": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "pattern": "^provider-lineage:[0-9a-f]{64}$"
+                },
+                {
+                  "const": "NONE"
+                }
+              ]
+            },
+            "effective_time": {
+              "oneOf": [
+                {
+                  "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+                },
+                {
+                  "const": "NOT_OBSERVED"
+                }
+              ]
+            },
+            "first_observed_time": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+            },
+            "append_only": {
+              "const": true
+            },
+            "content_hash": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ProviderCallReceipt": {
+      "$anchor": "ProviderCallReceipt",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "provider_call_receipt_id",
+        "provider_probe_protocol",
+        "provider_probe_protocol_hash",
+        "provider_call_approval_hash",
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "capability_manifest_hash",
+        "discovery_run_id",
+        "provider_role",
+        "endpoint_template_id",
+        "method",
+        "body_mode",
+        "scheduled_at",
+        "started_at",
+        "completed_at",
+        "response_class",
+        "quota_units",
+        "cost_minor_units",
+        "currency",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "provider-call-receipt/v1"
+        },
+        "provider_call_receipt_id": {
+          "type": "string",
+          "pattern": "^provider-call-receipt:[0-9a-f]{64}$"
+        },
+        "provider_probe_protocol": {
+          "$ref": "urn:hybrid-discovery:v6.2:authorization-records#/$defs/ProviderProbeProtocol"
+        },
+        "provider_probe_protocol_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "provider_call_approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "capability_manifest_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "discovery_run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "provider_role": {
+          "const": "FOOTBALL_FEASIBILITY_SOURCE"
+        },
+        "endpoint_template_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "method": {
+          "const": "GET"
+        },
+        "body_mode": {
+          "const": "NONE"
+        },
+        "scheduled_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "started_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "completed_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "response_class": {
+          "enum": [
+            "SUCCESS",
+            "CLIENT_REFUSAL",
+            "RATE_LIMITED",
+            "SERVER_FAILURE",
+            "TRANSPORT_FAILURE",
+            "SAFETY_STOP"
+          ]
+        },
+        "quota_units": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "cost_minor_units": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "ReportMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric_id",
+        "disposition",
+        "sample_count",
+        "evidence_refs"
+      ],
+      "properties": {
+        "metric_id": {
+          "enum": [
+            "FIXTURE_SAMPLE_COUNT",
+            "FIXTURE_FIELD_COVERAGE",
+            "EVENT_AVAILABILITY_COUNT",
+            "MISSING_FIELD_COUNT",
+            "IDENTITY_CONFLICT_COUNT",
+            "LATENCY_P50_US",
+            "LATENCY_P95_US",
+            "LATENCY_P99_US",
+            "SOURCE_TIME_AVAILABILITY",
+            "CORRECTION_COUNT",
+            "RETRACTION_COUNT",
+            "REPLAY_MATCH_COUNT",
+            "QUOTA_UNITS",
+            "QUOTA_HEADROOM_PERCENT",
+            "COST_MINOR_UNITS",
+            "RESPONSE_BYTES",
+            "CALL_LATENCY_US",
+            "SCHEMA_MATCH_COUNT"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "OBSERVED",
+            "INFERRED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "sample_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "numerator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "denominator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "decimal_value": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "unit": {
+          "enum": [
+            "COUNT",
+            "MICROSECOND",
+            "BYTE",
+            "PERCENT",
+            "QUOTA_UNIT",
+            "CURRENCY_MINOR_UNIT",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        }
+      }
+    },
+    "ReportBase": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "record_kind",
+        "report_name",
+        "provider_probe_protocol_ref",
+        "evidence_refs",
+        "metrics",
+        "disposition",
+        "scope0_projection",
+        "limitation_codes",
+        "unknown_codes",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "d0-report/v1"
+        },
+        "record_kind": {
+          "const": "D0_REPORT"
+        },
+        "report_name": {
+          "type": "string"
+        },
+        "provider_probe_protocol_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/ReportMetric"
+          }
+        },
+        "disposition": {
+          "enum": [
+            "SUPPORTED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "UNKNOWN",
+            "INDETERMINATE"
+          ]
+        },
+        "scope0_projection": {
+          "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection"
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "unknown_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "FootballProviderCapabilityReport": {
+      "$anchor": "FootballProviderCapabilityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "football-provider-capability-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "coverage",
+                "schema_stability",
+                "quota",
+                "licensing",
+                "cost"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "coverage": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/coverage"
+                },
+                "schema_stability": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/schema_stability"
+                },
+                "quota": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/quota"
+                },
+                "licensing": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/licensing"
+                },
+                "cost": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/cost"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "FootballLatencyReport": {
+      "$anchor": "FootballLatencyReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "football-latency-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "timing",
+                "missingness",
+                "capacity"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "timing": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/timing"
+                },
+                "missingness": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/missingness"
+                },
+                "capacity": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/capacity"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "FootballCorrectionReport": {
+      "$anchor": "FootballCorrectionReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "football-correction-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "replayability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "replayability": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/replayability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "FootballIdentityReport": {
+      "$anchor": "FootballIdentityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "football-identity-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "identity_confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "identity_confidence": {
+                  "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScopeProjection/properties/identity_confidence"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

@@ -1,0 +1,841 @@
+diff --git a/extension/.test-build/src/spool.js b/extension/.test-build/src/spool.js
+index 97ce8c4..c40ec2f 100644
+--- a/extension/.test-build/src/spool.js
++++ b/extension/.test-build/src/spool.js
+@@ -1,3 +1,4 @@
++import { identicalEntry, requestValue, completion } from "./storage/durable_idb.js";
+ import { canonicalBytes, canonicalContentHash, parseStrictJson } from "./canonical.js";
+ const H0 = "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c";
+ const stores = ["stream_state_v1", "spool_entries_v1"];
+@@ -10,29 +11,6 @@ const decimal = (value) => {
+     return BigInt(value);
+ };
+ const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+-const identicalEntry = (left, right) => {
+-    if (left === right)
+-        return true;
+-    if (left === null || right === null || typeof left !== "object" || typeof right !== "object")
+-        return false;
+-    const prototype = Object.getPrototypeOf(left);
+-    if ((prototype !== Object.prototype && prototype !== Array.prototype) || Object.getPrototypeOf(right) !== prototype)
+-        return false;
+-    if (Array.isArray(left) && Array.isArray(right) && left.length !== right.length)
+-        return false;
+-    const keys = Object.keys(left);
+-    return keys.length === Object.keys(right).length && keys.every(key => Object.hasOwn(right, key) &&
+-        identicalEntry(left[key], right[key]));
+-};
+-const requestValue = (request) => new Promise((resolve, reject) => {
+-    request.onsuccess = () => { resolve(request.result); };
+-    request.onerror = () => { reject(request.error ?? new Error("E_SPOOL_REQUEST")); };
+-});
+-const completion = (transaction) => new Promise((resolve, reject) => {
+-    transaction.oncomplete = () => { resolve(); };
+-    transaction.onabort = () => { reject(transaction.error ?? new Error("E_SPOOL_ABORT")); };
+-    transaction.onerror = () => { reject(transaction.error ?? new Error("E_SPOOL_TRANSACTION")); };
+-});
+ /** Offline durable sink. Only the still-gated projector may construct its input. */
+ export class Spool {
+     options;
+diff --git a/extension/.test-build/test/security/capability-reachability.bootstrap.test.js b/extension/.test-build/test/security/capability-reachability.bootstrap.test.js
+index ae7b481..a46eaef 100644
+--- a/extension/.test-build/test/security/capability-reachability.bootstrap.test.js
++++ b/extension/.test-build/test/security/capability-reachability.bootstrap.test.js
+@@ -4,9 +4,10 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+ import { resolve } from "node:path";
+ import { tmpdir } from "node:os";
+ import test from "node:test";
++import { verifyCurrentSurface } from "./current-surface.js";
+ import { verifyCapabilityGraph, verifyCapabilityManifest, } from "../../tools/verify-capability-graph.js";
+ void test("bootstrap privilege graph is closed", () => {
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), []);
++    verifyCurrentSurface();
+ });
+ void test("security-sensitive stubs expose no arbitrary map or index signature", () => {
+     const sensitive = [
+diff --git a/extension/.test-build/test/security/cdp-reachability.test.js b/extension/.test-build/test/security/cdp-reachability.test.js
+index 549d88b..77c3ed2 100644
+--- a/extension/.test-build/test/security/cdp-reachability.test.js
++++ b/extension/.test-build/test/security/cdp-reachability.test.js
+@@ -1,23 +1,34 @@
+ import assert from "node:assert/strict";
+-import { mkdtempSync, writeFileSync } from "node:fs";
++import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
++import { verifyCurrentSurface } from "./current-surface.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+         allow: "SEC_CDP_REACHABILITY-ALLOW",
+         deny: "SEC_CDP_REACHABILITY-DENY",
+         mutate: "SEC_CDP_REACHABILITY-MUTATE",
+     };
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
+-    for (const [name, source] of [
+-        [vectors.deny, "chrome.debugger.sendCommand(target,'Runtime.evaluate',{})"],
+-        [vectors.mutate, "chrome.debugger.sendCommand(target,'Network.enable',{maxPostDataSize:1})"],
++    assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
++    const root = mkdtempSync(resolve(tmpdir(), "sec-cdp-"));
++    mkdirSync(resolve(root, "src/security"), { recursive: true });
++    const broker = resolve(root, "src/security/cdp-broker.ts");
++    const bounded = "{maxTotalBufferSize:33554432,maxResourceBufferSize:2097152,maxPostDataSize:0}";
++    for (const [name, method, parameters, expected] of [
++        [vectors.allow, "Network.enable", bounded, []],
++        [vectors.allow, "Network.disable", "{}", []],
++        [vectors.deny, "Runtime.evaluate", "{}", ["E_CDP_METHOD_DENIED"]],
++        [vectors.deny, "Input.dispatchMouseEvent", "{}", ["E_CDP_DOMAIN_DENIED"]],
++        [vectors.deny, "Page.navigate", "{}", ["E_CDP_METHOD_DENIED"]],
++        [vectors.mutate, "Network.enable", "{maxPostDataSize:1}", ["E_CDP_PARAMETER_MISMATCH"]],
+     ]) {
+-        const root = mkdtempSync(resolve(tmpdir(), "sec-cdp-"));
+-        writeFileSync(resolve(root, "fixture.ts"), source);
+-        assert.notDeepEqual(verifyCapabilityGraph(root), [], name);
++        writeFileSync(broker, `export const sendLiteralCommand = (authorization: DiscoveryRunAuthorization) => {
++      const selectedTabId = authorization.browser_binding.tab_id;
++      chrome.debugger.sendCommand({tabId:selectedTabId}, ${JSON.stringify(method)}, ${parameters});
++    };`);
++        assert.deepEqual(verifyCapabilityGraph(root), expected, `${name}: ${method}`);
+     }
+ };
+ void test("CDP reachability allows only the pinned bounded graph", testSecurityBoundary);
+diff --git a/extension/.test-build/test/security/dynamic-dispatch.test.js b/extension/.test-build/test/security/dynamic-dispatch.test.js
+index 475f8de..a2a2125 100644
+--- a/extension/.test-build/test/security/dynamic-dispatch.test.js
++++ b/extension/.test-build/test/security/dynamic-dispatch.test.js
+@@ -4,20 +4,29 @@ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
++import { verifyCurrentSurface } from "./current-surface.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+         allow: "SEC_DYNAMIC_DISPATCH-ALLOW",
+         deny: "SEC_DYNAMIC_DISPATCH-DENY",
+         mutate: "SEC_DYNAMIC_DISPATCH-MUTATE",
+     };
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
+-    for (const [name, source] of [
+-        [vectors.deny, "const send=chrome.debugger.sendCommand;send(target,method,{})"],
+-        [vectors.mutate, "chrome.debugger['send'+'Command'](target,'Network.disable',{})"],
++    assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
++    for (const [name, source, expected] of [
++        [vectors.deny, "const send=chrome.debugger.sendCommand;send(target,method,{})", "E_PRIVILEGED_API_ALIAS"],
++        [vectors.mutate, "chrome.debugger['send'+'Command'](target,'Runtime.evaluate',{})", "E_CDP_METHOD_DENIED"],
+     ]) {
+         const root = mkdtempSync(resolve(tmpdir(), "sec-dispatch-"));
+         writeFileSync(resolve(root, "fixture.ts"), source);
+-        assert.notDeepEqual(verifyCapabilityGraph(root), [], name);
++        assert.ok(verifyCapabilityGraph(root).includes(expected), `${name}: ${expected}`);
+     }
++    const root = mkdtempSync(resolve(tmpdir(), "sec-reexport-"));
++    writeFileSync(resolve(root, "entry.ts"), "import {dispatch} from './barrel.js'; dispatch(target,method,{});");
++    writeFileSync(resolve(root, "barrel.ts"), "export {dispatch} from './dispatcher.js';");
++    const dispatcher = resolve(root, "dispatcher.ts");
++    writeFileSync(dispatcher, "export const dispatch = () => undefined;");
++    assert.deepEqual(verifyCapabilityGraph(root), [], "local re-export control");
++    writeFileSync(dispatcher, "export const dispatch = chrome.debugger.sendCommand;");
++    assert.ok(verifyCapabilityGraph(root).includes("E_PRIVILEGED_API_ALIAS"), "re-exported forbidden dispatcher");
+ };
+ void test("dynamic privileged dispatch cannot escape the closed graph", testSecurityBoundary);
+diff --git a/extension/.test-build/test/security/message-smuggling.test.js b/extension/.test-build/test/security/message-smuggling.test.js
+index 19bd31f..a05813f 100644
+--- a/extension/.test-build/test/security/message-smuggling.test.js
++++ b/extension/.test-build/test/security/message-smuggling.test.js
+@@ -4,13 +4,17 @@ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
++import { verifyCurrentSurface } from "./current-surface.js";
++import { book, capture, validators } from "../live/wire.test.js";
++import { liveEventHash } from "../../src/live/protocol.js";
++import { LiveCaptureSpool } from "../../src/live/spool.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+         allow: "SEC_MESSAGE_SMUGGLING-ALLOW",
+         deny: "SEC_MESSAGE_SMUGGLING-DENY",
+         mutate: "SEC_MESSAGE_SMUGGLING-MUTATE",
+     };
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
++    assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
+     for (const [name, source] of [
+         [vectors.deny, "window.postMessage({command:'ATTACH'},'*')"],
+         [vectors.mutate, "chrome.runtime.onMessage.addListener(message=>executePrivileged(message.command))"],
+@@ -21,3 +25,40 @@ export const testSecurityBoundary = () => {
+     }
+ };
+ void test("command-bearing public messages cannot reach privileged sinks", testSecurityBoundary);
++void test("nested commands reject before live hashing, logging or IndexedDB access", async (t) => {
++    const event = await capture(), market = book();
++    const digest = t.mock.method(crypto.subtle, "digest");
++    await liveEventHash(event, validators.record);
++    assert.ok(digest.mock.callCount() > 0); // The same probe sees the allowed control.
++    digest.mock.resetCalls();
++    let opens = 0;
++    const original = Object.getOwnPropertyDescriptor(globalThis, "indexedDB");
++    Object.defineProperty(globalThis, "indexedDB", { configurable: true,
++        value: { open: () => { opens++; throw Error("TEST_ONLY_DB_OPEN"); } } });
++    t.after(() => {
++        if (original)
++            Object.defineProperty(globalThis, "indexedDB", original);
++        else
++            Reflect.deleteProperty(globalThis, "indexedDB");
++    });
++    const logs = ["log", "info", "warn", "error", "debug"].map(name => t.mock.method(console, name, () => undefined));
++    for (const deep of [false, true]) {
++        const mutated = structuredClone(event);
++        const command = { method: "Page.navigate", params: { url: "https://example.invalid/" } };
++        if (deep) {
++            const home = mutated.payload["selections"]["HOME"];
++            assert.ok(home);
++            home["command"] = command;
++        }
++        else
++            mutated.payload["command"] = command;
++        const spool = new LiveCaptureSpool({ runId: event.run_id, streamId: event.stream_id,
++            generation: event.generation, bindingId: market.binding_id, documentEpoch: market.document_epoch,
++            profileHash: market.profile_hash, validate: validators.record });
++        await assert.rejects(liveEventHash(mutated, validators.record), { message: "E_LIVE_RECORD" });
++        await assert.rejects(spool.append(mutated), { message: "E_LIVE_RECORD" });
++        assert.equal(digest.mock.callCount(), 0);
++        assert.equal(opens, 0);
++        assert.ok(logs.every(log => log.mock.callCount() === 0));
++    }
++});
+diff --git a/extension/.test-build/test/security/outbound-network.test.js b/extension/.test-build/test/security/outbound-network.test.js
+index bfbceac..3b07ccc 100644
+--- a/extension/.test-build/test/security/outbound-network.test.js
++++ b/extension/.test-build/test/security/outbound-network.test.js
+@@ -4,13 +4,14 @@ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
++import { verifyCurrentSurface } from "./current-surface.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+         allow: "SEC_OUTBOUND_NETWORK-ALLOW",
+         deny: "SEC_OUTBOUND_NETWORK-DENY",
+         mutate: "SEC_OUTBOUND_NETWORK-MUTATE",
+     };
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
++    assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
+     for (const [name, source] of [
+         [vectors.deny, "fetch('https://example.invalid')"],
+         [vectors.mutate, "new WebSocket(userUrl)"],
+diff --git a/extension/.test-build/test/security/production-build-exclusion.test.js b/extension/.test-build/test/security/production-build-exclusion.test.js
+index c5b5b0a..65c0e9d 100644
+--- a/extension/.test-build/test/security/production-build-exclusion.test.js
++++ b/extension/.test-build/test/security/production-build-exclusion.test.js
+@@ -3,6 +3,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSyn
+ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
++import { spawnSync } from "node:child_process";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+@@ -14,6 +15,7 @@ export const testSecurityBoundary = () => {
+     assert.deepEqual(build.exclude, ["test", "test-red", "test-harness", "tools"], vectors.allow);
+     const distFiles = readdirSync(resolve("extension/dist"), { recursive: true }).map(String);
+     assert.equal(distFiles.some((path) => /(?:test|harness|tools)/u.test(path)), false, vectors.deny);
++    assert.equal(verifyCapabilityGraph(resolve("extension/src")).includes("E_COMPILED_CHUNK_SET"), false);
+     const root = mkdtempSync(resolve(tmpdir(), "sec-build-"));
+     cpSync(resolve("extension/src"), resolve(root, "extension/src"), { recursive: true });
+     cpSync(resolve("extension/dist"), resolve(root, "extension/dist"), { recursive: true });
+@@ -21,5 +23,43 @@ export const testSecurityBoundary = () => {
+     mkdirSync(resolve(root, "extension/dist/test-harness"), { recursive: true });
+     writeFileSync(resolve(root, "extension/dist/test-harness/privileged.js"), "export const escape=true");
+     assert.ok(verifyCapabilityGraph(resolve(root, "extension/src")).includes("E_COMPILED_CHUNK_SET"), vectors.mutate);
++    const liveScratch = mkdtempSync(resolve(tmpdir(), "live-package-exclusion-"));
++    const environment = { PATH: process.env["PATH"], UV_OFFLINE: "1",
++        PYTHONDONTWRITEBYTECODE: "1", HOME: resolve(liveScratch, "home"),
++        UV_CACHE_DIR: resolve(liveScratch, "uv-cache") };
++    if (process.env["UV_PROJECT_ENVIRONMENT"])
++        environment["UV_PROJECT_ENVIRONMENT"] = process.env["UV_PROJECT_ENVIRONMENT"];
++    const script = `
++import sys
++from pathlib import Path
++from tools.qualify_live_platform import build_live_extension
++from tools.verify_live_package import verify_live_package
++package, _ = build_live_extension(Path(sys.argv[1]))
++assert verify_live_package(package)['result'] == 'PASS'
++def denied(code):
++    try:
++        verify_live_package(package)
++    except ValueError as error:
++        assert str(error) == code, str(error)
++    else:
++        raise AssertionError('TEST_ONLY_PRIVILEGED_PACKAGE_ACCEPTED')
++harness = package / 'src/live/test-harness/privileged.js'
++harness.parent.mkdir()
++harness.write_text('export const TEST_ONLY_privileged = true;')
++denied('E_LIVE_PACKAGE_INVENTORY')
++harness.unlink()
++module = package / 'src/live/background.js'
++original = module.read_text()
++for dependency in ('./test-harness/privileged.js', 'node:fs'):
++    module.write_text(original + '\\nimport "' + dependency + '";\\n')
++    denied('E_LIVE_PACKAGE_IMPORT')
++module.write_text(original)
++assert verify_live_package(package)['result'] == 'PASS'
++print('CURRENT_LIVE_PACKAGE_EXCLUSION_PASS')
++`;
++    const checked = spawnSync("uv", ["run", "--frozen", "--offline", "python", "-B", "-c", script,
++        resolve(liveScratch, "build")], { cwd: process.cwd(), env: environment, encoding: "utf8", timeout: 90000 });
++    assert.equal(checked.status, 0, checked.stderr);
++    assert.equal(checked.stdout.trim(), "CURRENT_LIVE_PACKAGE_EXCLUSION_PASS");
+ };
+ void test("production compilation excludes review and harness inputs", testSecurityBoundary);
+diff --git a/extension/.test-build/test/security/target-escape.test.js b/extension/.test-build/test/security/target-escape.test.js
+index 13fe35a..5f57eae 100644
+--- a/extension/.test-build/test/security/target-escape.test.js
++++ b/extension/.test-build/test/security/target-escape.test.js
+@@ -4,13 +4,14 @@ import { tmpdir } from "node:os";
+ import { resolve } from "node:path";
+ import test from "node:test";
+ import { verifyCapabilityGraph } from "../../tools/verify-capability-graph.js";
++import { verifyCurrentSurface } from "./current-surface.js";
+ export const testSecurityBoundary = () => {
+     const vectors = {
+         allow: "SEC_TARGET_ESCAPE-ALLOW",
+         deny: "SEC_TARGET_ESCAPE-DENY",
+         mutate: "SEC_TARGET_ESCAPE-MUTATE",
+     };
+-    assert.deepEqual(verifyCapabilityGraph(resolve("extension/src")), [], vectors.allow);
++    assert.doesNotThrow(verifyCurrentSurface, vectors.allow);
+     for (const [name, source] of [
+         [vectors.deny, "chrome.debugger.attach({targetId},'1.3')"],
+         [vectors.mutate, "chrome.debugger.sendCommand({sessionId},'Network.disable',{})"],
+diff --git a/extension/.test-build/tools/verify-capability-graph.js b/extension/.test-build/tools/verify-capability-graph.js
+index 464eb52..ce16179 100644
+--- a/extension/.test-build/tools/verify-capability-graph.js
++++ b/extension/.test-build/tools/verify-capability-graph.js
+@@ -1964,7 +1964,7 @@ export const verifyCapabilityGraph = (root) => {
+             errors.push("E_COMPILED_CHUNK_MISSING");
+         else {
+             const expectedCompiled = new Set(filesBelow(absoluteRoot)
+-                .filter((path) => path.endsWith(".ts"))
++                .filter((path) => path.endsWith(".ts") && !path.endsWith(".d.ts"))
+                 .map((path) => `${relative(absoluteRoot, path).slice(0, -3)}.js`));
+             const actualCompiled = new Set(allFilesBelow(compiledRoot).map((path) => relative(compiledRoot, path)));
+             if (!equalJson([...actualCompiled].sort(), [...expectedCompiled].sort())) {
+diff --git a/extension/dist/canonical.js b/extension/dist/canonical.js
+index bb938af..ec2b5c1 100644
+--- a/extension/dist/canonical.js
++++ b/extension/dist/canonical.js
+@@ -52,7 +52,7 @@ class StrictJsonParser {
+             if (this.source[this.offset] !== ":")
+                 throw new Error("MALFORMED_UTF8_OR_JSON");
+             this.offset += 1;
+-            result[key] = this.value();
++            Object.defineProperty(result, key, { value: this.value(), enumerable: true, writable: true, configurable: true });
+             this.whitespace();
+             const delimiter = this.source[this.offset];
+             if (delimiter === "}") {
+@@ -233,3 +233,5 @@ const validateRegisteredExclusions = (artifactType, exclusions, registry) => {
+         throw new Error("UNREGISTERED_HASH_EXCLUSION");
+     }
+ };
++/** Canonical bytes for an already schema-validated local value. */
++export const canonicalBytes = (value) => new TextEncoder().encode(canonicalize(value));
+diff --git a/extension/dist/security/loopback.js b/extension/dist/security/loopback.js
+index 883c885..4c580be 100644
+--- a/extension/dist/security/loopback.js
++++ b/extension/dist/security/loopback.js
+@@ -1,5 +1,204 @@
+ import { ContractNotImplementedError } from "../errors.js";
++import { parseStrictJson } from "../canonical.js";
++import { SessionState, verifyFrame } from "../offline/protocol.js";
++function uniformJitter() {
++    const bytes = new Uint8Array(1);
++    do {
++        crypto.getRandomValues(bytes);
++    } while ((bytes[0] ?? 255) >= 202);
++    return (bytes[0] ?? 0) % 101;
++}
+ export class AuthenticatedLoopback {
+     taskId = "SEC0-T06";
+-    constructor() { throw new ContractNotImplementedError("SEC0-T06"); }
++    options;
++    socket;
++    state;
++    key;
++    sessions = new Set();
++    inbox = [];
++    wake;
++    failure;
++    stopped = false;
++    queue = Promise.resolve();
++    started = performance.now();
++    constructor(options) {
++        if (!options)
++            throw new ContractNotImplementedError("SEC0-T06");
++        try {
++            options.validateContext(options.context);
++            const context = options.context;
++            if (context.backend_url !== "ws://127.0.0.1:8765/offline" ||
++                context.source_kind !== "SYNTHETIC_TEST" || context.live_authority ||
++                context.money_authority || context.provider_authority)
++                throw new Error();
++        }
++        catch {
++            throw new Error("E_OFFLINE_CONTEXT");
++        }
++        this.options = { ...options, context: Object.freeze({ ...options.context }) };
++    }
++    fail(code) {
++        this.failure = new Error(code);
++        this.wake?.();
++    }
++    async receive(timeout = 30000) {
++        const deadline = performance.now() + timeout;
++        while (!this.inbox.length) {
++            if (this.failure)
++                throw this.failure;
++            const remaining = deadline - performance.now();
++            if (remaining <= 0)
++                throw new Error("E_OFFLINE_TRANSPORT");
++            await new Promise(resolve => {
++                const timer = setTimeout(() => { this.wake = undefined; resolve(); }, remaining);
++                this.wake = () => { clearTimeout(timer); this.wake = undefined; resolve(); };
++            });
++        }
++        const data = this.inbox.shift();
++        if (data === undefined || !this.key || !this.state)
++            throw new Error("E_OFFLINE_STATE");
++        return verifyFrame(data, this.key, this.state);
++    }
++    async send(type, body) {
++        if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.state || !this.key) {
++            throw new Error("E_OFFLINE_TRANSPORT");
++        }
++        this.socket.send(await this.state.send(type, body, this.key));
++    }
++    async connect(budget = 30000) {
++        const deadline = performance.now() + budget;
++        const remaining = () => {
++            const value = deadline - performance.now();
++            if (value <= 0)
++                throw new Error("E_OFFLINE_TRANSPORT");
++            return Math.min(5000, value);
++        };
++        this.socket?.close();
++        this.key?.fill(0);
++        this.inbox = [];
++        this.failure = undefined;
++        const { context, credentials, validateFrame } = this.options;
++        const credential = await credentials();
++        if (this.sessions.has(credential.sessionId) || credential.key.byteLength !== 32) {
++            throw new Error("E_OFFLINE_SESSION_REUSE");
++        }
++        this.sessions.add(credential.sessionId);
++        this.key = new Uint8Array(credential.key);
++        this.state = new SessionState(credential.sessionId, context.run_id, "CLIENT", validateFrame);
++        const socket = new WebSocket(context.backend_url);
++        this.socket = socket;
++        socket.onmessage = event => {
++            if (this.socket !== socket)
++                return;
++            if (typeof event.data !== "string" || new TextEncoder().encode(event.data).length > 262144 || this.inbox.length >= 8) {
++                this.fail("E_OFFLINE_FRAME_SIZE");
++                socket.close();
++                return;
++            }
++            this.inbox.push(event.data);
++            this.wake?.();
++        };
++        socket.onclose = socket.onerror = () => {
++            if (this.socket === socket && !this.failure)
++                this.fail("E_OFFLINE_TRANSPORT");
++        };
++        await new Promise((resolve, reject) => {
++            const timer = setTimeout(() => { socket.close(); reject(new Error("E_OFFLINE_TRANSPORT")); }, remaining());
++            socket.onopen = () => { clearTimeout(timer); resolve(); };
++            socket.addEventListener("error", () => { clearTimeout(timer); reject(new Error("E_OFFLINE_TRANSPORT")); }, { once: true });
++        });
++        const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32))))
++            .replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
++        await this.send("HELLO", { run_id: context.run_id, client_nonce: nonce });
++        const welcome = await this.receive(remaining());
++        await this.send("READY", welcome.body);
++        await this.receive(remaining());
++    }
++    serial(work) {
++        const result = this.queue.then(async () => {
++            if (this.stopped || performance.now() - this.started > 600000)
++                throw new Error("E_OFFLINE_STOPPED");
++            try {
++                await work();
++            }
++            catch (error) {
++                this.stopped = true;
++                this.socket?.close();
++                throw error;
++            }
++        });
++        this.queue = result.catch(() => undefined);
++        return result;
++    }
++    start() { return this.serial(async () => { await this.connect(); }); }
++    flushPending() {
++        return this.serial(async () => {
++            const { spool, context } = this.options;
++            let retryStarted, retry = 0;
++            for (;;) {
++                if (performance.now() - this.started > 600000)
++                    throw new Error("E_OFFLINE_STOPPED");
++                retryStarted ??= performance.now();
++                const attemptStarted = retryStarted;
++                const remaining = 30000 - (performance.now() - attemptStarted);
++                if (remaining <= 0)
++                    throw new Error("E_OFFLINE_RECONNECT_TIMEOUT");
++                try {
++                    if (!this.state?.ready || this.socket?.readyState !== WebSocket.OPEN)
++                        await this.connect(remaining);
++                    const pending = await spool.readPendingObservations(this.options.batchSize ?? 1);
++                    if (!pending.length)
++                        return;
++                    const identity = { batch_id: crypto.randomUUID(), run_id: context.run_id,
++                        browser_run_id: context.browser_run_id, producer_id: context.producer_id,
++                        stream_id: context.stream_id, generation: context.generation };
++                    const head = pending[0], tail = pending.at(-1);
++                    if (!head || !tail)
++                        throw new Error("E_OFFLINE_STATE");
++                    const first = head.record.position.sequence, last = tail.record.position.sequence;
++                    await this.send("BATCH", { ...identity, first_sequence: first, last_sequence: last,
++                        observations: pending.map(row => parseStrictJson(row.canonicalSanitizedBytes)) });
++                    const frame = await this.receive(Math.max(0, 30000 - (performance.now() - attemptStarted)));
++                    if (Object.entries(identity).some(([name, value]) => frame.body[name] !== value))
++                        throw new Error("E_OFFLINE_ACK_IDENTITY");
++                    if (frame.message_type === "NACK")
++                        throw new Error("E_OFFLINE_NACK");
++                    const sequence = frame.body.highest_contiguous_sequence;
++                    if (frame.message_type !== "ACK" || typeof sequence !== "string" ||
++                        BigInt(sequence) < BigInt(first) || BigInt(sequence) > BigInt(last))
++                        throw new Error("E_OFFLINE_ACK_RANGE");
++                    await spool.persistVerifiedAck(context.generation, sequence, frame.body.cursor_hash);
++                    if (sequence !== last) {
++                        const nack = await this.receive(Math.max(0, 30000 - (performance.now() - attemptStarted)));
++                        if (nack.message_type !== "NACK" || Object.entries(identity).some(([name, value]) => nack.body[name] !== value)) {
++                            throw new Error("E_OFFLINE_NACK_IDENTITY");
++                        }
++                        throw new Error("E_OFFLINE_NACK");
++                    }
++                    retryStarted = undefined;
++                    retry = 0;
++                }
++                catch (error) {
++                    if (!(error instanceof Error) || error.message !== "E_OFFLINE_TRANSPORT")
++                        throw error;
++                    const jitter = (this.options.reconnectJitter ?? uniformJitter)();
++                    if (!Number.isInteger(jitter) || jitter < 0 || jitter > 100)
++                        throw new Error("E_OFFLINE_JITTER", { cause: error });
++                    const delay = Math.min(250 * 2 ** retry++, 4000) + jitter;
++                    if (performance.now() - attemptStarted + delay > 30000)
++                        throw new Error("E_OFFLINE_RECONNECT_TIMEOUT", { cause: error });
++                    await new Promise(resolve => setTimeout(resolve, delay));
++                    this.state = undefined;
++                }
++            }
++        });
++    }
++    async close() {
++        this.stopped = true;
++        this.socket?.close();
++        this.fail("E_OFFLINE_STOPPED");
++        await this.queue;
++        this.key?.fill(0);
++        this.key = undefined;
++    }
+ }
+diff --git a/extension/dist/security/redaction.js b/extension/dist/security/redaction.js
+index 67030cb..1dc5d16 100644
+--- a/extension/dist/security/redaction.js
++++ b/extension/dist/security/redaction.js
+@@ -1,5 +1,68 @@
+-import { ContractNotImplementedError } from "../errors.js";
+-export const projectBeforePersistence = (input) => {
+-    String(input);
+-    throw new ContractNotImplementedError("SEC0-T06");
++import canonicalize from "canonicalize";
++import { canonicalContentHash, parseStrictJson } from "../canonical.js";
++const checkPlain = (value, seen = new Set(), depth = 0) => {
++    if (depth > 32 || seen.size > 65536)
++        throw new Error("E_OFFLINE_JSON");
++    if (value === null || typeof value === "string" || typeof value === "boolean" ||
++        (typeof value === "number" && Number.isFinite(value)))
++        return;
++    if (typeof value !== "object" || seen.has(value))
++        throw new Error("E_OFFLINE_JSON");
++    if (Object.getPrototypeOf(value) !== (Array.isArray(value) ? Array.prototype : Object.prototype)) {
++        throw new Error("E_OFFLINE_JSON");
++    }
++    seen.add(value);
++    for (const key of Reflect.ownKeys(value)) {
++        if (typeof key !== "string" || (Array.isArray(value) && key !== "length" && !/^(0|[1-9][0-9]*)$/.test(key))) {
++            throw new Error("E_OFFLINE_JSON");
++        }
++        const descriptor = Object.getOwnPropertyDescriptor(value, key);
++        if (!descriptor || !("value" in descriptor) || (!descriptor.enumerable && !(Array.isArray(value) && key === "length")))
++            throw new Error("E_OFFLINE_JSON");
++        checkPlain(descriptor.value, seen, depth + 1);
++    }
++};
++export const projectBeforePersistence = async (input, context) => {
++    if (input instanceof Uint8Array && input.byteLength > 65536)
++        throw new Error("E_OFFLINE_INPUT_SIZE");
++    let value;
++    try {
++        value = input instanceof Uint8Array ? parseStrictJson(input) : input;
++        checkPlain(value);
++        // Reuse strict Unicode validation for locally parsed plain-data convenience calls.
++        if (!(input instanceof Uint8Array))
++            value = parseStrictJson(new TextEncoder().encode(JSON.stringify(value)));
++    }
++    catch {
++        throw new Error("E_OFFLINE_JSON");
++    }
++    if (new TextEncoder().encode(JSON.stringify(value)).byteLength > 65536)
++        throw new Error("E_OFFLINE_INPUT_SIZE");
++    try {
++        context.validateRaw(value);
++    }
++    catch {
++        throw new Error("E_OFFLINE_SCHEMA");
++    }
++    const raw = value;
++    const binding = context;
++    if (binding.sourceKind !== "SYNTHETIC_TEST" || binding.allowedKinds.length !== 1 ||
++        binding.allowedKinds[0] !== "TERMINAL" || raw.observation_kind !== "TERMINAL" ||
++        raw.context.context_kind !== "RUN_BOUND_NOT_DOCUMENT" || raw.discovery_run_id !== context.runId ||
++        raw.context.browser_run_id !== context.browserRunId || raw.stream_id !== context.streamId ||
++        raw.generation !== context.generation)
++        throw new Error("E_OFFLINE_SOURCE_BINDING");
++    let hash;
++    try {
++        hash = await canonicalContentHash("RawObservation", value, context.canonicalRegistry);
++    }
++    catch {
++        throw new Error("E_OFFLINE_CONTENT_HASH");
++    }
++    if (hash !== raw.content_hash)
++        throw new Error("E_OFFLINE_CONTENT_HASH");
++    const bytes = new TextEncoder().encode(canonicalize(value));
++    if (bytes.byteLength > 65536)
++        throw new Error("E_OFFLINE_INPUT_SIZE");
++    return { canonicalSanitizedBytes: bytes, validatedRawObservation: { canonicalBytes: bytes.slice() } };
+ };
+diff --git a/extension/dist/spool.js b/extension/dist/spool.js
+index 5f1c38d..c40ec2f 100644
+--- a/extension/dist/spool.js
++++ b/extension/dist/spool.js
+@@ -1,4 +1,5 @@
+-import { canonicalContentHash, parseStrictJson } from "./canonical.js";
++import { identicalEntry, requestValue, completion } from "./storage/durable_idb.js";
++import { canonicalBytes, canonicalContentHash, parseStrictJson } from "./canonical.js";
+ const H0 = "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c";
+ const stores = ["stream_state_v1", "spool_entries_v1"];
+ const maximum = 9223372036854775807n;
+@@ -10,27 +11,33 @@ const decimal = (value) => {
+     return BigInt(value);
+ };
+ const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+-const requestValue = (request) => new Promise((resolve, reject) => {
+-    request.onsuccess = () => { resolve(request.result); };
+-    request.onerror = () => { reject(request.error ?? new Error("E_SPOOL_REQUEST")); };
+-});
+-const completion = (transaction) => new Promise((resolve, reject) => {
+-    transaction.oncomplete = () => { resolve(); };
+-    transaction.onabort = () => { reject(transaction.error ?? new Error("E_SPOOL_ABORT")); };
+-    transaction.onerror = () => { reject(transaction.error ?? new Error("E_SPOOL_TRANSACTION")); };
+-});
+ /** Offline durable sink. Only the still-gated projector may construct its input. */
+ export class Spool {
+     options;
++    // Reuse hash proofs only for byte-identical full entries read again from IndexedDB.
++    // State, schema, ordering and predecessor bindings are still checked on every snapshot.
++    verifiedEntries = new Map();
++    verifiedRegistry;
++    writes = Promise.resolve();
+     constructor(options) {
+         this.options = options;
+     }
++    serializeWrite(work) {
++        const result = this.writes.then(work);
++        this.writes = result.then(() => undefined, () => undefined);
++        return result;
++    }
+     configuration() {
+         const value = this.options;
+         if (!value || ![value.browser_run_id, value.producer_id, value.stream_id].every(id => uuid.test(id))) {
+             throw new Error("E_SPOOL_BINDING");
+         }
+         decimal(value.generation);
++        if (typeof value.validateRaw !== "function")
++            throw new Error("E_SPOOL_BINDING");
++        const limit = value.normalByteLimit ?? 133169152n;
++        if (typeof limit !== "bigint" || limit < 1024n || limit > 133169152n)
++            throw new Error("E_SPOOL_CAPACITY");
+         return value;
+     }
+     initial() {
+@@ -78,28 +85,21 @@ export class Spool {
+         });
+     }
+     async snapshot() {
+-        // ponytail: scan retained rows to verify the chain; add verified checkpoints only if run size demands it.
++        // Read every retained row and key in one native batch; preserve full chain verification.
+         const database = await this.open();
+         try {
+             const transaction = database.transaction(stores, "readonly");
+             const done = completion(transaction);
+             const stateRequest = requestValue(transaction.objectStore(stores[0]).get(this.key()));
+-            const entries = [];
+             const rows = transaction.objectStore(stores[1]);
+-            const cursor = rows.openCursor(IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false), "next");
+-            cursor.onsuccess = () => {
+-                if (cursor.result) {
+-                    const entry = cursor.result.value;
+-                    if (!same(cursor.result.key, this.key(entry.spool_record.position.sequence))) {
+-                        transaction.abort();
+-                        return;
+-                    }
+-                    entries.push(entry);
+-                    cursor.result.continue();
+-                }
+-            };
++            const range = IDBKeyRange.bound(this.key("0"), this.key(String(maximum)), false, false);
++            const entriesRequest = requestValue(rows.getAll(range));
++            const keysRequest = requestValue(rows.getAllKeys(range));
+             const state = await stateRequest ?? this.initial();
++            const entries = await entriesRequest, keys = await keysRequest;
+             await done;
++            if (entries.length !== keys.length || entries.some((entry, index) => !same(keys[index], this.key(entry.spool_record.position.sequence))))
++                throw new Error("E_SPOOL_CHAIN");
+             await this.validate(state, entries);
+             return { state, entries };
+         }
+@@ -108,6 +108,11 @@ export class Spool {
+         }
+     }
+     async validate(state, entries) {
++        const registry = this.configuration().registry;
++        if (!identicalEntry(this.verifiedRegistry, registry)) {
++            this.verifiedEntries.clear();
++            this.verifiedRegistry = structuredClone(registry);
++        }
+         const initial = this.initial();
+         if (!same(Object.keys(state).sort(), Object.keys(initial).sort()) ||
+             state.storage_schema_version !== initial.storage_schema_version ||
+@@ -121,16 +126,29 @@ export class Spool {
+         for (const [index, entry] of entries.entries()) {
+             const row = entry.spool_record;
+             const raw = entry.sanitized_observation;
++            this.validateRaw(raw);
++            const config = this.configuration();
++            if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
++                raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
++                raw.sequence !== row.position.sequence ||
++                decimal(row.payload_size_bytes) > 65536n)
++                throw new Error("E_SPOOL_OBSERVATION_BINDING");
+             if (!same(Object.keys(entry).sort(), ["sanitized_observation", "spool_record", "storage_schema_version"]) ||
+                 entry.storage_schema_version !== "browser-spool-entry/v1" ||
+                 row.position.sequence !== String(index + 1) || row.previous_cursor_hash !== previous ||
+                 row.raw_observation_id !== raw.raw_observation_id || row.raw_observation_content_hash !== raw.content_hash ||
+-                !same(row.position.generation_key, this.generationKey()) ||
+-                row.cursor_hash !== await this.cursor(raw, previous) ||
+-                row.content_hash !== await this.hash("SpoolRecord", row) ||
+-                raw.content_hash !== await this.hash("RawObservation", raw)) {
++                !same(row.position.generation_key, this.generationKey())) {
+                 throw new Error("E_SPOOL_CHAIN");
+             }
++            if (!identicalEntry(this.verifiedEntries.get(row.position.sequence), entry)) {
++                if (decimal(row.payload_size_bytes) < BigInt(canonicalBytes(raw).byteLength))
++                    throw new Error("E_SPOOL_OBSERVATION_BINDING");
++                if (row.cursor_hash !== await this.cursor(raw, previous) ||
++                    row.content_hash !== await this.hash("SpoolRecord", row) ||
++                    raw.content_hash !== await this.hash("RawObservation", raw))
++                    throw new Error("E_SPOOL_CHAIN");
++                this.verifiedEntries.set(row.position.sequence, structuredClone(entry));
++            }
+             previous = row.cursor_hash;
+             bytes += decimal(row.payload_size_bytes);
+         }
+@@ -142,6 +160,14 @@ export class Spool {
+             throw new Error("E_SPOOL_CHAIN");
+         }
+     }
++    validateRaw(value) {
++        try {
++            this.configuration().validateRaw(value);
++        }
++        catch {
++            throw new Error("E_SPOOL_SCHEMA");
++        }
++    }
+     generationKey() {
+         const { browser_run_id, producer_id, stream_id, generation } = this.configuration();
+         return { stream: { browser_run_id, producer_id, stream_id }, generation };
+@@ -180,15 +206,20 @@ export class Spool {
+             database.close();
+         }
+     }
+-    async append(value) {
++    append(value) {
++        return this.serializeWrite(() => this.appendRecord(value));
++    }
++    async appendRecord(value) {
+         const input = value;
+         if (!(input?.canonicalSanitizedBytes instanceof Uint8Array) ||
+             !(input.validatedRawObservation?.canonicalBytes instanceof Uint8Array) ||
+             !same(Array.from(input.canonicalSanitizedBytes), Array.from(input.validatedRawObservation.canonicalBytes))) {
+             throw new Error("E_SPOOL_UNVALIDATED");
+         }
+-        // The opaque envelope has already passed the governed RawObservation schema.
++        if (value.canonicalSanitizedBytes.byteLength > 65536)
++            throw new Error("E_SPOOL_SCHEMA");
+         const raw = parseStrictJson(value.canonicalSanitizedBytes);
++        this.validateRaw(raw);
+         const config = this.configuration();
+         if (raw.context.browser_run_id !== config.browser_run_id || raw.stream_id !== config.stream_id ||
+             raw.generation !== config.generation || !uuid.test(raw.discovery_run_id) ||
+@@ -205,7 +236,7 @@ export class Spool {
+         const size = BigInt(value.canonicalSanitizedBytes.byteLength);
+         if (raw.sequence !== state.next_sequence || decimal(state.next_sequence) === maximum)
+             throw new Error("E_SPOOL_SEQUENCE");
+-        if (decimal(state.normal_bytes_used) + size > 133169152n)
++        if (decimal(state.normal_bytes_used) + size > (config.normalByteLimit ?? 133169152n))
+             throw new Error("E_SPOOL_CAPACITY");
+         const cursor = await this.cursor(raw, state.last_cursor_hash);
+         const record = {
+@@ -237,7 +268,28 @@ export class Spool {
+         return entries.filter(entry => decimal(entry.spool_record.position.sequence) > decimal(state.ack_sequence))
+             .map(entry => entry.spool_record);
+     }
+-    async persistVerifiedAck(generation, sequence, cursorHash) {
++    async readPendingObservations(limit) {
++        if (!Number.isInteger(limit) || limit < 1 || limit > 32)
++            throw new Error("E_SPOOL_LIMIT");
++        const { state, entries } = await this.snapshot();
++        return entries.filter(entry => decimal(entry.spool_record.position.sequence) > decimal(state.ack_sequence))
++            .slice(0, limit).map(entry => ({ record: structuredClone(entry.spool_record),
++            canonicalSanitizedBytes: canonicalBytes(entry.sanitized_observation) }));
++    }
++    async exportRetainedObservations() {
++        const { entries } = await this.snapshot();
++        return entries.map(entry => canonicalBytes(entry.sanitized_observation));
++    }
++    async readVerifiedStreamState() {
++        const { state, entries } = await this.snapshot();
++        return Object.freeze({ generation: state.active_generation, nextSequence: state.next_sequence,
++            ackSequence: state.ack_sequence, ackCursorHash: state.ack_cursor_hash,
++            pendingCount: entries.length - Number(decimal(state.ack_sequence)) });
++    }
++    persistVerifiedAck(generation, sequence, cursorHash) {
++        return this.serializeWrite(() => this.persistAck(generation, sequence, cursorHash));
++    }
++    async persistAck(generation, sequence, cursorHash) {
+         const { state, entries } = await this.snapshot();
+         const number = decimal(sequence);
+         if (generation !== state.active_generation || number < decimal(state.ack_sequence) ||

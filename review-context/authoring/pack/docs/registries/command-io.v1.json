@@ -1,0 +1,3433 @@
+{
+  "schema_version": "command-io/v1",
+  "commands": [
+    {
+      "command_id": "BOOT0_CREATE_WORKSPACE",
+      "consumers": [
+        "V636-BOOT0-T02"
+      ],
+      "inputs": [
+        "plan-input/bootstrap/create_authoring_workspace.py"
+      ],
+      "outputs": [
+        ".bootstrap/authoring-workspace-receipt.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "BOOT0_EXTRACT_PLAN",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip",
+        "/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip.sha256"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BOOT0_INIT_AUTHORING_REPO",
+      "consumers": [
+        "V636-BOOT0-T03"
+      ],
+      "inputs": [
+        "plan-input/bootstrap/initialize_authoring_repository.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "BOOT0_VERIFY_EXTRACTED",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [
+        "plan-input/bootstrap/verify_extracted_plan.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "BOOT0_VERIFY_SIDECAR",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "COMPILE_V636_P04_T03",
+      "consumers": [
+        "V636-P04-T03"
+      ],
+      "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
+        "runtime/extension/test/live/capture.test.ts",
+        "runtime/extension/test/live/panel.test.ts",
+        "runtime/extension/test/live/spool.test.ts",
+        "runtime/extension/test/live/wire.test.ts",
+        "runtime/extension/test/offline/fixtures.ts",
+        "runtime/extension/test/offline/loopback.test.ts",
+        "runtime/extension/test/offline/protocol.test.ts",
+        "runtime/extension/test/offline/redaction.test.ts",
+        "runtime/extension/test/offline/spool-payload.test.ts",
+        "runtime/extension/tsconfig.test.json",
+        "runtime/extension/test/security/current-surface.ts"
+      ],
+      "outputs": [
+        "runtime/extension/.test-build/src/live/background.js",
+        "runtime/extension/.test-build/src/live/capture.js",
+        "runtime/extension/.test-build/src/live/contracts.js",
+        "runtime/extension/.test-build/src/live/dom_reader.js",
+        "runtime/extension/.test-build/src/live/panel.js",
+        "runtime/extension/.test-build/src/live/protocol.js",
+        "runtime/extension/.test-build/src/live/spool.js",
+        "runtime/extension/.test-build/src/live/transport.js",
+        "runtime/extension/.test-build/src/live/workspace.js",
+        "runtime/extension/.test-build/src/offline/bootstrap.js",
+        "runtime/extension/.test-build/src/offline/context.js",
+        "runtime/extension/.test-build/src/offline/protocol.js",
+        "runtime/extension/.test-build/src/offline/session.js",
+        "runtime/extension/.test-build/src/storage/durable_idb.js",
+        "runtime/extension/.test-build/test/live/capture.test.js",
+        "runtime/extension/.test-build/test/live/panel.test.js",
+        "runtime/extension/.test-build/test/live/spool.test.js",
+        "runtime/extension/.test-build/test/live/wire.test.js",
+        "runtime/extension/.test-build/test/offline/fixtures.js",
+        "runtime/extension/.test-build/test/offline/loopback.test.js",
+        "runtime/extension/.test-build/test/offline/protocol.test.js",
+        "runtime/extension/.test-build/test/offline/redaction.test.js",
+        "runtime/extension/.test-build/test/offline/spool-payload.test.js",
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_V636_P04_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_01_BEFORE_EXTENSION_ACK_TRANSACTION",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_02_DURING_EXTENSION_ACK_TRANSACTION",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_03_AFTER_EXTENSION_ACK_TRANSACTION",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_04_BEFORE_BACKEND_CONFIRMATION_COMMIT",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_05_AFTER_BACKEND_CONFIRMATION_COMMIT",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_ACK_06_DUPLICATE_IDENTICAL",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_CAPACITY_01_NORMAL_LIMIT_REACHED",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_CLOCK_01_AFTER_MAPPING_CLOSURE_INSERT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_CLOCK_02_AFTER_CLOSURE_COMMIT_BEFORE_SHOCK",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_CONFLICT_01_SAME_POSITION_DIFFERENT_HASH",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_01A_AFTER_CONSUMPTION_BEFORE_INTENT",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_01_BEFORE_AUTHORITY",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_02_AFTER_INTENT_BEFORE_DELETION",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_03_AFTER_EXTENSION_DELETION",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_04_AFTER_BACKEND_DELETION",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_05_AFTER_BOTH_DELETIONS_BEFORE_PROOF",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_DESTROY_06_AFTER_PROOF",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/destruction_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_EPOCH_01_AFTER_SHOCK_BEFORE_CLOSE_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_EPOCH_02_AFTER_SHOCK_CLOSE_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_EPOCH_03_AFTER_PENDING_WRITES_BEFORE_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_EPOCH_04_DURING_NEW_EPOCH_OPEN_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_EPOCH_05_NEW_SHOCK_WHILE_PENDING",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_01_AFTER_GAP_INSERT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_02_AFTER_SHOCK_INSERT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_03_AFTER_COHERENCE_TRANSITION",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_04_AFTER_CONTROLLER_CLOSE",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_05_AFTER_EPOCH_BINDING",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_06_AFTER_PREDECESSOR_CLOSE",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_07_AFTER_GENERATION_TRANSITION",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_08_AFTER_SUCCESSOR_INSERT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_09_DURING_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_10_AFTER_COMMIT",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_GAP_11_REPEATED_GAP_IN_SUCCESSOR",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_IDB_01_BEFORE_TRANSACTION",
+      "consumers": [
+        "V636-P03-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test-harness/indexeddb-crash-child.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_IDB_02_DURING_SEQUENCE_ALLOCATION",
+      "consumers": [
+        "V636-P03-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test-harness/indexeddb-crash-child.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_IDB_03_DURING_ROW_PUT",
+      "consumers": [
+        "V636-P03-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test-harness/indexeddb-crash-child.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_IDB_04_AFTER_COMMIT",
+      "consumers": [
+        "V636-P03-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test-harness/indexeddb-crash-child.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_LATE_01_MISSING_POSITION_AFTER_GAP",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tools/gap_coherence_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SEND_01_AFTER_SEND_BEFORE_BACKEND_BEGIN",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tools/loopback_ack_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_01_AFTER_RAW_COMMIT_STATEMENT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_02_AFTER_APPLICATION_STATEMENT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_03_AFTER_DERIVED_REVISION_STATEMENT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_04_AFTER_REDUCER_CURSOR_STATEMENT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_05_AFTER_ACK_OUTBOX_STATEMENT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_06_DURING_COMMIT",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "CRASH_VECTOR_SQL_07_AFTER_COMMIT_BEFORE_ACK_SEND",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tools/sqlite_crash_child.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "FINALIZE_A_V636_P10_T03",
+      "consumers": [
+        "V636-P10-T03"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json",
+        "runtime/tools/finalize_review.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "FINALIZE_B_V636_P10_T03",
+      "consumers": [
+        "V636-P10-T03"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json",
+        "runtime/tools/finalize_review.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "ISSUE_V636_P00_T05",
+      "consumers": [
+        "V636-P00-T05"
+      ],
+      "inputs": [
+        "authoring-tools/issue_declaration_gate.py",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json"
+      ],
+      "outputs": [
+        "pack/docs/receipts/declaration-complete.v1.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_TS_V636_P04_T03",
+      "consumers": [
+        "V636-P04-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/clock/clock-vectors.test.js"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_TS_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_TS_V636_P04_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T01",
+      "consumers": [
+        "V636-P01-T01"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_runtime_layout.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T02",
+      "consumers": [
+        "V636-P01-T02"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_declared_stubs.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T03",
+      "consumers": [
+        "V636-P01-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_normative_artifacts.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T04",
+      "consumers": [
+        "V636-P01-T04"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_harness_entrypoints.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T04.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T05",
+      "consumers": [
+        "V636-P01-T05"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_review_release_tools.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T05.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P01_T06",
+      "consumers": [
+        "V636-P01-T06"
+      ],
+      "inputs": [
+        ".bootstrap/authoring-workspace-receipt.json",
+        "plan-input/MANIFEST_SHA256.json",
+        "plan-input/docs/registries/artifact-ownership.v1.json",
+        "plan-input/docs/schemas/artifact-ownership.schema.json",
+        "plan-input/docs/tasks/task-manifest.v6.3.6.json",
+        "runtime/tests/materialization/test_materialization_gate.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T06.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P02_T01",
+      "consumers": [
+        "V636-P02-T01"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_task_manifest_semantics.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P02_T02",
+      "consumers": [
+        "V636-P02-T02"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P02_T03",
+      "consumers": [
+        "V636-P02-T03"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_declaration_complete_gate.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T01",
+      "consumers": [
+        "V636-P03-T01"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_crash_registry.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T02",
+      "consumers": [
+        "V636-P03-T02"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_chrome_indexeddb_environment.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T03",
+      "consumers": [
+        "V636-P03-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_indexeddb_process_crash.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T04",
+      "consumers": [
+        "V636-P03-T04"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_loopback_ack_process_crash.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T04.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T05",
+      "consumers": [
+        "V636-P03-T05"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_sqlite_process_crash.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T05.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T06",
+      "consumers": [
+        "V636-P03-T06"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_gap_generation_process_crash.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T06.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P03_T07",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/run_full_repair_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T07.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P04_T01",
+      "consumers": [
+        "V636-P04-T01"
+      ],
+      "inputs": [
+        "runtime/tests/clock/test_failure_precedence_registry.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P04_T02",
+      "consumers": [
+        "V636-P04-T02"
+      ],
+      "inputs": [
+        "runtime/tests/clock/test_python_clock_vectors.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P04_T04",
+      "consumers": [
+        "V636-P04-T04"
+      ],
+      "inputs": [
+        "runtime/tools/verify_full_repair_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T04.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T01",
+      "consumers": [
+        "V636-P05-T01"
+      ],
+      "inputs": [
+        "runtime/tests/exactness/test_task_symbols.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T02",
+      "consumers": [
+        "V636-P05-T02"
+      ],
+      "inputs": [
+        "runtime/tests/coverage/test_proof_coverage_matrix.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T03",
+      "consumers": [
+        "V636-P05-T03"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_cybersecurity_command_registry.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T04",
+      "consumers": [
+        "V636-P05-T04"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_launch_authorization.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T05",
+      "consumers": [
+        "V636-P05-T05"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_workspace_isolation.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T06",
+      "consumers": [
+        "V636-P05-T06"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_a_runner.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T06.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T07",
+      "consumers": [
+        "V636-P05-T07"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_b_runner.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T07.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P05_T08",
+      "consumers": [
+        "V636-P05-T08"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_aggregation_and_self_review.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T08.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T08.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P06_T01",
+      "consumers": [
+        "V636-P06-T01"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_executable_references.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P06_T02",
+      "consumers": [
+        "V636-P06-T02"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_verification_topology.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_V636_P06_T03",
+      "consumers": [
+        "V636-P06-T03"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_executable_complete_gate.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_REVIEW_AUTHORITY_BOOTSTRAP",
+      "consumers": [
+        "V636-P05-T04"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_authority_bootstrap.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T01",
+      "consumers": [
+        "V636-MIG0-T01"
+      ],
+      "inputs": [
+        "authoring-tools/verify_v62_source.py",
+        "pack/docs/registries/baseline-source-files.v1.json",
+        "pack/docs/registries/migration-source.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T02",
+      "consumers": [
+        "V636-MIG0-T02"
+      ],
+      "inputs": [
+        "authoring-tools/create_successor_workspace.py",
+        "pack/docs/registries/baseline-source-files.v1.json",
+        "pack/docs/registries/path-registry.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T03",
+      "consumers": [
+        "V636-MIG0-T03"
+      ],
+      "inputs": [
+        "authoring-tools/rebind_successor.py",
+        "pack/docs/registries/version-rebinding.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T04",
+      "consumers": [
+        "V636-MIG0-T04"
+      ],
+      "inputs": [
+        "authoring-tools/sync_normative_bundle.py",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "runtime/schema-lock.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T05",
+      "consumers": [
+        "V636-MIG0-T05"
+      ],
+      "inputs": [
+        "authoring-tools/build_task_command_registry.py",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/configs/review-a.v1.json",
+        "pack/docs/configs/review-b.v1.json",
+        "pack/docs/configs/review-aggregation.v1.json",
+        "pack/docs/configs/review-authority.v1.json"
+      ],
+      "outputs": [
+        "runtime/task-command-registry.json",
+        "runtime/review-config/review-a.v1.json",
+        "runtime/review-config/review-b.v1.json",
+        "runtime/review-config/review-aggregation.v1.json",
+        "runtime/review-config/review-authority.v1.json"
+      ],
+      "input_directories": [
+        "pack/docs/configs"
+      ]
+    },
+    {
+      "command_id": "VERIFY_V636_MIG0_T06",
+      "consumers": [
+        "V636-MIG0-T06"
+      ],
+      "inputs": [
+        "authoring-tools/verify_successor_migration.py",
+        "pack/docs/registries/version-rebinding.v1.json"
+      ],
+      "outputs": [
+        "pack/docs/receipts/migration-receipt.v1.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P00_T01",
+      "consumers": [
+        "V636-P00-T01"
+      ],
+      "inputs": [
+        "authoring-tools/import_review_sources.py",
+        "pack/docs/registries/source-inputs.v1.json"
+      ],
+      "outputs": [
+        "pack/docs/receipts/source-provenance.v1.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P00_T02",
+      "consumers": [
+        "V636-P00-T02"
+      ],
+      "inputs": [
+        "authoring-tools/validate_authority_graph.py",
+        "pack/docs/graphs/executable-discovery-graph.v1.json",
+        "pack/docs/graphs/non-authoritative-future-roadmap.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P00_T03",
+      "consumers": [
+        "V636-P00-T03"
+      ],
+      "inputs": [
+        "authoring-tools/validate_task_manifest.py",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/command-io.v1.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/schemas/task-card-v6.3.6.schema.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/docs/vectors/plan-contract-negative.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P00_T04",
+      "consumers": [
+        "V636-P00-T04"
+      ],
+      "inputs": [
+        "authoring-tools/validate_artifact_ownership.py",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P07_T01",
+      "consumers": [
+        "V636-P07-T01"
+      ],
+      "inputs": [
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "runtime/task-command-registry.json",
+        "runtime/tools/run_command_registry.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T01.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P07_T02",
+      "consumers": [
+        "V636-P07-T02"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "runtime/tools/verify_proof_coverage.py",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T09.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T02.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P07_T03",
+      "consumers": [
+        "V636-P07-T03"
+      ],
+      "inputs": [
+        "runtime/tools/build_candidate_qualification_receipt.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "pack/docs/configs/full-verifier-controller.v2.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T03.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P08_T01",
+      "consumers": [
+        "V636-P08-T01"
+      ],
+      "inputs": [
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T01.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P08_T02",
+      "consumers": [
+        "V636-P08-T02"
+      ],
+      "inputs": [
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P08_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T03.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P09_T01",
+      "consumers": [
+        "V636-P09-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/V636-P01-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6/bootstrap/authoring-repository-receipt.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_TS_V636_P04_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_TS_V636_P04_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P01_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P04_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T06.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T06.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T07.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T07.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T08.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T08.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_REVIEW_AUTHORITY_BOOTSTRAP.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T03.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VERIFY_V636_P07_T03.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/.bootstrap/authoring-workspace-receipt.json",
+        "/home/thenam176/betting-helper/plan-input/.receipts/hybrid-discovery-v6.3.6-plan-input.json",
+        "authoring-fixtures/part-b-compiler-inputs.json",
+        "authoring-fixtures/part-b-review-predecessor.json",
+        "authoring-tests/test_part_b_review_inputs.py",
+        "authoring-tools/prepare_part_b_review_inputs.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/contracts/02-authority-graph.md",
+        "pack/docs/receipts/declaration-complete.v1.json",
+        "pack/docs/receipts/migration-receipt.v1.json",
+        "pack/docs/receipts/source-provenance.v1.json",
+        "plan-input/bootstrap/create_authoring_workspace.py",
+        "plan-input/bootstrap/extract_plan.py",
+        "plan-input/bootstrap/initialize_authoring_repository.py",
+        "plan-input/bootstrap/test_bootstrap_tools.py",
+        "plan-input/bootstrap/verify_extracted_plan.py",
+        "runtime/tools/assemble_review_pack.py"
+      ],
+      "outputs": [
+        "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+        "pack/authoring-source/bootstrap/extract_plan.py",
+        "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+        "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+        "pack/authoring-source/bootstrap/verify_extracted_plan.py",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/CANDIDATE_QUALIFICATION.json",
+        "pack/evidence/V636-MIG0-T06.json",
+        "pack/evidence/V636-P00-T05.json",
+        "pack/evidence/V636-P02-T02.json",
+        "pack/evidence/V636-P03-T02.json",
+        "pack/evidence/V636-P03-T07.json",
+        "pack/evidence/V636-P04-T04.json",
+        "pack/evidence/V636-P05-T02.json",
+        "pack/evidence/V636-P05-T04.json",
+        "pack/evidence/V636-P05-T05.json",
+        "pack/evidence/V636-P05-T09.json",
+        "pack/evidence/V636-P06-T01.json",
+        "pack/evidence/V636-P07-T01.json",
+        "pack/evidence/V636-P07-T02.json",
+        "pack/evidence/V636-P07-T03.json",
+        "pack/evidence/retained",
+        "pack/evidence/retained-artifact-manifest.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P09_T02",
+      "consumers": [
+        "V636-P09-T02"
+      ],
+      "inputs": [
+        "pack/docs/registries/seal-exclusions.v1.json",
+        "runtime/tools/compute_governed_content_root.py"
+      ],
+      "outputs": [
+        "pack/GOVERNED_CONTENT_ROOT.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_V636_P09_T03",
+      "consumers": [
+        "V636-P09-T03"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/GOVERNED_CONTENT_ROOT.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/build_self_review.py",
+        "runtime/tools/retained_artifact_io.py"
+      ],
+      "outputs": [
+        "pack/SELF_REVIEW_REPORT.json",
+        "pack/SELF_REVIEW_REPORT.md"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "VERIFY_V636_P09_T04",
+      "consumers": [
+        "V636-P09-T04"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/GOVERNED_CONTENT_ROOT.json",
+        "pack/SELF_REVIEW_REPORT.json",
+        "pack/SELF_REVIEW_REPORT.md",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/MANIFEST_SHA256.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "VERIFY_V636_P10_T01",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "VERIFY_V636_P10_T02",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "VERIFY_V636_P10_T04",
+      "consumers": [
+        "V636-P10-T04"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/aggregate_reviews.py",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/aggregate/result.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "BOOT0_PREPARE_INPUT_DIRS",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "PLAN_PREFLIGHT",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [
+        "plan-input/plan_tools/check_plan.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "PLAN_SCHEMA_TESTS",
+      "consumers": [
+        "V636-BOOT0-T01"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "V636_MIG0_T07_SYNC",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [
+        "authoring-tools/sync_normative_bundle.py",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "runtime/schema-lock.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "V636_MIG0_T07_CHECK",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [
+        "authoring-tools/sync_normative_bundle.py",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "runtime/schema-lock.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "V636_MIG0_T08_SYNC",
+      "consumers": [
+        "V636-MIG0-T08"
+      ],
+      "inputs": [
+        "authoring-tools/sync_normative_bundle.py",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "runtime/schema-lock.json"
+      ],
+      "outputs": [
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/contracts/10-part-b-security-surface.md",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v1.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-aggregation.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v2.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v3.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v3.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/descendant-repository-qualification-receipt.schema.json",
+        "runtime/vendor/hybrid-discovery-v6.3.6/docs/schemas/full-verifier-controller.schema.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "V636_MIG0_T08_CHECK",
+      "consumers": [
+        "V636-MIG0-T08"
+      ],
+      "inputs": [
+        "authoring-tools/sync_normative_bundle.py",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "runtime/schema-lock.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_UV_LOCK",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_PNPM_LOCK",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_UV_SYNC",
+      "consumers": [
+        "V636-MIG0-T05"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_PNPM_INSTALL",
+      "consumers": [
+        "V636-MIG0-T05"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "COMPILE_CRASH_HARNESS",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.harness.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "COMPILE_ALL_TESTS",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
+        "runtime/extension/test/live/capture.test.ts",
+        "runtime/extension/test/live/panel.test.ts",
+        "runtime/extension/test/live/spool.test.ts",
+        "runtime/extension/test/live/wire.test.ts",
+        "runtime/extension/test/offline/fixtures.ts",
+        "runtime/extension/test/offline/loopback.test.ts",
+        "runtime/extension/test/offline/protocol.test.ts",
+        "runtime/extension/test/offline/redaction.test.ts",
+        "runtime/extension/test/offline/spool-payload.test.ts",
+        "runtime/extension/tsconfig.test.json",
+        "runtime/extension/test/security/current-surface.ts"
+      ],
+      "outputs": [
+        "runtime/extension/.test-build/src/live/background.js",
+        "runtime/extension/.test-build/src/live/capture.js",
+        "runtime/extension/.test-build/src/live/contracts.js",
+        "runtime/extension/.test-build/src/live/dom_reader.js",
+        "runtime/extension/.test-build/src/live/panel.js",
+        "runtime/extension/.test-build/src/live/protocol.js",
+        "runtime/extension/.test-build/src/live/spool.js",
+        "runtime/extension/.test-build/src/live/transport.js",
+        "runtime/extension/.test-build/src/live/workspace.js",
+        "runtime/extension/.test-build/src/offline/bootstrap.js",
+        "runtime/extension/.test-build/src/offline/context.js",
+        "runtime/extension/.test-build/src/offline/protocol.js",
+        "runtime/extension/.test-build/src/offline/session.js",
+        "runtime/extension/.test-build/src/storage/durable_idb.js",
+        "runtime/extension/.test-build/test/live/capture.test.js",
+        "runtime/extension/.test-build/test/live/panel.test.js",
+        "runtime/extension/.test-build/test/live/spool.test.js",
+        "runtime/extension/.test-build/test/live/wire.test.js",
+        "runtime/extension/.test-build/test/offline/fixtures.js",
+        "runtime/extension/.test-build/test/offline/loopback.test.js",
+        "runtime/extension/.test-build/test/offline/protocol.test.js",
+        "runtime/extension/.test-build/test/offline/redaction.test.js",
+        "runtime/extension/.test-build/test/offline/spool-payload.test.js",
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_RELEASE_TOOLS",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_candidate_command_registry.py",
+        "runtime/tests/release/test_candidate_qualification_receipt.py",
+        "runtime/tests/release/test_full_proof_coverage.py",
+        "runtime/tests/release/test_post_commit_baseline.py",
+        "runtime/tests/release/test_zero_parent_export.py",
+        "runtime/tests/release/test_zero_parent_repository.py",
+        "runtime/tests/seal/test_deterministic_seal.py",
+        "runtime/tests/seal/test_governed_content_root.py",
+        "runtime/tests/seal/test_pack_assembly.py",
+        "runtime/tests/seal/test_self_review_binding.py",
+        "runtime/tests/repairs/test_phase_evidence.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stderr"
+      ],
+      "input_directories": [
+        "runtime/tests/live"
+      ]
+    },
+    {
+      "command_id": "TEST_SECURITY_PY",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_authorization_trust.py",
+        "runtime/tests/security/test_bubblewrap_isolation.py",
+        "runtime/tests/security/test_canonical_hashing.py",
+        "runtime/tests/security/test_capability_manifest.py",
+        "runtime/tests/security/test_credential_evidence_boundary.py",
+        "runtime/tests/security/test_cybersecurity_command_registry.py",
+        "runtime/tests/security/test_no_archive_policy.py",
+        "runtime/tests/security/test_replay_revocation.py",
+        "runtime/tests/security/test_supply_chain_integrity.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "TEST_SECURITY_TS",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/cdp-reachability.test.js",
+        "runtime/extension/.test-build/test/security/dynamic-dispatch.test.js",
+        "runtime/extension/.test-build/test/security/message-smuggling.test.js",
+        "runtime/extension/.test-build/test/security/outbound-network.test.js",
+        "runtime/extension/.test-build/test/security/production-build-exclusion.test.js",
+        "runtime/extension/.test-build/test/security/target-escape.test.js",
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "runtime/tools/verify_live_package.py",
+        "runtime/contracts/live_readonly/v1/package-policy.json",
+        "pack/docs/contracts/10-part-b-security-surface.md"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_UV_SYNC_REFRESH",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "MIG0_PNPM_INSTALL_REFRESH",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "V636_MIG0_T07_BINDINGS",
+      "consumers": [
+        "V636-MIG0-T07"
+      ],
+      "inputs": [
+        "authoring-tools/build_task_command_registry.py",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/configs/review-a.v1.json",
+        "pack/docs/configs/review-b.v1.json",
+        "pack/docs/configs/review-aggregation.v1.json",
+        "pack/docs/configs/review-authority.v1.json"
+      ],
+      "outputs": [
+        "runtime/task-command-registry.json",
+        "runtime/review-config/review-a.v1.json",
+        "runtime/review-config/review-b.v1.json",
+        "runtime/review-config/review-aggregation.v1.json",
+        "runtime/review-config/review-authority.v1.json"
+      ],
+      "input_directories": [
+        "pack/docs/configs"
+      ]
+    },
+    {
+      "command_id": "V636_MIG0_T08_BINDINGS",
+      "consumers": [
+        "V636-MIG0-T08"
+      ],
+      "inputs": [
+        "authoring-tools/build_task_command_registry.py",
+        "pack/docs/tasks/task-manifest.v6.3.6.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/configs/review-aggregation.v2.json",
+        "pack/docs/configs/review-authority.v1.json",
+        "pack/docs/configs/review-a.v3.json",
+        "pack/docs/configs/review-b.v3.json"
+      ],
+      "outputs": [
+        "runtime/task-command-registry.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-authority.v1.json",
+        "runtime/review-config/review-a.v3.json",
+        "runtime/review-config/review-b.v3.json"
+      ],
+      "input_directories": [
+        "pack/docs/configs"
+      ]
+    },
+    {
+      "command_id": "HOST_REVIEW_AUTHORITY_BOOTSTRAP",
+      "consumers": [],
+      "inputs": [
+        "runtime/review-config/review-authority.v1.json",
+        "runtime/tools/bootstrap_review_authority.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "TYPECHECK_MATERIALIZED_TS",
+      "consumers": [
+        "V636-P01-T06"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.test.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION",
+      "consumers": [
+        "V636-P03-T02"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.harness.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "runtime/tools/verify_live_package.py",
+        "runtime/contracts/live_readonly/v1/package-policy.json",
+        "pack/docs/contracts/10-part-b-security-surface.md"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/bootstrap.test.js",
+        "runtime/extension/.test-build/test/bootstrap/canonical-vectors.test.js",
+        "runtime/extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js",
+        "runtime/extension/.test-build/test/schema-vendor.test.js",
+        "runtime/extension/.test-build/test/security/capability-reachability.bootstrap.test.js",
+        "runtime/extension/.test-build/test/security/current-surface.js",
+        "runtime/tools/verify_live_package.py",
+        "runtime/contracts/live_readonly/v1/package-policy.json",
+        "pack/docs/contracts/10-part-b-security-surface.md"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "QUALIFY_INHERITED_CANONICAL_PY",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/tests-red/test_canonical_hash_red.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/tools/verify_normative_bundle.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/tools/run_command_registry.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_FINAL_MIGRATION",
+      "consumers": [
+        "V636-MIG0-T08"
+      ],
+      "inputs": [
+        "authoring-tools/verify_successor_migration.py",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/normative-source-map.v1.json",
+        "pack/docs/registries/version-rebinding.v1.json"
+      ],
+      "outputs": [
+        "pack/docs/receipts/migration-final-receipt.v1.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "COMPILE_PRODUCTION",
+      "consumers": [
+        "V636-P05-T09"
+      ],
+      "inputs": [
+        "runtime/extension/src/live/background.ts",
+        "runtime/extension/src/live/capture.ts",
+        "runtime/extension/src/live/contracts.ts",
+        "runtime/extension/src/live/dom_reader.ts",
+        "runtime/extension/src/live/panel.ts",
+        "runtime/extension/src/live/protocol.ts",
+        "runtime/extension/src/live/spool.ts",
+        "runtime/extension/src/live/transport.ts",
+        "runtime/extension/src/live/workspace.ts",
+        "runtime/extension/src/offline/bootstrap.ts",
+        "runtime/extension/src/offline/context.ts",
+        "runtime/extension/src/offline/protocol.ts",
+        "runtime/extension/src/offline/session.ts",
+        "runtime/extension/src/storage/durable_idb.ts",
+        "runtime/extension/tsconfig.build.json"
+      ],
+      "outputs": [
+        "runtime/extension/dist/live/background.js",
+        "runtime/extension/dist/live/capture.js",
+        "runtime/extension/dist/live/contracts.js",
+        "runtime/extension/dist/live/dom_reader.js",
+        "runtime/extension/dist/live/panel.js",
+        "runtime/extension/dist/live/protocol.js",
+        "runtime/extension/dist/live/spool.js",
+        "runtime/extension/dist/live/transport.js",
+        "runtime/extension/dist/live/workspace.js",
+        "runtime/extension/dist/offline/bootstrap.js",
+        "runtime/extension/dist/offline/context.js",
+        "runtime/extension/dist/offline/protocol.js",
+        "runtime/extension/dist/offline/session.js",
+        "runtime/extension/dist/storage/durable_idb.js",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE_INSTALL_PYTHON",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE_INSTALL_NODE",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "REVIEW_A_PREPARE",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "REVIEW_A_MECHANICAL",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "runtime/tools/prepare_review_workspace.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "REVIEW_A_FINALIZE",
+      "consumers": [
+        "V636-P10-T03"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/finalize_review.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "REVIEW_B_PREPARE",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/prepare_review_workspace.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "REVIEW_B_MECHANICAL",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "runtime/tools/prepare_review_workspace.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "REVIEW_B_FINALIZE",
+      "consumers": [
+        "V636-P10-T03"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/finalize_review.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "REVIEW_AGGREGATE",
+      "consumers": [
+        "V636-P10-T04"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-a.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/review-b.authorization.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/execution-receipt.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/result.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/execution-receipt.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/result.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/cybersecurity-command-registry.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/review-config/review-a.v2.json",
+        "runtime/review-config/review-aggregation.v2.json",
+        "runtime/review-config/review-b.v2.json",
+        "runtime/tools/aggregate_reviews.py",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/issue_review_launch_authorization.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/seal_review_pack.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/aggregate/result.json"
+      ],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "A_CHECK_SOURCE",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/verify_executable_references.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "A_CHECK_EVIDENCE",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/retained_artifact_io.py",
+        "runtime/tools/verify_proof_coverage.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "A_CHECK_BASELINE",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "pack/docs/receipts/repo0-baseline-receipt.json",
+        "runtime/tools/qualify_zero_parent_baseline.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "A_INSTALL_NODE",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "B_INSTALL_NODE",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "A_INSTALL_PYTHON",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "B_INSTALL_PYTHON",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_CAPABILITY_MANIFEST",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_capability_manifest.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_CDP_REACHABILITY",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/cdp-reachability.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_DYNAMIC_DISPATCH",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/dynamic-dispatch.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_TARGET_ESCAPE",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/target-escape.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_MESSAGE_SMUGGLING",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/message-smuggling.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_OUTBOUND_NETWORK",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/outbound-network.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_AUTHORIZATION_TRUST",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_authorization_trust.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_REPLAY_REVOCATION",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_replay_revocation.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_CREDENTIAL_EVIDENCE",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_credential_evidence_boundary.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_CANONICAL_HASHING",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_canonical_hashing.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_NO_ARCHIVE",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_no_archive_policy.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_BUBBLEWRAP_ISOLATION",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_bubblewrap_isolation.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_SUPPLY_CHAIN",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_supply_chain_integrity.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "SEC_PRODUCTION_BUILD_EXCLUSION",
+      "consumers": [
+        "V636-P10-T02"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/production-build-exclusion.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__COMPILE_V636_P04_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.test.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__COMPILE_CRASH_HARNESS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.harness.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__COMPILE_ALL_TESTS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.test.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.harness.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__COMPILE_PRODUCTION",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/tsconfig.build.json"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_TS_V636_P04_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/clock/clock-vectors.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_runtime_layout.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_declared_stubs.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_normative_artifacts.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T04",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_harness_entrypoints.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T05",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_review_release_tools.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T06",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/materialization/test_materialization_gate.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_task_manifest_semantics.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_artifact_dependency_semantics.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/contracts/test_declaration_complete_gate.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_crash_registry.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_chrome_indexeddb_environment.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_indexeddb_process_crash.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T04",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_loopback_ack_process_crash.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T05",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_sqlite_process_crash.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T06",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_gap_generation_process_crash.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T07",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/durability/test_destruction_and_release.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/clock/test_failure_precedence_registry.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/clock/test_python_clock_vectors.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T04",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/clock/test_clock_parity_and_mutation.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/exactness/test_task_symbols.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/coverage/test_proof_coverage_matrix.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_cybersecurity_command_registry.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T04",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_launch_authorization.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T05",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_workspace_isolation.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T06",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_a_runner.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T07",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_b_runner.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T08",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_aggregation_and_self_review.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T01",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_executable_references.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T02",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_verification_topology.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T03",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_executable_complete_gate.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__VERIFY_REVIEW_AUTHORITY_BOOTSTRAP",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/review/test_review_authority_bootstrap.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_RELEASE_TOOLS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/release/test_candidate_command_registry.py",
+        "runtime/tests/release/test_candidate_qualification_receipt.py",
+        "runtime/tests/release/test_full_proof_coverage.py",
+        "runtime/tests/release/test_post_commit_baseline.py",
+        "runtime/tests/release/test_zero_parent_export.py",
+        "runtime/tests/release/test_zero_parent_repository.py",
+        "runtime/tests/seal/test_deterministic_seal.py",
+        "runtime/tests/seal/test_governed_content_root.py",
+        "runtime/tests/seal/test_pack_assembly.py",
+        "runtime/tests/seal/test_self_review_binding.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_SECURITY_PY",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests/security/test_authorization_trust.py",
+        "runtime/tests/security/test_bubblewrap_isolation.py",
+        "runtime/tests/security/test_canonical_hashing.py",
+        "runtime/tests/security/test_capability_manifest.py",
+        "runtime/tests/security/test_credential_evidence_boundary.py",
+        "runtime/tests/security/test_cybersecurity_command_registry.py",
+        "runtime/tests/security/test_no_archive_policy.py",
+        "runtime/tests/security/test_replay_revocation.py",
+        "runtime/tests/security/test_supply_chain_integrity.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__TEST_SECURITY_TS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/security/cdp-reachability.test.js",
+        "runtime/extension/.test-build/test/security/dynamic-dispatch.test.js",
+        "runtime/extension/.test-build/test/security/message-smuggling.test.js",
+        "runtime/extension/.test-build/test/security/outbound-network.test.js",
+        "runtime/extension/.test-build/test/security/production-build-exclusion.test.js",
+        "runtime/extension/.test-build/test/security/target-escape.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/extension/.test-build/test/bootstrap.test.js",
+        "runtime/extension/.test-build/test/bootstrap/canonical-vectors.test.js",
+        "runtime/extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js",
+        "runtime/extension/.test-build/test/schema-vendor.test.js",
+        "runtime/extension/.test-build/test/security/capability-reachability.bootstrap.test.js"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_CANONICAL_PY",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tests-red/test_canonical_hash_red.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tools/verify_normative_bundle.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK",
+      "consumers": [
+        "V636-P08-T03"
+      ],
+      "inputs": [
+        "runtime/tools/run_command_registry.py"
+      ],
+      "outputs": [],
+      "input_directories": []
+    },
+    {
+      "command_id": "ISSUE_CURRENT_AUTHORING_REPOSITORY_RECEIPT",
+      "consumers": [
+        "V636-MIG0-T08"
+      ],
+      "inputs": [
+        "authoring-tools/issue_current_authoring_repository_receipt.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VERIFY_EXTERNAL_AUTHORING_SOURCES",
+      "consumers": [
+        "V636-P07-T01"
+      ],
+      "inputs": [
+        "pack/docs/configs/full-verifier-controller.v1.json",
+        "pack/docs/registries/delivery-map.v1.json"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
+        "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tools"
+      ]
+    },
+    {
+      "command_id": "A_CHECK_DESCENDANT",
+      "consumers": [
+        "V636-P10-T01"
+      ],
+      "inputs": [
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/receipts/descendant-repository-qualification-receipt.json",
+        "pack/evidence/retained-artifact-manifest.json",
+        "runtime/tools/assemble_review_pack.py",
+        "runtime/tools/qualify_descendant_repository.py",
+        "runtime/tools/retained_artifact_io.py"
+      ],
+      "outputs": [],
+      "input_directories": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+      ]
+    },
+    {
+      "command_id": "CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT",
+      "consumers": [
+        "V636-P03-T07"
+      ],
+      "inputs": [
+        "runtime/tools/run_environment_qualification.py",
+        "runtime/tools/retained_artifact_io.py",
+        "pack/docs/configs/full-verifier-controller.v2.json"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/CAPTURE_V636_SUPPLEMENTAL_ENVIRONMENT.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VALIDATE_CURRENT_DECLARATION",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P07-T01"
+      ],
+      "inputs": [
+        "pack/docs/contracts/part-b-one-ready.v1.json",
+        "authoring-tools/validate_current_phase_inputs.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "VALIDATE_CURRENT_DESCENDANT_MIGRATION",
+      "consumers": [
+        "V636-MIG0-T08",
+        "V636-P07-T01"
+      ],
+      "inputs": [
+        "pack/docs/contracts/part-b-one-ready.v1.json",
+        "authoring-tools/validate_current_phase_inputs.py"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr"
+      ],
+      "input_directories": []
+    },
+    {
+      "command_id": "ISSUE_CURRENT_PHASE_PROOFS",
+      "consumers": [
+        "V636-P07-T01"
+      ],
+      "inputs": [
+        "pack/docs/contracts/part-b-one-ready.v1.json",
+        "runtime/tools/phase_evidence.py",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CURRENT_INPUTS.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_ALL_TESTS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/COMPILE_PRODUCTION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_BOOTSTRAP_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_INHERITED_CANONICAL_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_RELEASE_TOOLS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_PY.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_SECURITY_TS.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P02_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P03_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T02.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T04.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P05_T05.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/TEST_V636_P06_T01.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DECLARATION.stderr",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/VALIDATE_CURRENT_DESCENDANT_MIGRATION.stderr"
+      ],
+      "outputs": [
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-MIG0-T06.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P00-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P02-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T02.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T04.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T05.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P06-T01.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P05-T09.json",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stdout",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/command-logs/ISSUE_CURRENT_PHASE_PROOFS.stderr"
+      ],
+      "input_directories": []
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "crash-child-command-registry/v1",
+  "entries": [
+    {
+      "harness": "CHROME_INDEXEDDB",
+      "entrypoint": "extension/.test-build/test-harness/indexeddb-crash-child.js",
+      "executor": "node"
+    },
+    {
+      "harness": "LOOPBACK_ACK",
+      "entrypoint": "tools/loopback_ack_crash_child.py",
+      "executor": "uv-python"
+    },
+    {
+      "harness": "SQLITE_TRANSACTION",
+      "entrypoint": "tools/sqlite_crash_child.py",
+      "executor": "uv-python"
+    },
+    {
+      "harness": "GAP_GENERATION_COHERENCE",
+      "entrypoint": "tools/gap_coherence_crash_child.py",
+      "executor": "uv-python"
+    },
+    {
+      "harness": "WHOLE_RUN_DESTRUCTION",
+      "entrypoint": "tools/destruction_crash_child.py",
+      "executor": "uv-python"
+    }
+  ]
+}

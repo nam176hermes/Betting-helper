@@ -1,0 +1,11 @@
+{
+  "status": "REPRODUCED",
+  "synthetic_verifier_elapsed_seconds": 901,
+  "intent_max_lifetime_seconds": 900,
+  "confirmation_prompt_was_shown_after_expiry": true,
+  "launcher_exit": 2,
+  "real_provider_attempts": 0,
+  "operator_observations": 0,
+  "key_reads": 0,
+  "limitation": "Verifier latency is injected; no real signed live receipt was verified."
+}

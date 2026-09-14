@@ -1,0 +1,231 @@
+{
+  "exact_scope": "NORMAL local Python fixture; classifications are not global disable rules",
+  "loaded_skills": [
+    {
+      "name": "code-work",
+      "before": "catalog only; no body read observed",
+      "after": "full body read",
+      "classification": "REQUIRED",
+      "reason": "Source implementation contract; now supplied verbatim once with source/hash"
+    },
+    {
+      "name": "ponytail",
+      "before": "developer body",
+      "after": "developer body",
+      "classification": "REQUIRED",
+      "reason": "Active developer instruction, preserved"
+    }
+  ],
+  "discovered_tools": [
+    {
+      "name": "mcp__serena__activate_project",
+      "description_bytes": 433,
+      "classification": "REQUIRED",
+      "invoked": true,
+      "reason": "Required machine/Serena guidance for source and callers"
+    },
+    {
+      "name": "mcp__serena__delete_memory",
+      "description_bytes": 388,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__edit_memory",
+      "description_bytes": 1094,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__find_declaration",
+      "description_bytes": 1236,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__find_implementations",
+      "description_bytes": 1098,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__find_referencing_symbols",
+      "description_bytes": 976,
+      "classification": "REQUIRED",
+      "invoked": true,
+      "reason": "Required machine/Serena guidance for source and callers"
+    },
+    {
+      "name": "mcp__serena__find_symbol",
+      "description_bytes": 3054,
+      "classification": "REQUIRED",
+      "invoked": true,
+      "reason": "Required machine/Serena guidance for source and callers"
+    },
+    {
+      "name": "mcp__serena__get_current_config",
+      "description_bytes": 424,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__get_diagnostics_for_file",
+      "description_bytes": 1072,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__get_symbols_overview",
+      "description_bytes": 1110,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": true,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__initial_instructions",
+      "description_bytes": 574,
+      "classification": "REQUIRED",
+      "invoked": true,
+      "reason": "Required machine/Serena guidance for source and callers"
+    },
+    {
+      "name": "mcp__serena__insert_after_symbol",
+      "description_bytes": 697,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__insert_before_symbol",
+      "description_bytes": 830,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__list_memories",
+      "description_bytes": 348,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__onboarding",
+      "description_bytes": 470,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__open_dashboard",
+      "description_bytes": 360,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__read_memory",
+      "description_bytes": 407,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__rename_memory",
+      "description_bytes": 595,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    },
+    {
+      "name": "mcp__serena__rename_symbol",
+      "description_bytes": 768,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__replace_in_files",
+      "description_bytes": 2922,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__replace_symbol_body",
+      "description_bytes": 904,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__safe_delete_symbol",
+      "description_bytes": 565,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__search_for_pattern",
+      "description_bytes": 1764,
+      "classification": "CONDITIONALLY REQUIRED",
+      "invoked": false,
+      "reason": "Needed only if matching navigation/edit/diagnostic condition arises; available on demand"
+    },
+    {
+      "name": "mcp__serena__write_memory",
+      "description_bytes": 778,
+      "classification": "UNRELATED",
+      "invoked": false,
+      "reason": "No memory/dashboard task or authority in this fixture"
+    }
+  ],
+  "catalog_entries": 242,
+  "catalog_other_entries": "CONDITIONAL/UNRELATED/UNKNOWN by actual task applicability; not loaded skill bodies. No blanket disablement performed.",
+  "unknown": "Exact complete wire schema inventory and token attribution are not retained in rollout.",
+  "profiles": {
+    "M": "Exact target/ownership/files, V0/V1 plan, basic authority and bounded output; skills on demand",
+    "N": "M plus subsystem V1/V2 scope, full code-work once for implementation, exact Serena tool names and bounded fallback",
+    "C": "Unchanged Phase 2 full context; required architecture/contracts and capabilities on demand",
+    "D": "Unchanged Phase 2 full critical context, Astra high where required, V3/V4, authority/HOLD/independence/negative vectors"
+  },
+  "additional_B_skill_reads": [
+    {
+      "skill": "ponytail",
+      "classification": "REQUIRED",
+      "reason": "Active policy; extra source read overlaps already delivered developer body"
+    },
+    {
+      "skill": "code-work",
+      "classification": "REQUIRED",
+      "reason": "Implementation contract"
+    },
+    {
+      "skill": "using-superpowers",
+      "classification": "CONDITIONALLY REQUIRED",
+      "reason": "Selected workflow entrypoint, not disabled in optimized runs"
+    },
+    {
+      "skill": "systematic-debugging",
+      "classification": "CONDITIONALLY REQUIRED",
+      "reason": "Required when that debugging workflow is selected"
+    },
+    {
+      "skill": "test-driven-development",
+      "classification": "CONDITIONALLY REQUIRED",
+      "reason": "Selected framework; substantive failing-test requirement preserved by fresh precheck"
+    },
+    {
+      "skill": "verification-before-completion",
+      "classification": "CONDITIONALLY REQUIRED",
+      "reason": "Selected framework; fresh verification preserved"
+    }
+  ],
+  "B_cleanup_recovery": "rm -f style command rejected with instruction to use safer approach; two subsequent specific cache-cleanup commands. C2/Dnew -B avoids generating that cache."
+}

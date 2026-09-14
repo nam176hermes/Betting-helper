@@ -1,0 +1,217 @@
+{
+  "review_scope": "PLAN_CONTRACT_REVIEW_ONLY",
+  "authorized_production_phases": "NONE",
+  "zip_sha256": "dc7be9176d88a3160ea7259fad3c7f57d48d855b7211ad995fc24d33f59ba59b",
+  "manifest": {
+    "entries": 79,
+    "exact_file_set": true,
+    "all_hashes_and_sizes_match": true
+  },
+  "governed_root": {
+    "file_count": 76,
+    "recomputed_domain_versions": {
+      "v1": "05da6370af2a16b4e01e7359bd3a286ae7d4c38ea1ae9a1ba7b284fa73dd1175",
+      "v5": "50c7a356d98f2b47bdc992d0a67a9375b6a891aa5a02799c0826becc4c6bbaf5"
+    },
+    "recorded": "50c7a356d98f2b47bdc992d0a67a9375b6a891aa5a02799c0826becc4c6bbaf5"
+  },
+  "tasks": {
+    "actual_count": 59,
+    "unique_count": 59,
+    "declared_count": 59,
+    "dependency_errors": [],
+    "task_commands": 110,
+    "ownership_entries": 194
+  },
+  "unowned_security_targets": [
+    {
+      "command_id": "SEC_CAPABILITY_MANIFEST",
+      "source": "runtime/tests/security/test_capability_manifest.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_CDP_REACHABILITY",
+      "source": "runtime/extension/test/security/cdp-reachability.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_DYNAMIC_DISPATCH",
+      "source": "runtime/extension/test/security/dynamic-dispatch.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_TARGET_ESCAPE",
+      "source": "runtime/extension/test/security/target-escape.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_MESSAGE_SMUGGLING",
+      "source": "runtime/extension/test/security/message-smuggling.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_OUTBOUND_NETWORK",
+      "source": "runtime/extension/test/security/outbound-network.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_AUTHORIZATION_TRUST",
+      "source": "runtime/tests/security/test_authorization_trust.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_REPLAY_REVOCATION",
+      "source": "runtime/tests/security/test_replay_revocation.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_CREDENTIAL_EVIDENCE",
+      "source": "runtime/tests/security/test_credential_evidence_boundary.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_CANONICAL_HASHING",
+      "source": "runtime/tests/security/test_canonical_hashing.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_NO_ARCHIVE",
+      "source": "runtime/tests/security/test_no_archive_policy.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_BUBBLEWRAP_ISOLATION",
+      "source": "runtime/tests/security/test_bubblewrap_isolation.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_SUPPLY_CHAIN",
+      "source": "runtime/tests/security/test_supply_chain_integrity.py",
+      "owned": false,
+      "baseline_exists": false
+    },
+    {
+      "command_id": "SEC_PRODUCTION_BUILD_EXCLUSION",
+      "source": "runtime/extension/test/security/production-build-exclusion.test.ts",
+      "owned": false,
+      "baseline_exists": false
+    }
+  ],
+  "other_unowned_references": {
+    "pack/docs/registries/task-command-registry.v1.json": false,
+    "runtime/tools/inspect_restart_state.py": false
+  },
+  "late_creation_owners": {
+    "runtime/tools/create_zero_parent_repository.py": "V632-P08-T02",
+    "runtime/tools/qualify_zero_parent_baseline.py": "V632-P08-T03",
+    "runtime/tools/assemble_review_pack.py": "V632-P09-T01",
+    "runtime/tools/compute_governed_content_root.py": "V632-P09-T02"
+  },
+  "crash": {
+    "source_count": 46,
+    "mapped_count": 46,
+    "exactly_once": true,
+    "states_boundaries_kills_match": true,
+    "commands_resolve": true,
+    "owner_tasks_resolve": true,
+    "required_fields_present": true
+  },
+  "clock": {
+    "named_count": 65,
+    "unique_count": 65,
+    "coverage_exactly_once": true,
+    "mapping_negative_count": 16,
+    "precedence_negative_count": 16,
+    "ordered_error_codes": [
+      "E_NEGATIVE_TARGET_ORDER",
+      "E_NEGATIVE_SOURCE_ORDER",
+      "E_NEGATIVE_NETWORK_RTT",
+      "E_SOURCE_DOMAIN_MISMATCH",
+      "E_TARGET_DOMAIN_MISMATCH",
+      "E_BOOT_MISMATCH",
+      "E_UNIT_NOT_MICROSECOND",
+      "E_TIMESTAMP_OWNER_MISMATCH",
+      "E_INVERTED_OFFSET_INTERVAL",
+      "E_MAX_NETWORK_RTT_EXCEEDED",
+      "E_MAX_BASE_UNCERTAINTY_EXCEEDED",
+      "E_MINIMUM_VALID_SAMPLES",
+      "E_MAX_MAPPING_SEGMENT_AGE",
+      "E_WALL_STEP_TOLERANCE",
+      "E_INCONSISTENT_MAPPING",
+      "SOURCE_AGE_UNKNOWN",
+      "ACCEPT"
+    ]
+  },
+  "inherited_baseline_bytes_identical": {
+    "durability-crash": true,
+    "clock-coherence": true
+  },
+  "task_schema_valid": true,
+  "task_schema_mutation_rejected": {
+    "production": true,
+    "empty_rollback": true,
+    "unknown_dep": false,
+    "forward_dep": false,
+    "count_mismatch": false,
+    "unowned": false
+  },
+  "command_schema_valid": true,
+  "command_placeholder_rejected": {
+    "TBD": false,
+    "TODO": false,
+    "${COMMAND}": false,
+    "...": false,
+    "<command>": true
+  },
+  "review_a_mechanical_ids": [
+    "REVIEW_A_MECHANICAL"
+  ],
+  "review_a_registry_target": {
+    "command_id": "REVIEW_A_MECHANICAL",
+    "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.2",
+    "argv": [
+      "uv",
+      "run",
+      "--frozen",
+      "python",
+      "tools/run_review_a_checks.py",
+      "--config",
+      "review-config/review-a.v1.json"
+    ],
+    "expected_exit": 0
+  },
+  "ready_yes_scope_no_required_task": [
+    "V632-P05-T08"
+  ],
+  "synthetic_ready_yes_scope_no_schema_valid": true,
+  "bootstrap_extra_file_fixture": {
+    "path": "/tmp/v632-independent-review-86jyowdh/bootstrap-review-fixture-4r2eu7nq",
+    "receipt": {
+      "schema_version": "boot0-plan-input-receipt/v1",
+      "root": "/tmp/v632-independent-review-86jyowdh/bootstrap-review-fixture-4r2eu7nq/plan",
+      "manifest_sha256": "9fba82947a5a9b414d5e962fef80598c0a5a078da38f152d1efad63b1b2533dc",
+      "verified_entries": 79
+    },
+    "extra_file_exists": true
+  },
+  "verdicts": {
+    "PLAN_CONTRACT_COMPLETE": "NO",
+    "TASKS_EXECUTABLE_BY_FRESH_CODEX": "NO",
+    "FINDING_COVERAGE_COMPLETE": "NO",
+    "SECURITY_REVIEW_CONTRACT_COMPLETE": "NO",
+    "AUTHORIZED_PRODUCTION_PHASES": "NONE"
+  },
+  "terminal_verdict": "V632_PLAN_REJECTED"
+}

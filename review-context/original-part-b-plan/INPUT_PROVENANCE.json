@@ -1,0 +1,29 @@
+{
+  "plan": "BH_PART_B_BATCHED_V1",
+  "observed_repo_head": "d4055839e596fc52f0e0df175a6733a64b8fffc1",
+  "created_on": "2026-09-09",
+  "input_files": [
+    {
+      "filename": "NEXT_LIVE_INPUTS.md",
+      "bytes": 1396,
+      "sha256": "7949d890bbfa9f309878ec669b98794aacdd1e1cd9ccdf60717d2ba888ba416a"
+    },
+    {
+      "filename": "betting-helper-offline-to-live-plan.zip",
+      "bytes": 104318,
+      "sha256": "a3dacfb1ea9a14b7eb46d1705c4ae8b8342204e74d24776855f580cf2634e227"
+    },
+    {
+      "filename": "04_LIVE_PLAN.md",
+      "bytes": 9655,
+      "sha256": "f4e5a50840f68dbd8b6a9c9166609f44107f3a3f2fc7771b2113c275bd5d2236"
+    },
+    {
+      "filename": "07_LIVE_IMPLEMENTATION_TASKS.md",
+      "bytes": 19187,
+      "sha256": "552798f0f340c17e6ed39f61bd2868c72166e0e5c9ff8d6aad8343af7fefc319"
+    }
+  ],
+  "runtime_tested": false,
+  "live_source_inspected": false
+}

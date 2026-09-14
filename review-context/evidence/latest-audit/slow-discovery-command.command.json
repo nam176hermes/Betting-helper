@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "-B",
+    "-c",
+    "import runpy,sys;sys.path[:0]=['.','src'];runpy.run_path(sys.argv[1],run_name='__main__')",
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-first-live-audit-20260914T010425Z/audit_slow_discovery.py"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 1,
+  "seconds": 0.6155631309957244,
+  "log": "slow-discovery-command.log",
+  "log_sha256": "5b44d4b3fe513e233503c1873c099e7c638e6e85c269633be68b3182fd772359",
+  "browser_platform": null
+}

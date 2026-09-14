@@ -1,0 +1,152 @@
+{
+  "stage": "PREPARED_WAITING_HUMAN_FRESH_SESSIONS",
+  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-launch-1",
+  "results": [
+    {
+      "stage": "v3-launch-a",
+      "governed_entrypoint": "INTERACTIVE_V3_HOST_ENTRYPOINTS_ONLY",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/issue_review_launch_authorization.py",
+        "--config",
+        "/home/thenam176/betting-helper/part-b-candidate/review-config/review-a.v3.json",
+        "--output",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "duration_seconds": 1083.4164926949888,
+      "stdout_sha256": "517f28ffda632e418c0116b4e806c5c5dd04b2802e2958cf87c1b47401035756",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "v3-launch-b",
+      "governed_entrypoint": "INTERACTIVE_V3_HOST_ENTRYPOINTS_ONLY",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/issue_review_launch_authorization.py",
+        "--config",
+        "/home/thenam176/betting-helper/part-b-candidate/review-config/review-b.v3.json",
+        "--output",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "duration_seconds": 1090.3433671050007,
+      "stdout_sha256": "f56a743e08831ca953df26c31e6c41c43ef57c498da9d37dd0ba9195b0ed69fa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "v3-prepare-a",
+      "governed_entrypoint": "INTERACTIVE_V3_HOST_ENTRYPOINTS_ONLY",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "duration_seconds": 1092.6862560570007,
+      "stdout_sha256": "5f8f27857726a54917c93ebc5fb5a436bb4ce6790ad5aea0f78ad72928960fad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "v3-prepare-b",
+      "governed_entrypoint": "INTERACTIVE_V3_HOST_ENTRYPOINTS_ONLY",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6.json"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "duration_seconds": 1075.1177256359952,
+      "stdout_sha256": "2333596a584aca7532d93e5705ec39e07cd748d692365bdeb72d511e3e24ac1b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "roles": [
+    {
+      "role": "IMPLEMENTATION_READINESS_REVIEWER",
+      "authorization_path": "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json",
+      "authorization_sha256": "f0463f7d36c4f7b24adf6960e71daccb39a7b0cb46f9a5d33cf2bcaff9dd7728",
+      "review_run_id": "ed622e15-194e-4177-9ea0-d2b168e5193a",
+      "issued_at": "2026-09-13T20:56:48.188533+00:00",
+      "expires_at": "2026-09-14T04:56:48.188533+00:00",
+      "workspace_root": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a",
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a",
+      "prompt_path": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/ed622e15-194e-4177-9ea0-d2b168e5193a/prompt.md",
+      "prompt_sha256": "8a082c3ad1d5efe67c0b2c9b49da44865ee6bd2c23d09a66ad82a19c60194c7b",
+      "human_fresh_session_attestation": null,
+      "namespace_observed_after_launcher_exit": {
+        "authorization_id": "REVIEW-LAUNCH:fc31ab20b2dd8486151aa76b85d2d958d2dd7deba3bb86c3ef1d17fb3435f065",
+        "command_registry_sha256": "3822bf86024cb1980212b15c80b2d088d5548180a652f0a506f43de5fa851472",
+        "expires_at": "2026-09-14T04:56:48.188533+00:00",
+        "host_boot_id": "d3c3c2f2-bb4d-494d-989b-f9345817928c",
+        "namespaces": {
+          "mnt": 4026532287,
+          "net": 4026532447,
+          "pid": 4026532446,
+          "user": 4026532507
+        },
+        "pid": 2128942,
+        "schema_version": "review-namespace/v2",
+        "socket_path": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/scratch/tmp/namespace.sock",
+        "start_ticks": "15215347"
+      }
+    },
+    {
+      "role": "CYBERSECURITY_REVIEWER",
+      "authorization_path": "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6.json",
+      "authorization_sha256": "e928bc0336956cb7e01f18eb2bd60e041392aea7c85d91b7d741286c2cc3675a",
+      "review_run_id": "cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+      "issued_at": "2026-09-13T21:14:51.718903+00:00",
+      "expires_at": "2026-09-14T05:14:51.718903+00:00",
+      "workspace_root": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+      "prompt_path": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/prompt.md",
+      "prompt_sha256": "a876a434ba4c15c1903b44c2b3d6f5a3b17f5435727b66e278ed20a95bb17791",
+      "human_fresh_session_attestation": null,
+      "namespace_observed_after_launcher_exit": {
+        "authorization_id": "REVIEW-LAUNCH:fa6182cc93bd96f4b09ed9921c0a9eb9fdea6e019aca3c93f6f2ab7ee12a49f2",
+        "command_registry_sha256": "2f0414624388b0e01272572fadd9f7a6a5f00b0fd7d5a2331f5bfd02f5951a59",
+        "expires_at": "2026-09-14T05:14:51.718903+00:00",
+        "host_boot_id": "d3c3c2f2-bb4d-494d-989b-f9345817928c",
+        "namespaces": {
+          "mnt": 4026532511,
+          "net": 4026532515,
+          "pid": 4026532514,
+          "user": 4026532575
+        },
+        "pid": 2338417,
+        "schema_version": "review-namespace/v2",
+        "socket_path": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/scratch/tmp/namespace.sock",
+        "start_ticks": "15322871"
+      }
+    }
+  ],
+  "human_fresh_session_attestation": null,
+  "formal_review_results": 0
+}

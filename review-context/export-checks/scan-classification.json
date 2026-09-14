@@ -1,0 +1,15 @@
+{
+  "scanner": "gitleaks 8.30.1",
+  "scanner_exit": 1,
+  "archive_depth": 8,
+  "redaction": "100%",
+  "findings": 2338,
+  "classified_false_positives": {
+    "valid_der_public_key": 15,
+    "source_file_sha256": 2321,
+    "python_type_annotation": 2
+  },
+  "unresolved": [],
+  "assessment": "NO_UNRESOLVED_FINDINGS",
+  "limits": "Pattern scans and explicit source inspection are not a guarantee of absence of every possible secret."
+}

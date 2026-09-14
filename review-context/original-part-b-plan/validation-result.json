@@ -1,0 +1,85 @@
+{
+  "schema_version": "part-b-plan-validation/v1",
+  "status": "PASS",
+  "scope": "PACKAGE_STATIC_SCHEMAS_SQL_REFERENCE_MATH_ONLY",
+  "runtime_implementation_executed": false,
+  "real_api_calls": 0,
+  "real_credentials_requested": false,
+  "checks": [
+    {
+      "check": "JSON_PARSE",
+      "status": "PASS",
+      "detail": 11
+    },
+    {
+      "check": "SCHEMA_META_VALIDATION",
+      "status": "PASS",
+      "detail": 5
+    },
+    {
+      "check": "LOCAL_SCHEMA_REFERENCE_RESOLUTION",
+      "status": "PASS",
+      "detail": 11
+    },
+    {
+      "check": "CONFIG_EXAMPLE_AND_NEGATIVE_CASES",
+      "status": "PASS",
+      "detail": {
+        "positive": 1,
+        "negative": 9
+      }
+    },
+    {
+      "check": "CLOSED_EVENT_UNION_CASES",
+      "status": "PASS",
+      "detail": {
+        "positive": 1,
+        "negative": 4
+      }
+    },
+    {
+      "check": "INTENT_SHAPE_AND_PROBE_LIMIT_CASES",
+      "status": "PASS",
+      "detail": {
+        "positive": 1,
+        "negative": 4,
+        "temporal_semantics": "assigned to PB-14; runtime not executed"
+      }
+    },
+    {
+      "check": "TASK_AND_ACCEPTANCE_DAG",
+      "status": "PASS",
+      "detail": {
+        "tasks": 25,
+        "cases": 48,
+        "sources": 23
+      }
+    },
+    {
+      "check": "COMMAND_SCRIPT_OWNERSHIP",
+      "status": "PASS",
+      "detail": 9
+    },
+    {
+      "check": "LITERAL_SQL_DDL_COMPILES",
+      "status": "PASS",
+      "detail": 3
+    },
+    {
+      "check": "SQL_CONSTRAINT_NEGATIVES",
+      "status": "PASS",
+      "detail": 10
+    },
+    {
+      "check": "INTERNAL_MARKDOWN_LINKS_AND_FENCES",
+      "status": "PASS",
+      "detail": 25
+    },
+    {
+      "check": "REFERENCE_REQUEST_BUDGET_TESTS",
+      "status": "PASS",
+      "detail": 13
+    }
+  ],
+  "reference_test_output": "test_21_split (test_request_budget.BudgetTests.test_21_split) ... ok\ntest_30_seconds (test_request_budget.BudgetTests.test_30_seconds) ... ok\ntest_adaptive_125min (test_request_budget.BudgetTests.test_adaptive_125min) ... ok\ntest_concurrent (test_request_budget.BudgetTests.test_concurrent) ... ok\ntest_constant (test_request_budget.BudgetTests.test_constant) ... ok\ntest_empty (test_request_budget.BudgetTests.test_empty) ... ok\ntest_fallback (test_request_budget.BudgetTests.test_fallback) ... ok\ntest_half_open (test_request_budget.BudgetTests.test_half_open) ... ok\ntest_invalid_id (test_request_budget.BudgetTests.test_invalid_id) ... ok\ntest_invalid_interval (test_request_budget.BudgetTests.test_invalid_interval) ... ok\ntest_invalid_reserve (test_request_budget.BudgetTests.test_invalid_reserve) ... ok\ntest_sequential (test_request_budget.BudgetTests.test_sequential) ... ok\ntest_sorted_dedup (test_request_budget.BudgetTests.test_sorted_dedup) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 0.001s\n\nOK"
+}

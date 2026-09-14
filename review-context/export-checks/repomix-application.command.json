@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "repomix",
+    ".",
+    "--include",
+    "src/**,moj_discovery/**,tools/**,contracts/**,config/**,extension/src/**,extension/tools/**,extension/manifest*.json,extension/*.json,package.json,pyproject.toml",
+    "--style",
+    "xml",
+    "--parsable-style",
+    "--split-output",
+    "3mb",
+    "--no-git-sort-by-changes",
+    "--output",
+    "review-context/ai-packs/application.xml"
+  ],
+  "exit": 0,
+  "seconds": 1.1191178189765196,
+  "log": "repomix-application.log"
+}

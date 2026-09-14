@@ -1,0 +1,17 @@
+{
+  "schema_version": "review-trust-root/v1",
+  "authority_role": "HOST_REVIEW_AUTHORITY",
+  "algorithm": "Ed25519",
+  "public_key_source": "/home/thenam176/.config/hybrid-discovery/review-authority/ed25519-public-key.json",
+  "private_key_must_not_exist_under": [
+    "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+    "/home/thenam176/betting-helper/part-b-candidate",
+    "/home/thenam176/betting-helper/part-b-review-host/pack"
+  ],
+  "review_roles": [
+    "IMPLEMENTATION_READINESS_REVIEWER",
+    "CYBERSECURITY_REVIEWER",
+    "AGGREGATE_REVIEWER"
+  ],
+  "production_authority": "NONE"
+}

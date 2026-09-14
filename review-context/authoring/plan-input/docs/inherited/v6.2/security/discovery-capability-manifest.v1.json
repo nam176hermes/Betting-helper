@@ -1,0 +1,649 @@
+{
+  "schema_version": "discovery-capability-manifest/v1",
+  "profile": "DISCOVERY_PROFILE",
+  "extension_identity": {
+    "extension_id": "anfddcancelbmpogbmckmjckjlnpmpjk",
+    "manifest_public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwNvHE6TTy2adxztgucntNmg8qtLhcAIBs4b4BQFRzVHHGtldCv67OZwqBv2DhKRDzJUSOIZDU+F/qUCIFDwPqRl9SDAAufbQ+zdJhfIUVvGzp9pqJcqA7E0khaZwaO9UxgBz7+3N4JAjQcA48RqQrOfJ/GTJIHIuL+Pj7YCHgOjE/wvbu77FEJNEr3XQJ8JYW9X/NDCJUlqqxb2UXlftlv0Yn2dYD/C1DS2QS0E6NALBXWbJmcD/P7fC4djHNGn1zgBv1aUcNVLM7K6xJAaRy2a6gpAhvUzri3VwyHfXRO+yA0fCycLQXBPByF8B+g9uH4xOD2wt6Slb9Dzqtv2uNwIDAQAB"
+  },
+  "chrome_manifest": {
+    "manifest_version": 3,
+    "name": "Hybrid Discovery v6.2 REPO0",
+    "version": "6.2.0",
+    "description": "Inert authoring baseline. Discovery execution is not authorized.",
+    "minimum_chrome_version": "116",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwNvHE6TTy2adxztgucntNmg8qtLhcAIBs4b4BQFRzVHHGtldCv67OZwqBv2DhKRDzJUSOIZDU+F/qUCIFDwPqRl9SDAAufbQ+zdJhfIUVvGzp9pqJcqA7E0khaZwaO9UxgBz7+3N4JAjQcA48RqQrOfJ/GTJIHIuL+Pj7YCHgOjE/wvbu77FEJNEr3XQJ8JYW9X/NDCJUlqqxb2UXlftlv0Yn2dYD/C1DS2QS0E6NALBXWbJmcD/P7fC4djHNGn1zgBv1aUcNVLM7K6xJAaRy2a6gpAhvUzri3VwyHfXRO+yA0fCycLQXBPByF8B+g9uH4xOD2wt6Slb9Dzqtv2uNwIDAQAB",
+    "permissions": ["activeTab", "debugger", "scripting", "unlimitedStorage", "webNavigation"],
+    "optional_permissions": [],
+    "host_permissions": [],
+    "optional_host_permissions": [],
+    "content_scripts": [],
+    "web_accessible_resources": [],
+    "action": {
+      "default_title": "Hybrid Discovery held pending review"
+    },
+    "background": {
+      "service_worker": "dist/bootstrap.js",
+      "type": "module"
+    },
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' ws://127.0.0.1:8765"
+    }
+  },
+  "privileged_chrome_api_policy": {
+    "repo0_reachability": "UNREACHABLE_IN_INERT_BASELINE",
+    "future_implementation_authority": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+    "unlisted_method_policy": "DENY",
+    "unlisted_event_policy": "DENY",
+    "selected_root_debuggee_shape": {
+      "required_keys": ["tabId"],
+      "forbidden_keys": ["extensionId", "targetId", "sessionId"],
+      "additional_keys": "DENY",
+      "tab_id_binding": "DiscoveryRunAuthorization.browser_binding.tab_id"
+    },
+    "web_navigation_location_validation": {
+      "listener_filter": {"url": [{"hostEquals": "miseojeu.espacejeux.com", "pathEquals": "/"}]},
+      "filter_role": "NON_AUTHORITATIVE_NARROWING_ONLY",
+      "ignored_url_filter_fields": ["schemes", "ports"],
+      "authoritative_predicate": "PARSE_TRANSIENT_RAW_URL_AND_REQUIRE_PROTOCOL_https:_HOSTNAME_miseojeu.espacejeux.com_PATHNAME_/_EMPTY_USERNAME_PASSWORD_SEARCH_HASH_BEFORE_PROJECTION_OR_SIDE_EFFECT_ELSE_SAFETY_STOP",
+      "raw_url_retention": "DISCARD_AFTER_VALIDATION"
+    },
+    "allowed_method_calls": [
+      {
+        "member": "chrome.debugger.attach",
+        "owner": "extension/src/security/cdp-broker.ts#ClosedCdpBroker",
+        "private_operation": "ATTACH_SELECTED_ROOT_V1",
+        "parameters": {
+          "target_shape": "selected_root_debuggee_shape",
+          "required_version": "1.3",
+          "callback": "ABSENT_PROMISE_FORM_ONLY"
+        }
+      },
+      {
+        "member": "chrome.debugger.detach",
+        "owner": "extension/src/security/cdp-broker.ts#ClosedCdpBroker",
+        "private_operation": "DETACH_ROOT_V1",
+        "parameters": {
+          "target_shape": "selected_root_debuggee_shape",
+          "callback": "ABSENT_PROMISE_FORM_ONLY"
+        }
+      },
+      {
+        "member": "chrome.debugger.sendCommand",
+        "owner": "extension/src/security/cdp-broker.ts#sendLiteralCommand",
+        "private_operation": "ENABLE_NETWORK_OBSERVATION_V1",
+        "parameters": {
+          "target_shape": "selected_root_debuggee_shape",
+          "method_and_parameter_pairs": [
+            {
+              "method": "Network.enable",
+              "parameters": {
+                "maxTotalBufferSize": 33554432,
+                "maxResourceBufferSize": 2097152,
+                "maxPostDataSize": 0
+              }
+            },
+            {"method": "Network.disable", "parameters": {}}
+          ],
+          "callback": "ABSENT_PROMISE_FORM_ONLY"
+        }
+      },
+      {
+        "member": "chrome.webNavigation.getAllFrames",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "private_operation": "ATTACH_SELECTED_ROOT_V1",
+        "parameters": {
+          "required_keys": ["tabId"],
+          "additional_keys": "DENY",
+          "tab_id_binding": "DiscoveryRunAuthorization.browser_binding.tab_id"
+        },
+        "retained_result_fields": ["frameId", "parentFrameId", "documentId", "documentLifecycle", "frameType", "errorOccurred"],
+        "optional_retained_result_fields": ["parentDocumentId"],
+        "denied_result_fields": ["url", "processId"],
+        "callback": "ABSENT_PROMISE_FORM_ONLY"
+      },
+      {
+        "member": "chrome.scripting.executeScript",
+        "owner": "extension/src/security/fixed-probes.ts#runFixedProbe",
+        "private_operations": ["RUN_FIXED_APPLICATION_PROBE_V1", "RUN_FIXED_DOM_PROBE_V1"],
+        "parameters": {
+          "required_keys": ["target", "world", "func", "args"],
+          "additional_keys": "DENY",
+          "target": {
+            "required_keys": ["tabId", "frameIds"],
+            "forbidden_keys": ["allFrames"],
+            "additional_keys": "DENY",
+            "tab_id_binding": "DiscoveryRunAuthorization.browser_binding.tab_id",
+            "frame_ids": "EXACTLY_ONE_CURRENT_OWNED_FRAME_ID"
+          },
+          "world": "ISOLATED",
+          "func": ["APP_LOCATION_CONTEXT_V1", "DOM_DOCUMENT_LIFECYCLE_V1"],
+          "args": [],
+          "forbidden_keys": ["files", "injectImmediately"]
+        },
+        "result_binding": {
+          "array_length": 1,
+          "frameId": "MUST_EQUAL_CURRENT_OWNED_FRAME_ID",
+          "documentId": "MUST_EQUAL_CURRENT_OWNED_DOCUMENT_ID",
+          "result": "MUST_VALIDATE_EXACT_FIXED_PROBE_OUTPUT_BEFORE_ANY_SIDE_EFFECT"
+        },
+        "callback": "ABSENT_PROMISE_FORM_ONLY"
+      }
+    ],
+    "allowed_event_listeners": [
+      {
+        "member": "chrome.action.onClicked.addListener",
+        "owner": "extension/src/security/run-controller.ts#DiscoveryRunController",
+        "event_binding": {
+          "listener_arguments": ["tab"],
+          "listener_return": "void",
+          "trusted_user_gesture": true,
+          "tab_required_fields": ["id", "url"],
+          "tab_id": "MUST_EQUAL_DiscoveryRunAuthorization.browser_binding.tab_id",
+          "tab_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_tab_fields": ["id"],
+          "all_other_tab_fields": "DISCARD"
+        }
+      },
+      {
+        "member": "chrome.debugger.onEvent.addListener",
+        "owner": "extension/src/security/cdp-broker.ts#ClosedCdpBroker",
+        "event_binding": {
+          "listener_arguments": ["source", "method", "params_optional"],
+          "listener_return": "void",
+          "source_shape": "selected_root_debuggee_shape",
+          "child_session": "DENY",
+          "methods": [
+            "Network.requestWillBeSent",
+            "Network.responseReceived",
+            "Network.dataReceived",
+            "Network.loadingFinished",
+            "Network.loadingFailed",
+            "Network.webSocketCreated",
+            "Network.webSocketWillSendHandshakeRequest",
+            "Network.webSocketHandshakeResponseReceived",
+            "Network.webSocketFrameReceived",
+            "Network.webSocketFrameSent",
+            "Network.webSocketFrameError",
+            "Network.webSocketClosed",
+            "Network.eventSourceMessageReceived"
+          ],
+          "parameters": "PROJECT_ONLY_THE_MATCHING_cdp_events.retained_fields_BEFORE_ANY_SIDE_EFFECT"
+        }
+      },
+      {
+        "member": "chrome.debugger.onDetach.addListener",
+        "owner": "extension/src/security/cdp-broker.ts#ClosedCdpBroker",
+        "event_binding": {
+          "listener_arguments": ["source", "reason"],
+          "listener_return": "void",
+          "source_shape": "selected_root_debuggee_shape",
+          "reasons": ["target_closed", "canceled_by_user"],
+          "effect": "SAFETY_STOP_AND_SEAL_RUN"
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onBeforeNavigate.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "listener_filter": "web_navigation_location_validation.listener_filter",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "tab_id": "SELECTED_TAB_ID_ONLY",
+          "frame_id": "CURRENT_OWNED_FRAME_ID_ONLY",
+          "raw_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_fields": ["tabId", "frameId", "parentFrameId", "timeStamp", "parentDocumentId", "documentLifecycle", "frameType"],
+          "denied_fields": ["url", "processId"]
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onCommitted.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "listener_filter": "web_navigation_location_validation.listener_filter",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "tab_id": "SELECTED_TAB_ID_ONLY",
+          "frame_id": "CURRENT_OWNED_FRAME_ID_ONLY",
+          "raw_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_fields": ["tabId", "frameId", "parentFrameId", "timeStamp", "documentId", "parentDocumentId", "documentLifecycle", "frameType", "transitionType", "transitionQualifiers"],
+          "denied_fields": ["url", "processId"]
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onHistoryStateUpdated.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "listener_filter": "web_navigation_location_validation.listener_filter",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "tab_id": "SELECTED_TAB_ID_ONLY",
+          "frame_id": "CURRENT_OWNED_FRAME_ID_ONLY",
+          "raw_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_fields": ["tabId", "frameId", "parentFrameId", "timeStamp", "documentId", "parentDocumentId", "documentLifecycle", "frameType", "transitionType", "transitionQualifiers"],
+          "denied_fields": ["url", "processId"]
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onReferenceFragmentUpdated.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "listener_filter": "web_navigation_location_validation.listener_filter",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "tab_id": "SELECTED_TAB_ID_ONLY",
+          "frame_id": "CURRENT_OWNED_FRAME_ID_ONLY",
+          "raw_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_fields": ["tabId", "frameId", "parentFrameId", "timeStamp", "documentId", "parentDocumentId", "documentLifecycle", "frameType", "transitionType", "transitionQualifiers"],
+          "denied_fields": ["url", "processId"]
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onErrorOccurred.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "listener_filter": "web_navigation_location_validation.listener_filter",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "tab_id": "SELECTED_TAB_ID_ONLY",
+          "frame_id": "CURRENT_OWNED_FRAME_ID_ONLY",
+          "raw_url": "TRANSIENT_EXACT_LOCATION_VALIDATION_THEN_DISCARD",
+          "retained_fields": ["tabId", "frameId", "parentFrameId", "timeStamp", "documentId", "parentDocumentId", "documentLifecycle", "frameType"],
+          "denied_fields": ["url", "processId", "error"]
+        }
+      },
+      {
+        "member": "chrome.webNavigation.onTabReplaced.addListener",
+        "owner": "extension/src/security/target-policy.ts#assertOwnedTarget",
+        "event_binding": {
+          "listener_arguments": ["details"],
+          "listener_return": "void",
+          "replaced_tab_id": "MUST_EQUAL_SELECTED_TAB_ID",
+          "retained_fields": ["tabId", "replacedTabId", "timeStamp"],
+          "tab_replaced_effect": "SAFETY_STOP_AND_SEAL_RUN"
+        }
+      },
+      {
+        "member": "chrome.runtime.onMessage.addListener",
+        "owner": "extension/src/security/run-controller.ts#DiscoveryRunController",
+        "event_binding": {
+          "listener_arguments": ["message", "sender", "sendResponse"],
+          "listener_return": "void",
+          "sender_id": "anfddcancelbmpogbmckmjckjlnpmpjk",
+          "sender_origin": "chrome-extension://anfddcancelbmpogbmckmjckjlnpmpjk",
+          "sender_tab": "ABSENT",
+          "message_types": ["DISCOVERY_BEGIN_V1", "DISCOVERY_STOP_V1", "DISCOVERY_STATUS_GET_V1", "DISCOVERY_EXPORT_SANITIZED_V1", "DESTROY_WHOLE_RUN_WORKING_STORAGE_V1"],
+          "message_additional_properties": "DENY",
+          "send_response": "SYNCHRONOUS_AT_MOST_ONCE",
+          "page_content_external_sender": "DENY"
+        }
+      }
+    ],
+    "private_operation_bindings": [
+      {"private_operation": "ATTACH_SELECTED_ROOT_V1", "chrome_api_members": ["chrome.action.onClicked.addListener", "chrome.webNavigation.getAllFrames", "chrome.debugger.attach"]},
+      {"private_operation": "ENABLE_NETWORK_OBSERVATION_V1", "chrome_api_members": ["chrome.debugger.sendCommand", "chrome.debugger.onEvent.addListener", "chrome.debugger.onDetach.addListener"]},
+      {"private_operation": "RUN_FIXED_APPLICATION_PROBE_V1", "chrome_api_members": ["chrome.scripting.executeScript"]},
+      {"private_operation": "RUN_FIXED_DOM_PROBE_V1", "chrome_api_members": ["chrome.scripting.executeScript"]},
+      {"private_operation": "DETACH_ROOT_V1", "chrome_api_members": ["chrome.debugger.detach"]},
+      {"private_operation": "OPEN_LOOPBACK_V1", "chrome_api_members": [], "non_chrome_sink": "WebSocket(ws://127.0.0.1:8765)"},
+      {"private_operation": "APPEND_SANITIZED_OBSERVATION_V1", "chrome_api_members": [], "non_chrome_sink": "extension/src/spool.ts#Spool.append(PersistableSanitizedObservationV1)", "storage_policy": "privileged_storage_api_policy", "required_dominator": "extension/src/security/redaction.ts#projectBeforePersistence"}
+    ],
+    "explicit_denials": [
+      "chrome.debugger.getTargets",
+      "chrome.debugger attach/detach/sendCommand targets containing targetId, extensionId, sessionId, or any key other than tabId",
+      "chrome.debugger targetId/extensionId/sessionId targets",
+      "chrome.tabs methods and events",
+      "chrome.action methods or events other than chrome.action.onClicked.addListener",
+      "chrome.scripting methods other than executeScript",
+      "chrome.runtime methods or events other than chrome.runtime.onMessage.addListener",
+      "chrome.runtime.onMessageExternal, chrome.runtime.onConnect, chrome.runtime.onConnectExternal, chrome.runtime.connect, chrome.runtime.connectNative, chrome.runtime.sendMessage, chrome.runtime.sendNativeMessage",
+      "chrome.webNavigation methods and events not listed above",
+      "nativeMessaging permission and native messaging methods",
+      "all Chrome API methods and events not explicitly listed in allowed_method_calls or allowed_event_listeners"
+    ]
+  },
+  "privileged_storage_api_policy": {
+    "repo0_reachability": "UNREACHABLE_IN_INERT_BASELINE",
+    "future_implementation_authority": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+    "unlisted_method_and_event_policy": "DENY",
+    "sole_owner": "extension/src/spool.ts#Spool",
+    "database": {
+      "name_rule": "hybrid-discovery-v6.2-working-<lowercase-browser_run_id-uuid>",
+      "browser_run_id_source": "DiscoveryRunAuthorization.browser_binding.browser_run_id",
+      "version": 1,
+      "one_database_per_browser_run": true,
+      "upgrade_policy": "ONLY_oldVersion_0_TO_newVersion_1_ELSE_FAIL_CLOSED",
+      "object_stores": [
+        {
+          "name": "stream_state_v1",
+          "create_options": {"autoIncrement": false},
+          "out_of_line_key": {
+            "components": ["producer_id", "stream_id"],
+            "source": "validated StreamKey for the database browser_run_id"
+          },
+          "value_shape": {
+            "required_keys": ["storage_schema_version", "producer_id", "stream_id", "active_generation", "next_sequence", "last_cursor_hash", "ack_generation", "ack_sequence", "ack_cursor_hash", "normal_bytes_used", "terminal_reserve_bytes_used", "generation_state"],
+            "additional_keys": "DENY",
+            "storage_schema_version": "browser-stream-state/v1",
+            "decimal_fields": "CANONICAL_UNSIGNED_DECIMAL_STRINGS_WITH_SIGNED_64_BIT_MAXIMUM",
+            "hash_fields": "LOWERCASE_SHA256_HEX",
+            "generation_state": ["ACTIVE", "CLOSED"]
+          },
+          "indexes": []
+        },
+        {
+          "name": "spool_entries_v1",
+          "create_options": {"autoIncrement": false},
+          "out_of_line_key": {
+            "components": ["producer_id", "stream_id", "generation_pad19", "sequence_pad19"],
+            "decimal_key_encoding": "VALIDATE_CANONICAL_UNSIGNED_DECIMAL_AT_MOST_9223372036854775807_THEN_LEFT_PAD_ASCII_ZERO_TO_19_WITHOUT_CHANGING_RECORD_BYTES"
+          },
+          "value_shape": {
+            "required_keys": ["storage_schema_version", "spool_record", "sanitized_observation"],
+            "additional_keys": "DENY",
+            "storage_schema_version": "browser-spool-entry/v1",
+            "spool_record": "EXACT durability-records.schema.json#/$defs/SpoolRecord",
+            "sanitized_observation": "EXACT raw-observation.schema.json#"
+          },
+          "indexes": [
+            {"name": "by_spool_record_id", "keyPath": "spool_record.spool_record_id", "options": {"unique": true, "multiEntry": false}},
+            {"name": "by_raw_observation_id", "keyPath": "spool_record.raw_observation_id", "options": {"unique": true, "multiEntry": false}}
+          ]
+        }
+      ]
+    },
+    "projection_dominance": {
+      "projector": "extension/src/security/redaction.ts#projectBeforePersistence",
+      "input_type": "unknown",
+      "input_rule": "NO_INPUT_BYTE_OR_FIELD_MAY_BE_LOGGED_HASHED_OR_PERSISTED_BEFORE_PROJECTION",
+      "return_type": "PersistableSanitizedObservationV1",
+      "return_type_definition": "OPAQUE_NON_EXPORTABLE_unique_symbol_BRAND_PLUS_EXACT_VALIDATED_RawObservation_AND_CANONICAL_SANITIZED_BYTES",
+      "sole_constructor": "projectBeforePersistence",
+      "sink": "extension/src/spool.ts#Spool.append",
+      "sink_signature": "append(value: PersistableSanitizedObservationV1): Promise<SpoolRecord>",
+      "required_edge": "EVERY_Spool.append_ARGUMENT_MUST_BE_THE_UNALTERED_SUCCESS_RETURN_OF_projectBeforePersistence_IN_THE_SAME_DOMINATING_CONTROL_FLOW",
+      "casts_aliases_destructuring_or_reconstruction": "DENY",
+      "raw_cdp_event_to_storage": "UNREACHABLE"
+    },
+    "allowed_method_calls": [
+      {"member": "indexedDB.open", "owner": "extension/src/spool.ts#Spool", "arguments": ["database.name_rule", 1]},
+      {"member": "IDBDatabase.createObjectStore", "owner": "extension/src/spool.ts#Spool", "phase": "onupgradeneeded_oldVersion_0_newVersion_1_ONLY", "arguments": "EXACT_database.object_stores_name_and_create_options"},
+      {"member": "IDBObjectStore.createIndex", "owner": "extension/src/spool.ts#Spool", "phase": "onupgradeneeded_oldVersion_0_newVersion_1_ONLY", "arguments": "EXACT_database.object_stores.indexes"},
+      {"member": "IDBDatabase.transaction", "owner": "extension/src/spool.ts#Spool", "allowed_argument_tuples": [[["stream_state_v1", "spool_entries_v1"], "readwrite", {"durability": "strict"}], [["stream_state_v1", "spool_entries_v1"], "readonly"]]},
+      {"member": "IDBTransaction.objectStore", "owner": "extension/src/spool.ts#Spool", "allowed_names": ["stream_state_v1", "spool_entries_v1"]},
+      {"member": "IDBObjectStore.get", "owner": "extension/src/spool.ts#Spool", "allowed_store_and_key_pairs": [{"store": "stream_state_v1", "key": "EXACT_STREAM_KEY"}, {"store": "spool_entries_v1", "key": "EXACT_PADDED_POSITION_KEY_FOR_DUPLICATE_COMPARE"}]},
+      {"member": "IDBObjectStore.add", "owner": "extension/src/spool.ts#Spool", "store": "spool_entries_v1", "value": "EXACT_CLOSED_SPOOL_ENTRY", "key": "EXACT_PADDED_POSITION_KEY"},
+      {"member": "IDBObjectStore.put", "owner": "extension/src/spool.ts#Spool", "store": "stream_state_v1", "value": "EXACT_CLOSED_STREAM_STATE", "key": "EXACT_STREAM_KEY"},
+      {"member": "IDBObjectStore.openCursor", "owner": "extension/src/spool.ts#Spool", "store": "spool_entries_v1", "arguments": ["IDBKeyRange.bound(EXACT_GENERATION_LOWER_KEY,EXACT_GENERATION_UPPER_KEY,false,false)", "next"]},
+      {"member": "IDBKeyRange.bound", "owner": "extension/src/spool.ts#Spool", "arguments": ["EXACT_GENERATION_LOWER_KEY", "EXACT_GENERATION_UPPER_KEY", false, false]},
+      {"member": "IDBCursor.continue", "owner": "extension/src/spool.ts#Spool", "arguments": []},
+      {"member": "IDBTransaction.abort", "owner": "extension/src/spool.ts#Spool", "arguments": []},
+      {"member": "IDBDatabase.close", "owner": "extension/src/spool.ts#Spool", "arguments": []}
+    ],
+    "allowed_event_handlers": [
+      {"member": "IDBOpenDBRequest.onupgradeneeded", "owner": "extension/src/spool.ts#Spool", "event": "IDBVersionChangeEvent", "required_binding": "oldVersion_0_newVersion_1_ONLY"},
+      {"member": "IDBOpenDBRequest.onsuccess", "owner": "extension/src/spool.ts#Spool", "event": "Event", "required_binding": "RESULT_DATABASE_NAME_VERSION_AND_STORE_SET_EXACTLY_MATCH_POLICY"},
+      {"member": "IDBOpenDBRequest.onerror", "owner": "extension/src/spool.ts#Spool", "event": "Event", "effect": "FAIL_CLOSED_NO_APPEND"},
+      {"member": "IDBOpenDBRequest.onblocked", "owner": "extension/src/spool.ts#Spool", "event": "IDBVersionChangeEvent", "effect": "FAIL_CLOSED_NO_APPEND"},
+      {"member": "IDBRequest.onsuccess", "owner": "extension/src/spool.ts#Spool", "event": "Event", "required_binding": "EXACT_REQUEST_RESULT_SCHEMA"},
+      {"member": "IDBRequest.onerror", "owner": "extension/src/spool.ts#Spool", "event": "Event", "effect": "ABORT_TRANSACTION_FAIL_CLOSED"},
+      {"member": "IDBTransaction.oncomplete", "owner": "extension/src/spool.ts#Spool", "event": "Event", "effect": "ONLY_POINT_AT_WHICH_APPEND_RETURNS_DURABLY_SPOOLED"},
+      {"member": "IDBTransaction.onabort", "owner": "extension/src/spool.ts#Spool", "event": "Event", "effect": "RETURN_CODED_FAILURE_NO_DURABILITY_CLAIM"},
+      {"member": "IDBTransaction.onerror", "owner": "extension/src/spool.ts#Spool", "event": "Event", "effect": "ABORT_AND_RETURN_CODED_FAILURE"},
+      {"member": "IDBDatabase.onversionchange", "owner": "extension/src/spool.ts#Spool", "event": "IDBVersionChangeEvent", "effect": "CLOSE_AND_FAIL_CLOSED"}
+    ],
+    "append_transaction": {
+      "stores": ["stream_state_v1", "spool_entries_v1"],
+      "mode": "readwrite",
+      "durability": "strict",
+      "ordered_steps": ["GET_EXACT_STREAM_STATE", "VALIDATE_GENERATION_CURSOR_CAPACITY_AND_NEXT_SEQUENCE", "ADD_EXACT_SPOOL_ENTRY_AT_EXACT_PADDED_POSITION_KEY", "PUT_ADVANCED_EXACT_STREAM_STATE", "WAIT_FOR_oncomplete"],
+      "sequence_and_row_atomicity": "ONE_TRANSACTION",
+      "duplicate_behavior": "ConstraintError_ABORT_THEN_READONLY_COMPARE_CANONICAL_BYTES_IDENTICAL_IS_IDEMPOTENT_ELSE_CONFLICT",
+      "success_boundary": "IDBTransaction.oncomplete_ONLY",
+      "request_success_is_not_durability": true
+    },
+    "capacity_policy": {
+      "normal_spool_bytes": 133169152,
+      "terminal_gap_reserve_bytes": 1048576,
+      "normal_limit_action": "SPOOL_CAPACITY_SAFETY_STOP_AND_USE_RESERVE_ONLY_FOR_ONE_TERMINAL_GAP_RECORD",
+      "unacknowledged_eviction": "DENY",
+      "individual_deletion": "DENY"
+    },
+    "explicit_denials": [
+      "indexedDB.databases, indexedDB.cmp, and indexedDB.deleteDatabase",
+      "IDBDatabase.deleteObjectStore",
+      "IDBObjectStore.clear, delete, deleteIndex, getAll, getAllKeys, getKey, openKeyCursor, count, and any unlisted method",
+      "IDBCursor.advance, continuePrimaryKey, delete, and update",
+      "IDBIndex read or cursor methods outside upgrade-time createIndex",
+      "localStorage, sessionStorage, chrome.storage, CacheStorage, Origin Private File System, File System Access, and filesystem write APIs",
+      "automatic archive, backup, compaction, TTL, LRU, rolling deletion, retention daemon, restore, or cleanup",
+      "any persistence sink outside extension/src/spool.ts#Spool",
+      "any Spool.append path not dominated by extension/src/security/redaction.ts#projectBeforePersistence"
+    ]
+  },
+  "loopback": {
+    "url": "ws://127.0.0.1:8765",
+    "extension_origin": "chrome-extension://anfddcancelbmpogbmckmjckjlnpmpjk",
+    "authentication": "ONE_RUN_PAIRING_SECRET_HMAC_SHA256",
+    "pairing_secret_format": "RAW_32_BYTES_EPHEMERAL_ONE_RUN_ONLY",
+    "body_hash_algorithm": "HD-JCS-SHA256-v1",
+    "body_hash_artifact_type": "LoopbackBody",
+    "body_hash_domain": "HYBRID-DISCOVERY/v6.2/LoopbackBody/v1\u0000",
+    "hmac_algorithm": "HMAC-SHA-256",
+    "hmac_domain": "HYBRID-DISCOVERY/v6.2/LOOPBACK-HMAC-SHA256/v1\u0000",
+    "hmac_preimage_rule": "hmac_domain || U32BE(len(UTF8(session_id))) || UTF8(session_id) || U32BE(len(ASCII(direction))) || ASCII(direction) || U64BE(counter) || U32BE(len(ASCII(message_type))) || ASCII(message_type) || raw_32_byte_canonical_body_digest",
+    "counter_policy": "INDEPENDENT_PER_DIRECTION_START_AT_1_INCREMENT_EXACTLY_1_REJECT_REPLAY_OR_GAP",
+    "command_channel": false
+  },
+  "run_bounds": {
+    "max_concurrent_runs": 1,
+    "max_selected_tabs": 1,
+    "max_duration_seconds": 1800,
+    "max_sanitized_observations": 250000,
+    "normal_spool_bytes": 133169152,
+    "terminal_gap_reserve_bytes": 1048576,
+    "max_decoded_body_bytes": 2097152,
+    "max_volatile_unknown_payload_bytes": 33554432,
+    "max_page_message_bytes": 65536
+  },
+  "location_policy": {
+    "selection": "USER_SELECTED_TOP_LEVEL_PAGE_ONLY",
+    "origin": "https://miseojeu.espacejeux.com",
+    "pathname": "/",
+    "query": "DENY_AND_DO_NOT_RETAIN_OR_HASH",
+    "fragment": "DENY_AND_DO_NOT_RETAIN_OR_HASH",
+    "userinfo": "DENY_AND_DO_NOT_RETAIN_OR_HASH"
+  },
+  "target_policy": {
+    "target_types": ["page"],
+    "denied_target_types": ["iframe", "worker", "shared_worker", "service_worker", "browser", "background_page", "webview"],
+    "max_targets": 1,
+    "max_frames": 32,
+    "recursive_attachment": "DENY",
+    "frame_ownership_proof": "chrome.webNavigation selected-tab membership",
+    "target_domain": "DENY",
+    "child_sessions": "DENY",
+    "iframe_targets": "DENY",
+    "worker_targets": "DENY",
+    "browser_or_global_enumeration": "DENY"
+  },
+  "cdp_commands": [
+    {
+      "method": "Network.enable",
+      "parameters": {
+        "maxTotalBufferSize": 33554432,
+        "maxResourceBufferSize": 2097152,
+        "maxPostDataSize": 0
+      }
+    },
+    {
+      "method": "Network.disable",
+      "parameters": {}
+    }
+  ],
+  "cdp_events": [
+    {
+      "event": "Network.requestWillBeSent",
+      "retained_fields": ["request_id", "loader_id", "frame_id", "timestamp", "resource_type", "method_class", "origin_id", "path_template_id", "redirect_present"]
+    },
+    {
+      "event": "Network.responseReceived",
+      "retained_fields": ["request_id", "loader_id", "frame_id", "timestamp", "resource_type", "status_class", "mime_class", "protocol_class", "encoded_length", "from_cache", "from_service_worker"]
+    },
+    {
+      "event": "Network.dataReceived",
+      "retained_fields": ["request_id", "timestamp", "data_length", "encoded_data_length"]
+    },
+    {
+      "event": "Network.loadingFinished",
+      "retained_fields": ["request_id", "timestamp", "encoded_data_length"]
+    },
+    {
+      "event": "Network.loadingFailed",
+      "retained_fields": ["request_id", "timestamp", "resource_type", "cancelled", "blocked_or_cors_code"]
+    },
+    {
+      "event": "Network.webSocketCreated",
+      "retained_fields": ["request_id"]
+    },
+    {
+      "event": "Network.webSocketWillSendHandshakeRequest",
+      "retained_fields": ["request_id", "timestamp"]
+    },
+    {
+      "event": "Network.webSocketHandshakeResponseReceived",
+      "retained_fields": ["request_id", "timestamp", "status_class"]
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "retained_fields": ["request_id", "timestamp", "opcode", "mask"]
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "retained_fields": ["request_id", "timestamp", "opcode", "mask"]
+    },
+    {
+      "event": "Network.webSocketFrameError",
+      "retained_fields": ["request_id", "timestamp"]
+    },
+    {
+      "event": "Network.webSocketClosed",
+      "retained_fields": ["request_id", "timestamp"]
+    },
+    {
+      "event": "Network.eventSourceMessageReceived",
+      "retained_fields": ["request_id", "timestamp"]
+    }
+  ],
+  "denied_event_content": [
+    "URL_USERINFO",
+    "URL_QUERY",
+    "URL_FRAGMENT",
+    "HEADERS",
+    "COOKIES",
+    "AUTHORIZATION",
+    "POST_DATA",
+    "PAYLOAD_DATA",
+    "SSE_DATA",
+    "EXTRA_INFO_EVENTS",
+    "FREE_FORM_ERROR_TEXT"
+  ],
+  "fixed_probes": [
+    {
+      "probe_id": "APP_LOCATION_CONTEXT_V1",
+      "class": "APPLICATION",
+      "execution_world": "ISOLATED",
+      "arguments": [],
+      "selectors": [],
+      "script_or_expression_input": false,
+      "returns": ["origin_id", "path_template_id"]
+    },
+    {
+      "probe_id": "DOM_DOCUMENT_LIFECYCLE_V1",
+      "class": "DOM",
+      "execution_world": "ISOLATED",
+      "arguments": [],
+      "selectors": [],
+      "script_or_expression_input": false,
+      "returns": ["ready_state", "visibility_state", "has_focus", "document_context"]
+    }
+  ],
+  "public_messages": [
+    "DISCOVERY_BEGIN_V1",
+    "DISCOVERY_STOP_V1",
+    "DISCOVERY_STATUS_GET_V1",
+    "DISCOVERY_EXPORT_SANITIZED_V1",
+    "DESTROY_WHOLE_RUN_WORKING_STORAGE_V1"
+  ],
+  "private_operations": [
+    "ATTACH_SELECTED_ROOT_V1",
+    "ENABLE_NETWORK_OBSERVATION_V1",
+    "RUN_FIXED_APPLICATION_PROBE_V1",
+    "RUN_FIXED_DOM_PROBE_V1",
+    "DETACH_ROOT_V1",
+    "OPEN_LOOPBACK_V1",
+    "APPEND_SANITIZED_OBSERVATION_V1"
+  ],
+  "loopback_client_to_backend": [
+    "PAIR_HELLO_V1",
+    "PAIR_PROOF_V1",
+    "OBSERVATION_BATCH_V1",
+    "RESUME_STATE_FACT_V1",
+    "ACK_APPLIED_FACT_V1",
+    "PING_V1",
+    "RUN_TERMINAL_FACT_V1",
+    "PROTOCOL_ERROR_FACT_V1"
+  ],
+  "loopback_backend_to_client": [
+    "PAIR_CHALLENGE_V1",
+    "PAIR_ACCEPTED_V1",
+    "BACKEND_CURSOR_FACT_V1",
+    "BACKEND_GENERATION_FACT_V1",
+    "ACK_CURSOR_FACT_V1",
+    "PONG_V1",
+    "PROTOCOL_ERROR_FACT_V1"
+  ],
+  "body_classes": [],
+  "unreachable_capability_classes": [
+    "GENERIC_CDP_DISPATCH",
+    "COMPUTED_CDP_COMMAND",
+    "ARBITRARY_RUNTIME_EXECUTION",
+    "FETCH_INTERCEPTION_OR_MUTATION",
+    "INPUT_DISPATCH",
+    "PAGE_NAVIGATION_OR_MUTATION",
+    "DOM_MUTATION",
+    "TARGET_ENUMERATION_OR_AUTO_ATTACH",
+    "AUTHENTICATED_HTTP_REQUEST",
+    "OUTGOING_HTTP_OR_WEBSOCKET_BODY",
+    "PAGE_OR_CONTENT_OR_EXTERNAL_COMMAND_MESSAGE",
+    "LOOPBACK_COMMAND_CHANNEL",
+    "CROSS_TARGET_OR_CHILD_SESSION_ESCAPE",
+    "RESPONSE_BODY_CAPTURE",
+    "ARCHIVE_BACKUP_COMPACTION_OR_INDIVIDUAL_DELETION",
+    "PRODUCTION_OPERATOR_OR_WAGER_EXECUTION",
+    "MANIFEST_EXECUTABLE_SURFACE_EXPANSION",
+    "UNLISTED_CHROME_API",
+    "NATIVE_MESSAGING",
+    "UNLISTED_PERSISTENCE_API"
+  ],
+  "negative_escape_cases": [
+    "GENERIC_CDP_DISPATCH",
+    "COMPUTED_COMMAND_NAME",
+    "ALIASED_DESTRUCTURED_CALL_APPLY_BIND_PRIVILEGE",
+    "DYNAMIC_IMPORT_REQUIRE_EVAL_NEW_FUNCTION_REMOTE_CODE_OR_CODE_SPLIT",
+    "ARBITRARY_RUNTIME_CALL",
+    "FETCH_INPUT_PAGE_OR_NETWORK_MUTATION",
+    "DOM_OR_CSS_MUTATION",
+    "ARBITRARY_AUTHENTICATED_HTTP_METHOD_OR_BODY",
+    "FETCH_XHR_FORM_BEACON_NAVIGATION_OR_ARBITRARY_WEBSOCKET",
+    "PAGE_ORIGINATED_COMMAND_BEARING_MESSAGE",
+    "LOOPBACK_COMMAND_BEARING_MESSAGE",
+    "TARGET_SESSION_FRAME_OR_ORIGIN_ESCAPE",
+    "PERSISTENCE_BEFORE_PROJECT_BEFORE_PERSISTENCE",
+    "MANIFEST_EXECUTABLE_SURFACE_EXPANSION",
+    "UNLISTED_CHROME_API",
+    "NATIVE_MESSAGING_PERMISSION",
+    "UNLISTED_PERSISTENCE_API"
+  ],
+  "network_get_response_body_present": false,
+  "production_authority": "NONE"
+}

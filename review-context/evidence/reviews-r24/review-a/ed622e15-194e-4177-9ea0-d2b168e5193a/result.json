@@ -1,0 +1,111 @@
+{
+  "pack_zip_sha256": "2cfe4ad84189db200b3f06ab7bd55d9703aaf11fa0db74381036dd2ef2a909ab",
+  "review_run_id": "ed622e15-194e-4177-9ea0-d2b168e5193a",
+  "repository_qualification_receipt_sha256": "9a40210e1f0dd62dad962173307d614aa2a2f94fb0e84cabdd738bde5b8f14ee",
+  "repository_identity_kind": "DESCENDANT",
+  "repository_commit_oid": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "repository_tree_oid": "075fec1dace3115aabd9f1f4380ce6c802bd2d80",
+  "repository_file_tree_root_sha256": "1ffeeca70c8224958457f637a2cfa60381da6694a8cfa63f2c88401e2cb7c51b",
+  "schema_version": "independent-review-result/v2",
+  "review_role": "IMPLEMENTATION_READINESS_REVIEWER",
+  "review_outcome": "HOLD",
+  "findings": [
+    {
+      "finding_id": "PART-B-CANDIDATE-A",
+      "severity": "MINOR",
+      "blocking": false,
+      "title": "CANDIDATE_READINESS scope bound to the exact authorized Review A scope.",
+      "evidence_ids": [
+        "sha256:2c71f628b63bcdddd150a460fec63920b11934858162be74dfbb188b3f6aa698"
+      ],
+      "affected_verdicts": [
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK"
+      ],
+      "required_repair": "None for this scope marker. Production authority remains NONE."
+    },
+    {
+      "finding_id": "PART-B-A-MECHANICAL-CHECKS",
+      "severity": "MINOR",
+      "blocking": false,
+      "title": "The authorized controller completed A_CHECK_SOURCE, A_CHECK_EVIDENCE and A_CHECK_DESCENDANT with exit 0; the descendant identity and sealed mechanical evidence passed.",
+      "evidence_ids": [
+        "A_CHECK_SOURCE",
+        "A_CHECK_EVIDENCE",
+        "A_CHECK_DESCENDANT",
+        "commands_executed_root:dd34ab452f7480440f2ef3fb8c58bc50bf3139cc0bd9dc74b8e6b0324c109b01",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/scratch/control/review-a-controller.stdout",
+        "sha256:ec023e73d95f1ec6afb2a5a3e0070e6d89eede5adc5fc49fcd556ec3031d993b",
+        "stdout_sha256:d87b0a35d0dc710e6400f3b1ed5b0faa9b55c06c9f9b5cf1ddcbd1568e5c0313",
+        "stdout_sha256:d9db6af51a1725aa882b6eaf89934e6e98be115735af340d59ba793d8e04daf0",
+        "stdout_sha256:a7f41c79c98d1bd83ed3f598be695ab6ff33b73796d5ed8bcf3ab6b3969656ab"
+      ],
+      "affected_verdicts": [
+        "DESCENDANT_REPOSITORY_VALID",
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+        "SAFE_TO_IMPLEMENT_R0",
+        "SAFE_TO_IMPLEMENT_F0A",
+        "SAFE_TO_IMPLEMENT_SEC0",
+        "SAFE_TO_IMPLEMENT_E0",
+        "SAFE_TO_IMPLEMENT_D0",
+        "SAFE_TO_FREEZE_SCOPE0"
+      ],
+      "required_repair": "No repair is identified by these registered checks. Preserve their exact command records and bindings. This is sealed verification of retained post-commit evidence, including exact references, artifact lifecycle, process-level durability and clock proof, not a new live campaign or production authorization. Mechanical PASS does not clear the procedural findings below."
+    },
+    {
+      "finding_id": "PART-B-A-FRESH-SESSION-MISSING",
+      "severity": "IMPORTANT",
+      "blocking": true,
+      "title": "The completed workspace attestation still has fresh_session_attestation=null despite fresh_session_required=true.",
+      "evidence_ids": [
+        "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/workspace-attestation.json#/fresh_session_attestation",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json#/fresh_session_required",
+        "/home/thenam176/betting-helper/part-b-candidate/src/moj_discovery/review_authorization.py::verify_review_execution_receipt",
+        "/home/thenam176/betting-helper/part-b-candidate/tools/finalize_review.py::_validate_current_workspace"
+      ],
+      "affected_verdicts": [
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+        "SAFE_TO_IMPLEMENT_R0",
+        "SAFE_TO_IMPLEMENT_F0A",
+        "SAFE_TO_IMPLEMENT_SEC0",
+        "SAFE_TO_IMPLEMENT_E0",
+        "SAFE_TO_IMPLEMENT_D0",
+        "SAFE_TO_FREEZE_SCOPE0"
+      ],
+      "required_repair": "The authorized host/human authority must provide a truthful HUMAN_FRESH_CODEX_SESSION attestation for a compliant independent review session, bound to that session and authorization. The reviewer cannot self-declare session initialization or self-sign an execution receipt. Do not finalize this result as an independent PASS while this evidence is missing; the separate input-boundary finding also requires a replacement review."
+    },
+    {
+      "finding_id": "PART-B-A-INPUT-BOUNDARY",
+      "severity": "IMPORTANT",
+      "blocking": true,
+      "title": "At review entry the reviewer searched the historical memory registry for Review A/controller guidance, outside the supplied role input mounts; exclusive-input independence was not preserved.",
+      "evidence_ids": [
+        "CURRENT_REVIEW_SESSION:initial-memory-registry-search",
+        "/mnt/c/Users/thenam/.codex/memories/MEMORY.md:1-40",
+        "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json#/input_mounts"
+      ],
+      "affected_verdicts": [
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+        "SAFE_TO_IMPLEMENT_R0",
+        "SAFE_TO_IMPLEMENT_F0A",
+        "SAFE_TO_IMPLEMENT_SEC0",
+        "SAFE_TO_IMPLEMENT_E0",
+        "SAFE_TO_IMPLEMENT_D0",
+        "SAFE_TO_FREEZE_SCOPE0"
+      ],
+      "required_repair": "Run a replacement independent Review A in a fresh session restricted to the authorized role inputs, without historical review memory. Preserve this result as HOLD. No prior review verdict was used as candidate verification, and the mechanical PASS above comes from this session, but those facts do not cure the exclusive-input deviation. Readiness NO values withhold approval; they do not assert that the current mechanical checks failed."
+    }
+  ],
+  "authorized_production_phases": "NONE",
+  "verdicts": {
+    "DESCENDANT_REPOSITORY_VALID": "YES",
+    "READY_TO_IMPLEMENT_DISCOVERY_PACK": "NO",
+    "SAFE_TO_IMPLEMENT_R0": "NO",
+    "SAFE_TO_IMPLEMENT_F0A": "NO",
+    "SAFE_TO_IMPLEMENT_SEC0": "NO",
+    "SAFE_TO_IMPLEMENT_E0": "NO",
+    "SAFE_TO_IMPLEMENT_D0": "NO",
+    "SAFE_TO_FREEZE_SCOPE0": "NO",
+    "AUTHORIZED_PRODUCTION_PHASES": "NONE"
+  },
+  "content_hash": "85ce06dcaed587ec1289980d371eba38197146651961f10d4c5779a8220dc7dc"
+}

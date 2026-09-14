@@ -1,0 +1,7 @@
+{
+  "phase3_change_scope": "M/N only; C/D branch preserves Phase 2 prompt function and policy",
+  "legacy_prompt_AST_unchanged": true,
+  "legacy_policy_bytes_unchanged": true,
+  "route_AST_unchanged": true,
+  "measurement_limit": "No new COMPLEX model evaluation; existing same-model control retains different reasoning efforts and cache behavior. This establishes absence of a Phase 3 C/D prompt transformation, not a new performance sample."
+}

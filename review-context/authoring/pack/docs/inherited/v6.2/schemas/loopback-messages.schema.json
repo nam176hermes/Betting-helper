@@ -1,0 +1,1240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:loopback-messages",
+  "$anchor": "LoopbackMessage",
+  "title": "Authenticated fact-only loopback messages",
+  "$comment": "canonical_body_hash = SHA-256(ASCII('HYBRID-DISCOVERY/v6.2/LoopbackBody/v1') || 0x00 || RFC8785_JCS(body)). mac = HMAC-SHA-256(raw_32_byte_pairing_secret, ASCII('HYBRID-DISCOVERY/v6.2/LOOPBACK-HMAC-SHA256/v1') || 0x00 || U32BE(len(UTF8(session_id))) || UTF8(session_id) || U32BE(len(ASCII(direction))) || ASCII(direction) || U64BE(counter) || U32BE(len(ASCII(message_type))) || ASCII(message_type) || raw_32_byte_canonical_body_digest). Counters are independent per direction, start at 1, increment by exactly 1, and reject replay or gaps.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ClientToBackendMessage"
+    },
+    {
+      "$ref": "#/$defs/BackendToClientMessage"
+    }
+  ],
+  "$defs": {
+    "PAIR_HELLO_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discovery_run_id",
+        "extension_id",
+        "pairing_secret_commitment",
+        "client_nonce"
+      ],
+      "properties": {
+        "discovery_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "extension_id": {
+          "const": "anfddcancelbmpogbmckmjckjlnpmpjk"
+        },
+        "pairing_secret_commitment": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      }
+    },
+    "PAIR_PROOF_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "challenge_id",
+        "client_nonce",
+        "server_nonce",
+        "proof"
+      ],
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "server_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "proof": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "OBSERVATION_BATCH_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "batch_id",
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "first_sequence",
+        "last_sequence",
+        "observation_content_hashes"
+      ],
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "first_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "last_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "observation_content_hashes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "uniqueItems": false,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "RESUME_STATE_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "spool_high_water_sequence",
+        "verified_ack_sequence",
+        "verified_ack_cursor_hash"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "spool_high_water_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "verified_ack_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "verified_ack_cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "ACK_APPLIED_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "sequence",
+        "cursor_hash"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "PING_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ping_id",
+        "clock_domain_id",
+        "boot_id",
+        "monotonic_us"
+      ],
+      "properties": {
+        "ping_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "clock_domain_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "boot_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "monotonic_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        }
+      }
+    },
+    "RUN_TERMINAL_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discovery_run_id",
+        "browser_run_id",
+        "terminal_code",
+        "final_generation",
+        "final_sequence",
+        "final_cursor_hash"
+      ],
+      "properties": {
+        "discovery_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "terminal_code": {
+          "enum": [
+            "COMPLETED",
+            "USER_STOP",
+            "TIME_LIMIT",
+            "SPOOL_CAPACITY_SAFETY_STOP",
+            "ORIGIN_DRIFT_SAFETY_STOP",
+            "LIFECYCLE_SAFETY_STOP",
+            "SECURITY_SAFETY_STOP"
+          ]
+        },
+        "final_generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "final_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "final_cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "CLIENT_PROTOCOL_ERROR_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_code",
+        "terminal"
+      ],
+      "properties": {
+        "error_code": {
+          "enum": [
+            "SCHEMA_INVALID",
+            "AUTHENTICATION_FAILED",
+            "COUNTER_MISMATCH",
+            "HASH_MISMATCH",
+            "GENERATION_CONFLICT",
+            "CURSOR_CONFLICT",
+            "RUN_CLOSED",
+            "SAFETY_STOP"
+          ]
+        },
+        "terminal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "PAIR_CHALLENGE_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "challenge_id",
+        "client_nonce",
+        "server_nonce",
+        "expires_at_monotonic_us"
+      ],
+      "properties": {
+        "challenge_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "server_nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "expires_at_monotonic_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        }
+      }
+    },
+    "PAIR_ACCEPTED_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discovery_run_id",
+        "browser_run_id",
+        "backend_boot_id",
+        "generation",
+        "backend_sequence",
+        "backend_cursor_hash"
+      ],
+      "properties": {
+        "discovery_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "backend_boot_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "backend_sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "backend_cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "BACKEND_CURSOR_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "sequence",
+        "cursor_hash"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "BACKEND_GENERATION_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "predecessor_generation",
+        "transition_hash",
+        "status"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "predecessor_generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "transition_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "CLOSED_GAP",
+            "CLOSED_CONFLICT",
+            "CLOSED_RUN"
+          ]
+        }
+      }
+    },
+    "ACK_CURSOR_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id",
+        "generation",
+        "sequence",
+        "cursor_hash"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^producer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "stream_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "generation": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "cursor_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "PONG_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ping_id",
+        "source_clock_domain_id",
+        "source_boot_id",
+        "source_monotonic_us",
+        "backend_clock_domain_id",
+        "backend_boot_id",
+        "backend_receive_us",
+        "backend_send_us"
+      ],
+      "properties": {
+        "ping_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "source_clock_domain_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "source_boot_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "source_monotonic_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "backend_clock_domain_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "backend_boot_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "backend_receive_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "backend_send_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        }
+      }
+    },
+    "BACKEND_PROTOCOL_ERROR_FACT_V1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "error_code",
+        "terminal"
+      ],
+      "properties": {
+        "error_code": {
+          "enum": [
+            "SCHEMA_INVALID",
+            "AUTHENTICATION_FAILED",
+            "COUNTER_MISMATCH",
+            "HASH_MISMATCH",
+            "GENERATION_CONFLICT",
+            "CURSOR_CONFLICT",
+            "RUN_CLOSED",
+            "SAFETY_STOP"
+          ]
+        },
+        "terminal": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ClientToBackendMessage": {
+      "$anchor": "ClientToBackendMessage",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PAIR_HELLO_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PAIR_HELLO_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PAIR_PROOF_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PAIR_PROOF_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "OBSERVATION_BATCH_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/OBSERVATION_BATCH_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "RESUME_STATE_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/RESUME_STATE_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "ACK_APPLIED_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/ACK_APPLIED_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PING_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PING_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "RUN_TERMINAL_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/RUN_TERMINAL_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "CLIENT_TO_BACKEND"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PROTOCOL_ERROR_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/CLIENT_PROTOCOL_ERROR_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "BackendToClientMessage": {
+      "$anchor": "BackendToClientMessage",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PAIR_CHALLENGE_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PAIR_CHALLENGE_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PAIR_ACCEPTED_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PAIR_ACCEPTED_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "BACKEND_CURSOR_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/BACKEND_CURSOR_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "BACKEND_GENERATION_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/BACKEND_GENERATION_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "ACK_CURSOR_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/ACK_CURSOR_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PONG_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/PONG_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "session_id",
+            "direction",
+            "counter",
+            "message_type",
+            "body",
+            "canonical_body_hash",
+            "mac"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "loopback-message/v1"
+            },
+            "session_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "direction": {
+              "const": "BACKEND_TO_CLIENT"
+            },
+            "counter": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "message_type": {
+              "const": "PROTOCOL_ERROR_FACT_V1"
+            },
+            "body": {
+              "$ref": "#/$defs/BACKEND_PROTOCOL_ERROR_FACT_V1"
+            },
+            "canonical_body_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "mac": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "unevaluatedProperties": false
+}

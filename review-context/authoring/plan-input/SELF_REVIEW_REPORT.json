@@ -1,0 +1,26 @@
+{
+  "schema_version": "plan-self-review/v1",
+  "governed_content_root": "53732bf2ab7354ea504ed7d1a7e4f8e6e5bdac3c454a50db6856df94f43e3c1c",
+  "task_manifest_sha256": "d17b81cac1282ba52d6a77df7c917d7ce6026d56e9376503d57c9f7e2a53f9ed",
+  "checks": {
+    "task_count": 62,
+    "command_count": 215,
+    "artifact_count": 917,
+    "resolved_schema_pointers": 1241,
+    "crash_cases": 46,
+    "clock_vectors": 65,
+    "mapping_negatives": 16,
+    "pinned_baseline_files": 209,
+    "migration_patch_owners": 28,
+    "review_mounts_per_role": 5,
+    "exact_security_js_files": 6,
+    "inherited_python_tests": 125,
+    "authorized_production_phases": "NONE",
+    "result": "PASS"
+  },
+  "test_exit_code": 0,
+  "test_output_sha256": "7acc41eda144bccd429e48352730be4b6163b648cab4a583fd1a1b4311fc9edc",
+  "independent_plan_review": "PENDING",
+  "runtime_implementation_ready": "NO",
+  "authorized_production_phases": "NONE"
+}

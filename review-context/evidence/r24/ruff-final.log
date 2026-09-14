@@ -1,0 +1,12 @@
+E501 Line too long (102 > 100)
+   --> tests/security/test_bubblewrap_isolation.py:111:101
+    |
+109 |     observed = observe(generated)
+110 |     assert observed["net"] != os.readlink("/proc/self/ns/net"), vectors["allow"]
+111 |     assert observed["visible"] == observed["proc_escape"] == [False] * len(sentinels), vectors["deny"]
+    |                                                                                                     ^^
+112 |     assert observed["write_errno"] == 30  # EROFS from the actual readonly mount.
+113 |     assert observed["output"] == "TEST_ONLY"
+    |
+
+Found 1 error.

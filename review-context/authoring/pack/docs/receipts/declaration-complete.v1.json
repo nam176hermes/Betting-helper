@@ -1,0 +1,13 @@
+{
+  "artifact_count": 987,
+  "authorized_production_phases": "NONE",
+  "command_count": 219,
+  "commands_sha256": "48523735c9012b462d3132aa209244dfca8d75004529476d03c83656d54dacb8",
+  "content_hash": "0591727a38a171fb7c2ef7add033f13aef7e0e34da2704c25e17774887404069",
+  "gate": "DECLARATION_COMPLETE",
+  "ownership_sha256": "0dbd4a02e1af249c08ccc333744de601266dc4f3708e6ec960b409cece23a325",
+  "result": "PASS",
+  "schema_version": "declaration-complete/v1",
+  "task_count": 62,
+  "tasks_sha256": "3567cf65d5aeb8f7d70263a81c89644455f84240cd62e66246138bead318be6d"
+}

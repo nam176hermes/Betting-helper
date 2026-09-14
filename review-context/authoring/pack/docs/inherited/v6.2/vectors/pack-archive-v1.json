@@ -1,0 +1,67 @@
+{
+  "schema_version": "pack-archive-vectors/v1",
+  "profile_id": "HD-PACK-ZIP-STORED-v1",
+  "golden_vectors": [
+    {
+      "vector_id": "PACK-ARCHIVE-GOLDEN-STORED-V1",
+      "source_files": [
+        {
+          "path": "README.md",
+          "content_base64": "Zml4dHVyZQo=",
+          "size_bytes": 8,
+          "sha256": "e80b71cd14d3cbd65f4173abcbfcf01a545dbca32a72d575108b553a648cc96f"
+        }
+      ],
+      "manifest_content_base64": "eyJmaWxlcyI6W3sicGF0aCI6IlJFQURNRS5tZCIsInNoYTI1NiI6ImU4MGI3MWNkMTRkM2NiZDY1ZjQxNzNhYmNiZmNmMDFhNTQ1ZGJjYTMyYTcyZDU3NTEwOGI1NTNhNjQ4Y2M5NmYiLCJzaXplX2J5dGVzIjo4fV0sImltcGxlbWVudGF0aW9uX2Jhc2VsaW5lX2hhc2giOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwicGFja19oYXNoIjoiNmE2M2IxNTFlY2Y4NTViNTg0NWEyN2JlMzMyYTkzOTgzYjcyZjMwMDI2ZDMzNDYyZTI0ZDQ0NDFjMzJmZjc0MCIsInBhY2tfdmVyc2lvbiI6IjYuMiIsInByb2R1Y3Rpb25fYXV0aG9yaXR5IjoiTk9ORSIsInNjaGVtYV92ZXJzaW9uIjoicGFjay1tYW5pZmVzdC92MSIsInNlbGZfZXhjbHVkZWRfcGF0aCI6Ik1BTklGRVNUX1NIQTI1Ni5qc29uIn0K",
+      "tree_preimage_hex": "524541444d452e6d64003800653830623731636431346433636264363566343137336162636266636630316135343564626361333261373264353735313038623535336136343863633936660a",
+      "pack_hash": "6a63b151ecf855b5845a27be332a93983b72f30026d33462e24d4441c32ff740",
+      "expected_member_names": [
+        "hybrid-discovery-v6.2/MANIFEST_SHA256.json",
+        "hybrid-discovery-v6.2/README.md"
+      ],
+      "expected_archive_size_bytes": 760,
+      "expected_archive_sha256": "8dad90d03be6e4f433d1049c82766c7b091ced9db0aed47ef3172b084e84f952",
+      "expected_archive_base64": "UEsDBBQAAAAAAAAAIQAzElqTsAEAALABAAAqAAAAaHlicmlkLWRpc2NvdmVyeS12Ni4yL01BTklGRVNUX1NIQTI1Ni5qc29ueyJmaWxlcyI6W3sicGF0aCI6IlJFQURNRS5tZCIsInNoYTI1NiI6ImU4MGI3MWNkMTRkM2NiZDY1ZjQxNzNhYmNiZmNmMDFhNTQ1ZGJjYTMyYTcyZDU3NTEwOGI1NTNhNjQ4Y2M5NmYiLCJzaXplX2J5dGVzIjo4fV0sImltcGxlbWVudGF0aW9uX2Jhc2VsaW5lX2hhc2giOiJhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhIiwicGFja19oYXNoIjoiNmE2M2IxNTFlY2Y4NTViNTg0NWEyN2JlMzMyYTkzOTgzYjcyZjMwMDI2ZDMzNDYyZTI0ZDQ0NDFjMzJmZjc0MCIsInBhY2tfdmVyc2lvbiI6IjYuMiIsInByb2R1Y3Rpb25fYXV0aG9yaXR5IjoiTk9ORSIsInNjaGVtYV92ZXJzaW9uIjoicGFjay1tYW5pZmVzdC92MSIsInNlbGZfZXhjbHVkZWRfcGF0aCI6Ik1BTklGRVNUX1NIQTI1Ni5qc29uIn0KUEsDBBQAAAAAAAAAIQCsLGB1CAAAAAgAAAAfAAAAaHlicmlkLWRpc2NvdmVyeS12Ni4yL1JFQURNRS5tZGZpeHR1cmUKUEsBAhQDFAAAAAAAAAAhADMSWpOwAQAAsAEAACoAAAAAAAAAAAAAAKSBAAAAAGh5YnJpZC1kaXNjb3ZlcnktdjYuMi9NQU5JRkVTVF9TSEEyNTYuanNvblBLAQIUAxQAAAAAAAAAIQCsLGB1CAAAAAgAAAAfAAAAAAAAAAAAAACkgfgBAABoeWJyaWQtZGlzY292ZXJ5LXY2LjIvUkVBRE1FLm1kUEsFBgAAAAACAAIApQAAAD0CAAAAAA==",
+      "expected_sidecar_base64": "OGRhZDkwZDAzYmU2ZTRmNDMzZDEwNDljODI3NjZjN2IwOTFjZWQ5ZGIwYWVkNDdlZjMxNzJiMDg0ZTg0Zjk1MiAgaHlicmlkLWRpc2NvdmVyeS12Ni4yLnppcAo="
+    }
+  ],
+  "negative_vectors": [
+    { "vector_id": "PACK-ARCHIVE-REJECT-WRONG-BASENAME", "mutation": "archive basename differs", "expected_error": "E_PACK:ARCHIVE_NAME" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-ABSOLUTE-PATH", "mutation": "member path is absolute", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-TRAVERSAL", "mutation": "member path contains dot-dot component", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-BACKSLASH", "mutation": "member path contains backslash", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-NON-NFC", "mutation": "source path is not NFC", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-UFEFF-PATH-LEADING", "mutation": "source or member relative path UTF-8 hex efbbbf626f6d2e747874 decodes to U+FEFF at code-point position zero", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-UFEFF-PATH-EMBEDDED", "mutation": "source or member relative path UTF-8 hex 656d626564646564efbbbf626f6d2e747874 contains embedded U+FEFF", "expected_error": "E_PACK:ARCHIVE_PATH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-DUPLICATE", "mutation": "duplicate exact member name", "expected_error": "E_PACK:ARCHIVE_DUPLICATE" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-SYMLINK", "mutation": "source or member type is symlink", "expected_error": "E_PACK:SOURCE_TYPE" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-HARDLINK", "mutation": "source regular file has st_nlink other than one", "expected_error": "E_PACK:SOURCE_HARDLINK" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-SPECIAL-FILE", "mutation": "source contains device fifo or socket", "expected_error": "E_PACK:SOURCE_TYPE" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-DIRECTORY-ENTRY", "mutation": "ZIP contains explicit directory entry", "expected_error": "E_PACK:ARCHIVE_FILE_SET" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-EXTRA-MEMBER", "mutation": "ZIP contains member absent from manifest", "expected_error": "E_PACK:ARCHIVE_FILE_SET" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MISSING-MEMBER", "mutation": "ZIP omits member named by manifest", "expected_error": "E_PACK:ARCHIVE_FILE_SET" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-TIMESTAMP", "mutation": "DOS timestamp differs", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-COMPRESSION", "mutation": "member uses non-STORED compression", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-CREATOR", "mutation": "creator system is not UNIX code three", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-VERSION", "mutation": "made-by or extract version differs", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-PERMISSIONS", "mutation": "UNIX regular 0644 external attributes differ", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-EXTRA-FIELD", "mutation": "entry extra field is nonempty including ZIP64 or timestamp extra", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-ENTRY-COMMENT", "mutation": "entry comment is nonempty", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-ARCHIVE-COMMENT", "mutation": "archive comment is nonempty", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-FLAGS", "mutation": "encryption data-descriptor or another general-purpose flag is set", "expected_error": "E_PACK:ARCHIVE_METADATA" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-CRC", "mutation": "member CRC-32 differs from exact bytes", "expected_error": "E_PACK:ARCHIVE_INTEGRITY" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-SIZE", "mutation": "member uncompressed or compressed size differs", "expected_error": "E_PACK:ARCHIVE_INTEGRITY" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-HASH", "mutation": "member SHA-256 differs from manifest or source bytes", "expected_error": "E_PACK:ARCHIVE_BYTES" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-SELF", "mutation": "manifest lists MANIFEST_SHA256.json in files", "expected_error": "E_PACK:MANIFEST_SELF_REFERENCE" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-SET", "mutation": "manifest file set differs from source regular files", "expected_error": "E_PACK:MANIFEST_FILE_SET" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-ORDER", "mutation": "manifest files are not UTF-8 byte sorted", "expected_error": "E_PACK:MANIFEST_ORDER" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-SIZE-STRING", "mutation": "manifest size_bytes is a quoted decimal string", "expected_error": "E_PACK:MANIFEST" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-SIZE-NEGATIVE", "mutation": "manifest size_bytes is a negative JSON integer", "expected_error": "E_PACK:MANIFEST" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-SIZE-FRACTION", "mutation": "manifest size_bytes is a JSON fraction", "expected_error": "E_PACK:MANIFEST" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-MANIFEST-TREE", "mutation": "pack_hash differs from tree preimage digest", "expected_error": "E_PACK:MANIFEST_HASH" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-SIDECAR-MISSING", "mutation": "required sibling sidecar is absent", "expected_error": "E_PACK:SIDECAR" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-SIDECAR-BYTES", "mutation": "sidecar digest basename spacing line count or LF differs", "expected_error": "E_PACK:SIDECAR" },
+    { "vector_id": "PACK-ARCHIVE-REJECT-REBUILD", "mutation": "archive bytes differ from normative rebuild", "expected_error": "E_PACK:ARCHIVE_REBUILD" }
+  ],
+  "production_authority": "NONE"
+}

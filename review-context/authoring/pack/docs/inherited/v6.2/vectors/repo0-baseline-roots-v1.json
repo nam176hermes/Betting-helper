@@ -1,0 +1,209 @@
+{
+  "schema_version": "repo0-baseline-roots-v1",
+  "file_tree_algorithm": "HD-REPO0-FILE-TREE-SHA256-v1",
+  "command_result_algorithm": "HD-REPO0-COMMAND-RESULTS-SHA256-v1",
+  "valid_vectors": [
+    {
+      "vector_id": "REPO0-FILE-TREE-ROOT-ASCII",
+      "input": {
+        "entries": [
+          {
+            "entry_kind": "REGULAR_FILE",
+            "file_sha256": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+            "git_mode": "100644",
+            "gitlink": false,
+            "hardlink": false,
+            "path": "a.txt",
+            "size_bytes": "2",
+            "symlink": false
+          },
+          {
+            "entry_kind": "REGULAR_FILE",
+            "file_sha256": "306c6ca7407560340797866e077e053627ad409277d1b9da58106fce4cf717cb",
+            "git_mode": "100755",
+            "gitlink": false,
+            "hardlink": false,
+            "path": "bin/run",
+            "size_bytes": "17",
+            "symlink": false
+          }
+        ],
+        "schema_version": "repo0-independent-file-tree/v1"
+      },
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f5265706f30496e646570656e64656e7446696c65547265652f763100",
+      "jcs_size_bytes": "490",
+      "jcs_utf8_sha256": "b712a8bfedb2b116527c8dbe94d7857da2ee79d425eb31bc0b8400589734cd04",
+      "preimage_size_bytes": "540",
+      "sha256": "d5c1f833ca27735193294d4cb46c0813d8ad36384c91b056e0faf9fec50a00b3"
+    },
+    {
+      "vector_id": "REPO0-COMMAND-RESULT-ROOT-ASCII",
+      "input": {
+        "additional_argv_invocation_count": "1",
+        "algorithm_id": "HD-REPO0-COMMAND-RESULTS-SHA256-v1",
+        "candidate_exclusion_policy_id": "REPO0-CANDIDATE-EXCLUSIONS-v1",
+        "completion_state": "COMPLETE_ACCEPTED",
+        "domain": "HYBRID-DISCOVERY/v6.2/Repo0CommandResultSet/v1\u0000",
+        "execution_environment": {
+          "FORCE_COLOR": "0",
+          "HOME": "/home/thenam176",
+          "LANG": "C.UTF-8",
+          "LC_ALL": "C.UTF-8",
+          "NPM_CONFIG_IGNORE_SCRIPTS": "true",
+          "NPM_CONFIG_USERCONFIG": "/dev/null",
+          "NO_COLOR": "1",
+          "PATH": "/home/thenam176/.npm-global/bin:/home/thenam176/.local/share/mise/shims:/home/thenam176/.local/bin:/usr/local/bin:/usr/bin:/bin",
+          "PYTHONHASHSEED": "0",
+          "TMPDIR": "/tmp",
+          "TZ": "UTC",
+          "UV_NO_CONFIG": "1",
+          "UV_NO_PROGRESS": "1",
+          "UV_PYTHON_DOWNLOADS": "never"
+        },
+        "expanded_invocation_count": "3",
+        "inherit_parent_environment": false,
+        "production_authority": "NONE",
+        "qualified_file_tree": {
+          "entries": [
+            {
+              "entry_kind": "REGULAR_FILE",
+              "file_sha256": "87428fc522803d31065e7bce3cf03fe475096631e5e07bbd7a0fde60c4cf25c7",
+              "git_mode": "100644",
+              "gitlink": false,
+              "hardlink": false,
+              "path": "a.txt",
+              "size_bytes": "2",
+              "symlink": false
+            },
+            {
+              "entry_kind": "REGULAR_FILE",
+              "file_sha256": "306c6ca7407560340797866e077e053627ad409277d1b9da58106fce4cf717cb",
+              "git_mode": "100755",
+              "gitlink": false,
+              "hardlink": false,
+              "path": "bin/run",
+              "size_bytes": "17",
+              "symlink": false
+            }
+          ],
+          "schema_version": "repo0-independent-file-tree/v1"
+        },
+        "qualified_file_tree_root_sha256": "d5c1f833ca27735193294d4cb46c0813d8ad36384c91b056e0faf9fec50a00b3",
+        "record_type": "Repo0CommandResultSet",
+        "registry_path": "task-command-registry.json",
+        "registry_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "results": [
+          {
+            "argv": ["node", "--version"],
+            "argv_ordinal": "0",
+            "contract_error_tokens": [],
+            "disposition": "PASS",
+            "execution_state": "COMPLETED",
+            "expectation": {
+              "expected_exit_code": 0,
+              "forbidden_output_fragments": [],
+              "kind": "GREEN",
+              "required_output_fragments": ["v22.23.0"]
+            },
+            "expectation_matched": true,
+            "exit_code": 0,
+            "invocation_id": "PRE-TOOLCHAIN-NODE",
+            "invocation_index": "1",
+            "owner_id": "PRE-TOOLCHAIN-NODE",
+            "owner_kind": "VERIFICATION_COMMAND",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_size_bytes": "0",
+            "stdout_sha256": "416b218013b71477307e84ef2cfa1173d9927619c25853a601a18fe93db9c90a",
+            "stdout_size_bytes": "9",
+            "working_directory": "/home/thenam176/betting-helper/discovery-runtime"
+          },
+          {
+            "argv": ["uv", "run", "--frozen", "pytest", "-q", "tests/contracts/test_canonical_hash.py"],
+            "argv_ordinal": "0",
+            "contract_error_tokens": ["E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"],
+            "disposition": "EXPECTED_CONTRACT_RED",
+            "execution_state": "COMPLETED",
+            "expectation": {
+              "expected_contract_error": "E_CONTRACT_NOT_IMPLEMENTED:F0A-T01",
+              "expected_exit_code": 1,
+              "forbidden_output_fragments": ["ModuleNotFoundError", "ImportError", "ERR_MODULE_NOT_FOUND", "Cannot find module", "No such file"],
+              "kind": "INTENTIONAL_RED",
+              "required_output_fragments": ["E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"]
+            },
+            "expectation_matched": true,
+            "exit_code": 1,
+            "invocation_id": "F0A-T01",
+            "invocation_index": "2",
+            "owner_id": "F0A-T01",
+            "owner_kind": "TASK",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_size_bytes": "0",
+            "stdout_sha256": "e2dd4c9298d817710655beecdbbafb3b17f8a17858a2a2e3a5bd16c2e0b075c7",
+            "stdout_size_bytes": "35",
+            "working_directory": "/home/thenam176/betting-helper/discovery-runtime"
+          },
+          {
+            "argv": ["node", "--test", "extension/.test-build/test/contracts/canonical.test.js"],
+            "argv_ordinal": "1",
+            "contract_error_tokens": ["E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"],
+            "disposition": "EXPECTED_CONTRACT_RED",
+            "execution_state": "COMPLETED",
+            "expectation": {
+              "expected_contract_error": "E_CONTRACT_NOT_IMPLEMENTED:F0A-T01",
+              "expected_exit_code": 1,
+              "forbidden_output_fragments": ["ModuleNotFoundError", "ImportError", "ERR_MODULE_NOT_FOUND", "Cannot find module", "No such file"],
+              "kind": "INTENTIONAL_RED",
+              "required_output_fragments": ["E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"]
+            },
+            "expectation_matched": true,
+            "exit_code": 1,
+            "invocation_id": "F0A-T01#additional-1",
+            "invocation_index": "3",
+            "owner_id": "F0A-T01",
+            "owner_kind": "TASK",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderr_size_bytes": "0",
+            "stdout_sha256": "e2dd4c9298d817710655beecdbbafb3b17f8a17858a2a2e3a5bd16c2e0b075c7",
+            "stdout_size_bytes": "35",
+            "working_directory": "/home/thenam176/betting-helper/discovery-runtime"
+          }
+        ],
+        "root_eligible": true,
+        "schema_version": "repo0-command-result-set/v1",
+        "task_invocation_count": "2",
+        "verification_invocation_count": "1",
+        "working_directory": "/home/thenam176/betting-helper/discovery-runtime"
+      },
+      "domain_hex": "4859425249442d444953434f564552592f76362e322f5265706f30436f6d6d616e64526573756c745365742f763100",
+      "jcs_size_bytes": "4466",
+      "jcs_utf8_sha256": "1ef8b01816db5221e502b9b9b704b2df067eadee69e76f27f786b2f477b43ef5",
+      "preimage_size_bytes": "4513",
+      "sha256": "2bc9512405125ccae7916a72cc116689625a28a927bbce31c31ad4f7cb2c583c"
+    }
+  ],
+  "invalid_vectors": [
+    { "vector_id": "REPO0-ROOT-REJECT-AMBIENT-PARENT-GIT", "target": "FILE_TREE", "condition": "POSTCOMMIT_AMBIENT_PARENT_GIT_WITHOUT_LOCAL_DOTGIT", "expected_error": "E_REPO0_AMBIENT_GIT" },
+    { "vector_id": "REPO0-ROOT-REJECT-NON-NFC-PATH", "target": "FILE_TREE", "condition": "NON_NFC_PATH", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-UFEFF-PATH-LEADING", "target": "FILE_TREE", "condition": "UFEFF_PATH_LEADING", "path_utf8_hex": "efbbbf626f6d2e747874", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-UFEFF-PATH-EMBEDDED", "target": "FILE_TREE", "condition": "UFEFF_PATH_EMBEDDED", "path_utf8_hex": "656d626564646564efbbbf626f6d2e747874", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-SYMLINK", "target": "FILE_TREE", "condition": "SYMLINK_MODE", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-HARDLINK", "target": "FILE_TREE", "condition": "HARDLINK_COUNT", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-GITLINK", "target": "FILE_TREE", "condition": "GITLINK_MODE", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-GITMODULES", "target": "FILE_TREE", "condition": "GITMODULES_PATH", "expected_error": "E_REPO0_FILE_TREE_ENTRY" },
+    { "vector_id": "REPO0-ROOT-REJECT-FILE-ORDER", "target": "FILE_TREE", "condition": "FILE_ENTRY_ORDER_CHANGED", "expected_error": "E_REPO0_FILE_TREE_ORDER" },
+    { "vector_id": "REPO0-ROOT-REJECT-QUALIFIED-EXTRA", "target": "COMMAND_RESULT_SET", "condition": "QUALIFIED_FILE_EXTRA_OR_COMMITTED_OMISSION", "expected_error": "E_REPO0_QUALIFIED_TREE" },
+    { "vector_id": "REPO0-ROOT-REJECT-QUALIFIED-OMITTED", "target": "COMMAND_RESULT_SET", "condition": "QUALIFIED_FILE_OMITTED_OR_COMMITTED_EXTRA", "expected_error": "E_REPO0_QUALIFIED_TREE" },
+    { "vector_id": "REPO0-ROOT-REJECT-QUALIFIED-MODE", "target": "COMMAND_RESULT_SET", "condition": "QUALIFIED_FILE_MODE_CHANGED", "expected_error": "E_REPO0_QUALIFIED_TREE" },
+    { "vector_id": "REPO0-ROOT-REJECT-ADDITIONAL-ARGV-OMITTED", "target": "COMMAND_RESULT_SET", "condition": "ADDITIONAL_ARGV_OMITTED", "expected_error": "E_REPO0_COMMAND_EXPANSION" },
+    { "vector_id": "REPO0-ROOT-REJECT-RESULT-ORDER", "target": "COMMAND_RESULT_SET", "condition": "RESULT_ORDER_CHANGED", "expected_error": "E_REPO0_COMMAND_EXPANSION" },
+    { "vector_id": "REPO0-ROOT-REJECT-CWD", "target": "COMMAND_RESULT_SET", "condition": "WORKING_DIRECTORY_CHANGED", "expected_error": "E_REPO0_COMMAND_CONTEXT" },
+    { "vector_id": "REPO0-ROOT-REJECT-ENVIRONMENT", "target": "COMMAND_RESULT_SET", "condition": "ENVIRONMENT_INHERITED_OR_CHANGED", "expected_error": "E_REPO0_COMMAND_CONTEXT" },
+    { "vector_id": "REPO0-ROOT-REJECT-CONTRACT-TOKEN", "target": "COMMAND_RESULT_SET", "condition": "INTENTIONAL_RED_TOKEN_WRONG_OR_NOT_SINGLETON", "expected_error": "E_REPO0_CONTRACT_RED" },
+    { "vector_id": "REPO0-ROOT-REJECT-CONTRACT-TOKEN-MALFORMED-PREFIX", "target": "COMMAND_RESULT_SET", "condition": "INTENTIONAL_RED_TOKEN_MALFORMED_LEADING_BOUNDARY", "expected_error": "E_REPO0_CONTRACT_RED" },
+    { "vector_id": "REPO0-ROOT-REJECT-CONTRACT-TOKEN-MALFORMED-SUFFIX", "target": "COMMAND_RESULT_SET", "condition": "INTENTIONAL_RED_TOKEN_MALFORMED_TRAILING_BOUNDARY", "expected_error": "E_REPO0_CONTRACT_RED" },
+    { "vector_id": "REPO0-ROOT-REJECT-COMMAND-FAILED", "target": "COMMAND_RESULT_SET", "condition": "COMMAND_FAILED", "expected_error": "E_REPO0_COMMAND_ROOT_INELIGIBLE" },
+    { "vector_id": "REPO0-ROOT-REJECT-COMMAND-NOT-RUN", "target": "COMMAND_RESULT_SET", "condition": "COMMAND_NOT_RUN", "expected_error": "E_REPO0_COMMAND_ROOT_INELIGIBLE" },
+    { "vector_id": "REPO0-ROOT-REJECT-RESULT-INSIDE-BASELINE", "target": "BASELINE_RECEIPT", "condition": "RESULT_FILE_INSIDE_BASELINE", "expected_error": "E_REPO0_RECEIPT_CYCLE" }
+  ],
+  "production_authority": "NONE"
+}

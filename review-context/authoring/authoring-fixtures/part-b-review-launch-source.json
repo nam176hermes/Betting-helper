@@ -1,0 +1,390 @@
+{
+  "source_commit": "2aeadf705955889a9c2f75c27cbee92dfe64cbde",
+  "path": "pack/docs/schemas/review-launch-authorization.schema.json",
+  "source_sha256": "fa1693e642dd6af254add67504aba29084327dcdf3960a08544be425a069d464",
+  "document": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:hybrid-discovery:v6.3.6:review-launch-authorization",
+    "$defs": {
+      "ReadOnlyMount": {
+        "type": "object",
+        "required": [
+          "source_root",
+          "workspace_mount",
+          "mode",
+          "content_root_sha256"
+        ],
+        "properties": {
+          "source_root": {
+            "type": "string",
+            "pattern": "^/[^\\0]+$"
+          },
+          "workspace_mount": {
+            "type": "string",
+            "pattern": "^/[^\\0]+$"
+          },
+          "mode": {
+            "const": "READ_ONLY"
+          },
+          "content_root_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReviewLaunchAuthorization": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/LegacyReviewLaunchAuthorization"
+          },
+          {
+            "$ref": "#/$defs/DescendantReviewLaunchAuthorization"
+          }
+        ]
+      },
+      "LegacyReviewLaunchAuthorization": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "authorization_id",
+          "issuer_role",
+          "issuer_key_id",
+          "audience",
+          "review_role",
+          "review_run_id",
+          "pack_zip_sha256",
+          "pack_manifest_sha256",
+          "repo0_receipt_sha256",
+          "repo0_commit_oid",
+          "repo0_tree_oid",
+          "repo0_file_tree_root_sha256",
+          "workspace_root",
+          "input_mounts",
+          "excluded_roots",
+          "allowed_output_root",
+          "prompt_sha256",
+          "command_registry_sha256",
+          "issued_at",
+          "not_before",
+          "expires_at",
+          "maximum_duration_seconds",
+          "one_use_serial",
+          "nonce",
+          "fresh_session_required",
+          "production_authority",
+          "signature_algorithm",
+          "signature",
+          "host_boot_id",
+          "trust_epoch"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "review-launch-authorization/v1"
+          },
+          "authorization_id": {
+            "type": "string",
+            "pattern": "^REVIEW-LAUNCH:[0-9a-f]{64}$"
+          },
+          "issuer_role": {
+            "const": "HOST_REVIEW_AUTHORITY"
+          },
+          "issuer_key_id": {
+            "type": "string",
+            "pattern": "^key:ed25519:[0-9a-f]{64}$"
+          },
+          "audience": {
+            "const": "hybrid-discovery:independent-review-launcher:v1"
+          },
+          "review_role": {
+            "enum": [
+              "IMPLEMENTATION_READINESS_REVIEWER",
+              "CYBERSECURITY_REVIEWER",
+              "AGGREGATE_REVIEWER"
+            ]
+          },
+          "review_run_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f-]{27,}$"
+          },
+          "pack_zip_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "pack_manifest_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "repo0_receipt_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "repo0_commit_oid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,64}$"
+          },
+          "repo0_tree_oid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,64}$"
+          },
+          "repo0_file_tree_root_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "workspace_root": {
+            "type": "string",
+            "pattern": "^/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          },
+          "input_mounts": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/$defs/ReadOnlyMount"
+            }
+          },
+          "excluded_roots": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^/[^\\0]+$"
+            }
+          },
+          "allowed_output_root": {
+            "type": "string",
+            "pattern": "^/home/thenam176/betting-helper/reviews/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          },
+          "prompt_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "command_registry_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "not_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maximum_duration_seconds": {
+            "type": "integer",
+            "const": 14400
+          },
+          "one_use_serial": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "nonce": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "fresh_session_required": {
+            "const": true
+          },
+          "production_authority": {
+            "const": "NONE"
+          },
+          "signature_algorithm": {
+            "const": "Ed25519"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{86}$"
+          },
+          "host_boot_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f-]{36}$"
+          },
+          "trust_epoch": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "DescendantReviewLaunchAuthorization": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "authorization_id",
+          "issuer_role",
+          "issuer_key_id",
+          "audience",
+          "review_role",
+          "review_run_id",
+          "pack_zip_sha256",
+          "pack_manifest_sha256",
+          "workspace_root",
+          "input_mounts",
+          "excluded_roots",
+          "allowed_output_root",
+          "prompt_sha256",
+          "command_registry_sha256",
+          "issued_at",
+          "not_before",
+          "expires_at",
+          "maximum_duration_seconds",
+          "one_use_serial",
+          "nonce",
+          "fresh_session_required",
+          "production_authority",
+          "signature_algorithm",
+          "signature",
+          "host_boot_id",
+          "trust_epoch",
+          "repository_qualification_receipt_sha256",
+          "repository_identity_kind",
+          "repository_commit_oid",
+          "repository_tree_oid",
+          "repository_file_tree_root_sha256"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "review-launch-authorization/v2"
+          },
+          "authorization_id": {
+            "type": "string",
+            "pattern": "^REVIEW-LAUNCH:[0-9a-f]{64}$"
+          },
+          "issuer_role": {
+            "const": "HOST_REVIEW_AUTHORITY"
+          },
+          "issuer_key_id": {
+            "type": "string",
+            "pattern": "^key:ed25519:[0-9a-f]{64}$"
+          },
+          "audience": {
+            "const": "hybrid-discovery:independent-review-launcher:v1"
+          },
+          "review_role": {
+            "enum": [
+              "IMPLEMENTATION_READINESS_REVIEWER",
+              "CYBERSECURITY_REVIEWER",
+              "AGGREGATE_REVIEWER"
+            ]
+          },
+          "review_run_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f-]{27,}$"
+          },
+          "pack_zip_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "pack_manifest_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "workspace_root": {
+            "type": "string",
+            "pattern": "^/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          },
+          "input_mounts": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "$ref": "#/$defs/ReadOnlyMount"
+            }
+          },
+          "excluded_roots": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^/[^\\0]+$"
+            }
+          },
+          "allowed_output_root": {
+            "type": "string",
+            "pattern": "^/home/thenam176/betting-helper/reviews/hybrid-discovery-v6\\.3\\.6/review-[ab]$"
+          },
+          "prompt_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "command_registry_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "not_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maximum_duration_seconds": {
+            "type": "integer",
+            "const": 14400
+          },
+          "one_use_serial": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "nonce": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "fresh_session_required": {
+            "const": true
+          },
+          "production_authority": {
+            "const": "NONE"
+          },
+          "signature_algorithm": {
+            "const": "Ed25519"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{86}$"
+          },
+          "host_boot_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f-]{36}$"
+          },
+          "trust_epoch": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "repository_qualification_receipt_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "repository_identity_kind": {
+            "const": "DESCENDANT"
+          },
+          "repository_commit_oid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,64}$"
+          },
+          "repository_tree_oid": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,64}$"
+          },
+          "repository_file_tree_root_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

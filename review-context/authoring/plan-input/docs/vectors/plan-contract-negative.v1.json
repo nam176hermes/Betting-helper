@@ -1,0 +1,76 @@
+{
+  "schema_version": "plan-contract-negatives/v1",
+  "cases": [
+    {
+      "id": "PRODUCTION",
+      "mutation": "set authorized_production_phases to PAPER",
+      "expected_error": "E_PRODUCTION_AUTHORITY"
+    },
+    {
+      "id": "UNKNOWN_DEP",
+      "mutation": "replace first dependency with UNKNOWN",
+      "expected_error": "E_DEPENDENCY_UNKNOWN_OR_FUTURE"
+    },
+    {
+      "id": "FUTURE_DEP",
+      "mutation": "depend on final task from first task",
+      "expected_error": "E_DEPENDENCY_UNKNOWN_OR_FUTURE"
+    },
+    {
+      "id": "EMPTY_ROLLBACK",
+      "mutation": "set rollback to empty array",
+      "expected_error": "E_EMPTY_ROLLBACK"
+    },
+    {
+      "id": "WHITESPACE_ROLLBACK",
+      "mutation": "set rollback to one whitespace string",
+      "expected_error": "E_EMPTY_ROLLBACK"
+    },
+    {
+      "id": "COUNT_MISMATCH",
+      "mutation": "increment declared_task_count",
+      "expected_error": "E_TASK_COUNT"
+    },
+    {
+      "id": "UNOWNED_FILE",
+      "mutation": "append runtime/unowned.py to exact_files",
+      "expected_error": "E_UNOWNED"
+    },
+    {
+      "id": "FUTURE_OWNER",
+      "mutation": "assign the restart inspector to P09-T04",
+      "expected_error": "E_CONSUMER_BEFORE_OWNER"
+    },
+    {
+      "id": "FUTURE_EVIDENCE",
+      "mutation": "move Review B proof into CANDIDATE",
+      "expected_error": "E_FUTURE_EVIDENCE"
+    },
+    {
+      "id": "REVIEW_RECURSION",
+      "mutation": "set Review A leaf list to REVIEW_A_MECHANICAL",
+      "expected_error": "E_REVIEW_RECURSION"
+    },
+    {
+      "id": "PLACEHOLDER_TODO",
+      "mutation": "replace one argv with TODO",
+      "expected_error": "E_COMMAND_PLACEHOLDER"
+    },
+    {
+      "id": "PLACEHOLDER_EXPANSION",
+      "mutation": "replace one argv with ${COMMAND}",
+      "expected_error": "E_COMMAND_PLACEHOLDER"
+    },
+    {
+      "id": "PLACEHOLDER_ELLIPSIS",
+      "mutation": "replace one argv with ...",
+      "expected_error": "E_COMMAND_PLACEHOLDER"
+    }
+  ],
+  "positive_review_vector": {
+    "id": "REVIEW-READY-YES-SCOPE0-NO",
+    "READY_TO_IMPLEMENT_DISCOVERY_PACK": "YES",
+    "SAFE_TO_FREEZE_SCOPE0": "NO",
+    "AUTHORIZED_PRODUCTION_PHASES": "NONE"
+  }
+}

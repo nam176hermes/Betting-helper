@@ -1,0 +1,15 @@
+{
+  "schema_version": "path-registry/v1",
+  "authoring_root": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+  "runtime_candidate": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+  "pack_candidate": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack",
+  "final_runtime": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+  "final_pack": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+  "review_root": "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6",
+  "review_authorization_root": "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6",
+  "input_root": "/home/thenam176/betting-helper/inputs",
+  "plan_input_parent": "/home/thenam176/betting-helper/plan-input",
+  "plan_input_root": "/home/thenam176/betting-helper/plan-input/hybrid-discovery-v6.3.6-authoritative-design-plan",
+  "plan_zip": "/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip",
+  "plan_sidecar": "/home/thenam176/betting-helper/inputs/hybrid-discovery-v6.3.6-authoritative-design-plan.zip.sha256"
+}

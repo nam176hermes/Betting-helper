@@ -1,0 +1,17 @@
+{
+  "live_read_only_ready": false,
+  "missing_inputs": [
+    "REQUIRES_REAL_PROVIDER_EVIDENCE",
+    "WAITING_OPERATOR_SAMPLE",
+    "WAITING_PLATFORM",
+    "REQUIRES_CURRENT_PART_A_EVIDENCE",
+    "WAITING_REVIEW",
+    "LIVE_CONFIG_DISABLED",
+    "WAITING_MATCH_WINDOW",
+    "WAITING_FOR_USER_SECRET"
+  ],
+  "key_status": "NOT_CHECKED",
+  "independent_review": "NOT_RUN",
+  "model_enabled": false,
+  "money_ready": false
+}

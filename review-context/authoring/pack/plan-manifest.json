@@ -1,0 +1,60 @@
+{
+  "schema_version": "hybrid-discovery-v6.3.6-plan/v1",
+  "artifact_type": "AUTHORITATIVE_DESIGN_AND_IMPLEMENTATION_PLAN",
+  "authority": "PLAN_ONLY",
+  "authorized_production_phases": "NONE",
+  "based_on": {
+    "v6_3_1_plan_zip_sha256": "2f7498c14434c10ce8acb9e167a9a14ff02de31f6ecb2d4d191526558368865c",
+    "v6_2_review_markdown_sha256": "250b28b50390581f6d97ed27181fa436c4ccb36f08e3ab992c80748ceed79322",
+    "v6_2_review_json_sha256": "15728851bd663efe186a434070f5a7657f86ab14e30b445df4469b6dda5c10f5",
+    "v6_3_2_plan_zip_sha256": "dc7be9176d88a3160ea7259fad3c7f57d48d855b7211ad995fc24d33f59ba59b"
+    ,"v6_3_4_plan_zip_sha256": "6eb746ed00a773400e2d8774bbe6a070c9bea8aea287b9dd629daa439266d2f0"
+    ,"v6_3_4_manifest_sha256": "a91aca666c1a247a3152dcdc8f1363b8dc14ddb4d36b935a68bb4c655097debf"
+    ,"v6_3_4_governed_content_root": "43c6ad4b149e39c4ba47f3396e2ace4e5a2f29820c4d0df61892133d6bed18ba"
+    ,"v6_3_4_external_attestation_sha256": "2052a7ad78a054a6159459a280a47c48c6b60586a2608bdedd44405b55dd0c1a"
+    ,"v6_3_4_mig0_t05_defect_receipt_sha256": "a0c2049523c632e05705847821517a2cae9823a43d2cc1adb9d7960617fd49eb"
+    ,"v6_3_4_p01_t06_hold_receipt_sha256": "a31534b1b5d374a9d70ee471597fd4b4dfc8b292bc02731684f82141f95c3c96"
+  },
+  "phase_count": 13,
+  "task_count": 62,
+  "task_manifest": "docs/tasks/task-manifest.v6.3.6.json",
+  "task_schema": "pack/docs/schemas/task-card-v6.3.6.schema.json#/$defs/TaskManifestV636",
+  "lifecycle": [
+    "DECLARED",
+    "MATERIALIZED",
+    "EXECUTABLE",
+    "QUALIFIED",
+    "SEALED",
+    "EXTERNAL_REVIEWED"
+  ],
+  "target_plan_review_verdicts": [
+    "PLAN_CONTRACT_COMPLETE",
+    "TASKS_EXECUTABLE_BY_FRESH_CODEX",
+    "FINDING_COVERAGE_COMPLETE",
+    "SECURITY_REVIEW_CONTRACT_COMPLETE"
+  ],
+  "phase_order": [
+    "BOOT0",
+    "P00",
+    "MIG0",
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09",
+    "P10"
+  ],
+  "bootstrap_document": "BOOTSTRAP.md",
+  "inherited_vector_coverage": {
+    "durability_cases": 46,
+    "clock_named_vectors": 65,
+    "clock_mapping_negatives": 16
+  },
+  "phase_scheduling": "TASK_DEPENDENCY_ORDER_WITH_EXPLICIT_RECURRING_MIG0_TASKS",
+  "independent_plan_review": "PENDING",
+  "runtime_implementation_ready": "NO"
+}

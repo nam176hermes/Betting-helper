@@ -1,0 +1,3376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+  "title": "Hybrid Discovery v6.2 E0 evidence",
+  "x-semantic-rules": [
+    {
+      "rule_id": "E0_SCENARIO_OBSERVED_REFERENCE_MATCH",
+      "applies_to": [
+        "COMPLETE",
+        "PARTIAL"
+      ],
+      "predicate": "facts.fact_state == OBSERVED AND set(positive_fact_refs) == set(facts.evidence_refs)",
+      "error": "E_SCENARIO_FACT_REFERENCE_MATCH",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "CATALOG_RUN_COUNT_MATCH",
+      "predicate": "decimal(run_count) == size(runs)",
+      "error": "E_CATALOG_RUN_COUNT",
+      "precedence_rank": 30
+    },
+    {
+      "rule_id": "CATALOG_RUN_REF_IDENTITIES_DISTINCT",
+      "predicate": "size(set(tuple(run.run_ref.schema_id, run.run_ref.schema_version, run.run_ref.artifact_type, run.run_ref.artifact_id, run.run_ref.content_hash) for run in runs)) == size(runs)",
+      "error": "E_CATALOG_DUPLICATE_RUN_REF",
+      "precedence_rank": 30
+    },
+    {
+      "rule_id": "FULL_CATALOG_EXACT",
+      "predicate": "classification == FULL_CATALOG iff size(runs) >= 2 AND at least two distinct canonical run_ref identity tuples exist AND every run has exactly ordered checkpoints CATALOG_LOAD, AFTER_NATURAL_UPDATE, RUN_CLOSE AND at every checkpoint decimal(reconciled_fixture_numerator) == decimal(visible_fixture_denominator) AND every checkpoint unexplained_gap_count == 0 AND report unexplained_gap_count == 0",
+      "error": "E_CATALOG_FULL_SUFFICIENCY",
+      "precedence_rank": 31
+    },
+    {
+      "rule_id": "PARTIAL_CATALOG_EXACT",
+      "predicate": "classification == PARTIAL_CATALOG iff size(runs) >= 1 AND usable checkpoint evidence exists AND FULL_CATALOG predicate is false",
+      "error": "E_CATALOG_PARTIAL_SEMANTICS",
+      "precedence_rank": 32
+    },
+    {
+      "rule_id": "UNSUPPORTED_CATALOG_EXACT",
+      "predicate": "classification == UNSUPPORTED iff size(runs) == 0 AND run_count == 0 AND usable checkpoint evidence is absent",
+      "error": "E_CATALOG_UNSUPPORTED_SEMANTICS",
+      "precedence_rank": 33
+    },
+    {
+      "rule_id": "CATALOG_REPORT_DISPOSITION_MATCH",
+      "predicate": "FULL_CATALOG maps to report_summary.disposition SUPPORTED with empty limitation_codes and unknown_codes; PARTIAL_CATALOG maps to PARTIAL with nonempty limitation_codes; UNSUPPORTED maps to UNSUPPORTED with nonempty evidence_refs and limitation_codes",
+      "error": "E_CATALOG_CLASSIFICATION_DISPOSITION",
+      "precedence_rank": 33
+    },
+    {
+      "rule_id": "GLOBAL_CLASSIFICATION_EXACT",
+      "predicate": "FULL_CATALOG iff observed_global_state_class_count == required_global_state_class_count AND unknown_global_state_class_count == 0 AND referenced catalog classification is FULL_CATALOG; PARTIAL_CATALOG iff observed_global_state_class_count > 0 AND FULL_CATALOG predicate is false; UNSUPPORTED iff observed_global_state_class_count == 0",
+      "error": "E_GLOBAL_CLASSIFICATION",
+      "precedence_rank": 34
+    },
+    {
+      "rule_id": "QUOTE_PRICE_TICK_THRESHOLD",
+      "predicate": "price_transformation_disposition and tick_inference_disposition are THRESHOLD_MET iff matched_revision_count >= 30 AND distinct_fixture_count >= 3 AND distinct_run_count >= 2; otherwise each is INFERRED_WITH_LIMITS or UNKNOWN",
+      "error": "E_QUOTE_SUFFICIENCY",
+      "precedence_rank": 35
+    },
+    {
+      "rule_id": "NATURAL_TRAFFIC_ONLY",
+      "predicate": "natural_operator_traffic == true AND one_detail_tab_per_fixture_used == false AND traffic_source == NATURAL_OPERATOR_TRAFFIC AND generated_load == false wherever those fields apply",
+      "error": "E_NATURAL_TRAFFIC_ONLY",
+      "precedence_rank": 36
+    },
+    {
+      "rule_id": "P99_SAMPLE_THRESHOLD",
+      "predicate": "p99.availability == AVAILABLE iff decimal(sample_count) >= 1000; otherwise p99.availability == UNKNOWN and reason_code == SAMPLE_COUNT_BELOW_1000",
+      "error": "E_P99_SAMPLE_COUNT",
+      "precedence_rank": 37
+    }
+  ],
+  "x-content-reference-type-bindings": [
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+      "artifact_type": "DISCOVERY_RUN",
+      "schema_version": "discovery-run-authorization/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:authorization-records#DiscoveryRunAuthorization"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "APP_STATE_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#AppStateObservation"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "CAPACITY_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "DOM_VERIFICATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#DomVerificationObservation"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "LIFECYCLE_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#LifecycleObservation"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "E0_SCENARIO_RESULT",
+      "schema_version": "e0-scenario-result/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ScenarioBase"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "E0_REPORT",
+      "schema_version": "e0-report/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/ReportBase"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "BETSLIP",
+      "schema_version": "betslip/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#BetslipReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "OFFER",
+      "schema_version": "offer/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#OfferReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "CASHOUT_OFFER",
+      "schema_version": "cashout-offer/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#OfferReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "OFFER_REVISION",
+      "schema_version": "offer-revision/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#OfferRevisionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "CASHOUT_OFFER_REVISION",
+      "schema_version": "cashout-offer-revision/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#OfferRevisionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "USER_SUBMISSION",
+      "schema_version": "user-submission/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#UserSubmissionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "USER_CASHOUT_SUBMISSION",
+      "schema_version": "cashout-submission/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#UserSubmissionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "OPERATOR_ACCEPTANCE",
+      "schema_version": "operator-acceptance/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#OperatorAcceptanceReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "POSITION",
+      "schema_version": "position/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#PositionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "POSITION_REVISION",
+      "schema_version": "position-revision/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#PositionRevisionReference"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "artifact_type": "MATCHED_QUOTE_REVISIONS",
+      "schema_version": "matched-quote-revisions/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:e0-evidence:v1#MatchedQuoteRevisionsReference"
+    }
+  ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/E0S01"
+    },
+    {
+      "$ref": "#/$defs/E0S02"
+    },
+    {
+      "$ref": "#/$defs/E0S03"
+    },
+    {
+      "$ref": "#/$defs/E0S04"
+    },
+    {
+      "$ref": "#/$defs/E0S05"
+    },
+    {
+      "$ref": "#/$defs/E0S06"
+    },
+    {
+      "$ref": "#/$defs/E0S07"
+    },
+    {
+      "$ref": "#/$defs/E0S08"
+    },
+    {
+      "$ref": "#/$defs/E0S09"
+    },
+    {
+      "$ref": "#/$defs/E0S10"
+    },
+    {
+      "$ref": "#/$defs/E0S11"
+    },
+    {
+      "$ref": "#/$defs/E0S12"
+    },
+    {
+      "$ref": "#/$defs/E0S13"
+    },
+    {
+      "$ref": "#/$defs/E0S14"
+    },
+    {
+      "$ref": "#/$defs/E0S15"
+    },
+    {
+      "$ref": "#/$defs/E0S16"
+    },
+    {
+      "$ref": "#/$defs/E0S17"
+    },
+    {
+      "$ref": "#/$defs/E0S18"
+    },
+    {
+      "$ref": "#/$defs/E0S19"
+    },
+    {
+      "$ref": "#/$defs/E0S20"
+    },
+    {
+      "$ref": "#/$defs/E0S21"
+    },
+    {
+      "$ref": "#/$defs/E0S22"
+    },
+    {
+      "$ref": "#/$defs/E0S23"
+    },
+    {
+      "$ref": "#/$defs/E0S24"
+    },
+    {
+      "$ref": "#/$defs/CatalogCapabilityReport"
+    },
+    {
+      "$ref": "#/$defs/GlobalOperatorStateReport"
+    },
+    {
+      "$ref": "#/$defs/OperatorIdentityReport"
+    },
+    {
+      "$ref": "#/$defs/ParticipantOrientationReport"
+    },
+    {
+      "$ref": "#/$defs/TransportSemanticsReport"
+    },
+    {
+      "$ref": "#/$defs/QuoteDisplayParityReport"
+    },
+    {
+      "$ref": "#/$defs/BrowserLifecycleReport"
+    },
+    {
+      "$ref": "#/$defs/ClockTimestampReport"
+    },
+    {
+      "$ref": "#/$defs/GapsAndLossReport"
+    },
+    {
+      "$ref": "#/$defs/LoopbackTopologyReport"
+    },
+    {
+      "$ref": "#/$defs/BetslipObservationReport"
+    },
+    {
+      "$ref": "#/$defs/PositionObservationReport"
+    },
+    {
+      "$ref": "#/$defs/CashoutObservationReport"
+    },
+    {
+      "$ref": "#/$defs/CapacityReport"
+    },
+    {
+      "$ref": "#/$defs/CredentialRedactionReport"
+    }
+  ],
+  "$defs": {
+    "CodeArray": {
+      "type": "array",
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+      }
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+      }
+    },
+    "E0BundleIndex": {
+      "$anchor": "E0BundleIndex",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_ids",
+        "report_names"
+      ],
+      "properties": {
+        "scenario_ids": {
+          "type": "array",
+          "minItems": 24,
+          "maxItems": 24,
+          "uniqueItems": true,
+          "prefixItems": [
+            {
+              "const": "E0-S01"
+            },
+            {
+              "const": "E0-S02"
+            },
+            {
+              "const": "E0-S03"
+            },
+            {
+              "const": "E0-S04"
+            },
+            {
+              "const": "E0-S05"
+            },
+            {
+              "const": "E0-S06"
+            },
+            {
+              "const": "E0-S07"
+            },
+            {
+              "const": "E0-S08"
+            },
+            {
+              "const": "E0-S09"
+            },
+            {
+              "const": "E0-S10"
+            },
+            {
+              "const": "E0-S11"
+            },
+            {
+              "const": "E0-S12"
+            },
+            {
+              "const": "E0-S13"
+            },
+            {
+              "const": "E0-S14"
+            },
+            {
+              "const": "E0-S15"
+            },
+            {
+              "const": "E0-S16"
+            },
+            {
+              "const": "E0-S17"
+            },
+            {
+              "const": "E0-S18"
+            },
+            {
+              "const": "E0-S19"
+            },
+            {
+              "const": "E0-S20"
+            },
+            {
+              "const": "E0-S21"
+            },
+            {
+              "const": "E0-S22"
+            },
+            {
+              "const": "E0-S23"
+            },
+            {
+              "const": "E0-S24"
+            }
+          ],
+          "items": false
+        },
+        "report_names": {
+          "type": "array",
+          "minItems": 15,
+          "maxItems": 15,
+          "uniqueItems": true,
+          "prefixItems": [
+            {
+              "const": "catalog-capability-report.json"
+            },
+            {
+              "const": "global-operator-state-report.json"
+            },
+            {
+              "const": "operator-identity-report.json"
+            },
+            {
+              "const": "participant-orientation-report.json"
+            },
+            {
+              "const": "transport-semantics-report.json"
+            },
+            {
+              "const": "quote-display-parity-report.json"
+            },
+            {
+              "const": "browser-lifecycle-report.json"
+            },
+            {
+              "const": "clock-timestamp-report.json"
+            },
+            {
+              "const": "gaps-and-loss-report.json"
+            },
+            {
+              "const": "loopback-topology-report.json"
+            },
+            {
+              "const": "betslip-observation-report.json"
+            },
+            {
+              "const": "position-observation-report.json"
+            },
+            {
+              "const": "cashout-observation-report.json"
+            },
+            {
+              "const": "capacity-report.json"
+            },
+            {
+              "const": "credential-redaction-report.json"
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "AppStateObservationReference": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "APP_STATE_OBSERVATION"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+            },
+            "schema_version": {
+              "const": "raw-observation/v1"
+            }
+          }
+        }
+      ]
+    },
+    "BetslipReference": {
+      "$anchor": "BetslipReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "BETSLIP"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            "schema_version": {
+              "const": "betslip/v1"
+            }
+          }
+        }
+      ]
+    },
+    "OfferReference": {
+      "$anchor": "OfferReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "OFFER"
+                },
+                "schema_version": {
+                  "const": "offer/v1"
+                }
+              }
+            },
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "CASHOUT_OFFER"
+                },
+                "schema_version": {
+                  "const": "cashout-offer/v1"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "OfferRevisionReference": {
+      "$anchor": "OfferRevisionReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "OFFER_REVISION"
+                },
+                "schema_version": {
+                  "const": "offer-revision/v1"
+                }
+              }
+            },
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "CASHOUT_OFFER_REVISION"
+                },
+                "schema_version": {
+                  "const": "cashout-offer-revision/v1"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "UserSubmissionReference": {
+      "$anchor": "UserSubmissionReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "USER_SUBMISSION"
+                },
+                "schema_version": {
+                  "const": "user-submission/v1"
+                }
+              }
+            },
+            {
+              "properties": {
+                "artifact_type": {
+                  "const": "USER_CASHOUT_SUBMISSION"
+                },
+                "schema_version": {
+                  "const": "cashout-submission/v1"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "OperatorAcceptanceReference": {
+      "$anchor": "OperatorAcceptanceReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "OPERATOR_ACCEPTANCE"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            "schema_version": {
+              "const": "operator-acceptance/v1"
+            }
+          }
+        }
+      ]
+    },
+    "PositionReference": {
+      "$anchor": "PositionReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "POSITION"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            "schema_version": {
+              "const": "position/v1"
+            }
+          }
+        }
+      ]
+    },
+    "PositionRevisionReference": {
+      "$anchor": "PositionRevisionReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "POSITION_REVISION"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            "schema_version": {
+              "const": "position-revision/v1"
+            }
+          }
+        }
+      ]
+    },
+    "MatchedQuoteRevisionsReference": {
+      "$anchor": "MatchedQuoteRevisionsReference",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "MATCHED_QUOTE_REVISIONS"
+            },
+            "schema_id": {
+              "const": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            "schema_version": {
+              "const": "matched-quote-revisions/v1"
+            }
+          }
+        }
+      ]
+    },
+    "ScenarioBase": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "record_kind",
+        "scenario_id",
+        "scenario_name",
+        "attempt_index",
+        "status",
+        "discovery_run_refs",
+        "limitation_codes",
+        "unknown_codes",
+        "positive_fact_refs",
+        "facts",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "e0-scenario-result/v1"
+        },
+        "record_kind": {
+          "const": "E0_SCENARIO_RESULT"
+        },
+        "scenario_id": {
+          "type": "string",
+          "pattern": "^E0-S(?:0[1-9]|1[0-9]|2[0-4])$"
+        },
+        "scenario_name": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 96
+        },
+        "attempt_index": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "status": {
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "discovery_run_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "unknown_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "positive_fact_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "NOT_OBSERVED"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "positive_fact_refs": {
+                "maxItems": 0
+              },
+              "facts": {
+                "$ref": "#/$defs/NoPositiveFacts"
+              },
+              "limitation_codes": {
+                "minItems": 1
+              },
+              "unknown_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "COMPLETE"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "positive_fact_refs": {
+                "minItems": 1
+              },
+              "facts": {
+                "type": "object",
+                "properties": {
+                  "fact_state": {
+                    "const": "OBSERVED"
+                  },
+                  "evidence_refs": {
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "fact_state",
+                  "evidence_refs"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "PARTIAL"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "positive_fact_refs": {
+                "minItems": 1
+              },
+              "facts": {
+                "type": "object",
+                "properties": {
+                  "fact_state": {
+                    "const": "OBSERVED"
+                  },
+                  "evidence_refs": {
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "fact_state",
+                  "evidence_refs"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "NoPositiveFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "observation_attempted",
+        "positive_fact_count"
+      ],
+      "properties": {
+        "fact_state": {
+          "const": "NOT_OBSERVED"
+        },
+        "observation_attempted": {
+          "const": true
+        },
+        "positive_fact_count": {
+          "const": "0"
+        }
+      }
+    },
+    "ObservedScenarioFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "fact_code",
+        "observed_count",
+        "passive_observation",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "fact_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "observed_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "passive_observation": {
+          "const": true
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "ChromeRestartFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "prior_run_sealed",
+        "prior_browser_boot_id",
+        "new_browser_boot_id",
+        "prior_browser_run_id",
+        "new_browser_run_id",
+        "automatic_resume",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "prior_run_sealed": {
+          "const": true
+        },
+        "prior_browser_boot_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "new_browser_boot_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "prior_browser_run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "new_browser_run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "automatic_resume": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "PartialCashoutFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "ui_state",
+        "curve_state",
+        "active_request_issued",
+        "tool_caused_action",
+        "provenance",
+        "offer_ref",
+        "offer_revision_ref",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "ui_state": {
+          "enum": [
+            "VISIBLE",
+            "CHANGED",
+            "REMOVED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "curve_state": {
+          "enum": [
+            "VISIBLE",
+            "CHANGED",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "active_request_issued": {
+          "const": false
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "offer_ref": {
+          "$ref": "#/$defs/OfferReference"
+        },
+        "offer_revision_ref": {
+          "$ref": "#/$defs/OfferRevisionReference"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "NaturalCapacityFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "traffic_source",
+        "generated_load",
+        "sample_count",
+        "observed_bytes",
+        "peak_backlog_count",
+        "cpu_peak_percent",
+        "ram_peak_bytes",
+        "p50_us",
+        "p95_us",
+        "p99",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "traffic_source": {
+          "const": "NATURAL_OPERATOR_TRAFFIC"
+        },
+        "generated_load": {
+          "const": false
+        },
+        "sample_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "observed_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "peak_backlog_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "cpu_peak_percent": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "ram_peak_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "p50_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "p95_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "p99": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "availability",
+                "value_us"
+              ],
+              "properties": {
+                "availability": {
+                  "const": "AVAILABLE"
+                },
+                "value_us": {
+                  "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "availability",
+                "reason_code"
+              ],
+              "properties": {
+                "availability": {
+                  "const": "UNKNOWN"
+                },
+                "reason_code": {
+                  "const": "SAMPLE_COUNT_BELOW_1000"
+                }
+              }
+            }
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "PassiveMonetaryProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin",
+        "human_action_outside_tool",
+        "tool_caused_action",
+        "source_observation_ref"
+      ],
+      "properties": {
+        "origin": {
+          "enum": [
+            "PRE_EXISTING_OPERATOR_STATE",
+            "INDEPENDENT_USER_CREATED_STATE",
+            "MANUAL_EXTERNAL_ACTION"
+          ]
+        },
+        "human_action_outside_tool": {
+          "type": "boolean"
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "source_observation_ref": {
+          "$ref": "#/$defs/AppStateObservationReference"
+        }
+      }
+    },
+    "BetslipPriceFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "provenance",
+        "betslip_ref",
+        "offer_ref",
+        "offer_revision_ref",
+        "submission_disposition",
+        "acceptance_disposition",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "betslip_ref": {
+          "$ref": "#/$defs/BetslipReference"
+        },
+        "offer_ref": {
+          "$ref": "#/$defs/OfferReference"
+        },
+        "offer_revision_ref": {
+          "$ref": "#/$defs/OfferRevisionReference"
+        },
+        "submission_disposition": {
+          "const": "NOT_OBSERVED"
+        },
+        "acceptance_disposition": {
+          "const": "NOT_OBSERVED"
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "AcceptedPositionFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "provenance",
+        "user_submission_ref",
+        "operator_acceptance_ref",
+        "position_ref",
+        "position_revision_ref",
+        "correction_disposition",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "user_submission_ref": {
+          "$ref": "#/$defs/UserSubmissionReference"
+        },
+        "operator_acceptance_ref": {
+          "$ref": "#/$defs/OperatorAcceptanceReference"
+        },
+        "position_ref": {
+          "$ref": "#/$defs/PositionReference"
+        },
+        "position_revision_ref": {
+          "$ref": "#/$defs/PositionRevisionReference"
+        },
+        "correction_disposition": {
+          "enum": [
+            "NONE_OBSERVED",
+            "CORRECTION_OBSERVED",
+            "UNKNOWN"
+          ]
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "FullCashoutOfferFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "provenance",
+        "position_ref",
+        "offer_ref",
+        "offer_revision_ref",
+        "offer_state",
+        "active_request_issued",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "position_ref": {
+          "$ref": "#/$defs/PositionReference"
+        },
+        "offer_ref": {
+          "$ref": "#/$defs/OfferReference"
+        },
+        "offer_revision_ref": {
+          "$ref": "#/$defs/OfferRevisionReference"
+        },
+        "offer_state": {
+          "enum": [
+            "AVAILABLE",
+            "REVISED",
+            "EXPIRED"
+          ]
+        },
+        "active_request_issued": {
+          "const": false
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "OfferChangeFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "provenance",
+        "prior_offer_revision_ref",
+        "successor_offer_revision_ref",
+        "transition",
+        "active_request_issued",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "prior_offer_revision_ref": {
+          "$ref": "#/$defs/OfferRevisionReference"
+        },
+        "successor_offer_revision_ref": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/OfferRevisionReference"
+            },
+            {
+              "const": "NONE"
+            }
+          ]
+        },
+        "transition": {
+          "enum": [
+            "REVISED",
+            "REMOVED",
+            "EXPIRED",
+            "CORRECTED"
+          ]
+        },
+        "active_request_issued": {
+          "const": false
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "PostCashoutPositionFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_state",
+        "provenance",
+        "cashout_submission_ref",
+        "operator_acceptance_ref",
+        "prior_position_revision_ref",
+        "successor_position_revision_ref",
+        "correction_disposition",
+        "tool_caused_action",
+        "evidence_refs"
+      ],
+      "properties": {
+        "fact_state": {
+          "enum": [
+            "OBSERVED",
+            "PARTIAL"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/PassiveMonetaryProvenance"
+        },
+        "cashout_submission_ref": {
+          "$ref": "#/$defs/UserSubmissionReference"
+        },
+        "operator_acceptance_ref": {
+          "$ref": "#/$defs/OperatorAcceptanceReference"
+        },
+        "prior_position_revision_ref": {
+          "$ref": "#/$defs/PositionRevisionReference"
+        },
+        "successor_position_revision_ref": {
+          "$ref": "#/$defs/PositionRevisionReference"
+        },
+        "correction_disposition": {
+          "enum": [
+            "NONE_OBSERVED",
+            "CORRECTION_OBSERVED",
+            "UNKNOWN"
+          ]
+        },
+        "tool_caused_action": {
+          "const": false
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "ScenarioDefaultFacts": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ObservedScenarioFacts"
+        },
+        {
+          "$ref": "#/$defs/NoPositiveFacts"
+        }
+      ]
+    },
+    "E0S01": {
+      "$anchor": "E0S01",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S01"
+            },
+            "scenario_name": {
+              "const": "Soccer catalog loaded"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S02": {
+      "$anchor": "E0S02",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S02"
+            },
+            "scenario_name": {
+              "const": "Pre-match fixture opened"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S03": {
+      "$anchor": "E0S03",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S03"
+            },
+            "scenario_name": {
+              "const": "Live fixture opened"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S04": {
+      "$anchor": "E0S04",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S04"
+            },
+            "scenario_name": {
+              "const": "FT Winner 3 Way observed"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S05": {
+      "$anchor": "E0S05",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S05"
+            },
+            "scenario_name": {
+              "const": "1st Half Winner observed"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S06": {
+      "$anchor": "E0S06",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S06"
+            },
+            "scenario_name": {
+              "const": "2nd Half Winner observed"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S07": {
+      "$anchor": "E0S07",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S07"
+            },
+            "scenario_name": {
+              "const": "Market suspend"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S08": {
+      "$anchor": "E0S08",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S08"
+            },
+            "scenario_name": {
+              "const": "Market reopen"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S09": {
+      "$anchor": "E0S09",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S09"
+            },
+            "scenario_name": {
+              "const": "Goal around suspension/reopen"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S10": {
+      "$anchor": "E0S10",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S10"
+            },
+            "scenario_name": {
+              "const": "Red-card event if naturally available"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S11": {
+      "$anchor": "E0S11",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S11"
+            },
+            "scenario_name": {
+              "const": "Navigate fixture A to fixture B"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S12": {
+      "$anchor": "E0S12",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S12"
+            },
+            "scenario_name": {
+              "const": "Browser refresh"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S13": {
+      "$anchor": "E0S13",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S13"
+            },
+            "scenario_name": {
+              "const": "SPA navigation"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S14": {
+      "$anchor": "E0S14",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S14"
+            },
+            "scenario_name": {
+              "const": "BFCache/history navigation where applicable"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S15": {
+      "$anchor": "E0S15",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S15"
+            },
+            "scenario_name": {
+              "const": "Extension service-worker restart"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S16": {
+      "$anchor": "E0S16",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S16"
+            },
+            "scenario_name": {
+              "const": "Chrome restart"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/ChromeRestartFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S17": {
+      "$anchor": "E0S17",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S17"
+            },
+            "scenario_name": {
+              "const": "Windows sleep/resume"
+            },
+            "facts": {
+              "$ref": "#/$defs/ScenarioDefaultFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S18": {
+      "$anchor": "E0S18",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S18"
+            },
+            "scenario_name": {
+              "const": "Betslip price observation"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/BetslipPriceFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S19": {
+      "$anchor": "E0S19",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S19"
+            },
+            "scenario_name": {
+              "const": "Existing accepted position observation"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/AcceptedPositionFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S20": {
+      "$anchor": "E0S20",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S20"
+            },
+            "scenario_name": {
+              "const": "Full Cashout offer observation"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/FullCashoutOfferFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S21": {
+      "$anchor": "E0S21",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S21"
+            },
+            "scenario_name": {
+              "const": "Partial Cashout UI/curve observation"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/PartialCashoutFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S22": {
+      "$anchor": "E0S22",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S22"
+            },
+            "scenario_name": {
+              "const": "Offer removal/change"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/OfferChangeFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S23": {
+      "$anchor": "E0S23",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S23"
+            },
+            "scenario_name": {
+              "const": "Post-Cashout position revision"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/PostCashoutPositionFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "E0S24": {
+      "$anchor": "E0S24",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ScenarioBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scenario_id": {
+              "const": "E0-S24"
+            },
+            "scenario_name": {
+              "const": "Catalog burst/capacity observation"
+            },
+            "facts": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/NaturalCapacityFacts"
+                },
+                {
+                  "$ref": "#/$defs/NoPositiveFacts"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ReportMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric_id",
+        "disposition",
+        "sample_count",
+        "evidence_refs"
+      ],
+      "properties": {
+        "metric_id": {
+          "enum": [
+            "CATALOG_VISIBLE_FIXTURES",
+            "CATALOG_RECONCILED_FIXTURES",
+            "CATALOG_CHECKPOINTS",
+            "UNEXPLAINED_GAPS",
+            "GLOBAL_STATE_FIELDS_OBSERVED",
+            "IDENTITY_STABLE_OBSERVATIONS",
+            "IDENTITY_CONFLICTS",
+            "ORIENTATION_MATCHED_OBSERVATIONS",
+            "TRANSPORT_TARGETS",
+            "TRANSPORT_SCHEMA_REVISIONS",
+            "MATCHED_PRICE_REVISIONS",
+            "LIFECYCLE_TRANSITIONS",
+            "CLOCK_MAPPINGS",
+            "GAP_COUNT",
+            "LOST_SEQUENCE_COUNT",
+            "LOOPBACK_FRAME_COUNT",
+            "LOOPBACK_LATENCY_US",
+            "BETSLIP_OBSERVATIONS",
+            "POSITION_OBSERVATIONS",
+            "CASHOUT_OBSERVATIONS",
+            "NATURAL_SAMPLE_COUNT",
+            "NATURAL_BYTES",
+            "PEAK_BACKLOG",
+            "CPU_PEAK_PERCENT",
+            "RAM_PEAK_BYTES",
+            "P50_US",
+            "P95_US",
+            "P99_US",
+            "REDACTION_REJECTIONS",
+            "SANITIZED_EXPORTS"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "OBSERVED",
+            "INFERRED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "sample_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "numerator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "denominator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "decimal_value": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "unit": {
+          "enum": [
+            "COUNT",
+            "MICROSECOND",
+            "BYTE",
+            "PERCENT",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        }
+      }
+    },
+    "ReportSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "disposition",
+        "metrics",
+        "unexplained_gap_count",
+        "replay_disposition"
+      ],
+      "properties": {
+        "disposition": {
+          "enum": [
+            "SUPPORTED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "UNKNOWN",
+            "INDETERMINATE"
+          ]
+        },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/ReportMetric"
+          }
+        },
+        "unexplained_gap_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "replay_disposition": {
+          "enum": [
+            "MATCHED",
+            "DIVERGENT",
+            "NOT_OBSERVED"
+          ]
+        }
+      }
+    },
+    "CatalogCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "checkpoint_id",
+        "visible_fixture_denominator",
+        "reconciled_fixture_numerator",
+        "unexplained_gap_count",
+        "evidence_refs"
+      ],
+      "properties": {
+        "checkpoint_id": {
+          "enum": [
+            "CATALOG_LOAD",
+            "AFTER_NATURAL_UPDATE",
+            "RUN_CLOSE"
+          ]
+        },
+        "visible_fixture_denominator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "reconciled_fixture_numerator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "unexplained_gap_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      }
+    },
+    "CatalogRunSufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_ref",
+        "bounded_run",
+        "natural_operator_traffic",
+        "one_detail_tab_per_fixture_used",
+        "checkpoints"
+      ],
+      "properties": {
+        "run_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "bounded_run": {
+          "const": true
+        },
+        "natural_operator_traffic": {
+          "const": true
+        },
+        "one_detail_tab_per_fixture_used": {
+          "const": false
+        },
+        "checkpoints": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/CatalogCheckpoint"
+                },
+                {
+                  "properties": {
+                    "checkpoint_id": {
+                      "const": "CATALOG_LOAD"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/CatalogCheckpoint"
+                },
+                {
+                  "properties": {
+                    "checkpoint_id": {
+                      "const": "AFTER_NATURAL_UPDATE"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/CatalogCheckpoint"
+                },
+                {
+                  "properties": {
+                    "checkpoint_id": {
+                      "const": "RUN_CLOSE"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "CatalogSufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "minimum_bounded_runs",
+        "required_checkpoints_per_run",
+        "run_count",
+        "runs",
+        "tested_context_refs",
+        "all_visible_fixtures_reconciled",
+        "unexplained_gap_count",
+        "one_detail_tab_per_fixture_used",
+        "natural_operator_traffic"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "FULL_CATALOG",
+            "PARTIAL_CATALOG",
+            "UNSUPPORTED"
+          ]
+        },
+        "minimum_bounded_runs": {
+          "const": "2"
+        },
+        "required_checkpoints_per_run": {
+          "const": "3"
+        },
+        "run_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "runs": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/CatalogRunSufficiency"
+          }
+        },
+        "tested_context_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        },
+        "all_visible_fixtures_reconciled": {
+          "type": "boolean"
+        },
+        "unexplained_gap_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "one_detail_tab_per_fixture_used": {
+          "const": false
+        },
+        "natural_operator_traffic": {
+          "const": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "FULL_CATALOG"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runs": {
+                "minItems": 2
+              },
+              "all_visible_fixtures_reconciled": {
+                "const": true
+              },
+              "unexplained_gap_count": {
+                "const": "0"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "PARTIAL_CATALOG"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "UNSUPPORTED"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "runs": {
+                "maxItems": 0
+              },
+              "run_count": {
+                "const": "0"
+              },
+              "all_visible_fixtures_reconciled": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GlobalStateSufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "catalog_report_ref",
+        "observed_global_state_class_count",
+        "required_global_state_class_count",
+        "unknown_global_state_class_count",
+        "evidence_refs"
+      ],
+      "properties": {
+        "classification": {
+          "enum": [
+            "FULL_CATALOG",
+            "PARTIAL_CATALOG",
+            "UNSUPPORTED"
+          ]
+        },
+        "catalog_report_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "observed_global_state_class_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "required_global_state_class_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "unknown_global_state_class_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "FULL_CATALOG"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "unknown_global_state_class_count": {
+                "const": "0"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "classification": {
+                "const": "UNSUPPORTED"
+              }
+            },
+            "required": [
+              "classification"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observed_global_state_class_count": {
+                "const": "0"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "QuoteSufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "matched_revision_count",
+        "distinct_fixture_count",
+        "distinct_run_count",
+        "minimum_matched_revisions",
+        "minimum_distinct_fixtures",
+        "minimum_distinct_runs",
+        "price_transformation_disposition",
+        "tick_inference_disposition",
+        "one_detail_tab_per_fixture_used",
+        "natural_operator_traffic",
+        "evidence_refs"
+      ],
+      "properties": {
+        "matched_revision_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "distinct_fixture_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "distinct_run_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "minimum_matched_revisions": {
+          "const": "30"
+        },
+        "minimum_distinct_fixtures": {
+          "const": "3"
+        },
+        "minimum_distinct_runs": {
+          "const": "2"
+        },
+        "price_transformation_disposition": {
+          "enum": [
+            "THRESHOLD_MET",
+            "INFERRED_WITH_LIMITS",
+            "UNKNOWN"
+          ]
+        },
+        "tick_inference_disposition": {
+          "enum": [
+            "THRESHOLD_MET",
+            "INFERRED_WITH_LIMITS",
+            "UNKNOWN"
+          ]
+        },
+        "one_detail_tab_per_fixture_used": {
+          "const": false
+        },
+        "natural_operator_traffic": {
+          "const": true
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/MatchedQuoteRevisionsReference"
+          }
+        }
+      }
+    },
+    "CapacitySufficiency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "traffic_source",
+        "generated_load",
+        "sample_count",
+        "minimum_p99_sample_count",
+        "p99"
+      ],
+      "properties": {
+        "traffic_source": {
+          "const": "NATURAL_OPERATOR_TRAFFIC"
+        },
+        "generated_load": {
+          "const": false
+        },
+        "sample_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "minimum_p99_sample_count": {
+          "const": "1000"
+        },
+        "p99": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "availability",
+                "value_us"
+              ],
+              "properties": {
+                "availability": {
+                  "const": "AVAILABLE"
+                },
+                "value_us": {
+                  "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "availability",
+                "reason_code"
+              ],
+              "properties": {
+                "availability": {
+                  "const": "UNKNOWN"
+                },
+                "reason_code": {
+                  "const": "SAMPLE_COUNT_BELOW_1000"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ScopeProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "coverage": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "coverage"
+                }
+              }
+            }
+          ]
+        },
+        "semantics": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "semantics"
+                }
+              }
+            }
+          ]
+        },
+        "identity_confidence": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "identity_confidence"
+                }
+              }
+            }
+          ]
+        },
+        "missingness": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "missingness"
+                }
+              }
+            }
+          ]
+        },
+        "timing": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "timing"
+                }
+              }
+            }
+          ]
+        },
+        "replayability": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "replayability"
+                }
+              }
+            }
+          ]
+        },
+        "schema_stability": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "schema_stability"
+                }
+              }
+            }
+          ]
+        },
+        "capacity": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "capacity"
+                }
+              }
+            }
+          ]
+        },
+        "quota": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "quota"
+                }
+              }
+            }
+          ]
+        },
+        "licensing": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "licensing"
+                }
+              }
+            }
+          ]
+        },
+        "cost": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+            },
+            {
+              "properties": {
+                "category": {
+                  "const": "cost"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ReportBase": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "record_kind",
+        "report_name",
+        "source_scenario_ids",
+        "evidence_refs",
+        "report_summary",
+        "scope0_projection",
+        "confidence",
+        "limitation_codes",
+        "unknown_codes",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "e0-report/v1"
+        },
+        "record_kind": {
+          "const": "E0_REPORT"
+        },
+        "report_name": {
+          "type": "string"
+        },
+        "source_scenario_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 24,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^E0-S(?:0[1-9]|1[0-9]|2[0-4])$"
+          }
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "report_summary": {
+          "$ref": "#/$defs/ReportSummary"
+        },
+        "scope0_projection": {
+          "$ref": "#/$defs/ScopeProjection"
+        },
+        "confidence": {
+          "enum": [
+            "OBSERVED",
+            "INFERRED",
+            "NOT_OBSERVED",
+            "UNKNOWN",
+            "CONFLICT",
+            "INSUFFICIENT_SAMPLE"
+          ]
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "unknown_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "CatalogCapabilityReport": {
+      "$anchor": "CatalogCapabilityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "sufficiency"
+          ],
+          "properties": {
+            "report_name": {
+              "const": "catalog-capability-report.json"
+            },
+            "sufficiency": {
+              "$ref": "#/$defs/CatalogSufficiency"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "coverage",
+                "missingness"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "coverage": {
+                  "$ref": "#/$defs/ScopeProjection/properties/coverage"
+                },
+                "missingness": {
+                  "$ref": "#/$defs/ScopeProjection/properties/missingness"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "GlobalOperatorStateReport": {
+      "$anchor": "GlobalOperatorStateReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "sufficiency"
+          ],
+          "properties": {
+            "report_name": {
+              "const": "global-operator-state-report.json"
+            },
+            "sufficiency": {
+              "$ref": "#/$defs/GlobalStateSufficiency"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "OperatorIdentityReport": {
+      "$anchor": "OperatorIdentityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "operator-identity-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "identity_confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "identity_confidence": {
+                  "$ref": "#/$defs/ScopeProjection/properties/identity_confidence"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ParticipantOrientationReport": {
+      "$anchor": "ParticipantOrientationReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "participant-orientation-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "TransportSemanticsReport": {
+      "$anchor": "TransportSemanticsReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "transport-semantics-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics",
+                "schema_stability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                },
+                "schema_stability": {
+                  "$ref": "#/$defs/ScopeProjection/properties/schema_stability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "QuoteDisplayParityReport": {
+      "$anchor": "QuoteDisplayParityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "sufficiency"
+          ],
+          "properties": {
+            "report_name": {
+              "const": "quote-display-parity-report.json"
+            },
+            "sufficiency": {
+              "$ref": "#/$defs/QuoteSufficiency"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "BrowserLifecycleReport": {
+      "$anchor": "BrowserLifecycleReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "browser-lifecycle-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "replayability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "replayability": {
+                  "$ref": "#/$defs/ScopeProjection/properties/replayability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ClockTimestampReport": {
+      "$anchor": "ClockTimestampReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "clock-timestamp-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "timing"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "timing": {
+                  "$ref": "#/$defs/ScopeProjection/properties/timing"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "GapsAndLossReport": {
+      "$anchor": "GapsAndLossReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "gaps-and-loss-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "missingness",
+                "replayability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "missingness": {
+                  "$ref": "#/$defs/ScopeProjection/properties/missingness"
+                },
+                "replayability": {
+                  "$ref": "#/$defs/ScopeProjection/properties/replayability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "LoopbackTopologyReport": {
+      "$anchor": "LoopbackTopologyReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "loopback-topology-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "capacity",
+                "replayability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "capacity": {
+                  "$ref": "#/$defs/ScopeProjection/properties/capacity"
+                },
+                "replayability": {
+                  "$ref": "#/$defs/ScopeProjection/properties/replayability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "BetslipObservationReport": {
+      "$anchor": "BetslipObservationReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "betslip-observation-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "PositionObservationReport": {
+      "$anchor": "PositionObservationReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "position-observation-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "CashoutObservationReport": {
+      "$anchor": "CashoutObservationReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "cashout-observation-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "semantics"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "semantics": {
+                  "$ref": "#/$defs/ScopeProjection/properties/semantics"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "CapacityReport": {
+      "$anchor": "CapacityReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "sufficiency"
+          ],
+          "properties": {
+            "report_name": {
+              "const": "capacity-report.json"
+            },
+            "sufficiency": {
+              "$ref": "#/$defs/CapacitySufficiency"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "capacity",
+                "timing"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "capacity": {
+                  "$ref": "#/$defs/ScopeProjection/properties/capacity"
+                },
+                "timing": {
+                  "$ref": "#/$defs/ScopeProjection/properties/timing"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "CredentialRedactionReport": {
+      "$anchor": "CredentialRedactionReport",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ReportBase"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "report_name": {
+              "const": "credential-redaction-report.json"
+            },
+            "scope0_projection": {
+              "type": "object",
+              "required": [
+                "schema_stability"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "schema_stability": {
+                  "$ref": "#/$defs/ScopeProjection/properties/schema_stability"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

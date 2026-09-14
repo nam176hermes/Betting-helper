@@ -1,0 +1,32 @@
+{
+  "observed": {
+    "actual_head": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "current_task": "R24 A/B received HOLD; A exclusive-input deviation and B current credential proof gap; human inputs applied",
+    "current_delivery": {
+      "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "handoff_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/handoff-8570c78b",
+      "desktop_root": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b"
+    },
+    "current_sealed_pack": {
+      "path": "/home/thenam176/betting-helper/part-b-review-host-r20/pack.zip",
+      "sha256": "0abe04f9097a40e6d551373bba815a0bb4395e5068cd8f958d31f848db4f1521",
+      "size_bytes": 142419343
+    },
+    "current_review_handoff": "/home/thenam176/betting-helper/authoring-evidence/part-b-qualification-retry-r22/handoff-81efd40c/HOST_HANDOFF.json",
+    "pending_user_input": {
+      "kind": "HUMAN_FRESH_CODEX_SESSION_ATTESTED_BY",
+      "requested_once": true,
+      "required": "Human chosen display name for attested_by; session IDs already supplied and matched",
+      "answer_received": false
+    },
+    "next_ready_local_work": "Repair the three technical proof gaps with focused tests, record real human session evidence, then requalify/reseal changed source and obtain candidate-bound fresh independent reviews. Preserve current results/host logs. Do not reuse consumed launch serials."
+  },
+  "source_hashes": {
+    "/home/thenam176/betting-helper/part-b-candidate/config/live-batched.example.json": "fd0ce81710a14a741fdbd4bb0efbe1e6c141036f880ee31792c501af3399d38c",
+    "/home/thenam176/betting-helper/part-b-candidate/review-config/review-aggregation.v2.json": "0e596d0faf846fce3bee54311d8ccb6810c2793c4d056ab1edf6b49ba941a3b6",
+    "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json": "369af32c8e9956a3805bf15e48d06444d7841232e6eae9ffde3625d7a41d9ffb",
+    "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json": "230d114fec0b3cb4b92380de1c5c1d0ffee8682e03884fbb8505b71ab8a53dc5",
+    "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/contracts/10-part-b-security-surface.md": "074ee453043e2627c064fd5cb4f17c4ed1eb8327d314cd84021331bd1e7e63d5",
+    "/home/thenam176/betting-helper/part-b-candidate/tests/live/fixtures/admitted-profile-index.json": "78fa87248910542c28fe19f1c97db2bcd6e7ff97d090ba7f06066905caff98f5"
+  }
+}

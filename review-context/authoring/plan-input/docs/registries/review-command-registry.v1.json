@@ -1,0 +1,313 @@
+{
+  "schema_version": "review-command-registry/v1",
+  "commands": [
+    {
+      "command_id": "REVIEW_A_PREPARE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_A_PREPARE",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_A_MECHANICAL",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "--execute"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_A_MECHANICAL",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_A_FINALIZE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/finalize_review.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-a.authorization.json",
+        "--result",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
+        "--receipt",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_A_FINALIZE",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_B_PREPARE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_B_PREPARE",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_B_MECHANICAL",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/prepare_review_workspace.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "--execute"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_B_MECHANICAL",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_B_FINALIZE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/finalize_review.py",
+        "--authorization",
+        "/home/thenam176/betting-helper/review-authorizations/hybrid-discovery-v6.3.6/review-b.authorization.json",
+        "--result",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
+        "--receipt",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_B_FINALIZE",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "REVIEW_AGGREGATE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/aggregate_reviews.py",
+        "--config",
+        "review-config/review-aggregation.v1.json",
+        "--review-a",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/result.json",
+        "--receipt-a",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-a/execution-receipt.json",
+        "--review-b",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/result.json",
+        "--receipt-b",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/review-b/execution-receipt.json",
+        "--output",
+        "/home/thenam176/betting-helper/reviews/hybrid-discovery-v6.3.6/aggregate/result.json"
+      ],
+      "expected_exit": 0,
+      "kind": "review-operation",
+      "available_at": "SEALED",
+      "purpose": "REVIEW_AGGREGATE",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "A_CHECK_SOURCE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_executable_references.py",
+        "--mode",
+        "sealed-review"
+      ],
+      "purpose": "A_CHECK_SOURCE",
+      "expected_exit": 0,
+      "kind": "review-leaf",
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "A_CHECK_EVIDENCE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_proof_coverage.py",
+        "--matrix",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
+        "--stage",
+        "SEALED",
+        "--evidence-root",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/evidence",
+        "--attestation",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.seal-attestation.json",
+        "--zip",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip",
+        "--sidecar",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6.zip.sha256"
+      ],
+      "purpose": "A_CHECK_EVIDENCE",
+      "expected_exit": 0,
+      "kind": "review-leaf",
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "A_CHECK_BASELINE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/qualify_zero_parent_baseline.py",
+        "--root",
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+        "--check-only",
+        "--receipt",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6/docs/receipts/repo0-baseline-receipt.json"
+      ],
+      "purpose": "A_CHECK_BASELINE",
+      "expected_exit": 0,
+      "kind": "review-leaf",
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "A_INSTALL_NODE",
+      "cwd": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a/scratch/node-project",
+      "argv": [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--offline",
+        "--ignore-scripts"
+      ],
+      "purpose": "Host prepares frozen offline Node workspace for review A",
+      "expected_exit": 0,
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "review-operation"
+    },
+    {
+      "command_id": "B_INSTALL_NODE",
+      "cwd": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b/scratch/node-project",
+      "argv": [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--offline",
+        "--ignore-scripts"
+      ],
+      "purpose": "Host prepares frozen offline Node workspace for review B",
+      "expected_exit": 0,
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "review-operation"
+    },
+    {
+      "command_id": "A_INSTALL_PYTHON",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "sync",
+        "--frozen",
+        "--offline"
+      ],
+      "purpose": "Host prepares role scratch Python environment using configured UV_PROJECT_ENVIRONMENT",
+      "expected_exit": 0,
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "review-operation"
+    },
+    {
+      "command_id": "B_INSTALL_PYTHON",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "sync",
+        "--frozen",
+        "--offline"
+      ],
+      "purpose": "Host prepares role scratch Python environment using configured UV_PROJECT_ENVIRONMENT",
+      "expected_exit": 0,
+      "available_at": "SEALED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "review-operation"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "valid_input_exit": 0,
+  "tamper_exit": 1,
+  "path_escape_exit": 1,
+  "result": "PASS"
+}

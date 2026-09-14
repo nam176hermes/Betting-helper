@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "scope-semantic-vectors/v1",
+  "target_schema_id": "urn:hybrid-discovery:v6.2:scope-records:v1",
+  "vector_contract": {
+    "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorContract",
+    "base_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorBase",
+    "case_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorCase",
+    "content_reference_resolution_policy_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#ContentReferenceResolutionPolicy",
+    "patch_semantics": "RFC6902",
+    "error_selection": "LOWEST_PRECEDENCE_RANK_ONLY"
+  },
+  "positive_content_reference_resolution": {
+    "schema_version": "content-reference-resolution-policy/v1",
+    "positive_collections": ["valid_records", "semantic_bases"],
+    "coverage": "EVERY_CONTENT_REFERENCE_RECURSIVELY_IN_EVERY_POSITIVE_BASE",
+    "schema_id_resolution": "EXACT_PUBLISHED_ID_ONLY_NO_ALIAS_OR_FILENAME_FALLBACK",
+    "type_version_resolution": "EXACT_SCHEMA_ID_ARTIFACT_TYPE_SCHEMA_VERSION_BINDING_TO_RESOLVABLE_SCHEMA_TARGET",
+    "binding_schema_ids": ["urn:hybrid-discovery:v6.2:meta-records:v1", "urn:hybrid-discovery:v6.2:e0-evidence:v1"],
+    "missing_or_mismatched_reference_error": "E_CONTENT_REFERENCE_RESOURCE",
+    "production_authority": "NONE"
+  },
+  "error_precedence": [
+    { "precedence_rank": 1, "stage": "UNIVERSAL_DENIAL", "rule": "DENY_BEFORE_ANY_SIDE_EFFECT" },
+    { "precedence_rank": 5, "stage": "JSON_PATCH", "rule": "PATCH_MUST_APPLY_EXACTLY" },
+    { "precedence_rank": 10, "stage": "SCHEMA", "rule": "DRAFT_2020_12_CLOSED_SCHEMA" },
+    { "precedence_rank": 15, "stage": "REFERENCE", "rule": "REFERENCE_INTEGRITY" },
+    { "precedence_rank": 20, "stage": "SEMANTIC", "rule": "SCOPE0_SEMANTIC_RULES" },
+    { "precedence_rank": 30, "stage": "AUTHORITY", "rule": "PRODUCTION_AUTHORITY_NONE" }
+  ],
+  "valid_records": [
+    {
+      "case_id": "SCOPE-VALID-FROZEN",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "record": {
+        "schema_version": "frozen-initial-scope-approval/v1",
+        "record_kind": "FROZEN_INITIAL_SCOPE_APPROVAL",
+        "approval_id": "scope-approval:1111111111111111111111111111111111111111111111111111111111111111",
+        "approval_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "frozen_at": "2026-09-01T00:00:00Z",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "g0_acceptance_ref": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "G0_ACCEPTANCE", "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "task-evidence/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" },
+        "scope_input_view_binding": { "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "scope-input-view/v1", "content_hash": "3333333333333333333333333333333333333333333333333333333333333333" },
+        "scope_input_audit_binding": { "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "scope-input-audit/v1", "content_hash": "4444444444444444444444444444444444444444444444444444444444444444" },
+        "scope_input_policy_binding": { "schema_id": "urn:hybrid-discovery:v6.2:scope0-input-policy:v1", "schema_version": "scope0-input-policy/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" },
+        "competition_id": "competition:scope-001",
+        "forecast_bundle_scope": { "competition_id": "competition:scope-001", "eligible_fixture_states": ["PRE_MATCH", "FIRST_HALF", "HALFTIME", "SECOND_HALF"], "market_family": "THREE_WAY_WINNER" },
+        "supported_horizons": ["H1", "H2", "FT"],
+        "evaluation_bands": {
+          "H1": [
+            { "band_id": "band:h1-prematch", "fixture_phase": "PRE_MATCH", "admission_code": "ADMITTED_PRE_MATCH" },
+            { "band_id": "band:h1-live", "fixture_phase": "FIRST_HALF", "start_minute": "0", "end_minute": "45", "admission_code": "ADMITTED_FIRST_HALF" }
+          ],
+          "H2": [
+            { "band_id": "band:h2-halftime", "fixture_phase": "HALFTIME", "admission_code": "ADMITTED_HALFTIME" },
+            { "band_id": "band:h2-live", "fixture_phase": "SECOND_HALF", "start_minute": "45", "end_minute": "90", "admission_code": "ADMITTED_SECOND_HALF" }
+          ],
+          "FT": [
+            { "band_id": "band:ft-prematch", "fixture_phase": "PRE_MATCH", "admission_code": "ADMITTED_PRE_MATCH" }
+          ]
+        },
+        "temporal_partitions": {
+          "TRAIN": { "start": "2024-01-01T00:00:00Z", "end": "2024-07-01T00:00:00Z", "interval_semantics": "HALF_OPEN" },
+          "VALIDATION": { "start": "2024-07-01T00:00:00Z", "end": "2024-10-01T00:00:00Z", "interval_semantics": "HALF_OPEN" },
+          "TEST": { "start": "2024-10-01T00:00:00Z", "end": "2025-01-01T00:00:00Z", "interval_semantics": "HALF_OPEN", "pre_freeze_access_state": "NEVER_ACCESSED", "pre_freeze_access_event_count": "0" },
+          "FORWARD": { "start": "2025-01-01T00:00:00Z", "end": "2025-04-01T00:00:00Z", "interval_semantics": "HALF_OPEN", "pre_freeze_access_state": "NEVER_ACCESSED", "pre_freeze_access_event_count": "0" }
+        },
+        "fixture_clustering_rule_code": "CLUSTER_BY_PROVIDER_FIXTURE_ID",
+        "admitted_inputs": [
+          { "policy_entry_id": "scope0-input:e0-catalog-coverage", "category": "coverage", "source_ref": { "artifact_id": "artifact:6666666666666666666666666666666666666666666666666666666666666666", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "6666666666666666666666666666666666666666666666666666666666666666" }, "json_pointer": "/scope0_projection/coverage", "projected_value_hash": "7777777777777777777777777777777777777777777777777777777777777777" }
+        ],
+        "performance_input_denial": { "policy_enforced": true, "audit_confirmed": true, "denied_category_codes": ["RESULT_DATA", "MODEL_METRICS", "CALIBRATION_METRICS", "MARKET_METRICS", "FINANCIAL_METRICS", "RANKING_DATA", "CHAMPION_DATA", "PRODUCTION_AUTHORITY"] },
+        "contamination_lineage": {
+          "access_ledger_ref": { "artifact_id": "artifact:8888888888888888888888888888888888888888888888888888888888888888", "artifact_type": "SCOPE_INPUT_AUDIT", "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "scope-input-audit/v1", "content_hash": "8888888888888888888888888888888888888888888888888888888888888888" },
+          "access_ledger_schema_version": "scope-input-audit/v1",
+          "access_ledger_hash": "8888888888888888888888888888888888888888888888888888888888888888",
+          "replay_disposition": "MATCHED",
+          "test_access_events": "0",
+          "forward_access_events": "0",
+          "contamination_status": "CLEAN"
+        },
+        "valid_from": "2026-09-01T00:00:00Z",
+        "review_by": "2026-10-01T00:00:00Z",
+        "revocation_triggers": ["SCHEMA_DRIFT", "CONTAMINATION"],
+        "authority": "V7_DESIGN_ONLY",
+        "production_authority": { "AUTHORIZED_PRODUCTION_PHASES": "NONE" },
+        "immutable": true
+      }
+    },
+    {
+      "case_id": "SCOPE-VALID-NO-FEASIBLE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "record": {
+        "schema_version": "no-feasible-scope/v1",
+        "record_kind": "NO_FEASIBLE_SCOPE",
+        "record_id": "no-feasible-scope:9999999999999999999999999999999999999999999999999999999999999999",
+        "content_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+        "created_at": "2026-09-01T00:00:00Z",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "g0_acceptance_ref": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "G0_ACCEPTANCE", "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "task-evidence/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" },
+        "scope_input_view_binding": { "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "scope-input-view/v1", "content_hash": "3333333333333333333333333333333333333333333333333333333333333333" },
+        "scope_input_audit_binding": { "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "scope-input-audit/v1", "content_hash": "4444444444444444444444444444444444444444444444444444444444444444" },
+        "scope_input_policy_binding": { "schema_id": "urn:hybrid-discovery:v6.2:scope0-input-policy:v1", "schema_version": "scope0-input-policy/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" },
+        "reason_codes": ["INSUFFICIENT_ADMITTED_EVIDENCE"],
+        "failed_criteria_codes": ["COVERAGE_NOT_SUPPORTED"],
+        "authority": "NONE",
+        "production_authority": { "AUTHORIZED_PRODUCTION_PHASES": "NONE" },
+        "terminal": true
+      }
+    },
+    {
+      "case_id": "SCOPE-VALID-REVOCATION-GENESIS",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:scope-records:v1",
+      "record": {
+        "schema_version": "scope-revocation/v1",
+        "record_kind": "SCOPE_REVOCATION",
+        "revocation_id": "scope-revocation:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "revocation_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "approval_id": "scope-approval:1111111111111111111111111111111111111111111111111111111111111111",
+        "approval_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "revocation_sequence": "1",
+        "previous_revocation_hash": "GENESIS",
+        "trigger_code": "SCHEMA_DRIFT",
+        "evidence_refs": [
+          { "artifact_id": "artifact:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "artifact_type": "REVOCATION_EVIDENCE", "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1", "schema_version": "task-evidence/v1", "content_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }
+        ],
+        "effective_at": "2026-09-15T00:00:00Z",
+        "action": "REVOKE_V7_DESIGN_ONLY",
+        "terminal": true,
+        "reopening_permitted": false,
+        "production_authority": { "AUTHORIZED_PRODUCTION_PHASES": "NONE" }
+      }
+    }
+  ],
+  "semantic_rules": [
+    "ROOT_NESTED_COMPETITION_EQUAL",
+    "SUPPORTED_HORIZONS_EQUAL_BAND_KEYS",
+    "MINUTE_AND_STATE_BANDS_VALID",
+    "PARTITIONS_STRICTLY_ORDERED_HALF_OPEN_NONOVERLAPPING",
+    "TEST_AND_FORWARD_UNTOUCHED",
+    "REVIEW_BY_WITHIN_2592000_SECONDS",
+    "EXACT_POLICY_ADMISSION",
+    "PERFORMANCE_INPUTS_DENIED_BY_POLICY_AND_AUDIT",
+    "CONTAMINATION_LEDGER_REPLAYS_CLEAN",
+    "SCHEMA_VERSIONS_AND_HASHES_MATCH",
+    "NO_FEASIBLE_HAS_NO_POSITIVE_SCOPE",
+    "REVOCATION_HASH_SEQUENCE_AND_APPROVAL_IMMUTABILITY"
+  ],
+  "semantic_bases": [
+    {
+      "case_id": "SCOPE-VALID-APPROVAL-REVOCATION-INTEGRITY",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:scope-records:v1#ScopeApprovalRevocationIntegrity",
+      "record": {
+        "approval_id": "scope-approval:1111111111111111111111111111111111111111111111111111111111111111",
+        "stored_approval_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "recomputed_approval_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "revocation_id": "scope-revocation:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "revocation_approval_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+        "revocation_sequence": "1",
+        "previous_revocation_hash": "GENESIS",
+        "terminal": true
+      }
+    }
+  ],
+  "counterexamples": [
+    { "case_id": "SCOPE-REJECT-COMPETITION-MISMATCH", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/forecast_bundle_scope/competition_id", "value": "competition:other" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_COMPETITION_MISMATCH", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-HORIZON-MISSING-BAND-KEY", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "remove", "path": "/record/evaluation_bands/FT" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_HORIZON_BAND_KEYS", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-BAND-KEY-NOT-SUPPORTED", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "remove", "path": "/record/supported_horizons/2" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_HORIZON_BAND_KEYS", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-H1-HALFTIME", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/evaluation_bands/H1/0/fixture_phase", "value": "HALFTIME" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_H1_PHASE", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-NONLIVE-MINUTES", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "add", "path": "/record/evaluation_bands/H1/0/start_minute", "value": "0" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_NONLIVE_MINUTE", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-LIVE-MINUTE-EQUAL", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/evaluation_bands/H1/1/end_minute", "value": "0" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_MINUTE_ORDER", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-LIVE-MINUTE-OVER-180", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/evaluation_bands/H2/1/end_minute", "value": "181" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_MINUTE_RANGE", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-BAND-OVERLAP", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "add", "path": "/record/evaluation_bands/H1/2", "value": { "band_id": "band:h1-overlap", "fixture_phase": "FIRST_HALF", "start_minute": "30", "end_minute": "40", "admission_code": "ADMITTED_FIRST_HALF" } } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_BAND_OVERLAP", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-TRAIN-EMPTY", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "copy", "from": "/record/temporal_partitions/TRAIN/start", "path": "/record/temporal_partitions/TRAIN/end" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_PARTITION_EMPTY", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-TRAIN-VALIDATION-OVERLAP", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/temporal_partitions/VALIDATION/start", "value": "2024-06-01T00:00:00Z" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_PARTITION_OVERLAP", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-VALIDATION-TEST-ORDER", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/temporal_partitions/TEST/start", "value": "2024-09-01T00:00:00Z" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_PARTITION_ORDER", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-TEST-FORWARD-OVERLAP", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/temporal_partitions/FORWARD/start", "value": "2024-12-01T00:00:00Z" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_PARTITION_OVERLAP", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-TEST-TOUCHED", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/temporal_partitions/TEST/pre_freeze_access_event_count", "value": "1" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_TEST_TOUCHED", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-FORWARD-TOUCHED", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/temporal_partitions/FORWARD/pre_freeze_access_state", "value": "ACCESSED" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_FORWARD_TOUCHED", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-REVIEW-AFTER-30-DAYS", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/review_by", "value": "2026-10-01T00:00:01Z" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_REVIEW_BOUNDARY", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-WILDCARD-ADMISSION", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/admitted_inputs/0/json_pointer", "value": "/scope0_projection/*" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_POLICY_POINTER", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-UNLISTED-ADMISSION", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/admitted_inputs/0/policy_entry_id", "value": "scope0-input:unknown" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_POLICY_ADMISSION", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-ADMISSION-CATEGORY-MISMATCH", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/admitted_inputs/0/category", "value": "cost" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_POLICY_CATEGORY", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-PERFORMANCE-POLICY-DISABLED", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/performance_input_denial/policy_enforced", "value": false } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_PERFORMANCE_DENIAL", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-PERFORMANCE-AUDIT-DISABLED", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/performance_input_denial/audit_confirmed", "value": false } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_PERFORMANCE_DENIAL", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-CONTAMINATION", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/contamination_lineage/contamination_status", "value": "DIRTY" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_CONTAMINATION", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-LEDGER-DIVERGENCE", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/contamination_lineage/replay_disposition", "value": "DIVERGENT" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_LEDGER_REPLAY", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-SCHEMA-VERSION-MISMATCH", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/scope_input_view_binding/schema_version", "value": "scope-input-view/v2" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_SCHEMA_VERSION", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-EVIDENCE-HASH-MISMATCH", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/admitted_inputs/0/projected_value_hash", "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" } ], "candidate_schema_state": "VALID", "expected_error": "E_SCOPE_EVIDENCE_HASH", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-NO-FEASIBLE-POSITIVE-COMPETITION", "base_case_id": "SCOPE-VALID-NO-FEASIBLE", "operations": [ { "op": "add", "path": "/record/competition_id", "value": "competition:scope-001" } ], "candidate_schema_state": "INVALID", "expected_error": "E_NO_FEASIBLE_POSITIVE_SCOPE", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-NO-FEASIBLE-POSITIVE-BANDS", "base_case_id": "SCOPE-VALID-NO-FEASIBLE", "operations": [ { "op": "add", "path": "/record/evaluation_bands", "value": { "H1": [], "H2": [], "FT": [] } } ], "candidate_schema_state": "INVALID", "expected_error": "E_NO_FEASIBLE_POSITIVE_SCOPE", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-REVOCATION-APPROVAL-HASH", "base_case_id": "SCOPE-VALID-REVOCATION-GENESIS", "operations": [ { "op": "replace", "path": "/record/approval_hash", "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" } ], "candidate_schema_state": "VALID", "expected_error": "E_REVOCATION_APPROVAL_HASH", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-REVOCATION-SEQUENCE-GAP", "base_case_id": "SCOPE-VALID-REVOCATION-GENESIS", "operations": [ { "op": "replace", "path": "/record/revocation_sequence", "value": "2" } ], "candidate_schema_state": "VALID", "expected_error": "E_REVOCATION_SEQUENCE", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-REVOCATION-PREVIOUS-HASH", "base_case_id": "SCOPE-VALID-REVOCATION-GENESIS", "operations": [ { "op": "replace", "path": "/record/previous_revocation_hash", "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" } ], "candidate_schema_state": "VALID", "expected_error": "E_REVOCATION_PREVIOUS_HASH", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-APPROVAL-MUTATION-AFTER-REVOCATION", "base_case_id": "SCOPE-VALID-APPROVAL-REVOCATION-INTEGRITY", "operations": [ { "op": "replace", "path": "/record/recomputed_approval_hash", "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" } ], "candidate_schema_state": "VALID", "expected_error": "E_APPROVAL_IMMUTABILITY", "precedence_rank": 20 },
+    { "case_id": "SCOPE-REJECT-REVOCATION-REOPEN", "base_case_id": "SCOPE-VALID-REVOCATION-GENESIS", "operations": [ { "op": "replace", "path": "/record/reopening_permitted", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_REVOCATION_TERMINAL", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-FROZEN-AUTHORITY-NONE", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/authority", "value": "NONE" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_AUTHORITY", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-NO-FEASIBLE-DESIGN-AUTHORITY", "base_case_id": "SCOPE-VALID-NO-FEASIBLE", "operations": [ { "op": "replace", "path": "/record/authority", "value": "V7_DESIGN_ONLY" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE_AUTHORITY", "precedence_rank": 10 },
+    { "case_id": "SCOPE-REJECT-PRODUCTION-AUTHORITY", "base_case_id": "SCOPE-VALID-FROZEN", "operations": [ { "op": "replace", "path": "/record/production_authority/AUTHORIZED_PRODUCTION_PHASES", "value": "PAPER" } ], "candidate_schema_state": "INVALID", "expected_error": "E_PRODUCTION_AUTHORITY", "precedence_rank": 10 }
+  ],
+  "production_authority": "NONE"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "part-b-plan/v1",
+  "name": "Betting-helper Part B — batched read-only",
+  "observed_repo_head": "d4055839e596fc52f0e0df175a6733a64b8fffc1",
+  "task_count": 25,
+  "source_count": 23,
+  "acceptance_case_count": 48,
+  "part_c_selected": false,
+  "requires_user_key_at": "PB-18",
+  "key_custody": "USER_TERMINAL_TO_PROVIDER_PROCESS_ONLY",
+  "entry_prompt": "CODEX_PART_B_AUTORUN_PROMPT.md",
+  "runtime_implementation_claimed": false
+}

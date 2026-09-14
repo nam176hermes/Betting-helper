@@ -1,0 +1,812 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:scope-records:v1",
+  "title": "Hybrid Discovery v6.2 SCOPE0 records",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/FrozenInitialScopeApproval"
+    },
+    {
+      "$ref": "#/$defs/NoFeasibleScopeRecord"
+    },
+    {
+      "$ref": "#/$defs/ScopeRevocationRecord"
+    }
+  ],
+  "$defs": {
+    "ScopeApprovalRevocationIntegrity": {
+      "$anchor": "ScopeApprovalRevocationIntegrity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approval_id",
+        "stored_approval_hash",
+        "recomputed_approval_hash",
+        "revocation_id",
+        "revocation_approval_hash",
+        "revocation_sequence",
+        "previous_revocation_hash",
+        "terminal"
+      ],
+      "properties": {
+        "approval_id": {
+          "type": "string",
+          "pattern": "^scope-approval:[0-9a-f]{64}$"
+        },
+        "stored_approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "recomputed_approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "revocation_id": {
+          "type": "string",
+          "pattern": "^scope-revocation:[0-9a-f]{64}$"
+        },
+        "revocation_approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "revocation_sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "previous_revocation_hash": {
+          "oneOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            },
+            {
+              "const": "GENESIS"
+            }
+          ]
+        },
+        "terminal": {
+          "const": true
+        }
+      }
+    },
+    "CodeArray": {
+      "type": "array",
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+      }
+    },
+    "ArtifactBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_id",
+        "schema_version",
+        "content_hash"
+      ],
+      "properties": {
+        "schema_id": {
+          "type": "string",
+          "pattern": "^(?:urn:hybrid-discovery:v6\\.2:[a-z0-9-]+(?::v[0-9]+)?|https://hybrid-discovery\\.local/schemas/v6\\.2/[a-z0-9-]+\\.schema\\.json)$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+/v[0-9]+$"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        }
+      }
+    },
+    "AdmittedInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_entry_id",
+        "category",
+        "source_ref",
+        "json_pointer",
+        "projected_value_hash"
+      ],
+      "properties": {
+        "policy_entry_id": {
+          "type": "string",
+          "pattern": "^scope0-input:[a-z0-9][a-z0-9-]{0,95}$"
+        },
+        "category": {
+          "enum": [
+            "coverage",
+            "semantics",
+            "identity_confidence",
+            "missingness",
+            "timing",
+            "replayability",
+            "schema_stability",
+            "capacity",
+            "quota",
+            "licensing",
+            "cost"
+          ]
+        },
+        "source_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "json_pointer": {
+          "type": "string",
+          "pattern": "^/(?:[A-Za-z0-9_-]+)(?:/[A-Za-z0-9_-]+)*$",
+          "not": {
+            "pattern": "\\*"
+          }
+        },
+        "projected_value_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        }
+      }
+    },
+    "NonLiveBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "band_id",
+        "fixture_phase",
+        "admission_code"
+      ],
+      "properties": {
+        "band_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "fixture_phase": {
+          "enum": [
+            "PRE_MATCH",
+            "HALFTIME"
+          ]
+        },
+        "admission_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        }
+      }
+    },
+    "H1LiveBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "band_id",
+        "fixture_phase",
+        "start_minute",
+        "end_minute",
+        "admission_code"
+      ],
+      "properties": {
+        "band_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "fixture_phase": {
+          "const": "FIRST_HALF"
+        },
+        "start_minute": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9]|[1-9][0-9]|1[0-7][0-9])$"
+        },
+        "end_minute": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$"
+        },
+        "admission_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        }
+      }
+    },
+    "H1NonLiveBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "band_id",
+        "fixture_phase",
+        "admission_code"
+      ],
+      "properties": {
+        "band_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "fixture_phase": {
+          "const": "PRE_MATCH"
+        },
+        "admission_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        }
+      }
+    },
+    "FullLiveBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "band_id",
+        "fixture_phase",
+        "start_minute",
+        "end_minute",
+        "admission_code"
+      ],
+      "properties": {
+        "band_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "fixture_phase": {
+          "enum": [
+            "FIRST_HALF",
+            "SECOND_HALF",
+            "EXTRA_TIME"
+          ]
+        },
+        "start_minute": {
+          "type": "string",
+          "pattern": "^(?:0|[1-9]|[1-9][0-9]|1[0-7][0-9])$"
+        },
+        "end_minute": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-9][0-9]|1[0-7][0-9]|180)$"
+        },
+        "admission_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        }
+      }
+    },
+    "H1Bands": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/H1NonLiveBand"
+          },
+          {
+            "$ref": "#/$defs/H1LiveBand"
+          }
+        ]
+      }
+    },
+    "FullBands": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/NonLiveBand"
+          },
+          {
+            "$ref": "#/$defs/FullLiveBand"
+          }
+        ]
+      }
+    },
+    "EvaluationBands": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "H1": {
+          "$ref": "#/$defs/H1Bands"
+        },
+        "H2": {
+          "$ref": "#/$defs/FullBands"
+        },
+        "FT": {
+          "$ref": "#/$defs/FullBands"
+        }
+      }
+    },
+    "PartitionWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "interval_semantics"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "end": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "interval_semantics": {
+          "const": "HALF_OPEN"
+        }
+      }
+    },
+    "UntouchedPartitionWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "interval_semantics",
+        "pre_freeze_access_state",
+        "pre_freeze_access_event_count"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "end": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "interval_semantics": {
+          "const": "HALF_OPEN"
+        },
+        "pre_freeze_access_state": {
+          "const": "NEVER_ACCESSED"
+        },
+        "pre_freeze_access_event_count": {
+          "const": "0"
+        }
+      }
+    },
+    "TemporalPartitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "TRAIN",
+        "VALIDATION",
+        "TEST",
+        "FORWARD"
+      ],
+      "properties": {
+        "TRAIN": {
+          "$ref": "#/$defs/PartitionWindow"
+        },
+        "VALIDATION": {
+          "$ref": "#/$defs/PartitionWindow"
+        },
+        "TEST": {
+          "$ref": "#/$defs/UntouchedPartitionWindow"
+        },
+        "FORWARD": {
+          "$ref": "#/$defs/UntouchedPartitionWindow"
+        }
+      }
+    },
+    "ContaminationLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "access_ledger_ref",
+        "access_ledger_schema_version",
+        "access_ledger_hash",
+        "replay_disposition",
+        "test_access_events",
+        "forward_access_events",
+        "contamination_status"
+      ],
+      "properties": {
+        "access_ledger_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "access_ledger_schema_version": {
+          "const": "scope-input-audit/v1"
+        },
+        "access_ledger_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "replay_disposition": {
+          "const": "MATCHED"
+        },
+        "test_access_events": {
+          "const": "0"
+        },
+        "forward_access_events": {
+          "const": "0"
+        },
+        "contamination_status": {
+          "const": "CLEAN"
+        }
+      }
+    },
+    "ProductionAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "AUTHORIZED_PRODUCTION_PHASES"
+      ],
+      "properties": {
+        "AUTHORIZED_PRODUCTION_PHASES": {
+          "const": "NONE"
+        }
+      }
+    },
+    "FrozenInitialScopeApproval": {
+      "$anchor": "FrozenInitialScopeApproval",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_kind",
+        "approval_id",
+        "approval_hash",
+        "frozen_at",
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "g0_acceptance_ref",
+        "scope_input_view_binding",
+        "scope_input_audit_binding",
+        "scope_input_policy_binding",
+        "competition_id",
+        "forecast_bundle_scope",
+        "supported_horizons",
+        "evaluation_bands",
+        "temporal_partitions",
+        "fixture_clustering_rule_code",
+        "admitted_inputs",
+        "performance_input_denial",
+        "contamination_lineage",
+        "valid_from",
+        "review_by",
+        "revocation_triggers",
+        "authority",
+        "production_authority",
+        "immutable"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "frozen-initial-scope-approval/v1"
+        },
+        "record_kind": {
+          "const": "FROZEN_INITIAL_SCOPE_APPROVAL"
+        },
+        "approval_id": {
+          "type": "string",
+          "pattern": "^scope-approval:[0-9a-f]{64}$"
+        },
+        "approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "frozen_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "g0_acceptance_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "scope_input_view_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "scope_input_audit_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "scope_input_policy_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "competition_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "forecast_bundle_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "competition_id",
+            "eligible_fixture_states",
+            "market_family"
+          ],
+          "properties": {
+            "competition_id": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+            },
+            "eligible_fixture_states": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "PRE_MATCH",
+                  "FIRST_HALF",
+                  "HALFTIME",
+                  "SECOND_HALF",
+                  "EXTRA_TIME"
+                ]
+              }
+            },
+            "market_family": {
+              "const": "THREE_WAY_WINNER"
+            }
+          }
+        },
+        "supported_horizons": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "H1",
+              "H2",
+              "FT"
+            ]
+          }
+        },
+        "evaluation_bands": {
+          "$ref": "#/$defs/EvaluationBands"
+        },
+        "temporal_partitions": {
+          "$ref": "#/$defs/TemporalPartitions"
+        },
+        "fixture_clustering_rule_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "admitted_inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/AdmittedInput"
+          }
+        },
+        "performance_input_denial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "policy_enforced",
+            "audit_confirmed",
+            "denied_category_codes"
+          ],
+          "properties": {
+            "policy_enforced": {
+              "const": true
+            },
+            "audit_confirmed": {
+              "const": true
+            },
+            "denied_category_codes": {
+              "type": "array",
+              "minItems": 8,
+              "maxItems": 8,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "RESULT_DATA",
+                  "MODEL_METRICS",
+                  "CALIBRATION_METRICS",
+                  "MARKET_METRICS",
+                  "FINANCIAL_METRICS",
+                  "RANKING_DATA",
+                  "CHAMPION_DATA",
+                  "PRODUCTION_AUTHORITY"
+                ]
+              }
+            }
+          }
+        },
+        "contamination_lineage": {
+          "$ref": "#/$defs/ContaminationLineage"
+        },
+        "valid_from": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "review_by": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "revocation_triggers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "SCHEMA_DRIFT",
+              "CAPABILITY_DOWNGRADE",
+              "IDENTITY_CONFLICT",
+              "ORIENTATION_CONFLICT",
+              "EXCESSIVE_AGE",
+              "UNRESOLVED_GAP",
+              "EVIDENCE_INVALIDATION",
+              "CONTAMINATION",
+              "POLICY_HASH_MISMATCH",
+              "LEDGER_REPLAY_DIVERGENCE"
+            ]
+          }
+        },
+        "authority": {
+          "const": "V7_DESIGN_ONLY"
+        },
+        "production_authority": {
+          "$ref": "#/$defs/ProductionAuthority"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "NoFeasibleScopeRecord": {
+      "$anchor": "NoFeasibleScopeRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_kind",
+        "record_id",
+        "content_hash",
+        "created_at",
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "g0_acceptance_ref",
+        "scope_input_view_binding",
+        "scope_input_audit_binding",
+        "scope_input_policy_binding",
+        "reason_codes",
+        "failed_criteria_codes",
+        "authority",
+        "production_authority",
+        "terminal"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "no-feasible-scope/v1"
+        },
+        "record_kind": {
+          "const": "NO_FEASIBLE_SCOPE"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^no-feasible-scope:[0-9a-f]{64}$"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "created_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "g0_acceptance_ref": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        "scope_input_view_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "scope_input_audit_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "scope_input_policy_binding": {
+          "$ref": "#/$defs/ArtifactBinding"
+        },
+        "reason_codes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+          }
+        },
+        "failed_criteria_codes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+          }
+        },
+        "authority": {
+          "const": "NONE"
+        },
+        "production_authority": {
+          "$ref": "#/$defs/ProductionAuthority"
+        },
+        "terminal": {
+          "const": true
+        }
+      }
+    },
+    "ScopeRevocationRecord": {
+      "$anchor": "ScopeRevocationRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_kind",
+        "revocation_id",
+        "revocation_hash",
+        "approval_id",
+        "approval_hash",
+        "revocation_sequence",
+        "previous_revocation_hash",
+        "trigger_code",
+        "evidence_refs",
+        "effective_at",
+        "action",
+        "terminal",
+        "reopening_permitted",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "scope-revocation/v1"
+        },
+        "record_kind": {
+          "const": "SCOPE_REVOCATION"
+        },
+        "revocation_id": {
+          "type": "string",
+          "pattern": "^scope-revocation:[0-9a-f]{64}$"
+        },
+        "revocation_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "approval_id": {
+          "type": "string",
+          "pattern": "^scope-approval:[0-9a-f]{64}$"
+        },
+        "approval_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "revocation_sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "previous_revocation_hash": {
+          "oneOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            },
+            {
+              "const": "GENESIS"
+            }
+          ]
+        },
+        "trigger_code": {
+          "enum": [
+            "SCHEMA_DRIFT",
+            "CAPABILITY_DOWNGRADE",
+            "IDENTITY_CONFLICT",
+            "ORIENTATION_CONFLICT",
+            "EXCESSIVE_AGE",
+            "UNRESOLVED_GAP",
+            "EVIDENCE_INVALIDATION",
+            "CONTAMINATION",
+            "POLICY_HASH_MISMATCH",
+            "LEDGER_REPLAY_DIVERGENCE"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        },
+        "effective_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "action": {
+          "const": "REVOKE_V7_DESIGN_ONLY"
+        },
+        "terminal": {
+          "const": true
+        },
+        "reopening_permitted": {
+          "const": false
+        },
+        "production_authority": {
+          "$ref": "#/$defs/ProductionAuthority"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schema_version": "bh-live-readonly-config/v2",
+  "mode": "LIVE_READ_ONLY",
+  "enabled": false,
+  "provider": {
+    "id": "API_FOOTBALL_V3",
+    "base_url": "https://v3.football.api-sports.io",
+    "api_key_env": "API_FOOTBALL_KEY",
+    "account_slot": "api-football-primary",
+    "league_id": null,
+    "season": null,
+    "fixture_ids": [],
+    "polling_strategy": "BATCH_FASTEST_ACTIVE",
+    "batch_api_limit": 20,
+    "live_poll_seconds": 15,
+    "halftime_poll_seconds": 60,
+    "prematch_poll_seconds": 60,
+    "near_kickoff_poll_seconds": 30,
+    "terminal_confirmation_offsets_seconds": [
+      30,
+      120
+    ],
+    "events_fallback_enabled": false,
+    "events_fallback_fixture_ids": [],
+    "events_fallback_poll_seconds": 60,
+    "daily_soft_cap": 6000,
+    "max_requests_per_run": 600,
+    "max_requests_per_minute": 6,
+    "min_request_gap_seconds": 10,
+    "max_in_flight": 1,
+    "retry_reserve_fraction": "0.20"
+  },
+  "operator": {
+    "capture_strategy": "FIXED_DOM_READONLY",
+    "capture_profile_path": null,
+    "profile_evidence_hash": null,
+    "watchdog_seconds": 30,
+    "allowed_fixture_bindings": []
+  },
+  "runtime": {
+    "host": "127.0.0.1",
+    "port": 8765,
+    "platform": "WINDOWS_CHROME_WSL2",
+    "max_matches": 1,
+    "max_run_minutes": 120,
+    "run_output_dir": ".local/part-b/live-one",
+    "platform_qualification_path": null
+  },
+  "gates": {
+    "offline_result_path": ".local/offline-slice/acceptance/result.json",
+    "provider_feasibility_path": null,
+    "capture_review_path": null,
+    "security_review_path": null,
+    "live_intent_path": null
+  },
+  "model_enabled": false,
+  "paper_enabled": false,
+  "money_enabled": false,
+  "cashout_submission_enabled": false
+}

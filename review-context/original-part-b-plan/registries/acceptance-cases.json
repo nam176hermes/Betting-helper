@@ -1,0 +1,341 @@
+{
+  "schema_version": "part-b-cases/v1",
+  "cases": [
+    {
+      "case_id": "BCASE-01",
+      "execution_kind": "MOCK",
+      "name": "BASELINE_REUSE",
+      "owner_task": "PB-00",
+      "oracle": "No reset/rewrite; actual Part A gate or missing evidence reported."
+    },
+    {
+      "case_id": "BCASE-02",
+      "execution_kind": "MOCK",
+      "name": "CONFIG_V2_CLOSED",
+      "owner_task": "PB-01",
+      "oracle": "Reject unknown keys,enabledwithmissingprofile,oldnamespace and money flag."
+    },
+    {
+      "case_id": "BCASE-03",
+      "execution_kind": "MOCK",
+      "name": "CONFIG_FALLBACK_SUBSET",
+      "owner_task": "PB-01",
+      "oracle": "FallbackfixtureIDs subset;OFFrequiresnone;watchlist<=acceptedstage."
+    },
+    {
+      "case_id": "BCASE-04",
+      "execution_kind": "MOCK",
+      "name": "NO_ECHO_NO_TTY",
+      "owner_task": "PB-02",
+      "oracle": "NoTTY/GetPassWarning refuses before reading/network; user abort no I/O."
+    },
+    {
+      "case_id": "BCASE-05",
+      "execution_kind": "MOCK",
+      "name": "NO_SECRET_ARTIFACT",
+      "owner_task": "PB-02",
+      "oracle": "Fake secret absent in logs/reports/argv/config/browser/child env."
+    },
+    {
+      "case_id": "BCASE-06",
+      "execution_kind": "MOCK",
+      "name": "QUOTA_ATOMIC_CONCURRENT",
+      "owner_task": "PB-03",
+      "oracle": "Two processes cannot double-spend; reserve before I/O; no timeout refund."
+    },
+    {
+      "case_id": "BCASE-07",
+      "execution_kind": "MOCK",
+      "name": "QUOTA_MINUTE_AND_RETRY",
+      "owner_task": "PB-03",
+      "oracle": "Seventh call in60s refused; retries obey10s gap and session cap."
+    },
+    {
+      "case_id": "BCASE-08",
+      "execution_kind": "MOCK",
+      "name": "QUOTA_RESET_UNKNOWN",
+      "owner_task": "PB-03",
+      "oracle": "Clock rollback/missing provider quota cannot silently reset credit."
+    },
+    {
+      "case_id": "BCASE-09",
+      "execution_kind": "MOCK",
+      "name": "BUDGET_485_582",
+      "owner_task": "PB-03",
+      "oracle": "120min15s gives480periodic+5=485;reserve20%=582."
+    },
+    {
+      "case_id": "BCASE-10",
+      "execution_kind": "MOCK",
+      "name": "BATCH_IDS_20",
+      "owner_task": "PB-04",
+      "oracle": "Sort/dedupe; rejectbool/invalidID; cap20;noarbitraryURL."
+    },
+    {
+      "case_id": "BCASE-11",
+      "execution_kind": "MOCK",
+      "name": "KEY_REDIRECT_PROXY_DENY",
+      "owner_task": "PB-04",
+      "oracle": "Redirect/proxy never receiveskey;401stops;bodyerrorwith200rejects."
+    },
+    {
+      "case_id": "BCASE-12",
+      "execution_kind": "MOCK",
+      "name": "QUOTA_HEADER_DISTINCTION",
+      "owner_task": "PB-04",
+      "oracle": "Daily requests header distinct from per-minute header;badvaluesunknown."
+    },
+    {
+      "case_id": "BCASE-13",
+      "execution_kind": "MOCK",
+      "name": "MISSING_FIXTURE_PARTIAL",
+      "owner_task": "PB-05",
+      "oracle": "A/C update whilemissingBstales;noeraseor0score."
+    },
+    {
+      "case_id": "BCASE-14",
+      "execution_kind": "MOCK",
+      "name": "KICKOFF_NOT_UPDATE",
+      "owner_task": "PB-05",
+      "oracle": "fixture.timestamp onlykickoff;elapsedminute notseconds."
+    },
+    {
+      "case_id": "BCASE-15",
+      "execution_kind": "MOCK",
+      "name": "EVENT_REORDER_CORRECTION",
+      "owner_task": "PB-05",
+      "oracle": "Same multiset samehash;removedgoal/card invalidates;ambiguousredstateunknown."
+    },
+    {
+      "case_id": "BCASE-16",
+      "execution_kind": "MOCK",
+      "name": "EMPTY_VS_MISSING_SECTION",
+      "owner_task": "PB-05",
+      "oracle": "Emptyarraydoesnotactivatefallback;missing/nullstayunknown."
+    },
+    {
+      "case_id": "BCASE-17",
+      "execution_kind": "MOCK",
+      "name": "ONE_SHARED_POLLER",
+      "owner_task": "PB-06",
+      "oracle": "1/3/5concurrent+manypanels useonebundleloop."
+    },
+    {
+      "case_id": "BCASE-18",
+      "execution_kind": "MOCK",
+      "name": "HT_MIXED_BATCH",
+      "owner_task": "PB-06",
+      "oracle": "Fastestplayingmatch setscohort15s;HTmayoversamplewithoutsecondupdate loop."
+    },
+    {
+      "case_id": "BCASE-19",
+      "execution_kind": "MOCK",
+      "name": "NO_CATCHUP_BURST",
+      "owner_task": "PB-06",
+      "oracle": "Sleep/slowHTTP/reconnectnotcatchup;oneinflight."
+    },
+    {
+      "case_id": "BCASE-20",
+      "execution_kind": "MOCK",
+      "name": "TERMINAL_CONFIRM_STOP",
+      "owner_task": "PB-06",
+      "oracle": "FT+30/+120checks thenstop;runexpirycanstop earlier withqualificationnote."
+    },
+    {
+      "case_id": "BCASE-21",
+      "execution_kind": "MOCK",
+      "name": "FALLBACK_BUDGET_REFUSED",
+      "owner_task": "PB-06",
+      "oracle": "5fallback60sadds600;default600 capinsufficient,noautoincrease."
+    },
+    {
+      "case_id": "BCASE-22",
+      "execution_kind": "MOCK",
+      "name": "LIVE_SQL_TRANSACTION",
+      "owner_task": "PB-07",
+      "oracle": "Fault beforecommit noACK;aftercommitduplicate returns sameactual receipt."
+    },
+    {
+      "case_id": "BCASE-23",
+      "execution_kind": "MOCK",
+      "name": "LIVE_REPLAY_TAMPER",
+      "owner_task": "PB-07",
+      "oracle": "Fresh DB replay;payload/binding/hash/order corruptionfails."
+    },
+    {
+      "case_id": "BCASE-24",
+      "execution_kind": "BROWSER",
+      "name": "LIVE_IDB_REAL",
+      "owner_task": "PB-08",
+      "oracle": "Real extension-originlive spool;restartreadback;same source helper,PartA regression."
+    },
+    {
+      "case_id": "BCASE-25",
+      "execution_kind": "MOCK",
+      "name": "WIRE_ROLE_REPLAY",
+      "owner_task": "PB-08",
+      "oracle": "WrongOrigin/key/counter/role/protocolzero write;subscriptionsnotproducer."
+    },
+    {
+      "case_id": "BCASE-26",
+      "execution_kind": "MOCK",
+      "name": "PROFILE_DRAFT_DENIED",
+      "owner_task": "PB-09",
+      "oracle": "No actualsample profile cannotactivate;no password/account selectors."
+    },
+    {
+      "case_id": "BCASE-27",
+      "execution_kind": "BROWSER",
+      "name": "DOM_STABLE_THREEWAY",
+      "owner_task": "PB-10",
+      "oracle": "Full3pricesreadtogether;two stable snapshots;partial/hiddenreturnsNOT_VISIBLE."
+    },
+    {
+      "case_id": "BCASE-28",
+      "execution_kind": "BROWSER",
+      "name": "LATE_NAVIGATION_PACKET",
+      "owner_task": "PB-10",
+      "oracle": "LateA captureonBtab/documentdiscarded;profileexpiry stopped."
+    },
+    {
+      "case_id": "BCASE-29",
+      "execution_kind": "MOCK",
+      "name": "FIXTURE_BINDING_EXACT",
+      "owner_task": "PB-11",
+      "oracle": "Swappedteams/date/leagueconflict,noauto fuzzyapproval."
+    },
+    {
+      "case_id": "BCASE-30",
+      "execution_kind": "MOCK",
+      "name": "H2_SEMANTICS",
+      "owner_task": "PB-11",
+      "oracle": "HT2-0/current2-1 yieldsH2 0-1;missingHTisunknown."
+    },
+    {
+      "case_id": "BCASE-31",
+      "execution_kind": "MOCK",
+      "name": "SHOCK_INVALIDATION",
+      "owner_task": "PB-11",
+      "oracle": "Goal/VAR/card/period/gap closesoldmarket;timeralone cannotreopen."
+    },
+    {
+      "case_id": "BCASE-32",
+      "execution_kind": "MOCK",
+      "name": "RECEIPT_NOT_SOURCE_TIME",
+      "owner_task": "PB-11",
+      "oracle": "Samecontentnewcapture refreshesreceipt only;sourceunknownstaysunknown."
+    },
+    {
+      "case_id": "BCASE-33",
+      "execution_kind": "MOCK",
+      "name": "START_WAITING_STOP",
+      "owner_task": "PB-12",
+      "oracle": "No source startsWAITING;manualstopclosesownedrun,noauto resume."
+    },
+    {
+      "case_id": "BCASE-34",
+      "execution_kind": "BROWSER",
+      "name": "PANEL_WORKSPACE_PARITY",
+      "owner_task": "PB-13",
+      "oracle": "Same revisions shared,keyboard/narrowpanel correct,noextraAPIpoller."
+    },
+    {
+      "case_id": "BCASE-35",
+      "execution_kind": "MOCK",
+      "name": "UI_NO_MODEL_ACTIONS",
+      "owner_task": "PB-13",
+      "oracle": "No probability/wager/Cashout;linksverifiedHTTPS;unsafe textescaped."
+    },
+    {
+      "case_id": "BCASE-36",
+      "execution_kind": "MOCK",
+      "name": "INTENT_ONE_USE",
+      "owner_task": "PB-14",
+      "oracle": "Expired/replayed/wrongsource/declinedintentzeroI/O;typedphrase notsignedreview."
+    },
+    {
+      "case_id": "BCASE-37",
+      "execution_kind": "PLATFORM",
+      "name": "WINDOWS_WSL_OR_SELECTED",
+      "owner_task": "PB-15",
+      "oracle": "Exactactualplatformlocalpath,no0.0.0.0fallback orwrongbrowser proof."
+    },
+    {
+      "case_id": "BCASE-38",
+      "execution_kind": "MOCK",
+      "name": "PREFLIGHT_SYNTHETIC_DENIAL",
+      "owner_task": "PB-16",
+      "oracle": "Synthetic or stale report cannot enable realrun."
+    },
+    {
+      "case_id": "BCASE-39",
+      "execution_kind": "MOCK",
+      "name": "PART_A_REGRESSION",
+      "owner_task": "PB-17",
+      "oracle": "Affected original tests rerun;legacyfullstatusseparate."
+    },
+    {
+      "case_id": "BCASE-40",
+      "execution_kind": "REAL_PROVIDER",
+      "name": "PROVIDER_KEY_PROBE",
+      "owner_task": "PB-18",
+      "oracle": "Userkeyvalidatedinprivateprocess;<=20attempts;actualquota."
+    },
+    {
+      "case_id": "BCASE-41",
+      "execution_kind": "REAL_PROVIDER",
+      "name": "BUNDLE_SECTION_FEASIBILITY",
+      "owner_task": "PB-18",
+      "oracle": "Selectedleague/fixtures sectionavailability andtimingmeasured."
+    },
+    {
+      "case_id": "BCASE-42",
+      "execution_kind": "REAL_OPERATOR",
+      "name": "OBSERVED_FT_PROFILE",
+      "owner_task": "PB-19",
+      "oracle": "Actualfieldmap/IDs/orientation/settlement;no guessedselectors."
+    },
+    {
+      "case_id": "BCASE-43",
+      "execution_kind": "REVIEW",
+      "name": "ENABLED_SURFACE_REVIEW",
+      "owner_task": "PB-20",
+      "oracle": "Actual independent review ofcurrent enabledsurface;notself-signature."
+    },
+    {
+      "case_id": "BCASE-44",
+      "execution_kind": "REAL_LIVE",
+      "name": "ONE_MATCH_RECORD_REPLAY",
+      "owner_task": "PB-21",
+      "oracle": "Actualfootball+3FTbookchecks,recording,replay,budget,stop."
+    },
+    {
+      "case_id": "BCASE-45",
+      "execution_kind": "REAL_LIVE",
+      "name": "THREE_MATCH_COHORT",
+      "owner_task": "PB-22",
+      "oracle": "Actual3scope independently admittedandqualified."
+    },
+    {
+      "case_id": "BCASE-46",
+      "execution_kind": "REAL_LIVE",
+      "name": "FIVE_MATCH_COHORT",
+      "owner_task": "PB-22",
+      "oracle": "Actual5scope,batchIDs,requestcounts,no crossmatchmixing."
+    },
+    {
+      "case_id": "BCASE-47",
+      "execution_kind": "RELEASE",
+      "name": "SOURCE_FROZEN_HANDOFF",
+      "owner_task": "PB-23",
+      "oracle": "Currenttestedsource/contract/profile/evidencebound;nohashcycle."
+    },
+    {
+      "case_id": "BCASE-48",
+      "execution_kind": "RESEARCH_HANDOFF",
+      "name": "SCOPE_PERFORMANCE_BLIND",
+      "owner_task": "PB-24",
+      "oracle": "Technicalqualityviewonly;nomodel/ROIselectionorPartCautoexecution."
+    }
+  ]
+}

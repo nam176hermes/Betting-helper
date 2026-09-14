@@ -1,0 +1,153 @@
+{
+  "scope": "Semantic keyword-family mentions; not claimed exact equivalent instructions. Bridges absent from benchmark fixture prompts.",
+  "mentions": {
+    "machine_agents": {
+      "routing": 4,
+      "output": 7,
+      "retry_reuse": 0,
+      "delegation": 9,
+      "verification": 24,
+      "authority_hold": 3,
+      "workflow_pointer": 0
+    },
+    "phase2_injection": {
+      "routing": 4,
+      "output": 5,
+      "retry_reuse": 4,
+      "delegation": 3,
+      "verification": 6,
+      "authority_hold": 2,
+      "workflow_pointer": 0
+    },
+    "phase2_packet": {
+      "routing": 2,
+      "output": 1,
+      "retry_reuse": 0,
+      "delegation": 1,
+      "verification": 2,
+      "authority_hold": 3,
+      "workflow_pointer": 0
+    },
+    "code_work": {
+      "routing": 5,
+      "output": 2,
+      "retry_reuse": 1,
+      "delegation": 11,
+      "verification": 34,
+      "authority_hold": 4,
+      "workflow_pointer": 0
+    },
+    "phase2_bridge": {
+      "routing": 2,
+      "output": 3,
+      "retry_reuse": 1,
+      "delegation": 4,
+      "verification": 2,
+      "authority_hold": 2,
+      "workflow_pointer": 1
+    },
+    "phase3_mn_policy": {
+      "routing": 3,
+      "output": 3,
+      "retry_reuse": 2,
+      "delegation": 2,
+      "verification": 6,
+      "authority_hold": 2,
+      "workflow_pointer": 0
+    },
+    "phase3_bridge": {
+      "routing": 2,
+      "output": 0,
+      "retry_reuse": 0,
+      "delegation": 1,
+      "verification": 2,
+      "authority_hold": 2,
+      "workflow_pointer": 1
+    }
+  },
+  "sizes": {
+    "machine_agents": 7005,
+    "phase2_injection": 1308,
+    "phase2_packet": 1240,
+    "code_work": 7302,
+    "phase2_bridge": 846,
+    "phase3_mn_policy": 1051,
+    "phase3_bridge": 542
+  },
+  "normalized_hashes": {
+    "machine_agents": "afefdf7b3fcd3ebc3b7af46d8b3b0b0459f788f80acbfbabccd5d6828ef83575",
+    "phase2_injection": "2724da143acf8de7482ea4720c612ceb73c0d124f876655fa4f831d4097ba21a",
+    "phase2_packet": "51eb2f0a5547411be787dc4bebb17f1a900e9635bb8c46cff428990a6ceb418e",
+    "code_work": "fac325cea3894fde81cd7d440c2d77d04795319716e3ab75e646d0c204d07a94",
+    "phase2_bridge": "b3239a24e0ea54e93ef0f4da9010c0b5fc8c53e08e68a6d4ca780aa494742bf5",
+    "phase3_mn_policy": "d683988d3c0b553c667e5ff302352191fe7c53806f23c99422cfd6f5edfe0ebf",
+    "phase3_bridge": "93dfd729fafe8be4decbd2c881cb20f64f0feaf6990f22b5e5818dd38af0beb9"
+  },
+  "removed": [
+    "M/N duplicate packet CWD/HEAD/files versus bootstrap now merged",
+    "M/N raw risk axes/areas and full instruction-hash ledger left in validated state; render computed route and required checks",
+    "Empty optional packet arrays omitted in prompt only; original packet validation retained",
+    "Nested bridge quota details consolidated behind packet marker with native fallback",
+    "M/N returned check fingerprint maps removed from stdout; retained in state",
+    "Whole-description discovery replaced by exact names/bounded name fallback",
+    "Selected code-work skill supplied once; unchanged reopen discouraged"
+  ],
+  "retained": [
+    "All original safety/authority source rules and literal NONE/HOLD constraints",
+    "Full C/D Phase 2 policy and prompt branch",
+    "Verbatim required skill body, despite overlap with machine guidance",
+    "Global instruction/catalog/plugin sources unchanged"
+  ],
+  "identical_MCP_representations": [
+    {
+      "case": "normal-before",
+      "item": "item_3",
+      "tool": "initial_instructions",
+      "duplicate_bytes": 6491,
+      "normalized_sha256": "f499f7010140d2214c8da3576ef6d048f7aa50aae1e81f2f32eb2ebde14c2329"
+    },
+    {
+      "case": "normal-before",
+      "item": "item_4",
+      "tool": "activate_project",
+      "duplicate_bytes": 364,
+      "normalized_sha256": "3910deec91db91438dc3d05a3f674bfa4d8b1b44f18471e20f0d3f767fafe70a"
+    },
+    {
+      "case": "normal-after",
+      "item": "item_2",
+      "tool": "initial_instructions",
+      "duplicate_bytes": 6491,
+      "normalized_sha256": "f499f7010140d2214c8da3576ef6d048f7aa50aae1e81f2f32eb2ebde14c2329"
+    },
+    {
+      "case": "normal-after",
+      "item": "item_3",
+      "tool": "activate_project",
+      "duplicate_bytes": 362,
+      "normalized_sha256": "befa96efc6464900b993a7d761fd0fc328c8dac16357b06eaec1a6dbb1972fe0"
+    },
+    {
+      "case": "normal-after",
+      "item": "item_6",
+      "tool": "get_symbols_overview",
+      "duplicate_bytes": 28,
+      "normalized_sha256": "7bc3b89227fdb49aca976ceb0128737263056cf0a106c73744cb34fa7f315a7c"
+    },
+    {
+      "case": "normal-after",
+      "item": "item_7",
+      "tool": "find_referencing_symbols",
+      "duplicate_bytes": 883,
+      "normalized_sha256": "13deeacdcf90348f989558498b5c20b6d3beecdb662d60973b8b34ea9b9cccec"
+    },
+    {
+      "case": "normal-after",
+      "item": "item_8",
+      "tool": "find_symbol",
+      "duplicate_bytes": 227,
+      "normalized_sha256": "f9ef0875ed7d6d2177a501524afc261c01ea5f2d4f339b532c33ecda480cea6c"
+    }
+  ],
+  "MCP_caveat": "Exec UI serializes both representations even when code returns text once; consult raw rollout output before attributing model context cost."
+}

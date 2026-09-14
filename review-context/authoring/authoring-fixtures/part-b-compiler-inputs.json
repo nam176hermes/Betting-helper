@@ -1,0 +1,34 @@
+{
+  "schema_version": "part-b-compiler-source-inputs/v1",
+  "commit": "62150ea25feb1049e453a92b473320e1998b8e60",
+  "sources": {
+    "extension/src/live/background.ts": "7adb03a1bff89574480af93f399175444fbd0bda8949b6d51991ed8adc7b682a",
+    "extension/src/live/capture.ts": "1ebcbd0778d6f1f6ddd48bb0acf96c1d935ec5270dbfbe753b3da93ecaccc350",
+    "extension/src/live/contracts.ts": "9258e23e652dcd6e89e608b64f580314594e5ed60b3102d49840e042fa0a65d3",
+    "extension/src/live/dom_reader.ts": "a098ea436c5afd310bc57872bc8d902baf2d5e491333dab2db1ba180f04ceeb7",
+    "extension/src/live/panel.ts": "d71e260d13af9e6c7fceda929937c4801b4f770dc7b57d1d0111945d986240c3",
+    "extension/src/live/protocol.ts": "e96ba336f902a3982eaf768d517607d8675995f10ef4d5a0c7d1398a3808401a",
+    "extension/src/live/spool.ts": "132e31d46ad6d04a2a00e3786166ad65b626229c210c90b37da1bda2d57db8e9",
+    "extension/src/live/transport.ts": "bc291f177311e051c4bc20e245ed3832cd42e945dec6f0af2ae51443a0d36ed5",
+    "extension/src/live/workspace.ts": "f45509015870bdeba191d9feab7a442de3bcedf0d55db82cfa94bd0e47a1837f",
+    "extension/src/offline/bootstrap.ts": "72c2e908904db7b52625db2ae3409aead98e043691b32cdba3e134be553e6c60",
+    "extension/src/offline/context.ts": "9c402d3b37f40efc2315f4315a3478e5f489026e7688dc7ccd51b1d01bdf7b69",
+    "extension/src/offline/protocol.ts": "47901ca26dcf6c843e679c898746074110cd0af13939b236efb02fb2fa56638c",
+    "extension/src/offline/session.ts": "a2c903971545674a6c8d05d40b72e2b629317ef9ce3d4cd01e1d374f5b2123db",
+    "extension/src/storage/durable_idb.ts": "5e8e21f8eda59fe7ba362d9be0743932e478ba757c4ec8f7c8dda93379cd2fa2",
+    "extension/test/live/capture.test.ts": "c9c760b4504761cda6978367a17c667bde4305c93ecaea1b0a281528a99aea4e",
+    "extension/test/live/panel.test.ts": "76b457c462c9706c5e4d002174370be53046d19da90e4893a8eadade611f385d",
+    "extension/test/live/spool.test.ts": "d826c874d9fa359f2edac0cc4410b1609bc90d1382d7bb1b394ef96ffefd8654",
+    "extension/test/live/wire.test.ts": "9a68349ab9900c5a53e547fcadcf5819f8fbd598f1f373f5964729a91c28e242",
+    "extension/test/offline/fixtures.ts": "2f719c07873e923e7c8659ea89a78fc28fe01b4c0aef969f272279c0c299b654",
+    "extension/test/offline/loopback.test.ts": "e76ef800c5dd13cdaa847a885edf465c0ef69852d3a5d46d7952cacaaf55d6df",
+    "extension/test/offline/protocol.test.ts": "ab7168b74f3db39ed77950bf533209c1ca11d8522245010e85927fb4facacc55",
+    "extension/test/offline/redaction.test.ts": "89142352c623e83271eb30d847c7e0fce4a8710384d1dd930afb0b321281aeea",
+    "extension/test/offline/spool-payload.test.ts": "542469ce6b2c3bbcddb95a2a5c685dc64d00301fc7416c78891b98f789653cf8"
+  },
+  "compiler_configs": {
+    "extension/tsconfig.json": "c1131b756645d952cf8f429207c8b005dd338bddb29876fd5951ca9734e4959d",
+    "extension/tsconfig.test.json": "49f2fabbb048c36651a9352ddec2a858c95360a428dd3df924313233f0111e95",
+    "extension/tsconfig.build.json": "ae5299bf59f6d1e6069f1f643707b38fbdad4d39b9c82d13ace56490aaed10ca"
+  }
+}

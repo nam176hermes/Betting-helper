@@ -1,0 +1,574 @@
+{
+  "schema_version": "seed-artifacts/v1",
+  "owner": "V636-BOOT0-T02",
+  "entries": [
+    {
+      "source": "AGENTS.md",
+      "destination": "pack/AGENTS.md"
+    },
+    {
+      "source": "DESIGN_V6_3_6.md",
+      "destination": "pack/DESIGN_V6_3_6.md"
+    },
+    {
+      "source": "IMPLEMENTATION_PLAN_V6_3_6.md",
+      "destination": "pack/IMPLEMENTATION_PLAN_V6_3_6.md"
+    },
+    {
+      "source": "README.md",
+      "destination": "pack/README.md"
+    },
+    {
+      "source": "REPAIR_MATRIX_V6_3_6.md",
+      "destination": "pack/REPAIR_MATRIX_V6_3_6.md"
+    },
+    {
+      "source": "docs/configs/review-a.v1.json",
+      "destination": "pack/docs/configs/review-a.v1.json"
+    },
+    {
+      "source": "docs/configs/review-aggregation.v1.json",
+      "destination": "pack/docs/configs/review-aggregation.v1.json"
+    },
+    {
+      "source": "docs/configs/review-authority.v1.json",
+      "destination": "pack/docs/configs/review-authority.v1.json"
+    },
+    {
+      "source": "docs/configs/review-b.v1.json",
+      "destination": "pack/docs/configs/review-b.v1.json"
+    },
+    {
+      "source": "docs/configs/runtime-pyproject.toml",
+      "destination": "pack/docs/configs/runtime-pyproject.toml"
+    },
+    {
+      "source": "docs/configs/tsconfig.build.json",
+      "destination": "pack/docs/configs/tsconfig.build.json"
+    },
+    {
+      "source": "docs/configs/tsconfig.harness.json",
+      "destination": "pack/docs/configs/tsconfig.harness.json"
+    },
+    {
+      "source": "docs/configs/tsconfig.test.json",
+      "destination": "pack/docs/configs/tsconfig.test.json"
+    },
+    {
+      "source": "docs/contracts/00-sealing-and-attestation.md",
+      "destination": "pack/docs/contracts/00-sealing-and-attestation.md"
+    },
+    {
+      "source": "docs/contracts/01-artifact-lifecycle.md",
+      "destination": "pack/docs/contracts/01-artifact-lifecycle.md"
+    },
+    {
+      "source": "docs/contracts/02-successor-migration-rebinding.md",
+      "destination": "pack/docs/contracts/02-successor-migration-rebinding.md"
+    },
+    {
+      "source": "docs/contracts/03-task-exactness.md",
+      "destination": "pack/docs/contracts/03-task-exactness.md"
+    },
+    {
+      "source": "docs/contracts/04-verification-coverage.md",
+      "destination": "pack/docs/contracts/04-verification-coverage.md"
+    },
+    {
+      "source": "docs/contracts/05-reviewer-independence.md",
+      "destination": "pack/docs/contracts/05-reviewer-independence.md"
+    },
+    {
+      "source": "docs/contracts/06-cybersecurity-review.md",
+      "destination": "pack/docs/contracts/06-cybersecurity-review.md"
+    },
+    {
+      "source": "docs/contracts/07-command-and-config-lifecycle.md",
+      "destination": "pack/docs/contracts/07-command-and-config-lifecycle.md"
+    },
+    {
+      "source": "docs/contracts/08-execution-and-ownership.md",
+      "destination": "pack/docs/contracts/08-execution-and-ownership.md"
+    },
+    {
+      "source": "docs/contracts/09-inherited-baseline-qualification.md",
+      "destination": "pack/docs/contracts/09-inherited-baseline-qualification.md"
+    },
+    {
+      "source": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "destination": "pack/docs/fixtures/inherited/v6.2/plan-manifest.json"
+    },
+    {
+      "source": "docs/fixtures/inherited/v6.2/task-command-registry.json",
+      "destination": "pack/docs/fixtures/inherited/v6.2/task-command-registry.json"
+    },
+    {
+      "source": "docs/graphs/executable-discovery-graph.v1.json",
+      "destination": "pack/docs/graphs/executable-discovery-graph.v1.json"
+    },
+    {
+      "source": "docs/graphs/non-authoritative-future-roadmap.v1.json",
+      "destination": "pack/docs/graphs/non-authoritative-future-roadmap.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/cdp/browser_protocol.json",
+      "destination": "pack/docs/inherited/v6.2/cdp/browser_protocol.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/cdp/js_protocol.json",
+      "destination": "pack/docs/inherited/v6.2/cdp/js_protocol.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/graphs/executable-discovery-graph.v1.json",
+      "destination": "pack/docs/inherited/v6.2/graphs/executable-discovery-graph.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/graphs/non-authoritative-future-roadmap.v1.json",
+      "destination": "pack/docs/inherited/v6.2/graphs/non-authoritative-future-roadmap.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/registries/canonical-hash-domains.v1.json",
+      "destination": "pack/docs/inherited/v6.2/registries/canonical-hash-domains.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/registries/discovery-capability-consumers.v1.json",
+      "destination": "pack/docs/inherited/v6.2/registries/discovery-capability-consumers.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/registries/pack-archive-profile.v1.json",
+      "destination": "pack/docs/inherited/v6.2/registries/pack-archive-profile.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/registries/required-discovery-decisions.v1.json",
+      "destination": "pack/docs/inherited/v6.2/registries/required-discovery-decisions.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/registries/scope0-input-policy.v1.json",
+      "destination": "pack/docs/inherited/v6.2/registries/scope0-input-policy.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/authorization-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/authorization-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/capability-manifest.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/capability-manifest.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/clock-coherence-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/clock-coherence-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/common-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/common-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/d0-evidence.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/d0-evidence.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/durability-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/durability-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/e0-evidence.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/e0-evidence.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/loopback-messages.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/loopback-messages.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/meta-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/meta-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/pack-archive.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/pack-archive.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/raw-observation.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/raw-observation.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/review-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/review-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/schemas/scope-records.schema.json",
+      "destination": "pack/docs/inherited/v6.2/schemas/scope-records.schema.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/security/cdp-protocol-lock.v1.json",
+      "destination": "pack/docs/inherited/v6.2/security/cdp-protocol-lock.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/security/discovery-capability-manifest.v1.json",
+      "destination": "pack/docs/inherited/v6.2/security/discovery-capability-manifest.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/security/trust-root.v1.json",
+      "destination": "pack/docs/inherited/v6.2/security/trust-root.v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/sql/discovery-store-v1.sql",
+      "destination": "pack/docs/inherited/v6.2/sql/discovery-store-v1.sql"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/authorization-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/authorization-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/canonical-hashing-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/canonical-hashing-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/capability-negative-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/capability-negative-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/clock-coherence-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/clock-coherence-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/d0-evidence-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/d0-evidence-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/durability-crash-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/durability-crash-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/e0-evidence-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/e0-evidence-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/pack-archive-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/pack-archive-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/pack-governed-metadata-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/pack-governed-metadata-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/repo0-baseline-roots-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/repo0-baseline-roots-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/review-semantic-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/review-semantic-v1.json"
+    },
+    {
+      "source": "docs/inherited/v6.2/vectors/scope-semantic-v1.json",
+      "destination": "pack/docs/inherited/v6.2/vectors/scope-semantic-v1.json"
+    },
+    {
+      "source": "docs/plans/boot0-authoring-workspace-bootstrap.md",
+      "destination": "pack/docs/plans/boot0-authoring-workspace-bootstrap.md"
+    },
+    {
+      "source": "docs/plans/mig0-successor-rebinding.md",
+      "destination": "pack/docs/plans/mig0-successor-rebinding.md"
+    },
+    {
+      "source": "docs/plans/p00-authority-and-source-freeze.md",
+      "destination": "pack/docs/plans/p00-authority-and-source-freeze.md"
+    },
+    {
+      "source": "docs/plans/p01-complete-artifact-materialization.md",
+      "destination": "pack/docs/plans/p01-complete-artifact-materialization.md"
+    },
+    {
+      "source": "docs/plans/p02-materialized-contract-validation.md",
+      "destination": "pack/docs/plans/p02-materialized-contract-validation.md"
+    },
+    {
+      "source": "docs/plans/p03-process-level-durability-qualification.md",
+      "destination": "pack/docs/plans/p03-process-level-durability-qualification.md"
+    },
+    {
+      "source": "docs/plans/p04-clock-vector-qualification.md",
+      "destination": "pack/docs/plans/p04-clock-vector-qualification.md"
+    },
+    {
+      "source": "docs/plans/p05-review-security-and-release-tooling.md",
+      "destination": "pack/docs/plans/p05-review-security-and-release-tooling.md"
+    },
+    {
+      "source": "docs/plans/p06-executable-reference-validation.md",
+      "destination": "pack/docs/plans/p06-executable-reference-validation.md"
+    },
+    {
+      "source": "docs/plans/p07-candidate-qualification.md",
+      "destination": "pack/docs/plans/p07-candidate-qualification.md"
+    },
+    {
+      "source": "docs/plans/p08-zero-parent-baseline-export.md",
+      "destination": "pack/docs/plans/p08-zero-parent-baseline-export.md"
+    },
+    {
+      "source": "docs/plans/p09-acyclic-sealing.md",
+      "destination": "pack/docs/plans/p09-acyclic-sealing.md"
+    },
+    {
+      "source": "docs/plans/p10-dual-independent-review-and-aggregation.md",
+      "destination": "pack/docs/plans/p10-dual-independent-review-and-aggregation.md"
+    },
+    {
+      "source": "docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
+      "destination": "pack/docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md"
+    },
+    {
+      "source": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
+      "destination": "pack/docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md"
+    },
+    {
+      "source": "docs/prompts/CODEX_IMPLEMENTATION_START_PROMPT.md",
+      "destination": "pack/docs/prompts/CODEX_IMPLEMENTATION_START_PROMPT.md"
+    },
+    {
+      "source": "docs/prompts/CODEX_PLAN_REVIEW_PROMPT.md",
+      "destination": "pack/docs/prompts/CODEX_PLAN_REVIEW_PROMPT.md"
+    },
+    {
+      "source": "docs/registries/artifact-ownership.v1.json",
+      "destination": "pack/docs/registries/artifact-ownership.v1.json"
+    },
+    {
+      "source": "docs/registries/baseline-replay-command-registry.v1.json",
+      "destination": "pack/docs/registries/baseline-replay-command-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/baseline-source-files.v1.json",
+      "destination": "pack/docs/registries/baseline-source-files.v1.json"
+    },
+    {
+      "source": "docs/registries/clock-failure-precedence.v1.json",
+      "destination": "pack/docs/registries/clock-failure-precedence.v1.json"
+    },
+    {
+      "source": "docs/registries/clock-vector-coverage.v1.json",
+      "destination": "pack/docs/registries/clock-vector-coverage.v1.json"
+    },
+    {
+      "source": "docs/registries/command-io.v1.json",
+      "destination": "pack/docs/registries/command-io.v1.json"
+    },
+    {
+      "source": "docs/registries/config-materialization.v1.json",
+      "destination": "pack/docs/registries/config-materialization.v1.json"
+    },
+    {
+      "source": "docs/registries/crash-child-command-registry.v1.json",
+      "destination": "pack/docs/registries/crash-child-command-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/crash-harness-registry.v1.json",
+      "destination": "pack/docs/registries/crash-harness-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/cybersecurity-attack-matrix.v1.json",
+      "destination": "pack/docs/registries/cybersecurity-attack-matrix.v1.json"
+    },
+    {
+      "source": "docs/registries/cybersecurity-command-registry.v1.json",
+      "destination": "pack/docs/registries/cybersecurity-command-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/delivery-map.v1.json",
+      "destination": "pack/docs/registries/delivery-map.v1.json"
+    },
+    {
+      "source": "docs/registries/inherited-baseline-qualification.v1.json",
+      "destination": "pack/docs/registries/inherited-baseline-qualification.v1.json"
+    },
+    {
+      "source": "docs/registries/migration-source.v1.json",
+      "destination": "pack/docs/registries/migration-source.v1.json"
+    },
+    {
+      "source": "docs/registries/normative-source-map.v1.json",
+      "destination": "pack/docs/registries/normative-source-map.v1.json"
+    },
+    {
+      "source": "docs/registries/path-registry.v1.json",
+      "destination": "pack/docs/registries/path-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/proof-coverage-matrix.v1.json",
+      "destination": "pack/docs/registries/proof-coverage-matrix.v1.json"
+    },
+    {
+      "source": "docs/registries/review-command-registry.v1.json",
+      "destination": "pack/docs/registries/review-command-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/reviewer-role-registry.v1.json",
+      "destination": "pack/docs/registries/reviewer-role-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/schema-pointer-normalization.v1.json",
+      "destination": "pack/docs/registries/schema-pointer-normalization.v1.json"
+    },
+    {
+      "source": "docs/registries/schema-reference-registry.v1.json",
+      "destination": "pack/docs/registries/schema-reference-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/seal-exclusions.v1.json",
+      "destination": "pack/docs/registries/seal-exclusions.v1.json"
+    },
+    {
+      "source": "docs/registries/seed-artifacts.v1.json",
+      "destination": "pack/docs/registries/seed-artifacts.v1.json"
+    },
+    {
+      "source": "docs/registries/source-inputs.v1.json",
+      "destination": "pack/docs/registries/source-inputs.v1.json"
+    },
+    {
+      "source": "docs/registries/task-command-registry.v1.json",
+      "destination": "pack/docs/registries/task-command-registry.v1.json"
+    },
+    {
+      "source": "docs/registries/verification-topology.v1.json",
+      "destination": "pack/docs/registries/verification-topology.v1.json"
+    },
+    {
+      "source": "docs/registries/version-rebinding.v1.json",
+      "destination": "pack/docs/registries/version-rebinding.v1.json"
+    },
+    {
+      "source": "docs/reviews/decision-completeness-checklist.md",
+      "destination": "pack/docs/reviews/decision-completeness-checklist.md"
+    },
+    {
+      "source": "docs/reviews/finding-coverage-matrix.md",
+      "destination": "pack/docs/reviews/finding-coverage-matrix.md"
+    },
+    {
+      "source": "docs/reviews/plan-review-checklist.md",
+      "destination": "pack/docs/reviews/plan-review-checklist.md"
+    },
+    {
+      "source": "docs/reviews/risk-register.md",
+      "destination": "pack/docs/reviews/risk-register.md"
+    },
+    {
+      "source": "docs/reviews/v6.3.1-plan-review-input.md",
+      "destination": "pack/docs/reviews/v6.3.1-plan-review-input.md"
+    },
+    {
+      "source": "docs/reviews/v6.3.2-independent-review-evidence.json",
+      "destination": "pack/docs/reviews/v6.3.2-independent-review-evidence.json"
+    },
+    {
+      "source": "docs/reviews/v6.3.2-independent-review.md",
+      "destination": "pack/docs/reviews/v6.3.2-independent-review.md"
+    },
+    {
+      "source": "docs/reviews/v6.3.3-plan-review.md",
+      "destination": "pack/docs/reviews/v6.3.3-plan-review.md"
+    },
+    {
+      "source": "docs/reviews/v6.3.4-successor-blocker.md",
+      "destination": "pack/docs/reviews/v6.3.4-successor-blocker.md"
+    },
+    {
+      "source": "docs/schemas/artifact-ownership.schema.json",
+      "destination": "pack/docs/schemas/artifact-ownership.schema.json"
+    },
+    {
+      "source": "docs/schemas/command-registry.schema.json",
+      "destination": "pack/docs/schemas/command-registry.schema.json"
+    },
+    {
+      "source": "docs/schemas/external-seal-attestation.schema.json",
+      "destination": "pack/docs/schemas/external-seal-attestation.schema.json"
+    },
+    {
+      "source": "docs/schemas/migration-receipt.schema.json",
+      "destination": "pack/docs/schemas/migration-receipt.schema.json"
+    },
+    {
+      "source": "docs/schemas/proof-coverage.schema.json",
+      "destination": "pack/docs/schemas/proof-coverage.schema.json"
+    },
+    {
+      "source": "docs/schemas/review-execution-receipt.schema.json",
+      "destination": "pack/docs/schemas/review-execution-receipt.schema.json"
+    },
+    {
+      "source": "docs/schemas/review-launch-authorization.schema.json",
+      "destination": "pack/docs/schemas/review-launch-authorization.schema.json"
+    },
+    {
+      "source": "docs/schemas/review-result.schema.json",
+      "destination": "pack/docs/schemas/review-result.schema.json"
+    },
+    {
+      "source": "docs/schemas/self-review-record.schema.json",
+      "destination": "pack/docs/schemas/self-review-record.schema.json"
+    },
+    {
+      "source": "docs/schemas/task-card-v6.3.6.schema.json",
+      "destination": "pack/docs/schemas/task-card-v6.3.6.schema.json"
+    },
+    {
+      "source": "docs/security/review-trust-root.v1.json",
+      "destination": "pack/docs/security/review-trust-root.v1.json"
+    },
+    {
+      "source": "docs/sources/V634-MIG0-T05.json",
+      "destination": "pack/docs/sources/V634-MIG0-T05.json"
+    },
+    {
+      "source": "docs/sources/V634-P01-T06.json",
+      "destination": "pack/docs/sources/V634-P01-T06.json"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.seal-attestation.json",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.seal-attestation.json"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip.sha256",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip.sha256"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.seal-attestation.json",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.seal-attestation.json"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip"
+    },
+    {
+      "source": "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip.sha256",
+      "destination": "pack/docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip.sha256"
+    },
+    {
+      "source": "docs/tasks/task-manifest.v6.3.6.json",
+      "destination": "pack/docs/tasks/task-manifest.v6.3.6.json"
+    },
+    {
+      "source": "docs/vectors/inherited/clock-coherence-v6.2.json",
+      "destination": "pack/docs/vectors/inherited/clock-coherence-v6.2.json"
+    },
+    {
+      "source": "docs/vectors/inherited/durability-crash-v6.2.json",
+      "destination": "pack/docs/vectors/inherited/durability-crash-v6.2.json"
+    },
+    {
+      "source": "docs/vectors/plan-contract-negative.v1.json",
+      "destination": "pack/docs/vectors/plan-contract-negative.v1.json"
+    },
+    {
+      "source": "plan-manifest.json",
+      "destination": "pack/plan-manifest.json"
+    }
+  ]
+}

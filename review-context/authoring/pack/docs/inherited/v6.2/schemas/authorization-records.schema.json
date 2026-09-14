@@ -1,0 +1,3205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:authorization-records",
+  "title": "Hybrid Discovery v6.2 authorization records",
+  "x-semantic-rules": {
+    "strict_utc": "Every issued_at, not_before, expires_at, effective_at, validation_time, valid_from, and valid_until value is uppercase-Z RFC3339 UTC and is compared as an instant.",
+    "revocation_chain": "The sequence-0 head is SHA-256(UTF8('HYBRID-DISCOVERY/v6.2/REVOCATION-LEDGER-GENESIS/v1') || 0x00 || ASCII(lowercase ledger UUID)). The signed record revocation_checkpoint and verification-context required_revocation_checkpoint must name one ledger. The signed checkpoint must be an ancestor of or equal to the required checkpoint; signed_revocation_records must be the exact contiguous, signature-valid sequence from signed checkpoint + 1 through current_head, and current_head must equal required_revocation_checkpoint. A matching effective revoked_content_hash, revoked_serial, or revoked_key_id yields REVOKED.",
+    "revocation_record_checkpoint": "A RevocationRecord revocation_checkpoint is its latest-known predecessor checkpoint, never its own head. revocation_sequence is checkpoint.sequence + 1; previous_revocation_hash is null only for sequence 1, otherwise equals checkpoint.head_hash. This avoids a self-hash cycle.",
+    "clock_lease": "VerifierClockLease start and deadline plus verification-context current_monotonic must share clock_domain_id, boot_id, and MICROSECOND unit. start <= current < deadline, start < deadline, and deadline - start <= 1800000000 microseconds. Signed record issued_at must be <= trusted validation_time. Missing, unknown, restarted, rolled-back, regressed, mismatched, or incomplete evidence yields CLOCK_UNTRUSTED.",
+    "resume_binding": "NEW_RUN structurally forbids resume_binding. RESUME_EXISTING_RUN requires a new single-use receipt, new pairing commitment, new verifier lease, the same discovery run and exact browser/profile/window/tab/tab-instance/document/navigation/origin/path binding, prior and current verifier identities with different boot IDs, and exact predecessor authorization, reducer cursor, ACK cursor, and generation continuity. Any mismatch is SCOPE_BINDING_MISMATCH; the predecessor use remains burned.",
+    "prerequisite_gates": "DiscoveryRunAuthorization prerequisite_gates is the exact ordered tuple R0_REPAIR_ACCEPTED, F0A_FOUNDATION_ACCEPTED, DISCOVERY_SECURITY_ACCEPTED. Verification supplies the three complete signed PASS GateReceipt records in the same order and validates schema, canonical content hash, signature, trust, time, revocation, exact kind, and exact content-hash binding before authorizing.",
+    "one_use_identity": "receipt_id and receipt_content_hash are globally unique. Serial identity is (issuer, issuer_key_id, audience, serial). Nonce identity is (issuer, issuer_key_id, audience, scope_binding_hash, nonce), where scope_binding_hash is the exact domain-separated JCS projection frozen by the authorization receipt type.",
+    "provider_binding": "ProviderCallAuthorization is valid only against the supplied complete signed ProviderProbeProtocol. protocol_id and protocol_content_hash must match, endpoint/sample window must be members, GET/NO_BODY must match, and response size, deterministic sampling, retry, cadence, quota, cost, licensing, accepted schema, allowed fields, and prohibited outputs may not be widened.",
+    "base64url": "Ed25519 public keys and signatures are unpadded base64url, decode to exactly 32 and 64 bytes respectively, and must equal a canonical unpadded base64url re-encoding of the decoded bytes.",
+    "trust_root": "A verifier key authorizes only exact issuer, role, and audience members frozen on that key entry; valid_from <= record.issued_at <= valid_until; the key status must be ACTIVE in trusted_keys. TEST_ONLY_UNTRUSTED and TEST_ONLY_DISABLED can be used only by the isolated deterministic mechanism harness and never enter the active trusted set. valid_from must precede valid_until.",
+    "revocation_permanence": "A RevocationRecord is schema/hash/signature/issuer-role/key-interval checked at ledger admission. Once durably admitted into the contiguous ledger, its target effect is permanent after effective_at <= validation_time; later expiry of the signed ledger entry never resurrects the target."
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/GateReceipt"
+    },
+    {
+      "$ref": "#/$defs/DiscoveryRunAuthorization"
+    },
+    {
+      "$ref": "#/$defs/BodyClassApproval"
+    },
+    {
+      "$ref": "#/$defs/ProviderProbeProtocol"
+    },
+    {
+      "$ref": "#/$defs/ProviderCallAuthorization"
+    },
+    {
+      "$ref": "#/$defs/RevocationRecord"
+    },
+    {
+      "$ref": "#/$defs/TrustRoot"
+    }
+  ],
+  "$defs": {
+    "GateReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "gate_kind",
+        "gate_result",
+        "prerequisite_receipt_hashes",
+        "criteria_evidence_hashes",
+        "declared_use_semantics"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "gate-receipt/v1"
+        },
+        "record_type": {
+          "const": "GateReceipt"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "enum": [
+            "IMPLEMENTATION_GATE_ONLY",
+            "WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT"
+          ]
+        },
+        "one_use": {
+          "type": "boolean"
+        },
+        "consumed_before": {
+          "enum": [
+            "NO_PRIVILEGED_ACTION",
+            "ATOMIC_LEDGER_COMMIT_BEFORE_GATE_USE",
+            "ATOMIC_LEDGER_COMMIT_BEFORE_WHOLE_RUN_DESTRUCTION"
+          ]
+        },
+        "gate_kind": {
+          "enum": [
+            "REPO0_BASELINE_ACCEPTED",
+            "R0_REPAIR_ACCEPTED",
+            "F0A_FOUNDATION_ACCEPTED",
+            "DISCOVERY_SECURITY_ACCEPTED",
+            "OPERATOR_DISCOVERY_ACCEPTED",
+            "PROVIDER_FEASIBILITY_ACCEPTED",
+            "DISCOVERY_EVIDENCE_ACCEPTED",
+            "EVIDENCE_EXPORT_ACCEPTED",
+            "SCOPE0_FROZEN"
+          ]
+        },
+        "gate_result": {
+          "const": "PASS"
+        },
+        "prerequisite_receipt_hashes": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "criteria_evidence_hashes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "declared_use_semantics": {
+          "enum": [
+            "VERIFY_ONLY",
+            "SINGLE_USE"
+          ]
+        },
+        "bound_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "accepted_sanitized_export_manifest_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "declared_use_semantics": {
+                "const": "VERIFY_ONLY"
+              }
+            },
+            "required": [
+              "declared_use_semantics"
+            ]
+          },
+          "then": {
+            "properties": {
+              "one_use": {
+                "const": false
+              },
+              "consumed_before": {
+                "const": "NO_PRIVILEGED_ACTION"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "declared_use_semantics": {
+                "const": "SINGLE_USE"
+              }
+            },
+            "required": [
+              "declared_use_semantics"
+            ]
+          },
+          "then": {
+            "properties": {
+              "one_use": {
+                "const": true
+              },
+              "consumed_before": {
+                "enum": [
+                  "ATOMIC_LEDGER_COMMIT_BEFORE_GATE_USE",
+                  "ATOMIC_LEDGER_COMMIT_BEFORE_WHOLE_RUN_DESTRUCTION"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "gate_kind": {
+                "const": "EVIDENCE_EXPORT_ACCEPTED"
+              }
+            },
+            "required": [
+              "gate_kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "bound_run_id",
+              "accepted_sanitized_export_manifest_hash"
+            ],
+            "properties": {
+              "issuer_role": {
+                "const": "PACK_REVIEWER"
+              },
+              "audience": {
+                "const": "hybrid-discovery:bootstrap-gate:v1"
+              },
+              "scope": {
+                "const": "WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT"
+              },
+              "declared_use_semantics": {
+                "const": "SINGLE_USE"
+              },
+              "one_use": {
+                "const": true
+              },
+              "consumed_before": {
+                "const": "ATOMIC_LEDGER_COMMIT_BEFORE_WHOLE_RUN_DESTRUCTION"
+              },
+              "production_authority": {
+                "const": "NONE"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "scope": {
+                "const": "IMPLEMENTATION_GATE_ONLY"
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "bound_run_id"
+                  ]
+                },
+                {
+                  "required": [
+                    "accepted_sanitized_export_manifest_hash"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        }
+      ],
+      "$anchor": "GateReceipt"
+    },
+    "DiscoveryRunAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "authorization_mode",
+        "discovery_run_id",
+        "browser_binding",
+        "pairing_secret_commitment",
+        "verifier_clock",
+        "prerequisite_gates",
+        "budget"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "discovery-run-authorization/v1"
+        },
+        "record_type": {
+          "const": "DiscoveryRunAuthorization"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "const": "AUTHENTICATED_PASSIVE_DISCOVERY"
+        },
+        "one_use": {
+          "const": true
+        },
+        "consumed_before": {
+          "const": "ATOMIC_LEDGER_COMMIT_BEFORE_DEBUGGER_ATTACH"
+        },
+        "authorization_mode": {
+          "enum": [
+            "NEW_RUN",
+            "RESUME_EXISTING_RUN"
+          ]
+        },
+        "resume_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "predecessor_authorization_content_hash",
+            "prior_verifier_clock_domain_id",
+            "prior_verifier_boot_id",
+            "current_verifier_clock_domain_id",
+            "current_verifier_boot_id",
+            "reducer_cursor_hash",
+            "ack_cursor_hash",
+            "generation_id",
+            "generation_number",
+            "continuity_state",
+            "predecessor_run_state"
+          ],
+          "properties": {
+            "predecessor_authorization_content_hash": {
+              "$ref": "#/$defs/Sha256Hex"
+            },
+            "prior_verifier_clock_domain_id": {
+              "type": "string",
+              "pattern": "^clock:backend-verifier:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "prior_verifier_boot_id": {
+              "$ref": "#/$defs/UuidV4"
+            },
+            "current_verifier_clock_domain_id": {
+              "type": "string",
+              "pattern": "^clock:backend-verifier:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "current_verifier_boot_id": {
+              "$ref": "#/$defs/UuidV4"
+            },
+            "reducer_cursor_hash": {
+              "$ref": "#/$defs/Sha256Hex"
+            },
+            "ack_cursor_hash": {
+              "$ref": "#/$defs/Sha256Hex"
+            },
+            "generation_id": {
+              "type": "string",
+              "pattern": "^generation:[a-z0-9][a-z0-9-]{0,95}$"
+            },
+            "generation_number": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "continuity_state": {
+              "const": "VERIFIED_CONTIGUOUS"
+            },
+            "predecessor_run_state": {
+              "const": "OPEN_PAUSED_BY_BACKEND_RESTART"
+            }
+          }
+        },
+        "discovery_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "browser_id",
+            "profile_id",
+            "browser_run_id",
+            "window_id",
+            "tab_id",
+            "tab_instance_id",
+            "document_id",
+            "navigation_id",
+            "origin",
+            "pathname"
+          ],
+          "properties": {
+            "browser_id": {
+              "type": "string",
+              "pattern": "^browser:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "profile_id": {
+              "type": "string",
+              "pattern": "^profile:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "browser_run_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "window_id": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "tab_id": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "tab_instance_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "document_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "navigation_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "origin": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#]+$"
+            },
+            "pathname": {
+              "type": "string",
+              "pattern": "^/[^?#]*$",
+              "maxLength": 256
+            }
+          }
+        },
+        "pairing_secret_commitment": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verifier_clock": {
+          "$ref": "#/$defs/VerifierClockLease"
+        },
+        "prerequisite_gates": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PrerequisiteGateBinding"
+                },
+                {
+                  "properties": {
+                    "gate_kind": {
+                      "const": "R0_REPAIR_ACCEPTED"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PrerequisiteGateBinding"
+                },
+                {
+                  "properties": {
+                    "gate_kind": {
+                      "const": "F0A_FOUNDATION_ACCEPTED"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PrerequisiteGateBinding"
+                },
+                {
+                  "properties": {
+                    "gate_kind": {
+                      "const": "DISCOVERY_SECURITY_ACCEPTED"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_duration_seconds",
+            "max_sanitized_observations",
+            "normal_spool_bytes",
+            "terminal_gap_reserve_bytes",
+            "max_targets",
+            "max_frames"
+          ],
+          "properties": {
+            "max_duration_seconds": {
+              "const": 1800
+            },
+            "max_sanitized_observations": {
+              "const": 250000
+            },
+            "normal_spool_bytes": {
+              "const": 133169152
+            },
+            "terminal_gap_reserve_bytes": {
+              "const": 1048576
+            },
+            "max_targets": {
+              "const": 1
+            },
+            "max_frames": {
+              "const": 32
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "authorization_mode": {
+                "const": "NEW_RUN"
+              }
+            },
+            "required": [
+              "authorization_mode"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "resume_binding"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "resume_binding"
+            ]
+          }
+        }
+      ],
+      "$anchor": "DiscoveryRunAuthorization"
+    },
+    "BodyClassApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "discovery_run_id",
+        "browser_binding",
+        "body_class",
+        "metadata_only_evidence_hash",
+        "test_only_manifest_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "body-class-approval/v1"
+        },
+        "record_type": {
+          "const": "BodyClassApproval"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "const": "TEST_ONLY_APPROVED_INBOUND_BODY_CLASS"
+        },
+        "one_use": {
+          "const": true
+        },
+        "consumed_before": {
+          "const": "ATOMIC_LEDGER_COMMIT_BEFORE_BODY_TICKET_CREATION"
+        },
+        "discovery_run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "browser_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "browser_id",
+            "profile_id",
+            "browser_run_id",
+            "window_id",
+            "tab_id",
+            "tab_instance_id",
+            "document_id",
+            "navigation_id",
+            "origin",
+            "pathname"
+          ],
+          "properties": {
+            "browser_id": {
+              "type": "string",
+              "pattern": "^browser:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "profile_id": {
+              "type": "string",
+              "pattern": "^profile:[a-z0-9][a-z0-9-]{0,63}$"
+            },
+            "browser_run_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "window_id": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "tab_id": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "tab_instance_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "document_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "navigation_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "origin": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^/?#]+$"
+            },
+            "pathname": {
+              "type": "string",
+              "pattern": "^/[^?#]*$",
+              "maxLength": 256
+            }
+          }
+        },
+        "body_class": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "origin",
+            "path_template_id",
+            "direction",
+            "mime_class",
+            "max_decoded_bytes",
+            "sanitizer_id"
+          ],
+          "properties": {
+            "origin": {
+              "const": "https://miseojeu.espacejeux.com"
+            },
+            "path_template_id": {
+              "type": "string",
+              "pattern": "^path-template:[a-z0-9][a-z0-9-]{0,95}$"
+            },
+            "direction": {
+              "const": "INBOUND_RESPONSE"
+            },
+            "mime_class": {
+              "enum": [
+                "APPLICATION_JSON",
+                "TEXT_EVENT_STREAM",
+                "TEXT_PLAIN"
+              ]
+            },
+            "max_decoded_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2097152
+            },
+            "sanitizer_id": {
+              "type": "string",
+              "pattern": "^sanitizer:[a-z0-9][a-z0-9-]{0,95}$"
+            }
+          }
+        },
+        "metadata_only_evidence_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "test_only_manifest_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        }
+      ],
+      "$anchor": "BodyClassApproval"
+    },
+    "ProviderProbeProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "protocol_id",
+        "protocol_state",
+        "endpoint_templates",
+        "sample_windows",
+        "deterministic_sampling_rule",
+        "retry_policy",
+        "maximum_response_bytes",
+        "allowed_fields",
+        "denominators",
+        "cadence",
+        "budget",
+        "licensing",
+        "credential_class",
+        "accepted_schema_versions",
+        "prohibited_outputs"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "provider-probe-protocol/v1"
+        },
+        "record_type": {
+          "const": "ProviderProbeProtocol"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "const": "FOOTBALL_PROVIDER_FEASIBILITY_ONLY"
+        },
+        "one_use": {
+          "const": false
+        },
+        "consumed_before": {
+          "const": "NO_PROVIDER_CALL_AUTHORITY"
+        },
+        "protocol_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "protocol_state": {
+          "const": "FROZEN"
+        },
+        "endpoint_templates": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "endpoint_template_id",
+              "provider_role",
+              "method",
+              "body_policy"
+            ],
+            "properties": {
+              "endpoint_template_id": {
+                "type": "string",
+                "pattern": "^endpoint-template:[a-z0-9][a-z0-9-]{0,95}$"
+              },
+              "provider_role": {
+                "const": "FOOTBALL_FEASIBILITY_SOURCE"
+              },
+              "method": {
+                "const": "GET"
+              },
+              "body_policy": {
+                "const": "NO_BODY"
+              }
+            }
+          }
+        },
+        "sample_windows": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "window_id",
+              "window_kind",
+              "start_date",
+              "end_date",
+              "competition_ids",
+              "maximum_samples"
+            ],
+            "properties": {
+              "window_id": {
+                "type": "string",
+                "pattern": "^window:[a-z0-9][a-z0-9-]{0,63}$"
+              },
+              "window_kind": {
+                "enum": [
+                  "HISTORICAL",
+                  "LIVE"
+                ]
+              },
+              "start_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "end_date": {
+                "type": "string",
+                "format": "date"
+              },
+              "competition_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 64,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^competition:[a-z0-9][a-z0-9-]{0,95}$"
+                }
+              },
+              "maximum_samples": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              }
+            }
+          }
+        },
+        "allowed_fields": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "FIXTURE_ID",
+              "COMPETITION_ID",
+              "PARTICIPANT_IDS",
+              "SCHEDULED_START",
+              "EVENT_AVAILABILITY",
+              "SOURCE_TIMESTAMP",
+              "SCHEMA_VERSION",
+              "HTTP_STATUS_CLASS",
+              "RESPONSE_SIZE_BYTES",
+              "RECEIVE_TIME"
+            ]
+          }
+        },
+        "denominators": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "REQUESTED_FIXTURES",
+              "OBSERVED_FIXTURES",
+              "EXPECTED_EVENTS",
+              "OBSERVED_EVENTS",
+              "RESPONSES",
+              "SCHEMA_VALID_RESPONSES"
+            ]
+          }
+        },
+        "cadence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum_interval_ms",
+            "maximum_concurrency"
+          ],
+          "properties": {
+            "minimum_interval_ms": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "maximum_concurrency": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maximum_calls",
+            "quota_limit",
+            "quota_utilization_limit_percent",
+            "maximum_cost",
+            "currency"
+          ],
+          "properties": {
+            "maximum_calls": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "quota_limit": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "quota_utilization_limit_percent": {
+              "const": "80"
+            },
+            "maximum_cost": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,4})?$"
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            }
+          }
+        },
+        "licensing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "license_status",
+            "evidence_hash"
+          ],
+          "properties": {
+            "license_status": {
+              "enum": [
+                "DOCUMENTED_ALLOWED",
+                "DOCUMENTED_RESTRICTED",
+                "UNKNOWN"
+              ]
+            },
+            "evidence_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "credential_class": {
+          "enum": [
+            "USER_SUPPLIED_API_KEY",
+            "OAUTH_ACCESS_TOKEN",
+            "NONE"
+          ]
+        },
+        "accepted_schema_versions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._/-]{1,96}$"
+          }
+        },
+        "deterministic_sampling_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ordering",
+            "selection",
+            "seed_policy",
+            "duplicate_policy"
+          ],
+          "properties": {
+            "ordering": {
+              "const": "SCHEDULED_START_ASC_THEN_OPAQUE_FIXTURE_ID_ASC"
+            },
+            "selection": {
+              "const": "FIRST_MAXIMUM_SAMPLES_PER_WINDOW_AFTER_SCHEMA_VALIDATION"
+            },
+            "seed_policy": {
+              "const": "NO_RANDOM_SEED"
+            },
+            "duplicate_policy": {
+              "const": "ONE_SAMPLE_PER_OPAQUE_FIXTURE_ID_LOWEST_SORT_POSITION_WINS"
+            }
+          }
+        },
+        "retry_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maximum_attempts_per_sample",
+            "retryable_status_classes",
+            "retryable_transport_errors",
+            "backoff_policy"
+          ],
+          "properties": {
+            "maximum_attempts_per_sample": {
+              "const": 1
+            },
+            "retryable_status_classes": {
+              "const": []
+            },
+            "retryable_transport_errors": {
+              "const": []
+            },
+            "backoff_policy": {
+              "const": "NO_RETRY"
+            }
+          }
+        },
+        "maximum_response_bytes": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "prohibited_outputs": {
+          "const": [
+            "FINAL_SCORE",
+            "WINNER",
+            "SETTLEMENT",
+            "OUTCOME",
+            "FEATURE",
+            "PREDICTION",
+            "PROBABILITY",
+            "WDL",
+            "MODEL_RESULT",
+            "CALIBRATION_METRIC",
+            "MARKET_PERFORMANCE",
+            "ROI",
+            "YIELD",
+            "EDGE",
+            "EV",
+            "PROFIT",
+            "PNL",
+            "DRAWDOWN",
+            "RANKING",
+            "CHAMPION_SELECTION"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        }
+      ],
+      "$anchor": "ProviderProbeProtocol"
+    },
+    "ProviderCallAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "provider_call_id",
+        "protocol_id",
+        "protocol_content_hash",
+        "endpoint_template_id",
+        "sample_window_id",
+        "sample_id",
+        "method",
+        "body_policy",
+        "maximum_response_bytes",
+        "verifier_clock"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "provider-call-authorization/v1"
+        },
+        "record_type": {
+          "const": "ProviderCallAuthorization"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "const": "ONE_PROVIDER_FEASIBILITY_GET"
+        },
+        "one_use": {
+          "const": true
+        },
+        "consumed_before": {
+          "const": "ATOMIC_LEDGER_COMMIT_BEFORE_PROVIDER_IO"
+        },
+        "provider_call_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "protocol_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "protocol_content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "endpoint_template_id": {
+          "type": "string",
+          "pattern": "^endpoint-template:[a-z0-9][a-z0-9-]{0,95}$"
+        },
+        "sample_window_id": {
+          "type": "string",
+          "pattern": "^window:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "sample_id": {
+          "type": "string",
+          "pattern": "^sample:[a-z0-9][a-z0-9-]{0,95}$"
+        },
+        "method": {
+          "const": "GET"
+        },
+        "body_policy": {
+          "const": "NO_BODY"
+        },
+        "maximum_response_bytes": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "verifier_clock": {
+          "$ref": "#/$defs/VerifierClockLease"
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        }
+      ],
+      "$anchor": "ProviderCallAuthorization"
+    },
+    "RevocationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "issuer",
+        "issuer_role",
+        "issuer_key_id",
+        "signature_algorithm",
+        "audience",
+        "pack_bindings",
+        "implementation_bindings",
+        "scope",
+        "serial",
+        "nonce",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "revocation_checkpoint",
+        "one_use",
+        "consumed_before",
+        "production_authority",
+        "content_hash",
+        "signature",
+        "ledger_id",
+        "revocation_sequence",
+        "previous_revocation_hash",
+        "revoked_record_type",
+        "revoked_content_hash",
+        "revoked_serial",
+        "revoked_key_id",
+        "effective_at",
+        "reason_code"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "revocation-record/v1"
+        },
+        "record_type": {
+          "const": "RevocationRecord"
+        },
+        "record_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "pack_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "final_pack_zip_sha256",
+            "pack_manifest_sha256",
+            "repo0_baseline_receipt_sha256",
+            "repo0_git_commit_oid",
+            "repo0_git_tree_oid",
+            "repo0_tree_sha256"
+          ],
+          "properties": {
+            "final_pack_zip_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "pack_manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_baseline_receipt_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "repo0_git_commit_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_git_tree_oid": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+            },
+            "repo0_tree_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "implementation_bindings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "implementation_build_hash",
+            "dependency_lock_hash",
+            "schema_vendor_hash"
+          ],
+          "properties": {
+            "implementation_build_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "dependency_lock_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "schema_vendor_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "not_before": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_checkpoint": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ledger_id",
+            "sequence",
+            "head_hash"
+          ],
+          "properties": {
+            "ledger_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            "head_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "signature": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        },
+        "issuer_role": {
+          "$ref": "#/$defs/AuthorizationRole"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "scope": {
+          "const": "APPEND_ONLY_REVOCATION"
+        },
+        "one_use": {
+          "const": false
+        },
+        "consumed_before": {
+          "const": "NO_PRIVILEGED_ACTION"
+        },
+        "ledger_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        },
+        "revocation_sequence": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "previous_revocation_hash": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revoked_record_type": {
+          "enum": [
+            "GateReceipt",
+            "DiscoveryRunAuthorization",
+            "BodyClassApproval",
+            "ProviderProbeProtocol",
+            "ProviderCallAuthorization"
+          ]
+        },
+        "revoked_content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "revoked_serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "revoked_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason_code": {
+          "enum": [
+            "KEY_COMPROMISE",
+            "ISSUANCE_ERROR",
+            "SCOPE_INVALIDATED",
+            "BUILD_INVALIDATED",
+            "PACK_INVALIDATED",
+            "OPERATOR_WITHDRAWAL"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "issued_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "not_before": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "expires_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            },
+            "effective_at": {
+              "$ref": "#/$defs/StrictUtcDateTime"
+            }
+          }
+        }
+      ],
+      "$anchor": "RevocationRecord"
+    },
+    "StrictUtcDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-([0-2][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{6})?Z$"
+    },
+    "UuidV4": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "Sha256Hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "RevocationCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ledger_id",
+        "sequence",
+        "head_hash"
+      ],
+      "properties": {
+        "ledger_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "sequence": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "head_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "VerifierMonotonicTimestamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clock_domain_id",
+        "boot_id",
+        "unit",
+        "value",
+        "resolution"
+      ],
+      "properties": {
+        "clock_domain_id": {
+          "type": "string",
+          "pattern": "^clock:backend-verifier:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "unit": {
+          "const": "MICROSECOND"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "resolution": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        }
+      }
+    },
+    "TrustedWallAnchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wall_clock_domain_id",
+        "boot_id",
+        "unit",
+        "value",
+        "source",
+        "evidence_hash"
+      ],
+      "properties": {
+        "wall_clock_domain_id": {
+          "type": "string",
+          "pattern": "^clock:backend-wall:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "unit": {
+          "const": "RFC3339_UTC"
+        },
+        "value": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "source": {
+          "const": "OS_TRUSTED_WALL_CLOCK"
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "VerifierClockLease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "monotonic_start",
+        "monotonic_deadline",
+        "trusted_wall_anchor",
+        "maximum_lease_seconds"
+      ],
+      "properties": {
+        "monotonic_start": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "monotonic_deadline": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "trusted_wall_anchor": {
+          "$ref": "#/$defs/TrustedWallAnchor"
+        },
+        "maximum_lease_seconds": {
+          "const": 1800
+        }
+      }
+    },
+    "TrustedWallObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "wall_clock_domain_id",
+        "boot_id",
+        "unit",
+        "value",
+        "resolution",
+        "source",
+        "rollback_state",
+        "observed_monotonic",
+        "evidence_hash"
+      ],
+      "properties": {
+        "observation_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "wall_clock_domain_id": {
+          "type": "string",
+          "pattern": "^clock:backend-wall:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "unit": {
+          "const": "RFC3339_UTC"
+        },
+        "value": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "resolution": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        },
+        "source": {
+          "const": "OS_TRUSTED_WALL_CLOCK"
+        },
+        "rollback_state": {
+          "enum": [
+            "NO_ROLLBACK_OBSERVED",
+            "ROLLBACK_DETECTED",
+            "UNKNOWN"
+          ]
+        },
+        "observed_monotonic": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "BackendLifecycleObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "clock_domain_id",
+        "boot_id",
+        "lifecycle_state",
+        "evidence_hash"
+      ],
+      "properties": {
+        "observation_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "clock_domain_id": {
+          "type": "string",
+          "pattern": "^clock:backend-verifier:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "boot_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "lifecycle_state": {
+          "enum": [
+            "SAME_BOOT_NO_RESTART",
+            "RESTART_DETECTED",
+            "UNKNOWN"
+          ]
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "MonotonicContinuityObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "previous_monotonic",
+        "current_monotonic",
+        "continuity_state",
+        "evidence_hash"
+      ],
+      "properties": {
+        "observation_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "previous_monotonic": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "current_monotonic": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "continuity_state": {
+          "enum": [
+            "NO_REGRESSION",
+            "REGRESSION_DETECTED",
+            "UNKNOWN"
+          ]
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "VerifierClockEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_monotonic",
+        "trusted_wall_observation",
+        "backend_lifecycle_observation",
+        "monotonic_continuity_observation"
+      ],
+      "properties": {
+        "current_monotonic": {
+          "$ref": "#/$defs/VerifierMonotonicTimestamp"
+        },
+        "trusted_wall_observation": {
+          "$ref": "#/$defs/TrustedWallObservation"
+        },
+        "backend_lifecycle_observation": {
+          "$ref": "#/$defs/BackendLifecycleObservation"
+        },
+        "monotonic_continuity_observation": {
+          "$ref": "#/$defs/MonotonicContinuityObservation"
+        }
+      }
+    },
+    "PrerequisiteGateBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_kind",
+        "content_hash"
+      ],
+      "properties": {
+        "gate_kind": {
+          "enum": [
+            "R0_REPAIR_ACCEPTED",
+            "F0A_FOUNDATION_ACCEPTED",
+            "DISCOVERY_SECURITY_ACCEPTED"
+          ]
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        }
+      }
+    },
+    "ConsumedAuthorizationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_id",
+        "receipt_content_hash",
+        "issuer",
+        "issuer_key_id",
+        "audience",
+        "receipt_scope",
+        "scope_binding_hash",
+        "serial",
+        "nonce",
+        "consumption_state"
+      ],
+      "properties": {
+        "receipt_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "receipt_content_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "issuer": {
+          "type": "string",
+          "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "issuer_key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "receipt_scope": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{0,95}$"
+        },
+        "scope_binding_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "serial": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{7,63}$"
+        },
+        "nonce": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        },
+        "consumption_state": {
+          "const": "COMMITTED_BEFORE_AUTHORIZED_ACTION"
+        }
+      }
+    },
+    "AuthorizationConsumptionState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "store_state",
+        "records"
+      ],
+      "properties": {
+        "store_state": {
+          "enum": [
+            "AVAILABLE",
+            "UNAVAILABLE"
+          ]
+        },
+        "records": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": {
+            "$ref": "#/$defs/ConsumedAuthorizationRecord"
+          }
+        }
+      }
+    },
+    "RevocationAdmissionProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admitted_at",
+        "record_content_hash",
+        "trust_root_hash",
+        "schema_state",
+        "content_hash_state",
+        "signature_state",
+        "issuer_role_state",
+        "key_interval_state"
+      ],
+      "properties": {
+        "admitted_at": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "record_content_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "trust_root_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "schema_state": {
+          "const": "VALID"
+        },
+        "content_hash_state": {
+          "const": "VALID"
+        },
+        "signature_state": {
+          "const": "VALID"
+        },
+        "issuer_role_state": {
+          "const": "VALID"
+        },
+        "key_interval_state": {
+          "const": "VALID_AT_ADMISSION"
+        }
+      }
+    },
+    "AcceptedRevocationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record",
+        "admission_proof"
+      ],
+      "properties": {
+        "record": {
+          "$ref": "#/$defs/RevocationRecord"
+        },
+        "admission_proof": {
+          "$ref": "#/$defs/RevocationAdmissionProof"
+        }
+      }
+    },
+    "RevocationVerificationState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_revocation_checkpoint",
+        "signed_revocation_records",
+        "current_head"
+      ],
+      "properties": {
+        "required_revocation_checkpoint": {
+          "$ref": "#/$defs/RevocationCheckpoint"
+        },
+        "signed_revocation_records": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": {
+            "$ref": "#/$defs/AcceptedRevocationRecord"
+          }
+        },
+        "current_head": {
+          "$ref": "#/$defs/RevocationCheckpoint"
+        }
+      }
+    },
+    "BrowserBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_id",
+        "profile_id",
+        "browser_run_id",
+        "window_id",
+        "tab_id",
+        "tab_instance_id",
+        "document_id",
+        "navigation_id",
+        "origin",
+        "pathname"
+      ],
+      "properties": {
+        "browser_id": {
+          "type": "string",
+          "pattern": "^browser:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "profile_id": {
+          "type": "string",
+          "pattern": "^profile:[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "browser_run_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "window_id": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "tab_id": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "tab_instance_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "document_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "navigation_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "origin": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://[^/?#]+$"
+        },
+        "pathname": {
+          "type": "string",
+          "pattern": "^/[^?#]*$",
+          "maxLength": 256
+        }
+      }
+    },
+    "TestOnlyBodyClassManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "manifest_id",
+        "classification",
+        "body_classes",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "test-only-body-class-manifest/v1"
+        },
+        "manifest_id": {
+          "$ref": "#/$defs/UuidV4"
+        },
+        "classification": {
+          "const": "TEST_ONLY_SYNTHETIC_NO_AUTHORITY"
+        },
+        "body_classes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "origin",
+              "path_template_id",
+              "direction",
+              "mime_class",
+              "max_decoded_bytes",
+              "sanitizer_id"
+            ],
+            "properties": {
+              "origin": {
+                "type": "string",
+                "format": "uri",
+                "pattern": "^https://[^/?#]+$"
+              },
+              "path_template_id": {
+                "type": "string",
+                "pattern": "^path-template:[a-z0-9][a-z0-9-]{0,95}$"
+              },
+              "direction": {
+                "const": "INBOUND_RESPONSE"
+              },
+              "mime_class": {
+                "const": "APPLICATION_JSON"
+              },
+              "max_decoded_bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1048576
+              },
+              "sanitizer_id": {
+                "type": "string",
+                "pattern": "^sanitizer:[a-z0-9][a-z0-9-]{0,95}$"
+              }
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "DiscoveryRunVerificationContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validation_time",
+        "expected_audience",
+        "expected_final_pack_zip_sha256",
+        "expected_pack_manifest_sha256",
+        "expected_repo0_baseline_receipt_sha256",
+        "expected_repo0_git_commit_oid",
+        "expected_repo0_git_tree_oid",
+        "expected_repo0_tree_sha256",
+        "expected_implementation_build_hash",
+        "expected_dependency_lock_hash",
+        "expected_schema_vendor_hash",
+        "expected_browser_binding",
+        "prerequisite_gate_receipts",
+        "revocation_state",
+        "consumption_state",
+        "clock_evidence"
+      ],
+      "properties": {
+        "validation_time": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "expected_audience": {
+          "const": "hybrid-discovery:extension-run-controller:v1"
+        },
+        "expected_final_pack_zip_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_pack_manifest_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_repo0_baseline_receipt_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_repo0_git_commit_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+        },
+        "expected_repo0_git_tree_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}([0-9a-f]{24})?$"
+        },
+        "expected_repo0_tree_sha256": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_implementation_build_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_dependency_lock_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_schema_vendor_hash": {
+          "$ref": "#/$defs/Sha256Hex"
+        },
+        "expected_browser_binding": {
+          "$ref": "#/$defs/BrowserBinding"
+        },
+        "prerequisite_gate_receipts": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/GateReceipt"
+            },
+            {
+              "$ref": "#/$defs/GateReceipt"
+            },
+            {
+              "$ref": "#/$defs/GateReceipt"
+            }
+          ],
+          "items": false
+        },
+        "revocation_state": {
+          "$ref": "#/$defs/RevocationVerificationState"
+        },
+        "consumption_state": {
+          "$ref": "#/$defs/AuthorizationConsumptionState"
+        },
+        "clock_evidence": {
+          "$ref": "#/$defs/VerifierClockEvidence"
+        }
+      }
+    },
+    "TrustAudienceRoleBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audience",
+        "roles"
+      ],
+      "properties": {
+        "audience": {
+          "$ref": "#/$defs/AuthorizationAudience"
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/AuthorizationRole"
+          }
+        }
+      }
+    },
+    "TrustKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "trust",
+        "status",
+        "issuers",
+        "roles",
+        "audiences",
+        "valid_from",
+        "valid_until",
+        "key_id",
+        "public_key"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{0,63}$"
+        },
+        "trust": {
+          "enum": [
+            "ACTIVE_TRUSTED",
+            "TEST_ONLY_UNTRUSTED"
+          ]
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "TEST_ONLY_DISABLED"
+          ]
+        },
+        "issuers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^issuer:[a-z0-9][a-z0-9-]{0,63}$"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/AuthorizationRole"
+          }
+        },
+        "audiences": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/AuthorizationAudience"
+          }
+        },
+        "valid_from": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "valid_until": {
+          "$ref": "#/$defs/StrictUtcDateTime"
+        },
+        "key_id": {
+          "type": "string",
+          "pattern": "^key:ed25519:[0-9a-f]{64}$"
+        },
+        "public_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "trust": {
+                "const": "ACTIVE_TRUSTED"
+              }
+            },
+            "required": [
+              "trust"
+            ]
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": "ACTIVE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "trust": {
+                "const": "TEST_ONLY_UNTRUSTED"
+              }
+            },
+            "required": [
+              "trust"
+            ]
+          },
+          "then": {
+            "properties": {
+              "status": {
+                "const": "TEST_ONLY_DISABLED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TrustRoot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "signature_algorithm",
+        "public_key_encoding",
+        "key_id_derivation",
+        "signature_domain",
+        "runtime_key_material",
+        "signing_key_custody",
+        "trust_roles",
+        "audience_role_bindings",
+        "trusted_keys",
+        "test_only_untrusted_keys",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "trust-root/v1"
+        },
+        "signature_algorithm": {
+          "const": "Ed25519"
+        },
+        "public_key_encoding": {
+          "const": "RAW_32_BYTES_UNPADDED_BASE64URL_CANONICAL_REENCODE_REQUIRED"
+        },
+        "key_id_derivation": {
+          "const": "key:ed25519:<sha256-lowercase-hex-of-raw-public-key>"
+        },
+        "signature_domain": {
+          "const": "HYBRID-DISCOVERY/v6.2/SIGNATURE/Ed25519/v1\u0000"
+        },
+        "runtime_key_material": {
+          "const": "VERIFIER_PUBLIC_KEYS_ONLY"
+        },
+        "signing_key_custody": {
+          "const": "USER_SCOPED_OS_BACKED_OUTSIDE_PACK_AND_RUNTIME"
+        },
+        "trust_roles": {
+          "const": [
+            "PACK_REVIEWER",
+            "DISCOVERY_OPERATOR",
+            "PROVIDER_OPERATOR",
+            "REVOCATION_AUTHORITY"
+          ]
+        },
+        "audience_role_bindings": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:bootstrap-gate:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "PACK_REVIEWER"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:extension-run-controller:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "DISCOVERY_OPERATOR"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:body-broker:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "DISCOVERY_OPERATOR"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:provider-protocol:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "PACK_REVIEWER",
+                        "PROVIDER_OPERATOR"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:provider-client:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "PROVIDER_OPERATOR"
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/TrustAudienceRoleBinding"
+                },
+                {
+                  "properties": {
+                    "audience": {
+                      "const": "hybrid-discovery:revocation-ledger:v1"
+                    },
+                    "roles": {
+                      "const": [
+                        "REVOCATION_AUTHORITY"
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "trusted_keys": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/TrustKey"
+              },
+              {
+                "properties": {
+                  "trust": {
+                    "const": "ACTIVE_TRUSTED"
+                  },
+                  "status": {
+                    "const": "ACTIVE"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "test_only_untrusted_keys": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/TrustKey"
+              },
+              {
+                "properties": {
+                  "trust": {
+                    "const": "TEST_ONLY_UNTRUSTED"
+                  },
+                  "status": {
+                    "const": "TEST_ONLY_DISABLED"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      },
+      "$anchor": "TrustRoot"
+    },
+    "AuthorizationAudience": {
+      "type": "string",
+      "enum": [
+        "hybrid-discovery:bootstrap-gate:v1",
+        "hybrid-discovery:extension-run-controller:v1",
+        "hybrid-discovery:body-broker:v1",
+        "hybrid-discovery:provider-protocol:v1",
+        "hybrid-discovery:provider-client:v1",
+        "hybrid-discovery:revocation-ledger:v1"
+      ]
+    },
+    "AuthorizationRole": {
+      "type": "string",
+      "enum": [
+        "PACK_REVIEWER",
+        "DISCOVERY_OPERATOR",
+        "PROVIDER_OPERATOR",
+        "REVOCATION_AUTHORITY"
+      ]
+    }
+  },
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "pnpm",
+    "--dir",
+    "extension",
+    "exec",
+    "tsc",
+    "-p",
+    "tsconfig.live.json",
+    "--noEmit"
+  ],
+  "cwd": "/home/thenam176/betting-helper-github-review-20260914",
+  "exit": 0,
+  "seconds": 3.6617452380014583,
+  "log": "live-typecheck.log"
+}

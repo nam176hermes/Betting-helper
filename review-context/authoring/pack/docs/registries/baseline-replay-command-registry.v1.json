@@ -1,0 +1,892 @@
+{
+  "schema_version": "baseline-replay-command-registry/v1",
+  "commands": [
+    {
+      "command_id": "BASELINE__COMPILE_V636_P04_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json"
+      ],
+      "purpose": "Post-commit runtime replay of COMPILE_V636_P04_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__COMPILE_CRASH_HARNESS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.harness.json"
+      ],
+      "purpose": "Post-commit runtime replay of COMPILE_CRASH_HARNESS",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__COMPILE_ALL_TESTS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json"
+      ],
+      "purpose": "Post-commit runtime replay of COMPILE_ALL_TESTS",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.harness.json"
+      ],
+      "purpose": "Post-commit runtime replay of COMPILE_CRASH_HARNESS_AFTER_IMPLEMENTATION",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__COMPILE_PRODUCTION",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "purpose": "Post-commit runtime replay of COMPILE_PRODUCTION",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_TS_V636_P04_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/clock/clock-vectors.test.js"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_TS_V636_P04_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_runtime_layout.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_declared_stubs.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_normative_artifacts.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T04",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_harness_entrypoints.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T04",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T05",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_review_release_tools.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T05",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P01_T06",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_materialization_gate.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P01_T06",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_task_manifest_semantics.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P02_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_artifact_dependency_semantics.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P02_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P02_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_declaration_complete_gate.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P02_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_crash_registry.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_chrome_indexeddb_environment.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_indexeddb_process_crash.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T04",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_loopback_ack_process_crash.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T04",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T05",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_sqlite_process_crash.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T05",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T06",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_gap_generation_process_crash.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T06",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P03_T07",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/durability/test_destruction_and_release.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P03_T07",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/clock/test_failure_precedence_registry.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P04_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/clock/test_python_clock_vectors.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P04_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P04_T04",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/clock/test_clock_parity_and_mutation.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P04_T04",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/exactness/test_task_symbols.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/coverage/test_proof_coverage_matrix.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_cybersecurity_command_registry.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T04",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_launch_authorization.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T04",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T05",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_workspace_isolation.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T05",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T06",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_a_runner.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T06",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T07",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_b_runner.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T07",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P05_T08",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_aggregation_and_self_review.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P05_T08",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T01",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/release/test_executable_references.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P06_T01",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T02",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/release/test_verification_topology.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P06_T02",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_V636_P06_T03",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/release/test_executable_complete_gate.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_V636_P06_T03",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__VERIFY_REVIEW_AUTHORITY_BOOTSTRAP",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/review/test_review_authority_bootstrap.py"
+      ],
+      "purpose": "Post-commit runtime replay of VERIFY_REVIEW_AUTHORITY_BOOTSTRAP",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_RELEASE_TOOLS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/release/test_candidate_command_registry.py",
+        "tests/release/test_candidate_qualification_receipt.py",
+        "tests/release/test_full_proof_coverage.py",
+        "tests/release/test_post_commit_baseline.py",
+        "tests/release/test_zero_parent_export.py",
+        "tests/release/test_zero_parent_repository.py",
+        "tests/seal/test_deterministic_seal.py",
+        "tests/seal/test_governed_content_root.py",
+        "tests/seal/test_pack_assembly.py",
+        "tests/seal/test_self_review_binding.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_RELEASE_TOOLS",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_SECURITY_PY",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "pytest",
+        "-q",
+        "tests/security/test_authorization_trust.py",
+        "tests/security/test_bubblewrap_isolation.py",
+        "tests/security/test_canonical_hashing.py",
+        "tests/security/test_capability_manifest.py",
+        "tests/security/test_credential_evidence_boundary.py",
+        "tests/security/test_cybersecurity_command_registry.py",
+        "tests/security/test_no_archive_policy.py",
+        "tests/security/test_replay_revocation.py",
+        "tests/security/test_supply_chain_integrity.py"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_SECURITY_PY",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__TEST_SECURITY_TS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/cdp-reachability.test.js",
+        "extension/.test-build/test/security/dynamic-dispatch.test.js",
+        "extension/.test-build/test/security/message-smuggling.test.js",
+        "extension/.test-build/test/security/outbound-network.test.js",
+        "extension/.test-build/test/security/production-build-exclusion.test.js",
+        "extension/.test-build/test/security/target-escape.test.js"
+      ],
+      "purpose": "Post-commit runtime replay of TEST_SECURITY_TS",
+      "expected_exit": 0,
+      "available_at": "MATERIALIZED",
+      "network": "DENY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY",
+      "kind": "baseline-verification"
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "pytest",
+        "-q",
+        "tests/bootstrap"
+      ],
+      "expected_exit": 0,
+      "purpose": "Post-commit runtime replay of QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "kind": "baseline-verification",
+      "available_at": "QUALIFIED",
+      "network": "DENY",
+      "provider_access": "DENY",
+      "authenticated_operator_access": "DENY"
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/bootstrap.test.js",
+        "extension/.test-build/test/bootstrap/canonical-vectors.test.js",
+        "extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js",
+        "extension/.test-build/test/schema-vendor.test.js",
+        "extension/.test-build/test/security/capability-reachability.bootstrap.test.js"
+      ],
+      "expected_exit": 0,
+      "purpose": "Post-commit runtime replay of QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "kind": "baseline-verification",
+      "available_at": "QUALIFIED",
+      "network": "DENY",
+      "provider_access": "DENY",
+      "authenticated_operator_access": "DENY"
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_INHERITED_CANONICAL_PY",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "pytest",
+        "-q",
+        "tests-red/test_canonical_hash_red.py"
+      ],
+      "expected_exit": 0,
+      "purpose": "Post-commit runtime replay of QUALIFY_INHERITED_CANONICAL_PY",
+      "kind": "baseline-verification",
+      "available_at": "QUALIFIED",
+      "network": "DENY",
+      "provider_access": "DENY",
+      "authenticated_operator_access": "DENY"
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_normative_bundle.py",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.3.6",
+        "--runtime",
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6"
+      ],
+      "expected_exit": 0,
+      "purpose": "Post-commit runtime replay of QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "kind": "baseline-verification",
+      "available_at": "QUALIFIED",
+      "network": "DENY",
+      "provider_access": "DENY",
+      "authenticated_operator_access": "DENY"
+    },
+    {
+      "command_id": "BASELINE__QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/run_command_registry.py",
+        "--self-check"
+      ],
+      "expected_exit": 0,
+      "purpose": "Post-commit runtime replay of QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK",
+      "kind": "baseline-verification",
+      "available_at": "QUALIFIED",
+      "network": "DENY",
+      "provider_access": "DENY",
+      "authenticated_operator_access": "DENY"
+    }
+  ],
+  "runtime_root": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+  "source_registry": "pack/docs/registries/task-command-registry.v1.json",
+  "rule": "Same qualified runtime test argv; exact cwd rebound to the delivered repository. No authoring command or registry runner is replayed."
+}

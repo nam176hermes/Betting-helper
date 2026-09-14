@@ -1,0 +1,44 @@
+{
+  "areas": [
+    "subsystem"
+  ],
+  "authority": "NONE",
+  "constraints": [
+    "Preserve oracle.py",
+    "No production access"
+  ],
+  "cwd": "/ABSOLUTE/SELECTED/REPOSITORY",
+  "dirty_ownership": {},
+  "do_not_reread": [],
+  "exit_condition": "Oracle passes; review preserves HOLD",
+  "expected_output": "Correct change or evidence-based review",
+  "files": [
+    "src/example.py",
+    "tests/test_example.py"
+  ],
+  "known_verified_facts": [],
+  "required_checks": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "tests.test_example"
+      ],
+      "id": "focused",
+      "tier": "V2"
+    }
+  ],
+  "risk": {
+    "ambiguity": 1,
+    "blast_radius": 0,
+    "coupling": 0,
+    "critical_flags": [],
+    "failure_cost": 0,
+    "novelty": 0,
+    "safety": 0
+  },
+  "role": "implementation",
+  "target_head": "REPLACE_WITH_CURRENT_HEAD",
+  "task": "Replace with a bounded task"
+}

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/live/test_bundle_poller.py",
+    "tests/live/test_provider_budget.py",
+    "tests/live/test_live_contracts.py",
+    "tests/live/test_live_store.py",
+    "-o",
+    "cache_dir=.local/ai-review/pytest-cache"
+  ],
+  "cwd": "/home/thenam176/betting-helper-github-review-20260914",
+  "exit": 1,
+  "seconds": 6.052635892992839,
+  "log": "focused.log"
+}

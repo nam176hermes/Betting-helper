@@ -1,0 +1,74 @@
+{
+  "purpose": "Export verification, not application qualification or new formal review",
+  "source_files_unchanged_from_runtime_candidate": 737,
+  "authoring_files_copied_from_exact_commit": 360,
+  "focused_tests": {
+    "passed": 87,
+    "failed": 0,
+    "exit": 0,
+    "command_record": "export-checks/focused-provisioned.command.json"
+  },
+  "initial_focused_attempt": {
+    "passed": 86,
+    "failed": 1,
+    "exit": 1,
+    "cause": "JS dependencies were not yet provisioned in the export; system tsc lacked required library/types. Existing locked dependencies installed offline; retry passed without source or lockfile edits."
+  },
+  "dependency_provisioning": {
+    "argv": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile",
+      "--offline",
+      "--ignore-scripts"
+    ],
+    "exit": 0,
+    "downloaded_packages": 0,
+    "reused_packages": 100
+  },
+  "registry_self_check": {
+    "exit": 0
+  },
+  "live_typescript_typecheck": {
+    "exit": 0
+  },
+  "secret_scan": {
+    "source_findings_classification": "export-checks/scan-classification.json",
+    "history_scan_range": "d4055839e596fc52f0e0df175a6733a64b8fffc1..8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "history_scan_exit": 1,
+    "history_findings": 1,
+    "history_finding_classification": "Chrome manifest public key, parsed as DER RSAPublicKey; not API credentials",
+    "unresolved_findings": 0
+  },
+  "repomix": {
+    "version": "1.15.0",
+    "parts": 5,
+    "native_security_check": "No suspicious files detected in all three successful pack commands",
+    "file_content_comparisons": 687,
+    "mismatches": 0,
+    "initial_split_failure": "1 MiB split cannot fit root entry tools; changed only export split size to 3 MiB, all three packs completed."
+  },
+  "not_run": [
+    "full qualification",
+    "P08/P09",
+    "new seal",
+    "new formal A/B",
+    "live browser/profile access",
+    "provider probe",
+    "live session",
+    "installation/deployment"
+  ],
+  "MODEL_ENABLED": false,
+  "MONEY_READY": "NO",
+  "export_verifier_controls": {
+    "valid": 0,
+    "tamper": 1,
+    "path_escape": 1,
+    "result": "PASS"
+  },
+  "diff_check": {
+    "authored_files_exit": 0,
+    "all_added_files_exit": 2,
+    "reason": "Original failing test log has a trailing-whitespace line; preserved byte-for-byte as historical evidence."
+  }
+}

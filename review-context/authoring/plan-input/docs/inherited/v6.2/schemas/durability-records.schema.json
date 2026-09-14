@@ -1,0 +1,1107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json",
+  "title": "Hybrid Discovery v6.2 durability records",
+  "description": "Closed immutable durability records. Cross-record rules in $defs.SemanticInvariants are mandatory.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/SpoolRecord"
+    },
+    {
+      "$ref": "#/$defs/RawCommitRecord"
+    },
+    {
+      "$ref": "#/$defs/ApplicationRecord"
+    },
+    {
+      "$ref": "#/$defs/DerivedRevision"
+    },
+    {
+      "$ref": "#/$defs/ReducerCursor"
+    },
+    {
+      "$ref": "#/$defs/AckOutboxRecord"
+    },
+    {
+      "$ref": "#/$defs/AckCursor"
+    },
+    {
+      "$ref": "#/$defs/GapRecord"
+    },
+    {
+      "$ref": "#/$defs/GenerationTransition"
+    },
+    {
+      "$ref": "#/$defs/RunDestructionIntent"
+    },
+    {
+      "$ref": "#/$defs/DeletionProof"
+    }
+  ],
+  "$defs": {
+    "SchemaVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "Guarantee": {
+      "type": "string",
+      "const": "EFFECTIVELY_ONCE_AFTER_DURABLE_LOCAL_SPOOL_COMMIT"
+    },
+    "Uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "Hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ArtifactId": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]*:[0-9a-f]{64}$"
+    },
+    "UnsignedDecimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "PositiveDecimal": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]*$"
+    },
+    "UtcTimestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "StreamKey": {
+      "$anchor": "StreamKey",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "browser_run_id",
+        "producer_id",
+        "stream_id"
+      ],
+      "properties": {
+        "browser_run_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "producer_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "stream_id": {
+          "$ref": "#/$defs/Uuid"
+        }
+      }
+    },
+    "GenerationKey": {
+      "$anchor": "GenerationKey",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stream",
+        "generation"
+      ],
+      "properties": {
+        "stream": {
+          "$ref": "#/$defs/StreamKey"
+        },
+        "generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        }
+      }
+    },
+    "Position": {
+      "$anchor": "Position",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation_key",
+        "sequence"
+      ],
+      "properties": {
+        "generation_key": {
+          "$ref": "#/$defs/GenerationKey"
+        },
+        "sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        }
+      }
+    },
+    "CursorChainContract": {
+      "$anchor": "CursorChainContract",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed_domain",
+        "step_domain",
+        "seed_hash_h0",
+        "first_step_hash_h1",
+        "step_input"
+      ],
+      "properties": {
+        "seed_domain": {
+          "const": "HYBRID-DISCOVERY/v6.2/CursorSeed/v1\u0000"
+        },
+        "step_domain": {
+          "const": "HYBRID-DISCOVERY/v6.2/CursorStep/v1\u0000"
+        },
+        "seed_hash_h0": {
+          "const": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"
+        },
+        "first_step_hash_h1": {
+          "const": "739669d828057e94c856e7725ed05218e26639610d4ce58c2a5568244a16fc28"
+        },
+        "step_input": {
+          "const": "PREVIOUS_CURSOR_HASH_AND_FULL_RAW_OBSERVATION_CONTENT_HASH"
+        }
+      }
+    },
+    "SpoolRecord": {
+      "$anchor": "SpoolRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "guarantee",
+        "spool_record_id",
+        "position",
+        "raw_observation_id",
+        "raw_observation_content_hash",
+        "previous_cursor_hash",
+        "cursor_hash",
+        "cursor_hash_verification",
+        "spool_state",
+        "committed_at",
+        "payload_size_bytes",
+        "individual_deletion_eligible"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "SpoolRecord"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "guarantee": {
+          "$ref": "#/$defs/Guarantee"
+        },
+        "spool_record_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "raw_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "raw_observation_content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "previous_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash_verification": {
+          "const": "VERIFIED_HD_CURSOR_STEP_V1"
+        },
+        "spool_state": {
+          "enum": [
+            "VALIDATED",
+            "DURABLY_SPOOLED",
+            "ACK_VERIFIED",
+            "RETAINED_UNTIL_WHOLE_RUN_DESTRUCTION"
+          ]
+        },
+        "committed_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "payload_size_bytes": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "individual_deletion_eligible": {
+          "const": false
+        }
+      }
+    },
+    "RawCommitRecord": {
+      "$anchor": "RawCommitRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "guarantee",
+        "raw_commit_id",
+        "position",
+        "raw_observation_id",
+        "raw_observation_content_hash",
+        "previous_cursor_hash",
+        "cursor_hash",
+        "cursor_hash_verification",
+        "disposition",
+        "committed_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "RawCommitRecord"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "guarantee": {
+          "$ref": "#/$defs/Guarantee"
+        },
+        "raw_commit_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "raw_observation_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "raw_observation_content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "previous_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash_verification": {
+          "const": "VERIFIED_HD_CURSOR_STEP_V1"
+        },
+        "disposition": {
+          "enum": [
+            "APPLIED",
+            "LATE_REPAIR_ONLY",
+            "QUARANTINED_SCHEMA"
+          ]
+        },
+        "committed_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "ApplicationRecord": {
+      "$anchor": "ApplicationRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "application_id",
+        "position",
+        "raw_commit_id",
+        "raw_observation_content_hash",
+        "input_cursor_hash",
+        "application_status",
+        "applied_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "ApplicationRecord"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "application_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "raw_commit_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "raw_observation_content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "input_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "application_status": {
+          "const": "APPLIED"
+        },
+        "applied_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "DerivedRevision": {
+      "$anchor": "DerivedRevision",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "derived_revision_id",
+        "application_id",
+        "position",
+        "revision",
+        "previous_revision_hash",
+        "revision_hash",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "DerivedRevision"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "derived_revision_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "application_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "position": {
+          "$ref": "#/$defs/Position"
+        },
+        "revision": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "previous_revision_hash": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Hash"
+            },
+            {
+              "const": "GENESIS"
+            }
+          ]
+        },
+        "revision_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "ReducerCursor": {
+      "$anchor": "ReducerCursor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "reducer_cursor_id",
+        "generation_key",
+        "highest_contiguous_sequence",
+        "previous_cursor_hash",
+        "cursor_hash",
+        "cursor_hash_verification",
+        "raw_observation_content_hash",
+        "derived_revision_id",
+        "advanced_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "ReducerCursor"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "reducer_cursor_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "generation_key": {
+          "$ref": "#/$defs/GenerationKey"
+        },
+        "highest_contiguous_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "previous_cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash_verification": {
+          "const": "VERIFIED_HD_CURSOR_STEP_V1"
+        },
+        "raw_observation_content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "derived_revision_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "advanced_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "AckOutboxRecord": {
+      "$anchor": "AckOutboxRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "ack_outbox_id",
+        "generation_key",
+        "highest_contiguous_sequence",
+        "cursor_hash",
+        "cursor_hash_verification",
+        "raw_commit_id",
+        "application_id",
+        "derived_revision_id",
+        "reducer_cursor_id",
+        "committed_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "AckOutboxRecord"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "ack_outbox_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "generation_key": {
+          "$ref": "#/$defs/GenerationKey"
+        },
+        "highest_contiguous_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "cursor_hash_verification": {
+          "const": "VERIFIED_HD_CURSOR_STEP_V1"
+        },
+        "raw_commit_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "application_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "derived_revision_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "reducer_cursor_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "committed_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "AckCursor": {
+      "$anchor": "AckCursor",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "ack_cursor_id",
+        "owner",
+        "generation_key",
+        "highest_contiguous_sequence",
+        "cursor_hash",
+        "chain_verification",
+        "verified_against",
+        "recorded_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "AckCursor"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "ack_cursor_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "owner": {
+          "enum": [
+            "EXTENSION",
+            "BACKEND"
+          ]
+        },
+        "generation_key": {
+          "$ref": "#/$defs/GenerationKey"
+        },
+        "highest_contiguous_sequence": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "cursor_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "chain_verification": {
+          "const": "MATCHING_DURABLE_OUTBOX_REDUCER_RAW_CHAIN_OR_H0_AT_ZERO"
+        },
+        "verified_against": {
+          "enum": [
+            "LOCAL_SPOOL_CHAIN",
+            "BACKEND_DURABLE_CHAIN"
+          ]
+        },
+        "recorded_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "GapRecord": {
+      "$anchor": "GapRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "gap_id",
+        "stream",
+        "predecessor_generation",
+        "successor_generation",
+        "missing_from_sequence",
+        "missing_to_sequence",
+        "detected_sequence",
+        "gap_reason",
+        "repair_status",
+        "predecessor_epoch_id",
+        "predecessor_permanently_closed",
+        "ack_blocked_after_sequence",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "GapRecord"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "gap_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "stream": {
+          "$ref": "#/$defs/StreamKey"
+        },
+        "predecessor_generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "successor_generation": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "missing_from_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "missing_to_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "detected_sequence": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "gap_reason": {
+          "enum": [
+            "MISSING_SEQUENCE",
+            "CONFLICTING_DUPLICATE",
+            "SCHEMA_REJECTION",
+            "LIFECYCLE_DISCONTINUITY",
+            "STORAGE_SAFETY_STOP",
+            "UNKNOWN_CONTINUITY"
+          ]
+        },
+        "repair_status": {
+          "enum": [
+            "OPEN",
+            "HISTORY_REPAIRED_EPOCH_REMAINS_CLOSED",
+            "RESNAPSHOT_NEW_GENERATION",
+            "TERMINAL"
+          ]
+        },
+        "authoritative_resnapshot_proof_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ArtifactId"
+            },
+            {
+              "const": "NOT_OBSERVED"
+            },
+            {
+              "const": "UNKNOWN"
+            }
+          ]
+        },
+        "predecessor_epoch_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "predecessor_permanently_closed": {
+          "const": true
+        },
+        "ack_blocked_after_sequence": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "GenerationTransition": {
+      "$anchor": "GenerationTransition",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "generation_transition_id",
+        "stream",
+        "predecessor_generation",
+        "successor_generation",
+        "successor_rule",
+        "gap_id",
+        "predecessor_state",
+        "successor_state",
+        "transitioned_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "GenerationTransition"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "generation_transition_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "stream": {
+          "$ref": "#/$defs/StreamKey"
+        },
+        "predecessor_generation": {
+          "$ref": "#/$defs/UnsignedDecimal"
+        },
+        "successor_generation": {
+          "$ref": "#/$defs/PositiveDecimal"
+        },
+        "successor_rule": {
+          "const": "SUCCESSOR_EQUALS_PREDECESSOR_PLUS_ONE"
+        },
+        "gap_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "predecessor_state": {
+          "enum": [
+            "QUARANTINED_GAP",
+            "CLOSED"
+          ]
+        },
+        "successor_state": {
+          "const": "ACTIVE"
+        },
+        "transitioned_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "RunDestructionIntent": {
+      "$anchor": "RunDestructionIntent",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "destruction_intent_id",
+        "content_hash_algorithm",
+        "content_hash_domain",
+        "content_hash",
+        "run_id",
+        "run_state",
+        "writer_count",
+        "export_status",
+        "accepted_sanitized_export_manifest_hash",
+        "accounting_status",
+        "required_artifacts_included",
+        "destruction_authorization_id",
+        "destruction_gate_receipt_content_hash",
+        "destruction_gate_receipt",
+        "destruction_gate_receipt_verification",
+        "destruction_authorization_consumption_id",
+        "destruction_authority_consumption_state",
+        "human_invocation",
+        "human_invocation_mode",
+        "pre_delete_inventory_hash",
+        "external_intent_path",
+        "created_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "RunDestructionIntent"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "destruction_intent_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "content_hash_algorithm": {
+          "const": "HD-JCS-SHA256-v1"
+        },
+        "content_hash_domain": {
+          "const": "HYBRID-DISCOVERY/v6.2/RunDestructionIntent/v1\u0000"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "run_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "run_state": {
+          "const": "RUN_CLOSED"
+        },
+        "writer_count": {
+          "const": "0"
+        },
+        "export_status": {
+          "const": "VALIDATED_REPLAYED_SECRET_SCANNED_ACCEPTED"
+        },
+        "accepted_sanitized_export_manifest_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "accounting_status": {
+          "const": "ALL_ROWS_ACK_CHAIN_OR_EXPLICIT_GAP_EXPORT_ACCOUNTED"
+        },
+        "required_artifacts_included": {
+          "const": [
+            "GAPS",
+            "MAPPINGS",
+            "MAPPING_CLOSURES",
+            "DERIVED_REVISIONS",
+            "PRE_DELETE_INVENTORY"
+          ]
+        },
+        "destruction_authorization_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "destruction_gate_receipt_content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "destruction_gate_receipt": {
+          "allOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:authorization-records#/$defs/GateReceipt"
+            },
+            {
+              "required": [
+                "gate_kind"
+              ],
+              "properties": {
+                "gate_kind": {
+                  "const": "EVIDENCE_EXPORT_ACCEPTED"
+                }
+              }
+            }
+          ]
+        },
+        "destruction_gate_receipt_verification": {
+          "const": "CANONICAL_BYTES_CONTENT_HASH_AND_ED25519_SIGNATURE_VERIFIED_BEFORE_CONSUMPTION"
+        },
+        "destruction_authorization_consumption_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "destruction_authority_consumption_state": {
+          "const": "COMMITTED_BEFORE_WHOLE_RUN_DESTRUCTION"
+        },
+        "human_invocation": {
+          "const": true
+        },
+        "human_invocation_mode": {
+          "const": "EXPLICIT_HUMAN_INVOCATION"
+        },
+        "pre_delete_inventory_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "external_intent_path": {
+          "type": "string",
+          "pattern": "^\\.local/destruction/[0-9a-f-]{36}\\.intent\\.json$"
+        },
+        "created_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "DeletionProof": {
+      "$anchor": "DeletionProof",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "content_hash",
+        "deletion_proof_id",
+        "run_id",
+        "destruction_intent_id",
+        "extension_store_state",
+        "backend_store_state",
+        "proof_state",
+        "external_proof_path",
+        "secure_erasure_claim",
+        "completed_at",
+        "immutable"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "DeletionProof"
+        },
+        "schema_version": {
+          "$ref": "#/$defs/SchemaVersion"
+        },
+        "content_hash": {
+          "$ref": "#/$defs/Hash"
+        },
+        "deletion_proof_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "run_id": {
+          "$ref": "#/$defs/Uuid"
+        },
+        "destruction_intent_id": {
+          "$ref": "#/$defs/ArtifactId"
+        },
+        "extension_store_state": {
+          "enum": [
+            "PRESENT",
+            "DELETED",
+            "UNKNOWN"
+          ]
+        },
+        "backend_store_state": {
+          "enum": [
+            "PRESENT",
+            "DELETED",
+            "UNKNOWN"
+          ]
+        },
+        "proof_state": {
+          "enum": [
+            "PARTIAL_RESUMABLE",
+            "COMPLETE_LOGICAL_DELETION",
+            "UNKNOWN"
+          ]
+        },
+        "external_proof_path": {
+          "type": "string",
+          "pattern": "^\\.local/destruction/[0-9a-f-]{36}\\.deletion-proof\\.json$"
+        },
+        "secure_erasure_claim": {
+          "const": false
+        },
+        "completed_at": {
+          "$ref": "#/$defs/UtcTimestamp"
+        },
+        "immutable": {
+          "const": true
+        }
+      }
+    },
+    "SemanticInvariants": {
+      "$anchor": "SemanticInvariants",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_content_hashes",
+        "artifact_id_independence",
+        "initial_generation",
+        "initial_sequence",
+        "ordering_scope",
+        "replacement_generation_rule",
+        "first_sequence_previous_hash",
+        "successor_sequence_previous_hash",
+        "semantic_hash_verification",
+        "ack_chain_rule",
+        "ack_regression_rule",
+        "normal_transaction_order",
+        "gap_transaction_rule",
+        "duplicate_rule",
+        "conflict_rule",
+        "late_arrival_rule",
+        "restart_rule",
+        "capacity_bytes",
+        "terminal_reserve_bytes",
+        "individual_deletion",
+        "archive_policy",
+        "destruction_gate_receipt",
+        "destruction_receipt_verification",
+        "destruction_intent_hash_derivation",
+        "destruction_binding",
+        "destruction_binding_completeness",
+        "destruction_reconstruction_inputs",
+        "destruction_consumption_order",
+        "destruction_pre_intent_crash",
+        "destruction_external_intent_gate",
+        "destruction_invocation"
+      ],
+      "properties": {
+        "canonical_content_hashes": {
+          "const": "ALL_ELEVEN_REGISTERED_TOP_LEVEL_DURABILITY_RECORD_TYPES_REQUIRE_LOWERCASE_HEX_HD_JCS_SHA256_V1_CONTENT_HASH_EXCLUDING_ONLY_TOP_LEVEL_CONTENT_HASH"
+        },
+        "artifact_id_independence": {
+          "const": "EVERY_ARTIFACT_ID_IS_PREALLOCATED_OPAQUE_AND_INDEPENDENT_OF_CONTENT_HASH_NEVER_DERIVED_FROM_CONTENT_HASH"
+        },
+        "initial_generation": {
+          "const": "0"
+        },
+        "initial_sequence": {
+          "const": "1"
+        },
+        "ordering_scope": {
+          "const": "ACK_CONTIGUITY_GAPS_AND_CURSORS_PER_GENERATION_KEY_ONLY"
+        },
+        "replacement_generation_rule": {
+          "const": "SUCCESSOR_EQUALS_PREDECESSOR_PLUS_ONE"
+        },
+        "first_sequence_previous_hash": {
+          "const": "SEQUENCE_1_PREVIOUS_CURSOR_HASH_EQUALS_H0"
+        },
+        "successor_sequence_previous_hash": {
+          "const": "SEQUENCE_Q_PLUS_1_PREVIOUS_CURSOR_HASH_EQUALS_REDUCER_CURSOR_HASH_AT_Q"
+        },
+        "semantic_hash_verification": {
+          "const": "HD_CURSOR_STEP_V1_MUST_VERIFY_BEFORE_COMMIT"
+        },
+        "ack_chain_rule": {
+          "const": "NONZERO_ACK_REQUIRES_MATCHING_OUTBOX_REDUCER_RAW_DURABLE_CHAIN"
+        },
+        "ack_regression_rule": {
+          "const": "ACK_SEQUENCE_AND_HASH_MUST_NOT_REGRESS"
+        },
+        "normal_transaction_order": {
+          "const": "RawCommit->Application->DerivedRevision->ReducerCursor->AckOutbox"
+        },
+        "gap_transaction_rule": {
+          "const": "ATOMIC_GAP_SHOCK_IMMUTABLE_EPOCH_CLOSE_CONTROLLER_CLOSE_AFFECTED_EPOCH_BINDING_GENERATION_CLOSE_TRANSITION_AND_EXACT_SUCCESSOR_WITH_NO_APPLICATION_REVISION_CURSOR_OR_ACK"
+        },
+        "duplicate_rule": {
+          "const": "SAME_POSITION_AND_SAME_CANONICAL_BYTES_IS_IDEMPOTENT"
+        },
+        "conflict_rule": {
+          "const": "SAME_POSITION_AND_DIFFERENT_BYTES_OR_HASH_CLOSES_GENERATION"
+        },
+        "late_arrival_rule": {
+          "const": "LATE_REPAIR_ONLY_AND_NEVER_REOPENS_PREDECESSOR_EPOCH"
+        },
+        "restart_rule": {
+          "const": "VERIFIED_ACK_CHAIN_RECONCILIATION_FAILS_CLOSED_ON_BACKEND_REGRESSION"
+        },
+        "capacity_bytes": {
+          "const": "133169152"
+        },
+        "terminal_reserve_bytes": {
+          "const": "1048576"
+        },
+        "individual_deletion": {
+          "const": "FORBIDDEN"
+        },
+        "archive_policy": {
+          "const": "NO_AUTOMATIC_ARCHIVE_BACKUP_COMPACTION_RESTORE_ROTATION_OR_RETENTION"
+        },
+        "destruction_gate_receipt": {
+          "const": "CANONICAL_AUTHORIZATION_RECORDS_GATE_RECEIPT_BRANCH_EVIDENCE_EXPORT_ACCEPTED_SCOPE_WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT_ONLY"
+        },
+        "destruction_receipt_verification": {
+          "const": "VERIFY_CANONICAL_BYTES_CONTENT_HASH_ED25519_SIGNATURE_TIME_WINDOW_AND_REVOCATION_BEFORE_ATOMIC_CONSUMPTION"
+        },
+        "destruction_intent_hash_derivation": {
+          "const": "HD_JCS_SHA256_V1_DOMAIN_HYBRID_DISCOVERY_V6_2_RUN_DESTRUCTION_INTENT_V1_NUL_RFC8785_JCS_EXCLUDING_ONLY_CONTENT_HASH"
+        },
+        "destruction_binding": {
+          "const": "INTENT_AUTHORIZATION_ID_EQUALS_RECEIPT_RECORD_ID_AND_INTENT_CONSUMPTION_ID_EQUALS_CONSUMPTION_ROW_ID_AND_INTENT_CONTENT_HASH_EQUALS_CONSUMPTION_PRECOMMITTED_INTENT_CONTENT_HASH_AND_INTENT_PRE_DELETE_INVENTORY_HASH_EQUALS_CONSUMPTION_STAGED_INVENTORY_HASH_AND_INTENT_CREATED_AT_EQUALS_CONSUMPTION_STAGED_CREATED_AT_AND_INTENT_RUN_ID_EQUALS_RECEIPT_BOUND_RUN_ID_AND_INTENT_ACCEPTED_SANITIZED_EXPORT_MANIFEST_HASH_EQUALS_RECEIPT_BOUND_HASH_AND_INTENT_RECEIPT_CONTENT_HASH_EQUALS_CONSUMED_RECEIPT_CONTENT_HASH"
+        },
+        "destruction_binding_completeness": {
+          "const": "ALL_DESTRUCTION_RECEIPT_TYPE_SCHEMA_SCOPE_GATE_KIND_IDS_RUN_IDS_EXPORT_HASHES_RECEIPT_HASH_PRECOMMITTED_INTENT_HASH_STAGED_INVENTORY_HASH_STAGED_CREATED_AT_SIGNATURE_AND_VERIFICATION_FIELDS_NON_NULL_WELL_FORMED_AND_EXACTLY_BOUND_BEFORE_CONSUMPTION_COMMIT"
+        },
+        "destruction_reconstruction_inputs": {
+          "const": "CONSUMPTION_PRECOMMITS_INTENT_ID_CONTENT_HASH_PRE_DELETE_INVENTORY_HASH_CREATED_AT_FIXED_ARTIFACT_ORDER_RUN_EXPORT_RECEIPT_AND_CONSUMPTION_BINDINGS_EXTERNAL_INTENT_PATH_EQUALS_DOT_LOCAL_SLASH_DESTRUCTION_SLASH_RUN_ID_DOT_INTENT_DOT_JSON_AND_ALL_OTHER_INTENT_FIELDS_ARE_SCHEMA_CONSTANTS"
+        },
+        "destruction_consumption_order": {
+          "const": "ONE_USE_AUTHORIZATION_CONSUMPTION_COMMITTED_BEFORE_ANY_WHOLE_RUN_DESTRUCTION_REPLAY_FORBIDDEN"
+        },
+        "destruction_pre_intent_crash": {
+          "const": "IF_PROCESS_RESTARTS_AFTER_CONSUMPTION_COMMIT_BEFORE_EXTERNAL_INTENT_COMMIT_RECEIPT_REMAINS_BURNED_STORES_REMAIN_INTACT_AND_ONLY_BYTE_IDENTICAL_INTENT_RECONSTRUCTION_FROM_PRECOMMITTED_ID_AND_CONTENT_HASH_WITH_SAME_REVALIDATED_RECEIPT_IS_ALLOWED_WITHOUT_SECOND_CONSUMPTION"
+        },
+        "destruction_external_intent_gate": {
+          "const": "CLOSED_TO_DESTRUCTION_PENDING_AND_ANY_STORE_DELETE_REQUIRE_PERSISTED_EXTERNAL_INTENT_BYTES_WITH_ID_CONTENT_HASH_INVENTORY_HASH_CREATED_AT_RUN_EXPORT_RECEIPT_AND_CONSUMPTION_BINDINGS_EXACTLY_MATCHING_IMMUTABLE_CONSUMPTION_PRECOMMIT"
+        },
+        "destruction_invocation": {
+          "const": "EXPLICIT_HUMAN_INVOCATION_REQUIRED_NO_AUTOMATIC_TRIGGER"
+        }
+      }
+    }
+  }
+}

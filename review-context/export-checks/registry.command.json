@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "tools/run_command_registry.py",
+    "--self-check"
+  ],
+  "cwd": "/home/thenam176/betting-helper-github-review-20260914",
+  "exit": 0,
+  "seconds": 0.2943282399792224,
+  "log": "registry.log"
+}

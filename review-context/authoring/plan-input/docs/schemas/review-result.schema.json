@@ -1,0 +1,612 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.3.6:review-result",
+  "$defs": {
+    "Finding": {
+      "type": "object",
+      "required": [
+        "finding_id",
+        "severity",
+        "blocking",
+        "title",
+        "evidence_ids",
+        "affected_verdicts",
+        "required_repair"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9_.-]+$"
+        },
+        "severity": {
+          "enum": [
+            "CRITICAL",
+            "IMPORTANT",
+            "MINOR"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "affected_verdicts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required_repair": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "ImplementationReviewResult": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "review_role",
+        "review_outcome",
+        "findings",
+        "pack_zip_sha256",
+        "repo0_receipt_sha256",
+        "review_run_id",
+        "verdicts",
+        "authorized_production_phases",
+        "content_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "independent-review-result/v1"
+        },
+        "review_outcome": {
+          "enum": [
+            "PASS",
+            "HOLD",
+            "REJECTED"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "finding_id",
+              "severity",
+              "blocking",
+              "title",
+              "evidence_ids",
+              "affected_verdicts",
+              "required_repair"
+            ],
+            "properties": {
+              "finding_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_.-]+$"
+              },
+              "severity": {
+                "enum": [
+                  "CRITICAL",
+                  "IMPORTANT",
+                  "MINOR"
+                ]
+              },
+              "blocking": {
+                "type": "boolean"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "affected_verdicts": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required_repair": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "pack_zip_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "repo0_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "review_run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "authorized_production_phases": {
+          "const": "NONE"
+        },
+        "review_role": {
+          "const": "IMPLEMENTATION_READINESS_REVIEWER"
+        },
+        "verdicts": {
+          "type": "object",
+          "required": [
+            "REPO0_BASELINE_VALID",
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+            "SAFE_TO_IMPLEMENT_R0",
+            "SAFE_TO_IMPLEMENT_F0A",
+            "SAFE_TO_IMPLEMENT_SEC0",
+            "SAFE_TO_IMPLEMENT_E0",
+            "SAFE_TO_IMPLEMENT_D0",
+            "SAFE_TO_FREEZE_SCOPE0",
+            "AUTHORIZED_PRODUCTION_PHASES"
+          ],
+          "properties": {
+            "REPO0_BASELINE_VALID": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_R0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_F0A": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_SEC0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_E0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_D0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_FREEZE_SCOPE0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "AUTHORIZED_PRODUCTION_PHASES": {
+              "const": "NONE"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "CybersecurityReviewResult": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "review_role",
+        "review_outcome",
+        "findings",
+        "pack_zip_sha256",
+        "repo0_receipt_sha256",
+        "review_run_id",
+        "verdicts",
+        "authorized_production_phases",
+        "content_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "independent-review-result/v1"
+        },
+        "review_outcome": {
+          "enum": [
+            "PASS",
+            "HOLD",
+            "REJECTED"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "finding_id",
+              "severity",
+              "blocking",
+              "title",
+              "evidence_ids",
+              "affected_verdicts",
+              "required_repair"
+            ],
+            "properties": {
+              "finding_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_.-]+$"
+              },
+              "severity": {
+                "enum": [
+                  "CRITICAL",
+                  "IMPORTANT",
+                  "MINOR"
+                ]
+              },
+              "blocking": {
+                "type": "boolean"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "affected_verdicts": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required_repair": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "pack_zip_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "repo0_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "review_run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "authorized_production_phases": {
+          "const": "NONE"
+        },
+        "review_role": {
+          "const": "CYBERSECURITY_REVIEWER"
+        },
+        "verdicts": {
+          "type": "object",
+          "required": [
+            "CYBERSECURITY_REVIEW_COMPLETE",
+            "CHROME_CAPABILITY_BOUNDARY_PASS",
+            "AUTHORIZATION_TRUST_PASS",
+            "CREDENTIAL_EVIDENCE_BOUNDARY_PASS",
+            "HASHING_CRYPTOGRAPHY_PASS",
+            "CUSTODY_ISOLATION_PASS",
+            "AUTHORIZED_PRODUCTION_PHASES"
+          ],
+          "properties": {
+            "CYBERSECURITY_REVIEW_COMPLETE": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "CHROME_CAPABILITY_BOUNDARY_PASS": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "AUTHORIZATION_TRUST_PASS": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "CREDENTIAL_EVIDENCE_BOUNDARY_PASS": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "HASHING_CRYPTOGRAPHY_PASS": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "CUSTODY_ISOLATION_PASS": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "AUTHORIZED_PRODUCTION_PHASES": {
+              "const": "NONE"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "AggregateReviewResult": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "review_role",
+        "review_outcome",
+        "findings",
+        "pack_zip_sha256",
+        "repo0_receipt_sha256",
+        "review_run_id",
+        "implementation_review_sha256",
+        "cybersecurity_review_sha256",
+        "implementation_receipt_sha256",
+        "cybersecurity_receipt_sha256",
+        "verdicts",
+        "authorized_production_phases",
+        "content_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "independent-review-result/v1"
+        },
+        "review_outcome": {
+          "enum": [
+            "PASS",
+            "HOLD",
+            "REJECTED"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "required": [
+              "finding_id",
+              "severity",
+              "blocking",
+              "title",
+              "evidence_ids",
+              "affected_verdicts",
+              "required_repair"
+            ],
+            "properties": {
+              "finding_id": {
+                "type": "string",
+                "pattern": "^[A-Z0-9_.-]+$"
+              },
+              "severity": {
+                "enum": [
+                  "CRITICAL",
+                  "IMPORTANT",
+                  "MINOR"
+                ]
+              },
+              "blocking": {
+                "type": "boolean"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "affected_verdicts": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required_repair": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "pack_zip_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "repo0_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "review_run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "authorized_production_phases": {
+          "const": "NONE"
+        },
+        "review_role": {
+          "const": "AGGREGATE_REVIEWER"
+        },
+        "implementation_review_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "cybersecurity_review_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "implementation_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "cybersecurity_receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verdicts": {
+          "type": "object",
+          "required": [
+            "REPO0_BASELINE_VALID",
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+            "SAFE_TO_IMPLEMENT_R0",
+            "SAFE_TO_IMPLEMENT_F0A",
+            "SAFE_TO_IMPLEMENT_SEC0",
+            "SAFE_TO_IMPLEMENT_E0",
+            "SAFE_TO_IMPLEMENT_D0",
+            "SAFE_TO_FREEZE_SCOPE0",
+            "AUTHORIZED_PRODUCTION_PHASES"
+          ],
+          "properties": {
+            "REPO0_BASELINE_VALID": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_R0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_F0A": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_SEC0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_E0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_IMPLEMENT_D0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "SAFE_TO_FREEZE_SCOPE0": {
+              "enum": [
+                "YES",
+                "NO"
+              ]
+            },
+            "AUTHORIZED_PRODUCTION_PHASES": {
+              "const": "NONE"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReviewResult": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ImplementationReviewResult"
+        },
+        {
+          "$ref": "#/$defs/CybersecurityReviewResult"
+        },
+        {
+          "$ref": "#/$defs/AggregateReviewResult"
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/ReviewResult"
+}

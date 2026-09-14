@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "tools/qualify_live_platform.py",
+    "--config",
+    "config/live-batched.example.json",
+    "--output",
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/platform-8570c78"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 0,
+  "interrupted": false,
+  "started_at": "2026-09-13T18:03:32.558330+00:00",
+  "finished_at": "2026-09-13T18:03:45.235211+00:00",
+  "duration_seconds": 12.676898892997997,
+  "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+  "worker_real_provider_attempts": 0,
+  "worker_operator_captures": 0,
+  "worker_primary_credential_slot_accesses": 0
+}

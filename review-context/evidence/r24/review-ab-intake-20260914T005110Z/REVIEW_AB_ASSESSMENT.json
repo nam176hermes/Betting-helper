@@ -1,0 +1,153 @@
+{
+  "kind": "REVIEW_INTAKE_NOT_ACCEPTED_AGGREGATION",
+  "recorded_at": "2026-09-14T00:51:10.521887+00:00",
+  "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "reviews": [
+    {
+      "role": "A",
+      "review_role": "IMPLEMENTATION_READINESS_REVIEWER",
+      "review_run_id": "ed622e15-194e-4177-9ea0-d2b168e5193a",
+      "thread_id": "01a09cf2-19ef-7d91-88d6-f6792bf99d54",
+      "review_outcome": "HOLD",
+      "schema_hash_identity_scope_checks": "PASS",
+      "result_path": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/result.json",
+      "result_sha256": "a72fb320b470efd855b126b92465cddd256056d17e6fd817de11be37fc98d556",
+      "content_hash": "85ce06dcaed587ec1289980d371eba38197146651961f10d4c5779a8220dc7dc",
+      "commands_executed_root": "dd34ab452f7480440f2ef3fb8c58bc50bf3139cc0bd9dc74b8e6b0324c109b01",
+      "finished_at": "2026-09-13T23:59:27.141935+00:00",
+      "blocking_findings": [
+        {
+          "finding_id": "PART-B-A-FRESH-SESSION-MISSING",
+          "severity": "IMPORTANT",
+          "blocking": true,
+          "title": "The completed workspace attestation still has fresh_session_attestation=null despite fresh_session_required=true.",
+          "evidence_ids": [
+            "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/workspace-attestation.json#/fresh_session_attestation",
+            "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json#/fresh_session_required",
+            "/home/thenam176/betting-helper/part-b-candidate/src/moj_discovery/review_authorization.py::verify_review_execution_receipt",
+            "/home/thenam176/betting-helper/part-b-candidate/tools/finalize_review.py::_validate_current_workspace"
+          ],
+          "affected_verdicts": [
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+            "SAFE_TO_IMPLEMENT_R0",
+            "SAFE_TO_IMPLEMENT_F0A",
+            "SAFE_TO_IMPLEMENT_SEC0",
+            "SAFE_TO_IMPLEMENT_E0",
+            "SAFE_TO_IMPLEMENT_D0",
+            "SAFE_TO_FREEZE_SCOPE0"
+          ],
+          "required_repair": "The authorized host/human authority must provide a truthful HUMAN_FRESH_CODEX_SESSION attestation for a compliant independent review session, bound to that session and authorization. The reviewer cannot self-declare session initialization or self-sign an execution receipt. Do not finalize this result as an independent PASS while this evidence is missing; the separate input-boundary finding also requires a replacement review."
+        },
+        {
+          "finding_id": "PART-B-A-INPUT-BOUNDARY",
+          "severity": "IMPORTANT",
+          "blocking": true,
+          "title": "At review entry the reviewer searched the historical memory registry for Review A/controller guidance, outside the supplied role input mounts; exclusive-input independence was not preserved.",
+          "evidence_ids": [
+            "CURRENT_REVIEW_SESSION:initial-memory-registry-search",
+            "/mnt/c/Users/thenam/.codex/memories/MEMORY.md:1-40",
+            "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json#/input_mounts"
+          ],
+          "affected_verdicts": [
+            "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+            "SAFE_TO_IMPLEMENT_R0",
+            "SAFE_TO_IMPLEMENT_F0A",
+            "SAFE_TO_IMPLEMENT_SEC0",
+            "SAFE_TO_IMPLEMENT_E0",
+            "SAFE_TO_IMPLEMENT_D0",
+            "SAFE_TO_FREEZE_SCOPE0"
+          ],
+          "required_repair": "Run a replacement independent Review A in a fresh session restricted to the authorized role inputs, without historical review memory. Preserve this result as HOLD. No prior review verdict was used as candidate verification, and the mechanical PASS above comes from this session, but those facts do not cure the exclusive-input deviation. Readiness NO values withhold approval; they do not assert that the current mechanical checks failed."
+        }
+      ],
+      "human_input": {
+        "status": "RECORDED_USER_INPUT_APPLIED_AFTER_EXECUTION",
+        "attested_by": "thenam",
+        "input_record": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-launch-1/USER_REVIEW_SESSIONS_20260913T230927Z.json",
+        "attestation_before_sha256": "5010121331d969fe38bd665d4811cea5d7e4683d22b5071e46b2654ff2c95017",
+        "attestation_after_sha256": "941ca80eb4ac9501eeb0fb461621be5933d14fa82d428940f293161a16a25a43"
+      },
+      "independent_verdict_modified": false,
+      "signed_execution_receipt_issued": false
+    },
+    {
+      "role": "B",
+      "review_role": "CYBERSECURITY_REVIEWER",
+      "review_run_id": "cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+      "thread_id": "01a09cf7-4cca-7dd2-9e22-95ae59b06148",
+      "review_outcome": "HOLD",
+      "schema_hash_identity_scope_checks": "PASS",
+      "result_path": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/result.json",
+      "result_sha256": "983b49be30668a3894468d5d1650916bf3d07f1e7e60afea9d8165e91b3a2ac3",
+      "content_hash": "c4f247b94f9c9585fc28b6d78ae6ff7041fc40aa815708106b02ab011990162a",
+      "commands_executed_root": "e0cfaa89b77bb22441b19387a27ce08f3657c7840bf64637c8199966bdfd122a",
+      "finished_at": "2026-09-13T23:16:38.123237+00:00",
+      "blocking_findings": [
+        {
+          "affected_verdicts": [
+            "CYBERSECURITY_REVIEW_COMPLETE",
+            "CREDENTIAL_EVIDENCE_BOUNDARY_PASS"
+          ],
+          "blocking": true,
+          "evidence_ids": [
+            "SEC_CREDENTIAL_EVIDENCE",
+            "SEC_MESSAGE_SMUGGLING",
+            "source:/home/thenam176/betting-helper/part-b-candidate/tests/security/test_credential_evidence_boundary.py:23",
+            "sha256:4794ffa68a2580657afdadfbd839adb2f0d92a78989333541004419b35a3fc8f",
+            "source:/home/thenam176/betting-helper/part-b-candidate/src/moj_discovery/universal_denial.py:586",
+            "sha256:69a9d6e351dbd34fad340e635e39820e8b0c7441e26e926880d3345b7439c53b",
+            "source:/home/thenam176/betting-helper/part-b-candidate/src/moj_discovery/live_store.py:346",
+            "sha256:73fbe391f4fdd5ac05d8f7deb86cf01d1a74ff80df0aeaf9a6acbaecf2e9dff7",
+            "source:/home/thenam176/betting-helper/part-b-candidate/extension/src/live/contracts.ts:44",
+            "sha256:9258e23e652dcd6e89e608b64f580314594e5ed60b3102d49840e042fa0a65d3",
+            "source:/home/thenam176/betting-helper/part-b-candidate/extension/test/security/message-smuggling.test.ts:32",
+            "sha256:e7f46c323d86d425e51f28785fcbb161de5b73469955f5e7ef895136823c51c4"
+          ],
+          "finding_id": "B-CREDENTIAL-CURRENT-PROOF",
+          "required_repair": "Provide controller-executed allowed, denied and mutation observations for cookie, token, raw_response and authorization-bearing inputs through the current live-record admission boundary, with probes at hashing, logging, spool and database entry points showing no denied side effect. The passing registered Python test calls the real inherited UniversalDenialEngine on an E0 schema but downstream effects are synthetic callbacks; it does not call current validate_live_record/LiveStore.append or validateLiveRecord/LiveCaptureSpool. The current TypeScript sink probes cover nested command fields, not these credential/evidence vectors. This is a missing candidate-scope proof, not an observed disclosure. Any test/source repair needs a separately authorized candidate revision and review.",
+          "severity": "IMPORTANT",
+          "title": "Registered credential/evidence cases do not establish denial before the current candidate admission sinks"
+        },
+        {
+          "affected_verdicts": [
+            "CYBERSECURITY_REVIEW_COMPLETE",
+            "CUSTODY_ISOLATION_PASS"
+          ],
+          "blocking": true,
+          "evidence_ids": [
+            "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/workspace-attestation.json#/fresh_session_attestation",
+            "sha256:fa969ab52166473ed53bf307f2e0c68ae51b269a86dfecd65499cf8a0e564d6f",
+            "/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/contracts/05-reviewer-independence.md"
+          ],
+          "finding_id": "B-HUMAN-FRESH-SESSION",
+          "required_repair": "The authorized human/host authority must supply the genuine HUMAN_FRESH_CODEX_SESSION attestation bound to this role, run and exact prompt, and complete host-controlled finalization of the execution chain. fresh_session_attestation is null. The reviewer has not created a session event, signed a receipt or inferred model independence from mechanical PASS. No finalized execution receipt is claimed.",
+          "severity": "IMPORTANT",
+          "title": "Required human fresh-session attestation is absent after successful controller execution"
+        }
+      ],
+      "human_input": {
+        "status": "RECORDED_USER_INPUT_APPLIED_AFTER_EXECUTION",
+        "attested_by": "thenam",
+        "input_record": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-launch-1/USER_REVIEW_SESSIONS_20260913T230927Z.json",
+        "attestation_before_sha256": "fa969ab52166473ed53bf307f2e0c68ae51b269a86dfecd65499cf8a0e564d6f",
+        "attestation_after_sha256": "34e85d2e556c5d2d6de72151ec76bdaeeb44d3631551b24463a1ce852b5959cd"
+      },
+      "independent_verdict_modified": false,
+      "signed_execution_receipt_issued": false
+    }
+  ],
+  "status": "HOLD",
+  "current_blockers": [
+    "Review A requires replacement because it reported reading historical memory outside authorized inputs.",
+    "Review B requires current live credential/evidence admission sink proof for cookie/token/raw_response/authorization."
+  ],
+  "human_input_resolution": "Truthful user-confirmed fresh-session inputs applied to completed unsigned workspace attestations; old bytes preserved. This does not cure the A input-boundary deviation or rewrite either reviewer HOLD result.",
+  "finalization": "NOT_EXECUTED: blocking independent judgments remain; no PASS aggregation requested or manufactured.",
+  "provider_attempts": 0,
+  "operator_captures": 0,
+  "live_sessions": 0,
+  "credential_accesses": 0,
+  "MODEL_ENABLED": false,
+  "MONEY_READY": "NO",
+  "production_authority": "NONE"
+}

@@ -1,0 +1,1124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:live-records:v1",
+  "$defs": {
+    "ProviderState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_id",
+        "observed_at_utc",
+        "received_mono_us",
+        "clock_domain_id",
+        "request_id",
+        "batch_observation_id",
+        "content_revision",
+        "status_code",
+        "period",
+        "elapsed_minute",
+        "extra_minute",
+        "clock_precision",
+        "kickoff_utc",
+        "home_id",
+        "away_id",
+        "score_current",
+        "score_ht",
+        "score_ft",
+        "events",
+        "events_status",
+        "section_availability",
+        "red_card_state",
+        "provider_updated_at",
+        "quality_flags",
+        "home_name",
+        "away_name"
+      ],
+      "properties": {
+        "fixture_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "observed_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "received_mono_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "clock_domain_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "batch_observation_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "content_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "status_code": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]{1,16}$"
+        },
+        "period": {
+          "enum": [
+            "PREGAME",
+            "H1",
+            "HALFTIME",
+            "H2",
+            "FINISHED",
+            "BLOCKED",
+            "OUT_OF_SCOPE",
+            "UNKNOWN"
+          ]
+        },
+        "elapsed_minute": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "extra_minute": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "clock_precision": {
+          "enum": [
+            "MINUTE",
+            "UNKNOWN"
+          ]
+        },
+        "kickoff_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "home_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "away_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "score_current": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "home",
+                "away"
+              ],
+              "properties": {
+                "home": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "away": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "score_ht": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "home",
+                "away"
+              ],
+              "properties": {
+                "home": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "away": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "score_ft": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "home",
+                "away"
+              ],
+              "properties": {
+                "home": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "away": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "elapsed_minute",
+              "extra_minute",
+              "team_id",
+              "player_id",
+              "assist_id",
+              "type",
+              "detail"
+            ],
+            "properties": {
+              "elapsed_minute": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "extra_minute": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "team_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "player_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "assist_id": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": {
+                "enum": [
+                  "GOAL",
+                  "CARD",
+                  "SUBSTITUTION",
+                  "VAR",
+                  "OTHER"
+                ]
+              },
+              "detail": {
+                "enum": [
+                  "NORMAL_GOAL",
+                  "OWN_GOAL",
+                  "PENALTY",
+                  "MISSED_PENALTY",
+                  "YELLOW_CARD",
+                  "RED_CARD",
+                  "SECOND_YELLOW",
+                  "GOAL_CANCELLED",
+                  "PENALTY_CANCELLED",
+                  "OTHER"
+                ]
+              }
+            }
+          },
+          "maxItems": 2000
+        },
+        "events_status": {
+          "enum": [
+            "OBSERVED",
+            "OBSERVED_EMPTY",
+            "UNKNOWN_SECTION",
+            "MALFORMED"
+          ]
+        },
+        "section_availability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "events",
+            "lineups",
+            "statistics",
+            "players"
+          ],
+          "properties": {
+            "events": {
+              "enum": [
+                "PRESENT",
+                "EMPTY",
+                "MISSING",
+                "MALFORMED"
+              ]
+            },
+            "lineups": {
+              "enum": [
+                "PRESENT",
+                "EMPTY",
+                "MISSING",
+                "MALFORMED"
+              ]
+            },
+            "statistics": {
+              "enum": [
+                "PRESENT",
+                "EMPTY",
+                "MISSING",
+                "MALFORMED"
+              ]
+            },
+            "players": {
+              "enum": [
+                "PRESENT",
+                "EMPTY",
+                "MISSING",
+                "MALFORMED"
+              ]
+            }
+          }
+        },
+        "red_card_state": {
+          "enum": [
+            "KNOWN",
+            "UNKNOWN"
+          ]
+        },
+        "provider_updated_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "quality_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 32
+        },
+        "home_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "away_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "MarketBook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "binding_revision",
+        "operator_fixture_id",
+        "market_id",
+        "horizon",
+        "settlement_basis",
+        "selections",
+        "market_status",
+        "capture_revision",
+        "native_revision",
+        "observed_at_utc",
+        "browser_mono_us",
+        "clock_domain_id",
+        "source_updated_at",
+        "operator_score",
+        "operator_period",
+        "capture_evidence_tier",
+        "profile_hash",
+        "document_epoch",
+        "quality_flags"
+      ],
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "binding_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "operator_fixture_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "market_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "horizon": {
+          "enum": [
+            "H1",
+            "H2",
+            "FT"
+          ]
+        },
+        "settlement_basis": {
+          "enum": [
+            "NORMAL_TIME_INCLUDING_STOPPAGE",
+            "UNSUPPORTED"
+          ]
+        },
+        "selections": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "HOME",
+            "DRAW",
+            "AWAY"
+          ],
+          "properties": {
+            "HOME": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "selection_id",
+                "decimal_odds"
+              ],
+              "properties": {
+                "selection_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "decimal_odds": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]{0,5}(\\.[0-9]{1,6})?$"
+                }
+              }
+            },
+            "DRAW": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "selection_id",
+                "decimal_odds"
+              ],
+              "properties": {
+                "selection_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "decimal_odds": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]{0,5}(\\.[0-9]{1,6})?$"
+                }
+              }
+            },
+            "AWAY": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "selection_id",
+                "decimal_odds"
+              ],
+              "properties": {
+                "selection_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128
+                },
+                "decimal_odds": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]{0,5}(\\.[0-9]{1,6})?$"
+                }
+              }
+            }
+          }
+        },
+        "market_status": {
+          "enum": [
+            "OPEN",
+            "SUSPENDED",
+            "CLOSED",
+            "UNKNOWN"
+          ]
+        },
+        "capture_revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "native_revision": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "observed_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "browser_mono_us": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "clock_domain_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "source_updated_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operator_score": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "home",
+                "away"
+              ],
+              "properties": {
+                "home": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "away": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operator_period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "PREGAME",
+            "H1",
+            "HALFTIME",
+            "H2",
+            "FINISHED",
+            "BLOCKED",
+            "OUT_OF_SCOPE",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "capture_evidence_tier": {
+          "enum": [
+            "DISPLAY_COHERENT",
+            "UNVERIFIED"
+          ]
+        },
+        "profile_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "document_epoch": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "quality_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 32
+        }
+      }
+    },
+    "FixtureBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "revision",
+        "provider_fixture_id",
+        "league_id",
+        "season",
+        "kickoff_utc",
+        "home_id",
+        "away_id",
+        "operator_fixture_id",
+        "operator_home_id",
+        "operator_away_id",
+        "operator_match_url",
+        "livescore_match_url",
+        "orientation_status",
+        "evidence_hashes",
+        "home_name",
+        "away_name"
+      ],
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "provider_fixture_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "league_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "season": {
+          "type": "integer",
+          "minimum": 2000,
+          "maximum": 2100
+        },
+        "kickoff_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "home_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "away_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "operator_fixture_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "operator_home_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "operator_away_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "operator_match_url": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "livescore_match_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "maxLength": 2048
+        },
+        "orientation_status": {
+          "enum": [
+            "UNVERIFIED",
+            "VERIFIED",
+            "CONFLICT"
+          ]
+        },
+        "evidence_hashes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 32
+        },
+        "home_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "away_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        }
+      }
+    },
+    "BindingChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before_revision",
+        "after",
+        "reason"
+      ],
+      "properties": {
+        "before_revision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "after": {
+          "$ref": "#/$defs/FixtureBinding"
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+        }
+      }
+    },
+    "HealthChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding_id",
+        "reason",
+        "state",
+        "epoch",
+        "evidence_hashes"
+      ],
+      "properties": {
+        "binding_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uuid"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+        },
+        "state": {
+          "enum": [
+            "WAITING_FOR_DATA",
+            "CURRENT_DISPLAY_ONLY",
+            "SOURCE_TIME_UNKNOWN",
+            "STALE_PROVIDER",
+            "STALE_MARKET",
+            "STATE_CONFLICT",
+            "MARKET_SUSPENDED",
+            "PROFILE_EXPIRED",
+            "OUT_OF_SCOPE",
+            "STOPPED",
+            "PAUSED",
+            "GAP",
+            "CONTEXT_UNVERIFIED"
+          ]
+        },
+        "epoch": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$",
+          "maxLength": 19
+        },
+        "evidence_hashes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "maxItems": 32
+        }
+      }
+    },
+    "LiveEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "run_id",
+            "source_kind",
+            "stream_id",
+            "generation",
+            "sequence",
+            "observation_id",
+            "observed_at_utc",
+            "received_mono_us",
+            "previous_hash",
+            "content_hash",
+            "payload_type",
+            "payload"
+          ],
+          "properties": {
+            "protocol": {
+              "const": "BH_LIVE_READONLY_V1"
+            },
+            "run_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_kind": {
+              "const": "PROVIDER"
+            },
+            "stream_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "generation": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$",
+              "maxLength": 19
+            },
+            "observation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "observed_at_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "received_mono_us": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "previous_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "payload_type": {
+              "const": "ProviderState"
+            },
+            "payload": {
+              "$ref": "#/$defs/ProviderState"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "run_id",
+            "source_kind",
+            "stream_id",
+            "generation",
+            "sequence",
+            "observation_id",
+            "observed_at_utc",
+            "received_mono_us",
+            "previous_hash",
+            "content_hash",
+            "payload_type",
+            "payload"
+          ],
+          "properties": {
+            "protocol": {
+              "const": "BH_LIVE_READONLY_V1"
+            },
+            "run_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_kind": {
+              "const": "OPERATOR"
+            },
+            "stream_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "generation": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$",
+              "maxLength": 19
+            },
+            "observation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "observed_at_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "received_mono_us": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "previous_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "payload_type": {
+              "const": "MarketBook"
+            },
+            "payload": {
+              "$ref": "#/$defs/MarketBook"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "run_id",
+            "source_kind",
+            "stream_id",
+            "generation",
+            "sequence",
+            "observation_id",
+            "observed_at_utc",
+            "received_mono_us",
+            "previous_hash",
+            "content_hash",
+            "payload_type",
+            "payload"
+          ],
+          "properties": {
+            "protocol": {
+              "const": "BH_LIVE_READONLY_V1"
+            },
+            "run_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_kind": {
+              "const": "CONTROL"
+            },
+            "stream_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "generation": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$",
+              "maxLength": 19
+            },
+            "observation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "observed_at_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "received_mono_us": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "previous_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "payload_type": {
+              "const": "BindingChange"
+            },
+            "payload": {
+              "$ref": "#/$defs/BindingChange"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "run_id",
+            "source_kind",
+            "stream_id",
+            "generation",
+            "sequence",
+            "observation_id",
+            "observed_at_utc",
+            "received_mono_us",
+            "previous_hash",
+            "content_hash",
+            "payload_type",
+            "payload"
+          ],
+          "properties": {
+            "protocol": {
+              "const": "BH_LIVE_READONLY_V1"
+            },
+            "run_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "source_kind": {
+              "const": "CONTROL"
+            },
+            "stream_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "generation": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "sequence": {
+              "type": "string",
+              "pattern": "^[1-9][0-9]*$",
+              "maxLength": 19
+            },
+            "observation_id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "observed_at_utc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "received_mono_us": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$",
+              "maxLength": 19
+            },
+            "previous_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "content_hash": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "payload_type": {
+              "const": "HealthChange"
+            },
+            "payload": {
+              "$ref": "#/$defs/HealthChange"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/LiveEvent"
+}

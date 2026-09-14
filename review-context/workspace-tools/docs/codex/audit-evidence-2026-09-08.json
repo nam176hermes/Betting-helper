@@ -1,0 +1,1079 @@
+{
+  "schema": "codex-workflow-audit-evidence/v1",
+  "date": "2026-09-08",
+  "workspace": "/home/thenam176/betting-helper",
+  "scope": "Workflow audit and additive workspace documentation only; production authority NONE",
+  "method": "September 2026 active-session directory, cwd contains betting-helper, current audit excluded; only events at/after session creation, globally dedup calls by call_id; textual shell mentions are proxies including embedded commands, not proven executions; no cross-session cumulative-token sum",
+  "limitations": [
+    "Sample is 60 accessible September active-session logs, not lifetime history; current audit excluded.",
+    "Call IDs deduplicated globally; pre-session-creation events excluded.",
+    "JSON literal cmd fields parsed without executing JavaScript. Counts may include embedded definitions; nonliteral/other quoting omitted.",
+    "Command repetitions ignore cwd, revisions and input freshness; they do not prove unnecessary reruns.",
+    "Peak concurrent workers and exact model-per-stage attribution not reconstructed.",
+    "Some prompts/messages encrypted at rest; no claim to have evaluated every delegation brief.",
+    "Cumulative token counters are not account quota; cached inputs included; child counters not summed.",
+    "Output characters count stored serialized records, not decoded model output.",
+    "Model catalog proves available settings, not cost/quality differences on matched tasks.",
+    "No controlled after-treatment task benchmark; savings remain unmeasured."
+  ],
+  "sample": {
+    "sessions": 60,
+    "child_session_logs": 58,
+    "parse_errors": 0,
+    "sources": [
+      {
+        "id": "01a072fb-7a2e-7370-8664-f8fbd742d034",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+        "start": "2026-09-05T19:11:18.595Z",
+        "end": "2026-09-08T07:02:08.288Z",
+        "agent_path": null
+      },
+      {
+        "id": "01a07553-1052-7f82-93f0-c6219258be7f",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-06-13-01a07553-1052-7f82-93f0-c6219258be7f.jsonl",
+        "start": "2026-09-06T06:06:13.092Z",
+        "end": "2026-09-06T06:13:39.739Z",
+        "agent_path": "/root/bh_r00_impl"
+      },
+      {
+        "id": "01a0755a-1237-76a3-b1fb-7d94db5daa0e",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-13-52-01a0755a-1237-76a3-b1fb-7d94db5daa0e.jsonl",
+        "start": "2026-09-06T06:13:52.333Z",
+        "end": "2026-09-06T06:18:15.702Z",
+        "agent_path": "/root/bh_r00_review"
+      },
+      {
+        "id": "01a0755e-7f20-7193-b15d-9be20d24f1d1",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-18-42-01a0755e-7f20-7193-b15d-9be20d24f1d1.jsonl",
+        "start": "2026-09-06T06:18:42.363Z",
+        "end": "2026-09-06T06:36:37.070Z",
+        "agent_path": "/root/bh_r01_impl"
+      },
+      {
+        "id": "01a07567-a2b8-7431-9565-6293147b9453",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-28-41-01a07567-a2b8-7431-9565-6293147b9453.jsonl",
+        "start": "2026-09-06T06:28:41.291Z",
+        "end": "2026-09-06T06:38:28.129Z",
+        "agent_path": "/root/bh_r01_review"
+      },
+      {
+        "id": "01a07570-e02c-72e2-9a37-118d433c1def",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-38-46-01a07570-e02c-72e2-9a37-118d433c1def.jsonl",
+        "start": "2026-09-06T06:38:46.853Z",
+        "end": "2026-09-06T09:24:22.123Z",
+        "agent_path": "/root/bh_r02_impl"
+      },
+      {
+        "id": "01a07578-0375-7041-b812-749b1ecd394e",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-46-34-01a07578-0375-7041-b812-749b1ecd394e.jsonl",
+        "start": "2026-09-06T06:46:34.635Z",
+        "end": "2026-09-06T09:26:25.639Z",
+        "agent_path": "/root/bh_r02_review"
+      },
+      {
+        "id": "01a0757c-d4dc-7cc0-b278-b413703a252d",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T02-51-50-01a0757c-d4dc-7cc0-b278-b413703a252d.jsonl",
+        "start": "2026-09-06T06:51:50.386Z",
+        "end": "2026-09-06T07:15:50.965Z",
+        "agent_path": "/root/bh_r04_impl"
+      },
+      {
+        "id": "01a0758d-48c1-7d71-95f8-2ce6fdb59273",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T03-09-48-01a0758d-48c1-7d71-95f8-2ce6fdb59273.jsonl",
+        "start": "2026-09-06T07:09:48.635Z",
+        "end": "2026-09-06T07:17:14.377Z",
+        "agent_path": "/root/bh_r04_review"
+      },
+      {
+        "id": "01a07594-6e3c-78a2-a31d-27e9ed803fb3",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T03-17-36-01a07594-6e3c-78a2-a31d-27e9ed803fb3.jsonl",
+        "start": "2026-09-06T07:17:36.983Z",
+        "end": "2026-09-06T07:40:34.483Z",
+        "agent_path": "/root/bh_r06_impl"
+      },
+      {
+        "id": "01a075a3-a02d-7371-a565-a6f340cc1ac3",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T03-34-12-01a075a3-a02d-7371-a565-a6f340cc1ac3.jsonl",
+        "start": "2026-09-06T07:34:12.815Z",
+        "end": "2026-09-06T07:42:40.052Z",
+        "agent_path": "/root/bh_r06_review"
+      },
+      {
+        "id": "01a075ab-d88a-7cf2-b7ad-d4a269a96177",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T03-43-11-01a075ab-d88a-7cf2-b7ad-d4a269a96177.jsonl",
+        "start": "2026-09-06T07:43:11.521Z",
+        "end": "2026-09-06T08:08:25.168Z",
+        "agent_path": "/root/bh_r07_impl"
+      },
+      {
+        "id": "01a075bb-8a7f-7902-b338-c83e552d6156",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T04-00-20-01a075bb-8a7f-7902-b338-c83e552d6156.jsonl",
+        "start": "2026-09-06T08:00:20.148Z",
+        "end": "2026-09-06T08:10:41.083Z",
+        "agent_path": "/root/bh_r07_review"
+      },
+      {
+        "id": "01a075c5-7179-7921-ae01-3876c4d37a91",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T04-11-09-01a075c5-7179-7921-ae01-3876c4d37a91.jsonl",
+        "start": "2026-09-06T08:11:09.079Z",
+        "end": "2026-09-06T08:46:17.757Z",
+        "agent_path": "/root/bh_r09_impl"
+      },
+      {
+        "id": "01a075d6-b375-75a0-829b-f400ff9a65c5",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T04-30-00-01a075d6-b375-75a0-829b-f400ff9a65c5.jsonl",
+        "start": "2026-09-06T08:30:00.083Z",
+        "end": "2026-09-06T08:49:11.510Z",
+        "agent_path": "/root/bh_r09_review"
+      },
+      {
+        "id": "01a0760a-d8ef-7b62-88db-bc672beae5c2",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T05-26-57-01a0760a-d8ef-7b62-88db-bc672beae5c2.jsonl",
+        "start": "2026-09-06T09:26:57.548Z",
+        "end": "2026-09-06T10:00:53.701Z",
+        "agent_path": "/root/bh_r03_impl"
+      },
+      {
+        "id": "01a0761d-a176-7bd1-b016-4b139f2e710a",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T05-47-28-01a0761d-a176-7bd1-b016-4b139f2e710a.jsonl",
+        "start": "2026-09-06T09:47:28.527Z",
+        "end": "2026-09-06T10:01:27.740Z",
+        "agent_path": "/root/bh_r03_review"
+      },
+      {
+        "id": "01a0762a-9270-7910-bec1-5f374caaa32e",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-01-36-01a0762a-9270-7910-bec1-5f374caaa32e.jsonl",
+        "start": "2026-09-06T10:01:36.652Z",
+        "end": "2026-09-06T10:05:09.640Z",
+        "agent_path": "/root/bh_r03_rereview"
+      },
+      {
+        "id": "01a0762e-886c-7ba2-b37d-c77e462c81b6",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-05-56-01a0762e-886c-7ba2-b37d-c77e462c81b6.jsonl",
+        "start": "2026-09-06T10:05:56.239Z",
+        "end": "2026-09-06T10:34:39.117Z",
+        "agent_path": "/root/bh_r08_impl"
+      },
+      {
+        "id": "01a0763c-e116-73e2-964e-dbbd5ef77851",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-21-36-01a0763c-e116-73e2-964e-dbbd5ef77851.jsonl",
+        "start": "2026-09-06T10:21:36.430Z",
+        "end": "2026-09-06T10:36:58.485Z",
+        "agent_path": "/root/bh_r08_review"
+      },
+      {
+        "id": "01a0764b-529d-71b2-acb8-099b08b40d68",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-37-23-01a0764b-529d-71b2-acb8-099b08b40d68.jsonl",
+        "start": "2026-09-06T10:37:23.000Z",
+        "end": "2026-09-06T10:57:31.592Z",
+        "agent_path": "/root/bh_r10_impl"
+      },
+      {
+        "id": "01a07656-53aa-7df1-b67a-1a38237c12a9",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-49-24-01a07656-53aa-7df1-b67a-1a38237c12a9.jsonl",
+        "start": "2026-09-06T10:49:24.164Z",
+        "end": "2026-09-06T10:58:53.449Z",
+        "agent_path": "/root/bh_r10_review"
+      },
+      {
+        "id": "01a0765f-c982-7f21-8d72-f7214aaf398d",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T06-59-44-01a0765f-c982-7f21-8d72-f7214aaf398d.jsonl",
+        "start": "2026-09-06T10:59:44.155Z",
+        "end": "2026-09-06T11:14:48.933Z",
+        "agent_path": "/root/bh_r11_closure"
+      },
+      {
+        "id": "01a0768b-a758-7cb0-a27c-1d93daad174c",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T07-47-38-01a0768b-a758-7cb0-a27c-1d93daad174c.jsonl",
+        "start": "2026-09-06T11:47:38.995Z",
+        "end": "2026-09-06T12:29:47.556Z",
+        "agent_path": "/root/bh_r05_impl2"
+      },
+      {
+        "id": "01a076b2-40e6-79c0-814d-954a06fdc546",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T08-29-48-01a076b2-40e6-79c0-814d-954a06fdc546.jsonl",
+        "start": "2026-09-06T12:29:48.690Z",
+        "end": "2026-09-06T12:37:41.163Z",
+        "agent_path": "/root/bh_r05_contract_review"
+      },
+      {
+        "id": "01a076c2-2d27-7770-93df-907e04a53274",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T08-47-12-01a076c2-2d27-7770-93df-907e04a53274.jsonl",
+        "start": "2026-09-06T12:47:12.217Z",
+        "end": "2026-09-06T12:52:48.678Z",
+        "agent_path": "/root/durability_gap_analysis"
+      },
+      {
+        "id": "01a076c2-4c25-7e62-924b-137cd56001e0",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T08-47-20-01a076c2-4c25-7e62-924b-137cd56001e0.jsonl",
+        "start": "2026-09-06T12:47:20.135Z",
+        "end": "2026-09-06T12:53:00.069Z",
+        "agent_path": "/root/clock_gap_analysis"
+      },
+      {
+        "id": "01a076c2-6ce5-7422-9745-a45d2fd54ee8",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T08-47-28-01a076c2-6ce5-7422-9745-a45d2fd54ee8.jsonl",
+        "start": "2026-09-06T12:47:28.551Z",
+        "end": "2026-09-06T12:53:23.383Z",
+        "agent_path": "/root/qualification_ci_analysis"
+      },
+      {
+        "id": "01a076c4-9a93-7af2-ae7b-c6e4061f99d4",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T08-49-51-01a076c4-9a93-7af2-ae7b-c6e4061f99d4.jsonl",
+        "start": "2026-09-06T12:49:51.278Z",
+        "end": "2026-09-06T13:08:27.535Z",
+        "agent_path": "/root/r08_indexeddb_reaggregate"
+      },
+      {
+        "id": "01a076d7-2760-7c51-9969-d9da1a151052",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-10-06-01a076d7-2760-7c51-9969-d9da1a151052.jsonl",
+        "start": "2026-09-06T13:10:06.982Z",
+        "end": "2026-09-06T13:15:15.505Z",
+        "agent_path": "/root/r08_independent_review"
+      },
+      {
+        "id": "01a076dc-00be-72c2-bc41-6259fe259924",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-15-24-01a076dc-00be-72c2-bc41-6259fe259924.jsonl",
+        "start": "2026-09-06T13:15:24.758Z",
+        "end": "2026-09-06T13:17:10.688Z",
+        "agent_path": "/root/r08_review_fast"
+      },
+      {
+        "id": "01a076dd-f2c2-77a3-aa41-60bd2d164999",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-17-32-01a076dd-f2c2-77a3-aa41-60bd2d164999.jsonl",
+        "start": "2026-09-06T13:17:32.251Z",
+        "end": "2026-09-06T13:37:50.455Z",
+        "agent_path": "/root/r08_review_fix"
+      },
+      {
+        "id": "01a076e9-5b05-7290-8a16-685a0fcd0634",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-29-59-01a076e9-5b05-7290-8a16-685a0fcd0634.jsonl",
+        "start": "2026-09-06T13:29:59.844Z",
+        "end": "2026-09-06T13:31:28.333Z",
+        "agent_path": "/root/r08_fix_review"
+      },
+      {
+        "id": "01a076f0-bfe3-7e42-ad57-3606ee9e51de",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-38-04-01a076f0-bfe3-7e42-ad57-3606ee9e51de.jsonl",
+        "start": "2026-09-06T13:38:04.450Z",
+        "end": "2026-09-06T13:38:56.824Z",
+        "agent_path": "/root/r08_fix_final_review"
+      },
+      {
+        "id": "01a076f2-0878-7901-80e3-3e0517b3d211",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-39-28-01a076f2-0878-7901-80e3-3e0517b3d211.jsonl",
+        "start": "2026-09-06T13:39:28.537Z",
+        "end": "2026-09-06T13:54:12.568Z",
+        "agent_path": "/root/conflict01_impl"
+      },
+      {
+        "id": "01a076ff-c3a0-7f92-ac5d-0a60aae303b0",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-54-28-01a076ff-c3a0-7f92-ac5d-0a60aae303b0.jsonl",
+        "start": "2026-09-06T13:54:28.441Z",
+        "end": "2026-09-06T13:58:57.546Z",
+        "agent_path": "/root/conflict01_review"
+      },
+      {
+        "id": "01a07703-fc82-7ca0-878b-fb8a6ce7231d",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T09-59-05-01a07703-fc82-7ca0-878b-fb8a6ce7231d.jsonl",
+        "start": "2026-09-06T13:59:05.118Z",
+        "end": "2026-09-06T14:19:09.396Z",
+        "agent_path": "/root/clock_primitives_impl"
+      },
+      {
+        "id": "01a07716-93dc-7740-9a2b-af98d24d666c",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T10-19-23-01a07716-93dc-7740-9a2b-af98d24d666c.jsonl",
+        "start": "2026-09-06T14:19:23.540Z",
+        "end": "2026-09-06T14:23:11.878Z",
+        "agent_path": "/root/clock_primitives_review"
+      },
+      {
+        "id": "01a0771a-2be1-7cb0-b946-efb8c0a4c521",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T10-23-19-01a0771a-2be1-7cb0-b946-efb8c0a4c521.jsonl",
+        "start": "2026-09-06T14:23:19.065Z",
+        "end": "2026-09-06T14:48:35.240Z",
+        "agent_path": "/root/clock_lifecycle_impl"
+      },
+      {
+        "id": "01a07726-7780-74c0-9949-74567e17f2a7",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T10-36-44-01a07726-7780-74c0-9949-74567e17f2a7.jsonl",
+        "start": "2026-09-06T14:36:44.827Z",
+        "end": "2026-09-06T14:40:59.400Z",
+        "agent_path": "/root/clock_lifecycle_review"
+      },
+      {
+        "id": "01a07731-6391-7721-b0d9-1718ea5b785c",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T10-48-40-01a07731-6391-7721-b0d9-1718ea5b785c.jsonl",
+        "start": "2026-09-06T14:48:40.626Z",
+        "end": "2026-09-06T14:50:01.063Z",
+        "agent_path": "/root/clock_lifecycle_fix_review"
+      },
+      {
+        "id": "01a07732-dc01-7c83-aef9-f01bf8168c4a",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T10-50-17-01a07732-dc01-7c83-aef9-f01bf8168c4a.jsonl",
+        "start": "2026-09-06T14:50:17.000Z",
+        "end": "2026-09-06T15:35:47.303Z",
+        "agent_path": "/root/clock_coherence_impl"
+      },
+      {
+        "id": "01a0774d-92bd-71a0-b23a-cf96ccddb095",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T11-19-27-01a0774d-92bd-71a0-b23a-cf96ccddb095.jsonl",
+        "start": "2026-09-06T15:19:27.726Z",
+        "end": "2026-09-06T15:23:19.629Z",
+        "agent_path": "/root/clock_coherence_review"
+      },
+      {
+        "id": "01a0775c-c63c-76a0-89cd-fa053026ebd0",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T11-36-03-01a0775c-c63c-76a0-89cd-fa053026ebd0.jsonl",
+        "start": "2026-09-06T15:36:03.931Z",
+        "end": "2026-09-06T15:37:57.645Z",
+        "agent_path": "/root/clock_coherence_fix_review"
+      },
+      {
+        "id": "01a0775e-ce5a-7482-b04b-ffc39967a23d",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T11-38-17-01a0775e-ce5a-7482-b04b-ffc39967a23d.jsonl",
+        "start": "2026-09-06T15:38:17.074Z",
+        "end": "2026-09-06T16:33:13.650Z",
+        "agent_path": "/root/clock_final_evidence_impl"
+      },
+      {
+        "id": "01a07787-012b-76f2-8a8d-945f95b75efb",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T12-22-11-01a07787-012b-76f2-8a8d-945f95b75efb.jsonl",
+        "start": "2026-09-06T16:22:11.564Z",
+        "end": "2026-09-06T16:24:15.152Z",
+        "agent_path": "/root/clock_final_review"
+      },
+      {
+        "id": "01a07791-34be-7753-8479-7f7fa66b45c8",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T12-33-20-01a07791-34be-7753-8479-7f7fa66b45c8.jsonl",
+        "start": "2026-09-06T16:33:20.122Z",
+        "end": "2026-09-06T16:36:02.790Z",
+        "agent_path": "/root/clock_portable_evidence_review"
+      },
+      {
+        "id": "01a07793-f8ab-74f1-92c1-0de7e2f2ee1b",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T12-36-21-01a07793-f8ab-74f1-92c1-0de7e2f2ee1b.jsonl",
+        "start": "2026-09-06T16:36:21.315Z",
+        "end": "2026-09-06T17:23:43.493Z",
+        "agent_path": "/root/durability_sql_impl"
+      },
+      {
+        "id": "01a077a9-2509-7860-9061-5525d2314e93",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T12-59-28-01a077a9-2509-7860-9061-5525d2314e93.jsonl",
+        "start": "2026-09-06T16:59:28.940Z",
+        "end": "2026-09-06T17:02:18.468Z",
+        "agent_path": "/root/durability_sql_review"
+      },
+      {
+        "id": "01a077b7-b6ef-72e0-b217-2a40808e782d",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T13-15-23-01a077b7-b6ef-72e0-b217-2a40808e782d.jsonl",
+        "start": "2026-09-06T17:15:23.800Z",
+        "end": "2026-09-06T17:18:05.813Z",
+        "agent_path": "/root/durability_sql_fix_review"
+      },
+      {
+        "id": "01a077bf-65ee-7920-b111-71b9dcea4425",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T13-23-47-01a077bf-65ee-7920-b111-71b9dcea4425.jsonl",
+        "start": "2026-09-06T17:23:47.337Z",
+        "end": "2026-09-06T17:25:39.647Z",
+        "agent_path": "/root/durability_sql_ddl_review"
+      },
+      {
+        "id": "01a077c1-655a-7dc2-be76-337e0df04fcb",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T13-25-58-01a077c1-655a-7dc2-be76-337e0df04fcb.jsonl",
+        "start": "2026-09-06T17:25:58.259Z",
+        "end": "2026-09-08T06:39:02.060Z",
+        "agent_path": "/root/durability_ack_impl"
+      },
+      {
+        "id": "01a077dd-27f7-73e0-bf4e-1a694c23880b",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T13-56-17-01a077dd-27f7-73e0-bf4e-1a694c23880b.jsonl",
+        "start": "2026-09-06T17:56:17.558Z",
+        "end": "2026-09-08T06:41:30.234Z",
+        "agent_path": "/root/durability_ack_review"
+      },
+      {
+        "id": "01a077f0-5eac-76d0-ba57-b54881c516c1",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-17-16-01a077f0-5eac-76d0-ba57-b54881c516c1.jsonl",
+        "start": "2026-09-06T18:17:16.745Z",
+        "end": "2026-09-06T18:20:36.613Z",
+        "agent_path": "/root/durability_ack_fix_review"
+      },
+      {
+        "id": "01a077f3-d57a-7413-ab18-d219cb65e583",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-21-03-01a077f3-d57a-7413-ab18-d219cb65e583.jsonl",
+        "start": "2026-09-06T18:21:03.770Z",
+        "end": "2026-09-07T08:14:02.204Z",
+        "agent_path": "/root/durability_gap_impl"
+      },
+      {
+        "id": "01a0780c-04bf-7f70-ab3d-98131c1cc368",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-47-28-01a0780c-04bf-7f70-ab3d-98131c1cc368.jsonl",
+        "start": "2026-09-06T18:47:28.731Z",
+        "end": "2026-09-08T06:09:51.004Z",
+        "agent_path": "/root/durability_gap_review"
+      },
+      {
+        "id": "01a07811-ab2e-76d3-a816-6e6d199849bc",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-53-39-01a07811-ab2e-76d3-a816-6e6d199849bc.jsonl",
+        "start": "2026-09-06T18:53:39.012Z",
+        "end": "2026-09-06T18:57:41.851Z",
+        "agent_path": "/root/durability_gap_impl/gap_sql_design"
+      },
+      {
+        "id": "01a07acd-cf2c-7682-928c-46fa873ff194",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/07/rollout-2026-09-07T03-38-23-01a07acd-cf2c-7682-928c-46fa873ff194.jsonl",
+        "start": "2026-09-07T07:38:23.424Z",
+        "end": "2026-09-08T07:02:08.786Z",
+        "agent_path": "/root/descendant_closure_fix4"
+      },
+      {
+        "id": "01a07fa3-d909-7613-8060-dcb4fab9b0b0",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T02-10-39-01a07fa3-d909-7613-8060-dcb4fab9b0b0.jsonl",
+        "start": "2026-09-08T06:10:39.518Z",
+        "end": "2026-09-08T06:11:31.288Z",
+        "agent_path": "/root/p07_operand_preflight"
+      },
+      {
+        "id": "01a07fb1-7447-7132-b9f4-88f8cbf089b8",
+        "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/08/rollout-2026-09-08T02-25-31-01a07fb1-7447-7132-b9f4-88f8cbf089b8.jsonl",
+        "start": "2026-09-08T06:25:31.238Z",
+        "end": "2026-09-08T06:25:56.913Z",
+        "agent_path": null
+      }
+    ]
+  },
+  "calls": {
+    "unique_tool_calls": 11579,
+    "by_name": {
+      "exec": 7950,
+      "wait": 90,
+      "spawn_agent": 59,
+      "wait_agent": 1900,
+      "list_agents": 43,
+      "send_message": 1323,
+      "followup_task": 173,
+      "interrupt_agent": 2,
+      "request_user_input_async": 4,
+      "sleep": 35
+    },
+    "literal_cmd_fields_decoded": 6750,
+    "literal_command_pattern_counts": {
+      "git_status": 1111,
+      "git_diff": 757,
+      "rg_files": 360,
+      "pytest": 1096,
+      "portable": 23,
+      "self_check": 116
+    },
+    "exact_repeated_literal_commands": 563,
+    "repeated_command_examples": [
+      {
+        "command": "uv run --frozen --offline python -m pytest -q tests/durability/test_gap_generation_process_crash.py::test_closed_generation_and_epoch_never_reopen",
+        "count": 19,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-21-03-01a077f3-d57a-7413-ab18-d219cb65e583.jsonl",
+          "line": 1077
+        }
+      },
+      {
+        "command": "pnpm --dir extension exec tsc -p tsconfig.test.json",
+        "count": 18,
+        "session_count": 11,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 26150
+        }
+      },
+      {
+        "command": "UV_OFFLINE=1 uv sync --frozen --offline",
+        "count": 12,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 3506
+        }
+      },
+      {
+        "command": "pnpm install --frozen-lockfile --offline --ignore-scripts",
+        "count": 12,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 3506
+        }
+      },
+      {
+        "command": "python3.12 -B runtime/tools/qualify_zero_parent_baseline.py --root /home/thenam176/betting-helper/discovery-runtime-v6.3.6 --receipt /home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack/docs/receipts/rep",
+        "count": 12,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 3514
+        }
+      },
+      {
+        "command": "git status --short --branch && git diff --stat",
+        "count": 11,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 12249
+        }
+      },
+      {
+        "command": "python3.12 -B -m unittest authoring-tests/test_rebind_successor.py -v",
+        "count": 10,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 279
+        }
+      },
+      {
+        "command": "UV_OFFLINE=1 uv run --frozen python tools/run_command_registry.py --mode candidate-qualification --registry task-command-registry.json",
+        "count": 10,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 3145
+        }
+      },
+      {
+        "command": "uv run --frozen python tools/run_command_registry.py --mode candidate-qualification --registry task-command-registry.json",
+        "count": 10,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 4882
+        }
+      },
+      {
+        "command": "uv run --frozen --offline python -m pytest -q tests/durability/test_gap_generation_process_crash.py",
+        "count": 10,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/06/rollout-2026-09-06T14-21-03-01a077f3-d57a-7413-ab18-d219cb65e583.jsonl",
+          "line": 1684
+        }
+      },
+      {
+        "command": "git status --short",
+        "count": 9,
+        "session_count": 4,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 18570
+        }
+      },
+      {
+        "command": "git status --short --branch && git log -3 --oneline --decorate",
+        "count": 8,
+        "session_count": 1,
+        "source": {
+          "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+          "line": 11704
+        }
+      }
+    ],
+    "wait_agent_requested_timeouts": {
+      "1000": 4,
+      "60000": 903,
+      "30000": 585,
+      "10000": 25,
+      "55000": 368,
+      "20000": 12,
+      "120000": 1,
+      "360000": 1,
+      "1280": 1
+    },
+    "output_budget_values_in_scripts": {
+      "count": 7759,
+      "gte_20000": 1694,
+      "maximum": 160000
+    },
+    "stored_output_proxies": {
+      "records": 11579,
+      "characters": 48961278,
+      "records_containing_truncated": 368
+    }
+  },
+  "dispatch": {
+    "count": 59,
+    "no_history": 52,
+    "default_full_history": 6,
+    "three_turns": 1,
+    "model_counts": [
+      {
+        "model": "gpt-6-astra",
+        "effort": "high",
+        "count": 23
+      },
+      {
+        "model": "gpt-6-astra",
+        "effort": "xhigh",
+        "count": 1
+      },
+      {
+        "model": "gpt-5.6-sol",
+        "effort": "high",
+        "count": 17
+      },
+      {
+        "model": "gpt-5.6-terra",
+        "effort": "high",
+        "count": 6
+      },
+      {
+        "model": "gpt-5.6-terra",
+        "effort": "medium",
+        "count": 4
+      },
+      {
+        "model": null,
+        "effort": null,
+        "count": 7
+      },
+      {
+        "model": "gpt-5.6-astra",
+        "effort": "high",
+        "count": 1,
+        "result": "rejected: Unknown model"
+      }
+    ],
+    "invalid_model_source": {
+      "path": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+      "call_line": 19737,
+      "result_line": 19739
+    }
+  },
+  "model_sources": {
+    "desktop_config": "/mnt/c/Users/thenam/.codex/config.toml",
+    "desktop_model": "gpt-6-astra",
+    "desktop_effort": "high",
+    "cli_config": "/home/thenam176/.codex/config.toml",
+    "cli_model": "gpt-5.6-terra",
+    "cli_effort": "medium",
+    "desktop_catalog": "/mnt/c/Users/thenam/.codex/models_cache.json",
+    "catalog_fetched_at": "2026-09-08T07:03:25.809823412Z",
+    "astra_supported_efforts": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max",
+      "ultra"
+    ],
+    "astra_catalog_default": "medium",
+    "official_docs": [
+      "https://developers.openai.com/api/docs/guides/latest-model",
+      "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+      "https://learn.chatgpt.com/docs/config-file/config-reference"
+    ]
+  },
+  "parent_cumulative_token_event": {
+    "source": "/mnt/c/Users/thenam/.codex/sessions/2026/09/05/rollout-2026-09-05T15-11-18-01a072fb-7a2e-7370-8664-f8fbd742d034.jsonl",
+    "usage": {
+      "input_tokens": 248573253,
+      "cached_input_tokens": 245717376,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 344508,
+      "reasoning_output_tokens": 146238,
+      "total_tokens": 248917761
+    },
+    "interpretation": "Single last sampled cumulative event, not account quota or unique context; no sum of child usage."
+  },
+  "inventory": {
+    "workflow_file_entries": 315,
+    "nested_instruction_files": 69,
+    "unique_instruction_contents": 10,
+    "instruction_groups": [
+      {
+        "sha256": "e69d77486291ea204747b7eb3a11a5025379f988822e887184b123336e9f7286",
+        "count": 23,
+        "representative": "discovery-runtime-v6.3.6-pre-sealed-pack-root-fix-20260906T0117Z/AGENTS.md"
+      },
+      {
+        "sha256": "ce565ffeaa4a55e57aa9fa4b4cead18500d4a1ebc1656aa28388719f4fcfeb14",
+        "count": 29,
+        "representative": "authoring-controller-config-worktree/pack/AGENTS.md"
+      },
+      {
+        "sha256": "7ea98c934de407b36649c3bbc27d9cc548904adbfd384a3a73326fd083173550",
+        "count": 4,
+        "representative": "plan-input/hybrid-discovery-v6.3.4-authoritative-design-plan/AGENTS.md"
+      },
+      {
+        "sha256": "d4800ec5870dce74330a70a1415b4f08e2fd55d927d9a740b6b978c6fd468a08",
+        "count": 7,
+        "representative": "plan-input/hybrid-discovery-v6.3.5-authoritative-design-plan/AGENTS.md"
+      },
+      {
+        "sha256": "4eeb0c20d5444aec1e80ee098903c4c9f097f16fb6eb079f475ce36bed191d05",
+        "count": 1,
+        "representative": "project/AGENTS.md"
+      },
+      {
+        "sha256": "3e5c284f860422275c38384bb55939b78ca329767f6e0e28df1df5fca98c7a5b",
+        "count": 1,
+        "representative": "hybrid-discovery-v6.3.5-authoring/runtime/AGENTS.md"
+      },
+      {
+        "sha256": "d389b187ab9714861a94f7276c2eadac755394f16d32b53a0222d540c76fdbe0",
+        "count": 1,
+        "representative": "discovery-runtime/AGENTS.md"
+      },
+      {
+        "sha256": "a15930c847eac5f5cbd9cea7a27eb6cc1a6a3a072b8316e5e9305223b31e8ebc",
+        "count": 1,
+        "representative": "hybrid-discovery-v6.3.4-authoring/runtime/AGENTS.md"
+      },
+      {
+        "sha256": "1d448dc1f656c5c43b07069a6d7aee3840c6052d44e342593e06ba36897faa7c",
+        "count": 1,
+        "representative": "archive/review-cycle2-rejected-20260906T0224Z/review-packs/hybrid-discovery-v6.2/AGENTS.md"
+      },
+      {
+        "sha256": "9ca0271ddb63bc06d2a5b171fd2f1355a3232da4d0576ec523a047f33960046b",
+        "count": 1,
+        "representative": "archive/review-cycle2-rejected-20260906T0224Z/review-packs/hybrid-discovery-v6.3.3-authoritative-design-plan/AGENTS.md"
+      }
+    ],
+    "top_level_file_counts_excluding_caches": {
+      "hybrid-discovery-v6.3.6-repair-plan.zip": 1,
+      "hybrid-discovery-implementation-pack-v6.1.zip.sha256": 1,
+      "hybrid-discovery-v6.3.6-repair-plan.md": 1,
+      "hybrid-discovery-implementation-pack-v6.1.zip": 1,
+      "discovery-runtime-v6.3.6-pre-sealed-pack-root-fix-20260906T0117Z": 387,
+      "authoring-evidence": 102,
+      "discovery-runtime-v6.3.6-pre-namespace-bin-fix-20260906T0041Z": 387,
+      "authoring-controller-config-worktree": 344,
+      "docs": 7,
+      "hybrid-discovery-v6.3.6-authoring-candidate-20260905-pre-evidence": 303,
+      "inputs": 7,
+      "discovery-runtime-v6.3.6-pre-p09-cli-bootstrap-20260905T2335Z": 387,
+      "hybrid-discovery-v6.3.6-authoring": 718,
+      "discovery-runtime-v6.3.6-pre-self-contained-hash-test-20260905T2327Z": 387,
+      "discovery-runtime-v6.3.6-pre-uv-cache-fix-20260906T0025Z": 387,
+      "discovery-runtime-v6.3.6-pre-sealed-source-closure-fix-20260906T0112Z": 387,
+      "plan-input": 638,
+      "discovery-runtime-v6.3.6": 611,
+      "project": 46,
+      "discovery-runtime-v6.3.6-pre-baseline-cli-fix-20260905T2230Z": 387,
+      "discovery-runtime-v6.3.6-pre-git-inventory-fix-20260905T2305Z": 387,
+      "hybrid-discovery-v6.3.6-plan-authoring": 939,
+      "review-workspaces": 5215,
+      "discovery-runtime-v6.3.6-pre-normalized-hash-fix-20260905T2311Z": 387,
+      "discovery-runtime-v6.3.6-pre-sealed-review-mechanical-fix-20260906T0112Z": 387,
+      "discovery-runtime-v6.3.6-pre-namespace-home-fix-20260906T0032Z": 387,
+      "hybrid-discovery-v6.3.5-authoring": 756,
+      "discovery-runtime": 234,
+      "discovery-runtime-v6.3.6-pre-venv-bind-fix-20260905T2237Z": 387,
+      "review-authorizations": 2,
+      "hybrid-discovery-v6.3.4-authoring": 744,
+      "discovery-runtime-v6.3.6-pre-pnpm-store-fix-20260906T0017Z": 387,
+      "hybrid-discovery-v6.3.5-plan-authoring": 160,
+      "discovery-runtime-v6.3.6-pre-final-portability-smoke-20260905T2254Z": 387,
+      "discovery-runtime-v6.3.6-pre-broker-tool-availability-fix-20260906T0047Z": 387,
+      "discovery-runtime-v6.3.6-pre-portable-test-fix-20260905T2320Z": 387,
+      "reviews": 7,
+      "discovery-runtime-v6.3.6-pre-review-launch-root-fix-20260905T2350Z": 387,
+      "review-packs": 197,
+      "archive": 52311,
+      "hybrid-discovery-v6.3.6-authoring-candidate-20260905": 303
+    },
+    "pre_fix_runtime_directories": 17,
+    "existing_root_agents_bytes": 0,
+    "new_root_agents_bytes": 3726,
+    "new_workflow_bytes": 8731,
+    "excluded_directories": [
+      ".git",
+      ".local",
+      ".mypy_cache",
+      ".pnpm-store",
+      ".pytest_cache",
+      ".ruff_cache",
+      ".test-build",
+      ".uv-cache",
+      ".venv",
+      "__pycache__",
+      "dist",
+      "node_modules"
+    ],
+    "excluded_nonregular_entries": 106
+  },
+  "baseline": {
+    "regular_files_hashed": 70232,
+    "repository_regular_files_hashed": 70227,
+    "external_configuration_files_hashed": 5,
+    "sha256_of_sorted_hash_inventory": "307efd6bf9b5045d546ef33fa83b43fc3661d1532f6ce9851fc2375d2363e975",
+    "nested_heads": {
+      ".": {
+        "exit": 128,
+        "stdout": ""
+      },
+      "discovery-runtime-v6.3.6": {
+        "exit": 0,
+        "stdout": "dd9d081ca9a04ac586203fb7b23d18cf40fc0b4a\n"
+      },
+      "hybrid-discovery-v6.3.6-authoring": {
+        "exit": 0,
+        "stdout": "5249e84b57b7bc4d30abc24f41ead64174ab7549\n"
+      },
+      "authoring-controller-config-worktree": {
+        "exit": 0,
+        "stdout": "67cefedc555ba8a0a29c61428b2cd82a4973d81b\n"
+      }
+    },
+    "authoring_initial_tracked_dirty_files": 14
+  },
+  "validation": {
+    "status": "COMPLETE: scoped tests and documentation checks pass; existing Python static failures retained; no-config full preflight HOLD; formal qualification not run",
+    "full_no_config": {
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_local.py",
+        "--profile",
+        "full"
+      ],
+      "exit": 2,
+      "report": {
+        "authoritative_controller": "NOT_EXECUTED",
+        "hold_codes": [
+          "CONTROLLER_CONFIG_UNBOUND"
+        ],
+        "prerequisites": [
+          {
+            "code": "CONTROLLER_CONFIG_UNBOUND",
+            "path": null,
+            "prerequisite_id": "source_owned_controller_config",
+            "status": "MISSING_CONFIGURATION"
+          }
+        ],
+        "production_authority": "NONE",
+        "profile": "full",
+        "schema_version": "full-verification-prerequisites/v1",
+        "status": "HOLD"
+      }
+    },
+    "checks": [
+      {
+        "check": "ci_contract",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/repairs/test_ci_profile_contract.py"
+        ],
+        "exit": 0,
+        "seconds": 0.23,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/ci_contract.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/ci_contract.stderr",
+        "output_lines": 2,
+        "tail": [
+          ".                                                                        [100%]",
+          "1 passed in 0.02s"
+        ]
+      },
+      {
+        "check": "typescript",
+        "argv": [
+          "pnpm",
+          "typecheck"
+        ],
+        "exit": 0,
+        "seconds": 5.84,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/typescript.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/typescript.stderr",
+        "output_lines": 4,
+        "tail": [
+          "> hybrid-discovery-repo0@6.2.0 typecheck /home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+          "> pnpm --dir extension exec tsc -p tsconfig.json --noEmit"
+        ]
+      },
+      {
+        "check": "ruff",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "ruff",
+          "check",
+          "src",
+          "tests",
+          "tools"
+        ],
+        "exit": 1,
+        "seconds": 0.04,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/ruff.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/ruff.stderr",
+        "output_lines": 318,
+        "tail": [
+          "   |",
+          "",
+          "Found 28 errors.",
+          "[*] 3 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option)."
+        ]
+      },
+      {
+        "check": "eslint",
+        "argv": [
+          "pnpm",
+          "lint"
+        ],
+        "exit": 0,
+        "seconds": 7.21,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/eslint.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/eslint.stderr",
+        "output_lines": 4,
+        "tail": [
+          "> hybrid-discovery-repo0@6.2.0 lint /home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+          "> pnpm --dir extension exec eslint src test test-red tools"
+        ]
+      },
+      {
+        "check": "mypy",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "mypy"
+        ],
+        "exit": 1,
+        "seconds": 6.38,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/mypy.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/mypy.stderr",
+        "output_lines": 176,
+        "tail": [
+          "tests/review/test_review_launch_authorization.py:694: error: Module \"tools.finalize_review\" does not explicitly export attribute \"sign_review_execution_receipt\"  [attr-defined]",
+          "tests/coverage/test_proof_coverage_matrix.py:45: error: Argument 1 to \"len\" has incompatible type \"object\"; expected \"Sized\"  [arg-type]",
+          "tests/coverage/test_proof_coverage_matrix.py:46: error: \"object\" has no attribute \"__iter__\"; maybe \"__dir__\" or \"__str__\"? (not iterable)  [attr-defined]",
+          "Found 163 errors in 29 files (checked 243 source files)"
+        ]
+      },
+      {
+        "check": "portable",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "tools/verify_local.py",
+          "--profile",
+          "portable"
+        ],
+        "exit": 0,
+        "seconds": 765.28,
+        "stdout_path": "/tmp/bh-codex-audit-validation-20260908/portable.stdout",
+        "stderr_path": "/tmp/bh-codex-audit-validation-20260908/portable.stderr",
+        "output_lines": 1,
+        "status": "PASS",
+        "results": [
+          {
+            "id": "compile_all_tests",
+            "exit": 0,
+            "summary": []
+          },
+          {
+            "id": "registry_self_check",
+            "exit": 0,
+            "summary": []
+          },
+          {
+            "id": "implemented_repair_tests",
+            "exit": 0,
+            "summary": [
+              "84 passed in 758.69s (0:12:38)"
+            ]
+          },
+          {
+            "id": "collect_all_repair_tests",
+            "exit": 0,
+            "summary": [
+              "350 tests collected in 0.19s"
+            ]
+          }
+        ]
+      }
+    ],
+    "generated_artifacts_restored": [
+      {
+        "path": "discovery-runtime-v6.3.6/extension/.test-build/src/contracts/clock-vectors.js",
+        "compiled_sha256": "3c1014398f5a4a578ca989a24c10e5bec0661a10b38fa0722220d43a1fb82ca8",
+        "entry_head_sha256": "5872721199672d6d4689c8cc4a83c70682050c0b977f489ee897c3cb3d5b666f"
+      },
+      {
+        "path": "discovery-runtime-v6.3.6/extension/.test-build/src/spool.js",
+        "compiled_sha256": "12c930bc9e116f391bca6baa45945653f2a7f8d93bf6d672530fba7badcace0d",
+        "entry_head_sha256": "bac7b0976c8ac19cee7f39a93064da47ec99a4856621adc38ffc4ad6fd8d75e6"
+      },
+      {
+        "path": "discovery-runtime-v6.3.6/extension/.test-build/test-harness/indexeddb-crash-child.js",
+        "compiled_sha256": "1a5afb9052b3649ed34ff57efeb0a935e85432e48909b0d8e3a8ecc18c30f864",
+        "entry_head_sha256": "706d3b428171db31ea600a3f1aff11eced2dd55d1f5b206a032180c54eadc79d"
+      },
+      {
+        "path": "discovery-runtime-v6.3.6/extension/.test-build/test/clock/clock-vectors.test.js",
+        "compiled_sha256": "07fd0cccea1095f432e7b8f83780d0480deda71af4abd0ce32345d5cade83c2f",
+        "entry_head_sha256": "3819ddb8018f3fffc16288839813187a015913baf05d07a7c0eb70e11b40290a"
+      },
+      {
+        "path": "discovery-runtime-v6.3.6/extension/.test-build/test/contracts/clock-coherence.test.js",
+        "compiled_sha256": "9f4f30e155ec3161857b445790f10831ee4bb0e758a9b04d94f7fe71eaf8d335",
+        "entry_head_sha256": "b5b75f93fa388523c0c792e837995ff62fb3207e132f3c7a7b2f0111363ff0e7"
+      }
+    ],
+    "generated_artifact_caveat": "Portable execution followed compilation. Five changed tracked generated files were restored to clean entry bytes; this is not qualification of restored generated outputs.",
+    "preservation": {
+      "regular_files_compared": 70232,
+      "changed_or_missing_preexisting_regular_files": [],
+      "added_regular_files": [
+        "AGENTS.md",
+        "docs/codex/audit-2026-09-08.md",
+        "docs/codex/audit-evidence-2026-09-08.json",
+        "docs/codex/workflow.md"
+      ],
+      "git": {
+        ".": {
+          "head_unchanged": true,
+          "root_status_delta": [
+            "?? AGENTS.md"
+          ]
+        },
+        "discovery-runtime-v6.3.6": {
+          "head_and_status_unchanged": true
+        },
+        "hybrid-discovery-v6.3.6-authoring": {
+          "head_and_status_unchanged": true
+        },
+        "authoring-controller-config-worktree": {
+          "head_and_status_unchanged": true
+        }
+      },
+      "markdown_sections": "A-N in exact order",
+      "local_links": "PASS",
+      "trailing_whitespace": "PASS",
+      "evidence_json_and_counts": "PASS",
+      "generated_outputs": "Restored to clean entry Git bytes, independently hash-checked"
+    }
+  },
+  "changes": [
+    "AGENTS.md",
+    "docs/codex/workflow.md",
+    "docs/codex/audit-2026-09-08.md",
+    "docs/codex/audit-evidence-2026-09-08.json"
+  ]
+}

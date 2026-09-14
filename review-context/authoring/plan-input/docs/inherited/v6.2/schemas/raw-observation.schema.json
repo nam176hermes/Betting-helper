@@ -1,0 +1,1249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+  "title": "Hybrid Discovery v6.2 RawObservation",
+  "x-semantic-rules": [
+    {
+      "rule_id": "LIFECYCLE_NO_STALE_EVIDENCE",
+      "predicate": "every pre-transition eligible document/display fact appears in invalidated_evidence_refs and no invalidated fact is eligible in after_context",
+      "error": "E_STALE_EVIDENCE_NOT_INVALIDATED",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "DISCARD_REPLACE_ROTATES_CONTEXT",
+      "predicate": "TAB_DISCARD and TAB_REPLACED require before_context.document_instance_id != after_context.document_instance_id and after navigation, debugger attachment, and session generations are strictly newer",
+      "error": "E_LIFECYCLE_CONTEXT_NOT_ROTATED",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "CHROME_RESTART_ROTATES_RUN",
+      "predicate": "BROWSER_RESTART requires before and after browser_boot_id and browser_run_id to differ, prior context sealed, and no automatic resume",
+      "error": "E_BROWSER_RUN_NOT_ROTATED",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "GAP_LINEAGE_COMPLETE",
+      "predicate": "gap_record_ref, reducer_cursor_ref, generation_transition_ref, and closed_epoch_ref bind the same stream transition and predecessor/replacement generations",
+      "error": "E_GAP_LINEAGE_REFERENCE",
+      "precedence_rank": 20
+    }
+  ],
+  "x-content-reference-type-bindings": [
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "APP_STATE_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#AppStateObservation"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "CAPACITY_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "DOM_VERIFICATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#DomVerificationObservation"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "artifact_type": "LIFECYCLE_OBSERVATION",
+      "schema_version": "raw-observation/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:raw-observation:v1#LifecycleObservation"
+    },
+    {
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json",
+      "artifact_type": "GAP_RECORD",
+      "schema_version": "gap-record/v1",
+      "schema_target": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json#GapRecord"
+    },
+    {
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json",
+      "artifact_type": "REDUCER_CURSOR",
+      "schema_version": "reducer-cursor/v1",
+      "schema_target": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json#ReducerCursor"
+    },
+    {
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json",
+      "artifact_type": "GENERATION_TRANSITION",
+      "schema_version": "generation-transition/v1",
+      "schema_target": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json#GenerationTransition"
+    },
+    {
+      "schema_id": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json",
+      "artifact_type": "FIXTURE_COHERENCE_EPOCH",
+      "schema_version": "fixture-coherence-epoch/v1",
+      "schema_target": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json#FixtureCoherenceEpoch"
+    }
+  ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/NetworkMetadataObservation"
+    },
+    {
+      "$ref": "#/$defs/AppStateObservation"
+    },
+    {
+      "$ref": "#/$defs/DomVerificationObservation"
+    },
+    {
+      "$ref": "#/$defs/LifecycleObservation"
+    },
+    {
+      "$ref": "#/$defs/ClockSampleObservation"
+    },
+    {
+      "$ref": "#/$defs/GapObservation"
+    },
+    {
+      "$ref": "#/$defs/TerminalObservation"
+    }
+  ],
+  "$defs": {
+    "ObservationBase": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "raw_observation_id",
+        "observation_kind",
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "capability_manifest_hash",
+        "discovery_run_id",
+        "run_receipt_hash",
+        "stream_id",
+        "generation",
+        "sequence",
+        "context",
+        "clock_context",
+        "sanitizer_version",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "raw-observation/v1"
+        },
+        "raw_observation_id": {
+          "type": "string",
+          "pattern": "^observation:[0-9a-f]{64}$"
+        },
+        "observation_kind": {
+          "enum": [
+            "NETWORK_METADATA",
+            "APP_STATE",
+            "DOM_VERIFICATION",
+            "LIFECYCLE",
+            "CLOCK_SAMPLE",
+            "GAP",
+            "TERMINAL"
+          ]
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "capability_manifest_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "discovery_run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "run_receipt_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "stream_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "generation": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "context": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+        },
+        "clock_context": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+        },
+        "sanitizer_version": {
+          "const": "sanitizer/v1"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "NetworkMetadataFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transport_id",
+        "target_type",
+        "transport_family",
+        "direction",
+        "resource_class",
+        "origin_match",
+        "pathname_template_id",
+        "mime_class",
+        "encoded_bytes",
+        "terminal_state"
+      ],
+      "properties": {
+        "transport_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "target_type": {
+          "const": "PAGE"
+        },
+        "transport_family": {
+          "enum": [
+            "HTTP",
+            "WEB_SOCKET",
+            "EVENT_SOURCE"
+          ]
+        },
+        "direction": {
+          "enum": [
+            "INBOUND",
+            "OUTBOUND"
+          ]
+        },
+        "resource_class": {
+          "enum": [
+            "DOCUMENT",
+            "XHR",
+            "WEB_SOCKET",
+            "EVENT_SOURCE",
+            "OTHER"
+          ]
+        },
+        "origin_match": {
+          "type": "boolean"
+        },
+        "pathname_template_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "mime_class": {
+          "enum": [
+            "JSON",
+            "TEXT",
+            "EVENT_STREAM",
+            "BINARY",
+            "UNKNOWN"
+          ]
+        },
+        "encoded_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "terminal_state": {
+          "enum": [
+            "FINISHED",
+            "FAILED_SANITIZED",
+            "OPEN"
+          ]
+        }
+      }
+    },
+    "CatalogFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "catalog_revision_id",
+        "competition_id",
+        "visible_fixture_count",
+        "checkpoint_id"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "CATALOG_FACT"
+        },
+        "catalog_revision_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "competition_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "visible_fixture_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "checkpoint_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        }
+      }
+    },
+    "FixtureFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "fixture_id",
+        "competition_id",
+        "fixture_state",
+        "scheduled_start_utc"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "FIXTURE_FACT"
+        },
+        "fixture_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "competition_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "fixture_state": {
+          "enum": [
+            "PRE_MATCH",
+            "FIRST_HALF",
+            "HALFTIME",
+            "SECOND_HALF",
+            "EXTRA_TIME",
+            "SUSPENDED",
+            "CLOSED",
+            "UNKNOWN"
+          ]
+        },
+        "scheduled_start_utc": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        }
+      }
+    },
+    "ThreeWayBookFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "fixture_id",
+        "horizon",
+        "book_revision_id",
+        "book_state",
+        "atomicity",
+        "selections"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "THREE_WAY_WINNER_BOOK_FACT"
+        },
+        "fixture_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "horizon": {
+          "enum": [
+            "H1",
+            "H2",
+            "FT"
+          ]
+        },
+        "book_revision_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "book_state": {
+          "enum": [
+            "OPEN",
+            "SUSPENDED",
+            "CLOSED",
+            "UNKNOWN"
+          ]
+        },
+        "atomicity": {
+          "enum": [
+            "ATOMIC",
+            "PARTIAL",
+            "INDETERMINATE"
+          ]
+        },
+        "selections": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "role",
+              "selection_id",
+              "decimal_price"
+            ],
+            "properties": {
+              "role": {
+                "enum": [
+                  "HOME",
+                  "DRAW",
+                  "AWAY"
+                ]
+              },
+              "selection_id": {
+                "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+              },
+              "decimal_price": {
+                "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+              }
+            }
+          }
+        }
+      }
+    },
+    "BetslipFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "betslip_instance_id",
+        "state",
+        "selection_count",
+        "human_created"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "BETSLIP_FACT"
+        },
+        "betslip_instance_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "state": {
+          "enum": [
+            "EMPTY",
+            "POPULATED",
+            "PRICE_CHANGED",
+            "UNAVAILABLE",
+            "UNKNOWN"
+          ]
+        },
+        "selection_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "human_created": {
+          "const": true
+        }
+      }
+    },
+    "PositionFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "position_id",
+        "position_revision_id",
+        "state",
+        "pre_existing"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "POSITION_FACT"
+        },
+        "position_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "position_revision_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "state": {
+          "enum": [
+            "ACCEPTED",
+            "REVISED",
+            "CLOSED",
+            "UNKNOWN"
+          ]
+        },
+        "pre_existing": {
+          "const": true
+        }
+      }
+    },
+    "CashoutFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_kind",
+        "position_id",
+        "offer_revision_id",
+        "offer_state",
+        "offer_scope",
+        "active_request_issued"
+      ],
+      "properties": {
+        "fact_kind": {
+          "const": "CASHOUT_OFFER_FACT"
+        },
+        "position_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "offer_revision_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "offer_state": {
+          "enum": [
+            "AVAILABLE",
+            "REVISED",
+            "REMOVED",
+            "EXPIRED",
+            "UNKNOWN"
+          ]
+        },
+        "offer_scope": {
+          "enum": [
+            "FULL",
+            "PARTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "active_request_issued": {
+          "const": false
+        }
+      }
+    },
+    "AppStateFacts": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CatalogFact"
+        },
+        {
+          "$ref": "#/$defs/FixtureFact"
+        },
+        {
+          "$ref": "#/$defs/ThreeWayBookFact"
+        },
+        {
+          "$ref": "#/$defs/BetslipFact"
+        },
+        {
+          "$ref": "#/$defs/PositionFact"
+        },
+        {
+          "$ref": "#/$defs/CashoutFact"
+        }
+      ]
+    },
+    "DomVerificationFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "probe_id",
+        "verification_status",
+        "observed_document_instance_id",
+        "observed_navigation_epoch"
+      ],
+      "properties": {
+        "probe_id": {
+          "enum": [
+            "APP_LOCATION_CONTEXT_V1",
+            "DOM_DOCUMENT_LIFECYCLE_V1"
+          ]
+        },
+        "verification_status": {
+          "enum": [
+            "VERIFIED",
+            "MISMATCH",
+            "NOT_OBSERVED"
+          ]
+        },
+        "observed_document_instance_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "observed_navigation_epoch": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "fixture_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        }
+      }
+    },
+    "LifecycleFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lifecycle_event",
+        "before_context",
+        "after_context",
+        "continuity_disposition",
+        "pre_transition_evidence_state",
+        "post_transition_evidence_state",
+        "prior_context_disposition",
+        "stale_evidence_disposition",
+        "invalidated_evidence_refs",
+        "authority_disposition",
+        "automatic_resume",
+        "manual_rebind_required"
+      ],
+      "properties": {
+        "lifecycle_event": {
+          "enum": [
+            "FIXTURE_NAVIGATION",
+            "DOCUMENT_REFRESH",
+            "SPA_NAVIGATION",
+            "BFCACHE_ACTIVATION",
+            "TAB_DISCARD",
+            "TAB_REPLACED",
+            "SERVICE_WORKER_RESTART",
+            "BROWSER_RESTART",
+            "SLEEP_RESUME",
+            "DEBUGGER_DETACH",
+            "DEBUGGER_REATTACH"
+          ]
+        },
+        "before_context": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+        },
+        "after_context": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+        },
+        "continuity_disposition": {
+          "enum": [
+            "CONTIGUOUS",
+            "NEW_DOCUMENT_REQUIRED",
+            "NEW_RUN_REQUIRED",
+            "GAP_REQUIRED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "pre_transition_evidence_state": {
+          "enum": [
+            "ACTIVE",
+            "SEALED"
+          ]
+        },
+        "post_transition_evidence_state": {
+          "enum": [
+            "REVERIFY_REQUIRED",
+            "MANUAL_REBIND_REQUIRED",
+            "NEW_RUN_AUTHORIZATION_REQUIRED",
+            "CLOCK_MAPPING_AND_RESNAPSHOT_REQUIRED",
+            "RESTORE_DURABLE_CURSOR_REQUIRED"
+          ]
+        },
+        "prior_context_disposition": {
+          "enum": [
+            "INVALIDATED",
+            "SEALED"
+          ]
+        },
+        "stale_evidence_disposition": {
+          "const": "INVALIDATED"
+        },
+        "invalidated_evidence_refs": {
+          "type": "array",
+          "maxItems": 256,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+          }
+        },
+        "authority_disposition": {
+          "enum": [
+            "RETAINED_WITHIN_AUTHORIZED_RUN",
+            "REAUTHORIZATION_REQUIRED",
+            "NEW_RUN_AUTHORIZATION_REQUIRED"
+          ]
+        },
+        "automatic_resume": {
+          "const": false
+        },
+        "manual_rebind_required": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "enum": [
+                  "TAB_DISCARD",
+                  "TAB_REPLACED",
+                  "DEBUGGER_DETACH"
+                ]
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "manual_rebind_required": {
+                "const": true
+              },
+              "post_transition_evidence_state": {
+                "const": "MANUAL_REBIND_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "SEALED"
+              },
+              "invalidated_evidence_refs": {
+                "minItems": 1
+              },
+              "authority_disposition": {
+                "const": "REAUTHORIZATION_REQUIRED"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "const": "BROWSER_RESTART"
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "continuity_disposition": {
+                "const": "NEW_RUN_REQUIRED"
+              },
+              "post_transition_evidence_state": {
+                "const": "NEW_RUN_AUTHORIZATION_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "SEALED"
+              },
+              "invalidated_evidence_refs": {
+                "minItems": 1
+              },
+              "authority_disposition": {
+                "const": "NEW_RUN_AUTHORIZATION_REQUIRED"
+              },
+              "automatic_resume": {
+                "const": false
+              },
+              "manual_rebind_required": {
+                "const": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "enum": [
+                  "FIXTURE_NAVIGATION",
+                  "DOCUMENT_REFRESH",
+                  "SPA_NAVIGATION",
+                  "BFCACHE_ACTIVATION"
+                ]
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "post_transition_evidence_state": {
+                "const": "REVERIFY_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "INVALIDATED"
+              },
+              "invalidated_evidence_refs": {
+                "minItems": 1
+              },
+              "authority_disposition": {
+                "const": "RETAINED_WITHIN_AUTHORIZED_RUN"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "const": "SERVICE_WORKER_RESTART"
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "post_transition_evidence_state": {
+                "const": "RESTORE_DURABLE_CURSOR_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "SEALED"
+              },
+              "authority_disposition": {
+                "const": "RETAINED_WITHIN_AUTHORIZED_RUN"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "const": "SLEEP_RESUME"
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "post_transition_evidence_state": {
+                "const": "CLOCK_MAPPING_AND_RESNAPSHOT_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "SEALED"
+              },
+              "invalidated_evidence_refs": {
+                "minItems": 1
+              },
+              "authority_disposition": {
+                "const": "RETAINED_WITHIN_AUTHORIZED_RUN"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle_event": {
+                "const": "DEBUGGER_REATTACH"
+              }
+            },
+            "required": [
+              "lifecycle_event"
+            ]
+          },
+          "then": {
+            "properties": {
+              "post_transition_evidence_state": {
+                "const": "REVERIFY_REQUIRED"
+              },
+              "prior_context_disposition": {
+                "const": "SEALED"
+              },
+              "invalidated_evidence_refs": {
+                "minItems": 1
+              },
+              "authority_disposition": {
+                "const": "REAUTHORIZATION_REQUIRED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ClockSampleFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_id",
+        "source_clock",
+        "target_clock",
+        "t1_us",
+        "t2_us",
+        "t3_us",
+        "t4_us",
+        "mapping_disposition"
+      ],
+      "properties": {
+        "sample_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "source_clock": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+        },
+        "target_clock": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+        },
+        "t1_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "t2_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "t3_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "t4_us": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "mapping_disposition": {
+          "enum": [
+            "VALID",
+            "REJECTED_ORDER",
+            "REJECTED_DOMAIN",
+            "REJECTED_RTT",
+            "REJECTED_UNCERTAINTY"
+          ]
+        }
+      }
+    },
+    "GapRecordReference": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "GAP_RECORD"
+            },
+            "schema_id": {
+              "const": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json"
+            },
+            "schema_version": {
+              "const": "gap-record/v1"
+            }
+          }
+        }
+      ]
+    },
+    "ReducerCursorReference": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "REDUCER_CURSOR"
+            },
+            "schema_id": {
+              "const": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json"
+            },
+            "schema_version": {
+              "const": "reducer-cursor/v1"
+            }
+          }
+        }
+      ]
+    },
+    "GenerationTransitionReference": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "GENERATION_TRANSITION"
+            },
+            "schema_id": {
+              "const": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json"
+            },
+            "schema_version": {
+              "const": "generation-transition/v1"
+            }
+          }
+        }
+      ]
+    },
+    "ClosedFixtureCoherenceEpochReference": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+        },
+        {
+          "properties": {
+            "artifact_type": {
+              "const": "FIXTURE_COHERENCE_EPOCH"
+            },
+            "schema_id": {
+              "const": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json"
+            },
+            "schema_version": {
+              "const": "fixture-coherence-epoch/v1"
+            }
+          }
+        }
+      ]
+    },
+    "GapFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gap_id",
+        "predecessor_generation",
+        "replacement_generation",
+        "first_missing_sequence",
+        "last_missing_sequence",
+        "reason_code",
+        "gap_record_ref",
+        "reducer_cursor_ref",
+        "generation_transition_ref",
+        "closed_epoch_ref"
+      ],
+      "properties": {
+        "gap_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+        },
+        "predecessor_generation": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "replacement_generation": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "first_missing_sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "last_missing_sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+        },
+        "reason_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "gap_record_ref": {
+          "$ref": "#/$defs/GapRecordReference"
+        },
+        "reducer_cursor_ref": {
+          "$ref": "#/$defs/ReducerCursorReference"
+        },
+        "generation_transition_ref": {
+          "$ref": "#/$defs/GenerationTransitionReference"
+        },
+        "closed_epoch_ref": {
+          "$ref": "#/$defs/ClosedFixtureCoherenceEpochReference"
+        }
+      }
+    },
+    "TerminalFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "terminal_code",
+        "final_generation",
+        "final_sequence",
+        "observation_count",
+        "gap_count",
+        "safety_disposition"
+      ],
+      "properties": {
+        "terminal_code": {
+          "enum": [
+            "COMPLETED",
+            "MANUAL_STOP",
+            "BUDGET_STOP",
+            "SECURITY_STOP",
+            "REVOCATION_STOP",
+            "BROWSER_EXIT",
+            "BACKEND_EXIT"
+          ]
+        },
+        "final_generation": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "final_sequence": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "observation_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "gap_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "safety_disposition": {
+          "enum": [
+            "CLEAN",
+            "PARTIAL_EVIDENCE_ONLY",
+            "INVALIDATED"
+          ]
+        }
+      }
+    },
+    "NetworkMetadataObservation": {
+      "$anchor": "NetworkMetadataObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "NETWORK_METADATA"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/NetworkMetadataFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "AppStateObservation": {
+      "$anchor": "AppStateObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "APP_STATE"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/AppStateFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "DomVerificationObservation": {
+      "$anchor": "DomVerificationObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "DOM_VERIFICATION"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/DomVerificationFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "LifecycleObservation": {
+      "$anchor": "LifecycleObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "LIFECYCLE"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/LifecycleFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ClockSampleObservation": {
+      "$anchor": "ClockSampleObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "CLOCK_SAMPLE"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/ClockSampleFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "GapObservation": {
+      "$anchor": "GapObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "GAP"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RunBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/GapFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "TerminalObservation": {
+      "$anchor": "TerminalObservation",
+      "allOf": [
+        {
+          "$ref": "#/$defs/ObservationBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "facts"
+          ],
+          "properties": {
+            "observation_kind": {
+              "const": "TERMINAL"
+            },
+            "context": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RunBoundContext"
+            },
+            "facts": {
+              "$ref": "#/$defs/TerminalFacts"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

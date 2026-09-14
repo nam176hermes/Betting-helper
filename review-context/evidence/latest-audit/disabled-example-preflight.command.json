@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "-B",
+    "tools/live_preflight_batched.py",
+    "--config",
+    "config/live-batched.example.json"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 2,
+  "seconds": 0.4153201509907376,
+  "log": "disabled-example-preflight.log",
+  "log_sha256": "f08778ab74aac80d83e61157bdd009208fa7c594f531078742bec2ab72d651ad",
+  "browser_platform": null
+}

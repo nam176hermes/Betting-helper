@@ -1,0 +1,586 @@
+{
+  "status": "PREPARED_WAITING_HUMAN_FRESH_SESSIONS",
+  "source": {
+    "runtime": {
+      "head": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "tree": "075fec1dace3115aabd9f1f4380ce6c802bd2d80",
+      "source_diff": ""
+    },
+    "authoring_head": "959439f492b6bd385bfdce57443733a00044aebc",
+    "authoring_tree": "3faafd6fa719a08e00c0352b909b1b1901018ed7",
+    "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+    "controller_binding": {
+      "schema_version": "full-verifier-controller-binding/v2",
+      "config_sha256": "369af32c8e9956a3805bf15e48d06444d7841232e6eae9ffde3625d7a41d9ffb",
+      "accepted_authoring_ancestor": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
+      "current_checkout_root": "/home/thenam176/betting-helper/part-b-candidate",
+      "governed_source_pack": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
+      "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24",
+      "external_authoring_tests": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
+      "external_authoring_source_sha256": "b23d94a5e8b86a28e565a9e168fda4b7b352b6a29602baa7d7cfdd1d9ad2f9ca",
+      "external_authoring_command": {
+        "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+        "argv": [
+          "uv",
+          "run",
+          "--project",
+          "/home/thenam176/betting-helper/part-b-candidate",
+          "--frozen",
+          "--offline",
+          "python",
+          "-I",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
+          "-c",
+          "/dev/null",
+          "--confcutdir",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+          "-o",
+          "cache_dir=/tmp/bh-v636-authoring-tests",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs/plan-input/bootstrap/test_bootstrap_tools.py"
+        ]
+      },
+      "uv_cache": "/home/thenam176/.cache/uv",
+      "pnpm_store": "/home/thenam176/.local/share/pnpm/store/v10",
+      "chrome": {
+        "path": "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
+        "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
+      },
+      "receipts": {
+        "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      },
+      "audited_runtime_ancestor": "7cd7ab14652458608386d940bdc7764910044f6a",
+      "qualification_evidence": {
+        "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json"
+      }
+    },
+    "worker_real_provider_attempts": 0,
+    "worker_operator_captures": 0,
+    "worker_live_sessions": 0,
+    "worker_primary_credential_slot_accesses": 0,
+    "historical_toolchain_skips": 11
+  },
+  "operations": {
+    "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "results": [
+      {
+        "command_id": "VERIFY_V636_P08_T01",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "tools/qualify_descendant_repository.py",
+          "--root",
+          "/home/thenam176/betting-helper/part-b-candidate",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--output",
+          "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T01.json",
+          "--preflight"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "44e30369d9db82e2ea6c74a51a2e686c12fb1d80f5a64912370a029afd76c57f",
+        "stdout_size_bytes": "3667",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 0.4416066549893003
+      },
+      {
+        "command_id": "VERIFY_V636_P08_T02",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "tools/qualify_descendant_repository.py",
+          "--root",
+          "/home/thenam176/betting-helper/part-b-candidate",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--issue",
+          "--receipt",
+          "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+          "--output",
+          "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T02.json"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "a7f41c79c98d1bd83ed3f598be695ab6ff33b73796d5ed8bcf3ab6b3969656ab",
+        "stdout_size_bytes": "2114",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 911.182813647989
+      },
+      {
+        "command_id": "VERIFY_V636_P08_T03",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "tools/qualify_descendant_repository.py",
+          "--root",
+          "/home/thenam176/betting-helper/part-b-candidate",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--check-only",
+          "--receipt",
+          "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json",
+          "--output",
+          "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P08-T03.json"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "a7f41c79c98d1bd83ed3f598be695ab6ff33b73796d5ed8bcf3ab6b3969656ab",
+        "stdout_size_bytes": "2114",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 464.7095511650259
+      },
+      {
+        "command_id": "VERIFY_V636_P09_T01",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "-B",
+          "tools/assemble_review_pack.py",
+          "--source",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
+          "--destination",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--retained-manifest",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json",
+          "--retained-root",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "37e626cc564994ec566ebcbf8ece7275c6d80c087e95ff967c9ec4be4ab02f44",
+        "stdout_size_bytes": "15433",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 1668.1889238510048,
+        "attempt_evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/p09-retry-1"
+      },
+      {
+        "command_id": "VERIFY_V636_P09_T02",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "-B",
+          "tools/compute_governed_content_root.py",
+          "--pack",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack",
+          "--registry",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/registries/seal-exclusions.v1.json"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "280fc997e46edeb51c99a91f0db936655c8515c3b12363811fe172cf82668851",
+        "stdout_size_bytes": "261",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 0.7776743400027044,
+        "attempt_evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/p09-retry-1"
+      },
+      {
+        "command_id": "VERIFY_V636_P09_T03",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "-B",
+          "tools/build_self_review.py",
+          "--governed-root",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/GOVERNED_CONTENT_ROOT.json",
+          "--repository-receipt",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/receipts/descendant-repository-qualification-receipt.json",
+          "--output-dir",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/configs/full-verifier-controller.v2.json",
+          "--recorded-config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--retained-manifest",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json",
+          "--retained-root",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "85e4ce6a1037c06f82d67473f8cd2bccd9fa7a2321a653de7d8abcd84db78cac",
+        "stdout_size_bytes": "916",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 1031.698159676016,
+        "attempt_evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/p09-retry-1"
+      },
+      {
+        "command_id": "VERIFY_V636_P09_T04",
+        "argv": [
+          "uv",
+          "run",
+          "--frozen",
+          "--offline",
+          "python",
+          "-B",
+          "tools/seal_review_pack.py",
+          "--pack",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack",
+          "--config",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/docs/configs/full-verifier-controller.v2.json",
+          "--recorded-config",
+          "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+          "--retained-manifest",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained-artifact-manifest.json",
+          "--retained-root",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack/evidence/retained",
+          "--zip",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip",
+          "--sidecar",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack.zip.sha256",
+          "--attestation",
+          "/home/thenam176/betting-helper/part-b-review-host-r24/pack.seal-attestation.json"
+        ],
+        "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+        "exit_code": 0,
+        "expected_exit": 0,
+        "passed": true,
+        "stdout_sha256": "7059846ce2c0586b5e6a18f100d6620f14519438a8790d556da05e68f1a19efd",
+        "stdout_size_bytes": "1226",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_size_bytes": "0",
+        "duration_seconds": 1038.523832404986,
+        "attempt_evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/p09-retry-1"
+      }
+    ],
+    "complete": true,
+    "prior_failed_attempt": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/p09-retry-1/previous-p08-p09-outcome.json",
+    "production_authority": "NONE"
+  },
+  "stages": {
+    "full-controller": {
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_local.py",
+        "--profile",
+        "full",
+        "--config",
+        "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "interrupted": false,
+      "started_at": "2026-09-13T16:13:49.424247+00:00",
+      "finished_at": "2026-09-13T17:48:45.523915+00:00",
+      "duration_seconds": 5696.099701818981,
+      "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "log_sha256": "263990645f619454c03c1482f049303d9c6f04b71918811028884add9de94442",
+      "worker_real_provider_attempts": 0,
+      "worker_operator_captures": 0,
+      "worker_primary_credential_slot_accesses": 0
+    },
+    "mock-qualification": {
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_part_b.py",
+        "--profile",
+        "mock",
+        "--output",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/mock-8570c78"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "interrupted": false,
+      "started_at": "2026-09-13T17:48:45.634351+00:00",
+      "finished_at": "2026-09-13T18:03:32.448058+00:00",
+      "duration_seconds": 886.8137191549758,
+      "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "log_sha256": "cc7e3362aff145a15eeceb6ed20a06d818ab115a719919f9895a666745ffad43",
+      "worker_real_provider_attempts": 0,
+      "worker_operator_captures": 0,
+      "worker_primary_credential_slot_accesses": 0
+    },
+    "platform-qualification": {
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/qualify_live_platform.py",
+        "--config",
+        "config/live-batched.example.json",
+        "--output",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/platform-8570c78"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "interrupted": false,
+      "started_at": "2026-09-13T18:03:32.558330+00:00",
+      "finished_at": "2026-09-13T18:03:45.235211+00:00",
+      "duration_seconds": 12.676898892997997,
+      "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "log_sha256": "c26de83abdc9496cd1301470918ec39ecca1cf389ef0ae1c6504da1800d1c431",
+      "worker_real_provider_attempts": 0,
+      "worker_operator_captures": 0,
+      "worker_primary_credential_slot_accesses": 0
+    },
+    "package-build": {
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/package_part_b.py",
+        "--output",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/delivery-8570c78"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "interrupted": false,
+      "started_at": "2026-09-13T18:03:45.341716+00:00",
+      "finished_at": "2026-09-13T18:03:51.496054+00:00",
+      "duration_seconds": 6.15435041199089,
+      "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "log_sha256": "8177c50d1312996d76447948aea9834fe8991d4dd4303416a5a274606bb46f53",
+      "worker_real_provider_attempts": 0,
+      "worker_operator_captures": 0,
+      "worker_primary_credential_slot_accesses": 0
+    }
+  },
+  "prepared": {
+    "status": "PREPARED_WAITING_HUMAN_FRESH_SESSIONS",
+    "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "roles": [
+      {
+        "role": "IMPLEMENTATION_READINESS_REVIEWER",
+        "authorization_path": "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/ed622e15-194e-4177-9ea0-d2b168e5193a.json",
+        "authorization_sha256": "f0463f7d36c4f7b24adf6960e71daccb39a7b0cb46f9a5d33cf2bcaff9dd7728",
+        "review_run_id": "ed622e15-194e-4177-9ea0-d2b168e5193a",
+        "issued_at": "2026-09-13T20:56:48.188533+00:00",
+        "expires_at": "2026-09-14T04:56:48.188533+00:00",
+        "workspace_root": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a",
+        "output_root": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a",
+        "prompt_path": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/ed622e15-194e-4177-9ea0-d2b168e5193a/prompt.md",
+        "prompt_sha256": "8a082c3ad1d5efe67c0b2c9b49da44865ee6bd2c23d09a66ad82a19c60194c7b",
+        "human_fresh_session_attestation": null,
+        "namespace_observed_after_launcher_exit": {
+          "authorization_id": "REVIEW-LAUNCH:fc31ab20b2dd8486151aa76b85d2d958d2dd7deba3bb86c3ef1d17fb3435f065",
+          "command_registry_sha256": "3822bf86024cb1980212b15c80b2d088d5548180a652f0a506f43de5fa851472",
+          "expires_at": "2026-09-14T04:56:48.188533+00:00",
+          "host_boot_id": "d3c3c2f2-bb4d-494d-989b-f9345817928c",
+          "namespaces": {
+            "mnt": 4026532287,
+            "net": 4026532447,
+            "pid": 4026532446,
+            "user": 4026532507
+          },
+          "pid": 2128942,
+          "schema_version": "review-namespace/v2",
+          "socket_path": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-a/ed622e15-194e-4177-9ea0-d2b168e5193a/scratch/tmp/namespace.sock",
+          "start_ticks": "15215347"
+        }
+      },
+      {
+        "role": "CYBERSECURITY_REVIEWER",
+        "authorization_path": "/home/thenam176/betting-helper/part-b-review-host-r24/authorizations/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6.json",
+        "authorization_sha256": "e928bc0336956cb7e01f18eb2bd60e041392aea7c85d91b7d741286c2cc3675a",
+        "review_run_id": "cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+        "issued_at": "2026-09-13T21:14:51.718903+00:00",
+        "expires_at": "2026-09-14T05:14:51.718903+00:00",
+        "workspace_root": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+        "output_root": "/home/thenam176/betting-helper/part-b-review-host-r24/results/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6",
+        "prompt_path": "/home/thenam176/betting-helper/part-b-candidate/.local/part-b/review-inputs/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/prompt.md",
+        "prompt_sha256": "a876a434ba4c15c1903b44c2b3d6f5a3b17f5435727b66e278ed20a95bb17791",
+        "human_fresh_session_attestation": null,
+        "namespace_observed_after_launcher_exit": {
+          "authorization_id": "REVIEW-LAUNCH:fa6182cc93bd96f4b09ed9921c0a9eb9fdea6e019aca3c93f6f2ab7ee12a49f2",
+          "command_registry_sha256": "2f0414624388b0e01272572fadd9f7a6a5f00b0fd7d5a2331f5bfd02f5951a59",
+          "expires_at": "2026-09-14T05:14:51.718903+00:00",
+          "host_boot_id": "d3c3c2f2-bb4d-494d-989b-f9345817928c",
+          "namespaces": {
+            "mnt": 4026532511,
+            "net": 4026532515,
+            "pid": 4026532514,
+            "user": 4026532575
+          },
+          "pid": 2338417,
+          "schema_version": "review-namespace/v2",
+          "socket_path": "/home/thenam176/betting-helper/part-b-review-host-r24/workspaces/review-b/cce3ef6b-8fa5-4765-9b5a-63f6c84637e6/scratch/tmp/namespace.sock",
+          "start_ticks": "15322871"
+        }
+      }
+    ],
+    "human_action_required": "Start two genuinely fresh Codex sessions using the exact resolved prompt and workspace for each role; do not fork implementation history. Attest the actual event only after it occurred.",
+    "mechanical_execution": "NOT_EXECUTED",
+    "review_results": "NOT_SUPPLIED",
+    "independent_review_receipts": "NOT_CREATED",
+    "production_authority": "NONE"
+  },
+  "delivery": {
+    "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "handoff_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/handoff-8570c78b",
+    "desktop_root": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b",
+    "files": {
+      "CODEX_CYBERSECURITY_REVIEW_PROMPT.md": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
+        "sha256": "edf5f9113a0f52cfcc73cba77bc14862d7066e320aa3dd2ce4effbba4e1386a5",
+        "size_bytes": 448
+      },
+      "CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
+        "sha256": "8353f0f9aa4ec9e76c72d0c58308e5740089d66316540a2a79eb25b8934a7f44",
+        "size_bytes": 488
+      },
+      "HOST_HANDOFF.json": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/HOST_HANDOFF.json",
+        "sha256": "202de786951bdd6c072a94443cb9a19e11a2dc9012800baf7d7375006750f939",
+        "size_bytes": 16470
+      },
+      "HUONG_DAN_REVIEW_VI.md": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/HUONG_DAN_REVIEW_VI.md",
+        "sha256": "f515f2bf512a64512bb19da0d595eadcd3f1e0e843e12ae4e0d330a4bb97aaa3",
+        "size_bytes": 3548
+      },
+      "betting-helper-part-b.zip": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/betting-helper-part-b.zip",
+        "sha256": "24a6325e58d61ef648d7218bdcdbb2079094be8e4d9baf7c9a592a6b7c7e1e59",
+        "size_bytes": 131227
+      },
+      "betting-helper-part-b.zip.sha256": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/betting-helper-part-b.zip.sha256",
+        "sha256": "e3f862342b42068d22f0d1913d376b4902ab72c051f11597c9113dad080f5e05",
+        "size_bytes": 92
+      },
+      "pack.seal-attestation.json": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/pack.seal-attestation.json",
+        "sha256": "aec3255cafa1bc265503a0423d363990fcfc86595ec3ecfc97e6dddb672954ca",
+        "size_bytes": 1193
+      },
+      "pack.zip": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/pack.zip",
+        "sha256": "2cfe4ad84189db200b3f06ab7bd55d9703aaf11fa0db74381036dd2ef2a909ab",
+        "size_bytes": 142233451
+      },
+      "pack.zip.sha256": {
+        "path": "/mnt/c/Users/thenam/Desktop/Betting-Helper-Review-8570c78b/pack.zip.sha256",
+        "sha256": "ecc02b72c8e22752700a07c57b162672654f5d944e6aa785ace9a6cb62d0c13f",
+        "size_bytes": 75
+      }
+    },
+    "authority": "NONE"
+  },
+  "post_seal": [
+    {
+      "argv": [
+        "/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python",
+        "-B",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/prepare_handoff.py"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "started_at": "2026-09-13T20:56:43.410486+00:00",
+      "finished_at": "2026-09-13T20:56:47.268500+00:00",
+      "log_sha256": "22855a0b438180d897a5b31175cc37ca8396cb4bc468fcd7cfa7110f85019d2b"
+    },
+    {
+      "argv": [
+        "/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python",
+        "-B",
+        "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/start_review_ab.py"
+      ],
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "exit": 0,
+      "started_at": "2026-09-13T20:56:47.269180+00:00",
+      "finished_at": "2026-09-13T22:09:09.933713+00:00",
+      "log_sha256": "24ab89b372ad433db6caede867d82ebc667f345ce1b233d06a821b16a30e31eb"
+    }
+  ],
+  "verdicts": {
+    "PART_B_MOCK_PASS": true,
+    "PROVIDER_PROBE_PASS": "NOT_REVALIDATED_FOR_CURRENT_CANDIDATE",
+    "OPERATOR_PROFILE_ACCEPTED": false,
+    "PLATFORM_BRIDGE_PASS": "PASS_WINDOWS_CHROME_WSL2_SYNTHETIC_DATA",
+    "LIVE_READ_ONLY_PASS_ONE": false,
+    "LIVE_READ_ONLY_PASS_THREE": false,
+    "LIVE_READ_ONLY_PASS_FIVE": false,
+    "SCOPE0_READY_FOR_REVIEW": "NOT_ESTABLISHED",
+    "INDEPENDENT_LIVE_SECURITY_REVIEW": "NOT_RUN",
+    "MODEL_ENABLED": false,
+    "MONEY_READY": "NO"
+  },
+  "evidence_sha256": {
+    "FROZEN_CAMPAIGN.json": "c687e0ddd72e08081a0ff2c5b08fbe2a11233d809b48fa632eb5f89de125b434",
+    "CANDIDATE_QUALIFICATION.json": "06a9c521a20c1711d8bcee4608451f930196b02899ee144d6d9b3d6878c5f3a1",
+    "DESCENDANT_REPOSITORY_QUALIFICATION.json": "9a40210e1f0dd62dad962173307d614aa2a2f94fb0e84cabdd738bde5b8f14ee",
+    "p08-p09-outcome.json": "e90c3e1e8ebedd982cac9b3a59cc57cb06d363c66c97a467a955759fc60bad78",
+    "review-ab-launch-1/PREPARED_REVIEW_AB.json": "afb5d0e2d62e8a07db8e86de13e04ac8311cc7a172d275b2b3185afaac89fa6f",
+    "review-ab-launch-1/outcome.json": "86039530b3bbbc071765ba848c89d06a4ab2910b166ba49fe41c5bbedc4aa764"
+  },
+  "accepted_profile_sha256": null,
+  "provider_http_attempts": 0,
+  "operator_captures": 0,
+  "live_sessions": 0,
+  "primary_credential_accesses": 0,
+  "human_sessions_created": 0,
+  "independent_review_receipts": 0,
+  "limitations": [
+    "Fresh human-started A/B sessions, actual independent judgments and host finalization/aggregation remain required.",
+    "Preparation isolates mechanical command namespaces; selecting a Codex project folder alone does not establish OS containment of the whole reviewer task.",
+    "Platform qualification uses isolated browsers and synthetic data, not actual operator capture or provider response.",
+    "No actual operator DOM/profile, current probe or real match/live session acceptance.",
+    "Old generated dirty outputs preserved; existing broader mypy test debt is recorded in REPAIR_REPORT.json."
+  ],
+  "production_authority": "NONE"
+}

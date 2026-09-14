@@ -1,0 +1,33 @@
+{
+  "schema_version": "full-verifier-controller/v1",
+  "production_authority": "NONE",
+  "accepted_authoring_ancestor": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
+  "current_checkout_root": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+  "governed_source_pack": "/home/thenam176/betting-helper/authoring-controller-config-worktree/pack",
+  "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller",
+  "external_authoring_tests": "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
+  "external_authoring_source_sha256": "2f23dbee243a45f2808ccbb005c02f49dc09715680613c48fde2bce70272c6ce",
+  "external_authoring_command": {
+    "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+    "argv": [
+      "uv", "run", "--project", "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "--frozen", "--offline", "python", "-I", "-B", "-m", "pytest", "-q",
+      "/home/thenam176/betting-helper/authoring-controller-config-worktree/authoring-tests",
+      "-c", "/dev/null", "--confcutdir", "/home/thenam176/betting-helper/authoring-controller-config-worktree",
+      "-o", "cache_dir=/tmp/bh-v636-authoring-tests"
+    ]
+  },
+  "uv_cache": "/home/thenam176/.cache/uv",
+  "pnpm_store": "/home/thenam176/.local/share/pnpm/store/v10",
+  "chrome": {
+    "path": "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
+    "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
+  },
+  "receipts": {
+    "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/bootstrap/authoring-repository-receipt.json",
+    "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T01.json",
+    "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T02.json",
+    "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/V636-P07-T03.json",
+    "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/hybrid-discovery-v6.3.6-controller/CANDIDATE_QUALIFICATION.json"
+  }
+}

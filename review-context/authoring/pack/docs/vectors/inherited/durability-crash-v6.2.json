@@ -1,0 +1,429 @@
+{
+  "schema_version": "1",
+  "vector_set_id": "DURABILITY_CRASH_V1",
+  "guarantee": "EFFECTIVELY_ONCE_AFTER_DURABLE_LOCAL_SPOOL_COMMIT",
+  "ordering": {
+    "stream_key": ["browser_run_id", "producer_id", "stream_id"],
+    "generation_key": ["browser_run_id", "producer_id", "stream_id", "generation"],
+    "position": ["browser_run_id", "producer_id", "stream_id", "generation", "sequence"],
+    "initial_generation": 0,
+    "initial_sequence": 1,
+    "replacement_rule": "SUCCESSOR_EQUALS_PREDECESSOR_PLUS_ONE"
+  },
+  "cursor_chain": {
+    "seed_domain": "HYBRID-DISCOVERY/v6.2/CursorSeed/v1\u0000",
+    "step_domain": "HYBRID-DISCOVERY/v6.2/CursorStep/v1\u0000",
+    "H0": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c",
+    "H1": "739669d828057e94c856e7725ed05218e26639610d4ce58c2a5568244a16fc28"
+  },
+  "canonical_hash_contract": {
+    "algorithm": "HD-JCS-SHA256-v1",
+    "registered_artifact_types": ["SpoolRecord", "RawCommitRecord", "ApplicationRecord", "DerivedRevision", "ReducerCursor", "AckOutboxRecord", "AckCursor", "GapRecord", "GenerationTransition", "RunDestructionIntent", "DeletionProof"],
+    "required_field": "content_hash",
+    "excluded_json_pointers": ["/content_hash"],
+    "artifact_id_rule": "PREALLOCATED_OPAQUE_INDEPENDENT_INPUT_INCLUDED_IN_PREIMAGE_NEVER_DERIVED_FROM_CONTENT_HASH",
+    "nested_non_artifacts": ["StreamKey", "GenerationKey", "Position", "CursorChainContract", "SemanticInvariants"]
+  },
+  "canonical_hash_positive_vector": {
+    "id": "DURABILITY-HASH-POS-01-SPOOL",
+    "artifact_type": "SpoolRecord",
+    "record": {
+      "record_type": "SpoolRecord",
+      "schema_version": "1",
+      "content_hash": "b0c70913a11301221308d6a692d2f9ec91e37e729862f24d8cafe03a2f2ba6fb",
+      "guarantee": "EFFECTIVELY_ONCE_AFTER_DURABLE_LOCAL_SPOOL_COMMIT",
+      "spool_record_id": "SPOOL_RECORD:1111111111111111111111111111111111111111111111111111111111111111",
+      "position": {"generation_key": {"stream": {"browser_run_id": "11111111-1111-4111-8111-111111111111", "producer_id": "22222222-2222-4222-8222-222222222222", "stream_id": "33333333-3333-4333-8333-333333333333"}, "generation": "0"}, "sequence": "1"},
+      "raw_observation_id": "RAW_OBSERVATION:2222222222222222222222222222222222222222222222222222222222222222",
+      "raw_observation_content_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+      "previous_cursor_hash": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c",
+      "cursor_hash": "739669d828057e94c856e7725ed05218e26639610d4ce58c2a5568244a16fc28",
+      "cursor_hash_verification": "VERIFIED_HD_CURSOR_STEP_V1",
+      "spool_state": "DURABLY_SPOOLED",
+      "committed_at": "2030-01-01T00:00:00Z",
+      "payload_size_bytes": "128",
+      "individual_deletion_eligible": false
+    },
+    "projection": "REMOVE_ONLY_TOP_LEVEL_CONTENT_HASH",
+    "expected_sha256": "b0c70913a11301221308d6a692d2f9ec91e37e729862f24d8cafe03a2f2ba6fb",
+    "expected": "SCHEMA_VALID_AND_RECOMPUTED_HASH_MATCH"
+  },
+  "canonical_hash_negative_vector": {
+    "id": "DURABILITY-HASH-NEG-01-MISSING-CONTENT-HASH",
+    "base_vector_id": "DURABILITY-HASH-POS-01-SPOOL",
+    "mutation": "REMOVE_TOP_LEVEL_CONTENT_HASH",
+    "expected": "SCHEMA_INVALID_BEFORE_CANONICAL_HASH"
+  },
+  "baseline": {
+    "indexeddb_spool_rows": 0,
+    "reducer_cursor": {"generation": 0, "sequence": 0, "hash": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"},
+    "extension_ack": {"generation": 0, "sequence": 0, "hash": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"},
+    "backend_ack": {"generation": 0, "sequence": 0, "hash": "149300a0e3954885a1d6c0f13a9d1101227cc21cce37bd6b7c72eab641741c0c"},
+    "predecessor_generation": {"generation": 0, "state": "ACTIVE"},
+    "successor_generation": "NOT_CREATED",
+    "coherence_state": "OPEN"
+  },
+  "normal_transaction_order": ["raw_commits", "application_records", "derived_revisions", "reducer_cursors", "ack_outbox"],
+  "gap_transaction_order": ["gap_records", "shock_observations", "coherence_transitions_atomic_epoch_close", "coherence_controllers_to_shocked_closed", "gap_epoch_bindings_to_affected_epoch", "close_predecessor_generation", "generation_transitions", "open_successor_generation"],
+  "harness_contract": {
+    "sql_crash_injection": "KILL_REAL_CHILD_PROCESS_WITH_SIGKILL",
+    "python_exception_is_sufficient": false,
+    "restart_each_case_with_new_process": true,
+    "integrity_checks": ["PRAGMA integrity_check", "PRAGMA foreign_key_check"],
+    "unlisted_sql_table_delta": 0,
+    "commit_boundary_rule": "ONLY_PRECOMMIT_OR_FULLY_COMMITTED_STATE_IS_ALLOWED"
+  },
+  "destruction_authority_contract": {
+    "receipt_schema_version": "gate-receipt/v1",
+    "receipt_record_type": "GateReceipt",
+    "gate_kind": "EVIDENCE_EXPORT_ACCEPTED",
+    "gate_result": "PASS",
+    "scope": "WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT",
+    "run_binding": "INTENT_RUN_ID_EQUALS_RECEIPT_BOUND_RUN_ID_EQUALS_AUTHORIZATION_CONSUMPTION_RUN_ID",
+    "manifest_binding": "INTENT_ACCEPTED_SANITIZED_EXPORT_MANIFEST_HASH_EQUALS_RECEIPT_BOUND_HASH_EQUALS_AUTHORIZATION_CONSUMPTION_HASH",
+    "content_hash_binding": "INTENT_DESTRUCTION_GATE_RECEIPT_CONTENT_HASH_EQUALS_RECEIPT_CONTENT_HASH_EQUALS_CONSUMED_RECEIPT_CONTENT_HASH",
+    "canonical_receipt_schema": "authorization-records.schema.json#GateReceipt",
+    "receipt_verification": "CANONICAL_BYTES_CONTENT_HASH_AND_ED25519_SIGNATURE_VERIFIED_BEFORE_CONSUMPTION",
+    "intent_content_hash_algorithm": "HD-JCS-SHA256-v1",
+    "intent_content_hash_domain": "HYBRID-DISCOVERY/v6.2/RunDestructionIntent/v1\u0000",
+    "intent_content_hash_excluded_json_pointers": ["/content_hash"],
+    "consumption_binding_completeness": "ALL_DESTRUCTION_TYPE_SCHEMA_SCOPE_GATE_KIND_IDS_RUN_IDS_EXPORT_HASHES_RECEIPT_HASH_PRECOMMITTED_INTENT_HASH_STAGED_INVENTORY_HASH_STAGED_CREATED_AT_SIGNATURE_AND_VERIFICATION_FIELDS_NON_NULL_WELL_FORMED_AND_EXACTLY_BOUND_BEFORE_COMMIT",
+    "precommitted_intent_bindings": ["destruction_intent_id", "content_hash", "pre_delete_inventory_hash", "created_at", "fixed_required_artifacts_order", "run_id", "external_intent_path_equals_dot_local_destruction_slash_run_id_dot_intent_json", "accepted_sanitized_export_manifest_hash", "destruction_authorization_id", "destruction_gate_receipt_content_hash", "destruction_authorization_consumption_id"],
+    "one_use": true,
+    "declared_use_semantics": "SINGLE_USE",
+    "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_WHOLE_RUN_DESTRUCTION",
+    "consumption_commit_state": "COMMITTED_BEFORE_WHOLE_RUN_DESTRUCTION",
+    "explicit_human_invocation": true,
+    "automatic_trigger": false,
+    "accepted_export_contents": "PRE_DELETE_INVENTORY_INCLUDED_RUN_DESTRUCTION_INTENT_EXCLUDED_TO_AVOID_MANIFEST_HASH_SIGNATURE_CYCLE",
+    "intent_order": "AFTER_EXPORT_ACCEPTANCE_EXPLICIT_HUMAN_INVOCATION_AND_AUTHORITY_CONSUMPTION_CREATE_AND_STORE_EXTERNAL_RUN_DESTRUCTION_INTENT_BEFORE_ANY_WHOLE_RUN_STORE_DELETE",
+    "pre_intent_crash_rule": "CONSUMED_RECEIPT_REMAINS_PERMANENTLY_BURNED_STORES_REMAIN_INTACT_AND_RECOVERY_MAY_ONLY_REVALIDATE_THE_SAME_RECEIPT_BYTES_TO_RECONSTRUCT_THE_BYTE_IDENTICAL_PRECOMMITTED_EXTERNAL_INTENT_WITHOUT_SECOND_CONSUMPTION_OR_NEW_AUTHORITY",
+    "external_intent_gate": "DESTRUCTION_PENDING_AND_STORE_DELETE_REQUIRE_PERSISTED_EXTERNAL_INTENT_BYTES_MATCHING_THE_IMMUTABLE_PRECOMMIT"
+  },
+  "destruction_intent_reconstruction_vector": {
+    "id": "DESTRUCTION-INTENT-RECONSTRUCT-POS-01",
+    "receipt_fixture_ref": "authorization-v1.json#/test_only_signed_record_vectors/base_records/EvidenceExportAcceptedGateReceipt",
+    "destruction_intent_id": "DESTRUCTION_INTENT:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "destruction_authorization_consumption_id": "AUTHORIZATION_CONSUMPTION:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "run_id": "00000000-0000-4000-8000-000000000028",
+    "accepted_sanitized_export_manifest_hash": "8888888888888888888888888888888888888888888888888888888888888888",
+    "pre_delete_inventory_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "created_at": "2030-01-01T00:00:00.000000Z",
+    "external_intent_path": ".local/destruction/00000000-0000-4000-8000-000000000028.intent.json",
+    "required_artifacts_included": ["GAPS", "MAPPINGS", "MAPPING_CLOSURES", "DERIVED_REVISIONS", "PRE_DELETE_INVENTORY"],
+    "expected_content_hash": "d78555bc433052db4b9d6840857e066429cb538b8f814b567393c973335755ca",
+    "recovery_rule": "REVALIDATE_SAME_RECEIPT_BYTES_AS_DATA_ONLY_RECONSTRUCT_BYTE_IDENTICAL_INTENT_NO_SECOND_CONSUMPTION_NO_NEW_AUTHORITY",
+    "negative_mutations": ["ALTER_DESTRUCTION_INTENT_ID", "ALTER_PRE_DELETE_INVENTORY_HASH", "ALTER_CREATED_AT", "ALTER_EXTERNAL_INTENT_PATH", "REORDER_REQUIRED_ARTIFACTS"],
+    "negative_expected": "CANONICAL_CONTENT_HASH_MISMATCH_OR_SCHEMA_REJECT"
+  },
+  "authorization_consumption_positive_vectors": [
+    {"id": "AUTH-CONSUME-POS-01-DISCOVERY-RUN", "record_type": "DiscoveryRunAuthorization", "receipt_schema_version": "discovery-run-authorization/v1", "scope": "AUTHENTICATED_PASSIVE_DISCOVERY", "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_DEBUGGER_ATTACH", "expected": "ACCEPT"},
+    {"id": "AUTH-CONSUME-POS-02-BODY-CLASS", "record_type": "BodyClassApproval", "receipt_schema_version": "body-class-approval/v1", "scope": "TEST_ONLY_APPROVED_INBOUND_BODY_CLASS", "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_BODY_TICKET_CREATION", "expected": "ACCEPT"},
+    {"id": "AUTH-CONSUME-POS-03-PROVIDER-CALL", "record_type": "ProviderCallAuthorization", "receipt_schema_version": "provider-call-authorization/v1", "scope": "ONE_PROVIDER_FEASIBILITY_GET", "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_PROVIDER_IO", "expected": "ACCEPT"},
+    {"id": "AUTH-CONSUME-POS-04-SINGLE-USE-GATE", "record_type": "GateReceipt", "receipt_schema_version": "gate-receipt/v1", "scope": "IMPLEMENTATION_GATE_ONLY", "gate_kind": "DISCOVERY_SECURITY_ACCEPTED", "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_GATE_USE", "expected": "ACCEPT"},
+    {"id": "AUTH-CONSUME-POS-05-DESTRUCTION-EXACT", "record_type": "GateReceipt", "receipt_schema_version": "gate-receipt/v1", "scope": "WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT", "gate_kind": "EVIDENCE_EXPORT_ACCEPTED", "all_destruction_bindings": "NON_NULL_WELL_FORMED_EXACT_MATCH_WITH_PRECOMMITTED_INTENT_ID_CONTENT_HASH_INVENTORY_HASH_AND_CREATED_AT", "consumed_before": "ATOMIC_LEDGER_COMMIT_BEFORE_WHOLE_RUN_DESTRUCTION", "expected": "ACCEPT"}
+  ],
+  "sql_negative_vectors": [
+    {"id": "SQL-NEG-CURSOR-FIRST-NOT-H0", "attempt": "INSERT_APPLIED_SEQUENCE_1_WITH_NON_H0_PREVIOUS_CURSOR_HASH", "expected_error": "E_CURSOR_FIRST_STEP_NOT_H0"},
+    {"id": "SQL-NEG-CURSOR-BROKEN-PREDECESSOR", "attempt": "INSERT_APPLIED_SEQUENCE_Q_PLUS_1_WITH_PREVIOUS_HASH_NOT_EQUAL_TO_REDUCER_CURSOR_Q", "expected_error": "E_CURSOR_PREDECESSOR_LINK"},
+    {"id": "SQL-NEG-ACK-FABRICATED-AHEAD", "attempt": "INSERT_BACKEND_ACK_99_WITHOUT_MATCHING_OUTBOX_REDUCER_RAW_CHAIN", "expected_error": "E_ACK_WITHOUT_DURABLE_CHAIN"},
+    {"id": "SQL-NEG-ACK-REGRESSION", "attempt": "INSERT_BACKEND_ACK_AT_OR_BELOW_EXISTING_BACKEND_ACK", "expected_error": "E_ACK_REGRESSION"},
+    {"id": "SQL-NEG-GENERATION-CLOSE-WITHOUT-COHERENCE", "attempt": "CLOSE_GAP_PREDECESSOR_WITHOUT_BOUND_SHOCK_CONTROLLER_AND_IMMUTABLE_COHERENCE_TRANSITION", "expected_error": "E_GENERATION_CLOSE_WITHOUT_COHERENCE_CLOSURE"},
+    {"id": "SQL-NEG-GENERATION-OPEN-WITHOUT-COHERENCE", "attempt": "OPEN_SUCCESSOR_WITHOUT_BOUND_PERMANENT_PREDECESSOR_EPOCH_CLOSE", "expected_error": "E_GENERATION_OPEN_WITHOUT_COHERENCE_CLOSURE"},
+    {"id": "SQL-NEG-DESTRUCTION-WRONG-RUN", "attempt": "CONSUME_EXPORT_ACCEPTED_RECEIPT_FOR_A_DIFFERENT_BOUND_RUN", "expected_error": "E_DESTRUCTION_AUTHORITY_RUN"},
+    {"id": "SQL-NEG-DESTRUCTION-WRONG-HASH", "attempt": "CONSUME_EXPORT_ACCEPTED_RECEIPT_WITH_A_DIFFERENT_MANIFEST_OR_CONTENT_HASH_BINDING", "expected_error": "E_DESTRUCTION_AUTHORITY_HASH"},
+    {"id": "SQL-NEG-DESTRUCTION-WRONG-TYPE", "attempt": "CONSUME_NON_GATE_RECEIPT_OR_NON_EXPORT_ACCEPTED_GATE", "expected_error": "E_DESTRUCTION_AUTHORITY_TYPE"},
+    {"id": "SQL-NEG-DESTRUCTION-WRONG-SCOPE", "attempt": "CONSUME_EXPORT_ACCEPTED_RECEIPT_WITH_IMPLEMENTATION_GATE_SCOPE", "expected_error": "E_DESTRUCTION_AUTHORITY_SCOPE"},
+    {"id": "SQL-NEG-DESTRUCTION-UNCONSUMED", "attempt": "MOVE_CLOSED_RUN_TO_DESTRUCTION_PENDING_WITHOUT_COMMITTED_AUTHORIZATION_CONSUMPTION", "expected_error": "E_DESTRUCTION_AUTHORITY_REQUIRED"},
+    {"id": "SQL-NEG-DESTRUCTION-REPLAY", "attempt": "CONSUME_AN_ALREADY_USED_RECEIPT_ID_SERIAL_NONCE_OR_CONTENT_HASH", "expected_error": "E_DESTRUCTION_AUTHORITY_REPLAY"},
+    {"id": "SQL-NEG-DESTRUCTION-NULL-HASHES", "attempt": "CONSUME_EXPORT_ACCEPTED_RECEIPT_WITH_BOTH_ACCEPTED_AND_RECEIPT_BOUND_EXPORT_MANIFEST_HASHES_NULL", "expected_error": "E_DESTRUCTION_AUTHORITY_HASH"},
+    {"id": "SQL-NEG-DESTRUCTION-NULL-STAGED-INTENT", "attempt": "CONSUME_EXPORT_ACCEPTED_RECEIPT_WITH_NULL_PRECOMMITTED_INTENT_CONTENT_HASH_INVENTORY_HASH_OR_CREATED_AT", "expected_error": "E_DESTRUCTION_INTENT_PRECOMMIT"}
+  ],
+  "destruction_authority_negative_vectors": [
+    {"id": "DESTRUCTION-AUTH-NEG-01-WRONG-RUN", "invalid_record": "RECEIPT_BOUND_RUN_ID_DIFFERS_FROM_INTENT_AND_CONSUMPTION_RUN_ID", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_RUN"},
+    {"id": "DESTRUCTION-AUTH-NEG-02-WRONG-HASH", "invalid_record": "RECEIPT_BOUND_MANIFEST_HASH_OR_RECEIPT_CONTENT_HASH_DIFFERS_FROM_INTENT_AND_CONSUMPTION_BINDING", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_HASH"},
+    {"id": "DESTRUCTION-AUTH-NEG-03-WRONG-TYPE", "invalid_record": "RECORD_TYPE_NOT_GATE_RECEIPT_OR_GATE_KIND_NOT_EVIDENCE_EXPORT_ACCEPTED", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_TYPE"},
+    {"id": "DESTRUCTION-AUTH-NEG-04-WRONG-SCOPE", "invalid_record": "SCOPE_NOT_WHOLE_RUN_DESTRUCTION_AFTER_ACCEPTED_EXPORT", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_SCOPE"},
+    {"id": "DESTRUCTION-AUTH-NEG-05-UNCONSUMED", "invalid_record": "CONSUMPTION_NOT_COMMITTED_BEFORE_WHOLE_RUN_DESTRUCTION", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_REQUIRED"},
+    {"id": "DESTRUCTION-AUTH-NEG-06-REPLAY", "invalid_record": "ONE_USE_RECEIPT_ID_SERIAL_NONCE_OR_CONTENT_HASH_ALREADY_CONSUMED", "schema_or_semantic_result": "REJECT", "sql_expected_error": "E_DESTRUCTION_AUTHORITY_REPLAY"},
+    {"id": "DESTRUCTION-AUTH-NEG-07-NULL-BINDING", "invalid_record": "EVIDENCE_EXPORT_ACCEPTED_CONSUMPTION_WITH_NULL_DESTRUCTION_ID_RUN_HASH_RECEIPT_HASH_PRECOMMITTED_INTENT_HASH_STAGED_INVENTORY_HASH_STAGED_CREATED_AT_SIGNATURE_OR_VERIFICATION_BINDING", "schema_or_semantic_result": "REJECT", "sql_expected_errors": ["E_DESTRUCTION_AUTHORITY_ID", "E_DESTRUCTION_AUTHORITY_RUN", "E_DESTRUCTION_AUTHORITY_HASH", "E_DESTRUCTION_INTENT_PRECOMMIT", "E_DESTRUCTION_AUTHORITY_UNVERIFIED"]}
+  ],
+  "cases": [
+    {
+      "id": "IDB-01-BEFORE-TRANSACTION",
+      "boundary": "before IndexedDB sequence-allocation transaction",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "REOBSERVE_IF_SOURCE_EMITS_AGAIN_NO_GUARANTEE_APPLIES"}
+    },
+    {
+      "id": "IDB-02-DURING-SEQUENCE-ALLOCATION",
+      "boundary": "after sequence allocation and before spool row put in one IndexedDB transaction",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ABORT_TRANSACTION_REUSE_SEQUENCE_1"}
+    },
+    {
+      "id": "IDB-03-DURING-ROW-PUT",
+      "boundary": "after spool row put and before IndexedDB transaction completion",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ABORT_TRANSACTION_REUSE_SEQUENCE_1"}
+    },
+    {
+      "id": "IDB-04-AFTER-COMMIT",
+      "boundary": "after IndexedDB transaction completion and before send",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RESEND_DURABLY_SPOOLED_POSITION_0_1"}
+    },
+    {
+      "id": "SEND-01-AFTER-SEND-BEFORE-BACKEND-BEGIN",
+      "boundary": "after send and before backend BEGIN IMMEDIATE",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RESEND_POSITION_0_1_AFTER_FRESH_PAIRING_AND_RESUME_AUTHORIZATION"}
+    },
+    {
+      "id": "SQL-01-AFTER-RAW-COMMIT-STATEMENT",
+      "boundary": "after raw_commits INSERT and before application_records INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"}
+    },
+    {
+      "id": "SQL-02-AFTER-APPLICATION-STATEMENT",
+      "boundary": "after application_records INSERT and before derived_revisions INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"}
+    },
+    {
+      "id": "SQL-03-AFTER-DERIVED-REVISION-STATEMENT",
+      "boundary": "after derived_revisions INSERT and before reducer_cursors INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"}
+    },
+    {
+      "id": "SQL-04-AFTER-REDUCER-CURSOR-STATEMENT",
+      "boundary": "after reducer_cursors INSERT and before ack_outbox INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"}
+    },
+    {
+      "id": "SQL-05-AFTER-ACK-OUTBOX-STATEMENT",
+      "boundary": "after ack_outbox INSERT and before COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_RESEND_POSITION_0_1"}
+    },
+    {
+      "id": "SQL-06-DURING-COMMIT",
+      "boundary": "during SQLite COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "allowed_atomic_outcomes": [{"sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "BASELINE_H0_Q0", "backend_ack": "BASELINE_H0_Q0", "recovery_action": "RESEND_POSITION_0_1"}, {"sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1}, "reducer_cursor": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "recovery_action": "RESEND_OR_REDELIVER_IDEMPOTENT_ACK"}], "extension_ack": "BASELINE_H0_Q0", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN"}
+    },
+    {
+      "id": "SQL-07-AFTER-COMMIT-BEFORE-ACK-SEND",
+      "boundary": "after SQLite COMMIT and before backend ACK send",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "REDELIVER_ACK_FROM_DURABLE_OUTBOX"}
+    },
+    {
+      "id": "ACK-01-BEFORE-EXTENSION-ACK-TRANSACTION",
+      "boundary": "after ACK receipt and before extension ACK transaction",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "BACKEND_REDELIVERS_DUPLICATE_ACK"}
+    },
+    {
+      "id": "ACK-02-DURING-EXTENSION-ACK-TRANSACTION",
+      "boundary": "after ACK chain verification and before IndexedDB ACK transaction completion",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "BASELINE_H0_Q0", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ABORT_ACK_TRANSACTION_AND_REVERIFY_REDELIVERED_ACK"}
+    },
+    {
+      "id": "ACK-03-AFTER-EXTENSION-ACK-TRANSACTION",
+      "boundary": "after IndexedDB ACK transaction completion and before backend confirmation",
+      "kill": "TERMINATE_EXTENSION_WORKER",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RETAIN_ROW_AND_SEND_ACK_CONFIRMATION_IDEMPOTENTLY"}
+    },
+    {
+      "id": "ACK-04-BEFORE-BACKEND-CONFIRMATION-COMMIT",
+      "boundary": "after extension confirmation send and before backend confirmation transaction",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1, "ack_cursors": 0}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RESEND_CONFIRMATION_AFTER_FRESH_PAIRING"}
+    },
+    {
+      "id": "ACK-05-AFTER-BACKEND-CONFIRMATION-COMMIT",
+      "boundary": "after backend confirmation transaction commit",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"raw_commits": 1, "application_records": 1, "derived_revisions": 1, "reducer_cursors": 1, "ack_outbox": 1, "ack_cursors": 1}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RESTART_HANDSHAKE_CONFIRMS_EQUAL_VERIFIED_CURSORS"}
+    },
+    {
+      "id": "ACK-06-DUPLICATE-IDENTICAL",
+      "boundary": "identical resend after full commit",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"raw_commits": 0, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "RETURN_EXISTING_IDEMPOTENT_ACK"}
+    },
+    {
+      "id": "GAP-01-AFTER-GAP-INSERT",
+      "boundary": "after gap_records INSERT and before shock_observations INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-02-AFTER-SHOCK-INSERT",
+      "boundary": "after shock_observations INSERT and before immutable coherence_transitions epoch-close INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-03-AFTER-COHERENCE-TRANSITION",
+      "boundary": "after immutable OPEN to SHOCKED_CLOSED coherence_transitions INSERT and before controller UPDATE",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-04-AFTER-CONTROLLER-CLOSE",
+      "boundary": "after coherence_controllers UPDATE to SHOCKED_CLOSED and before gap_epoch_bindings INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-05-AFTER-EPOCH-BINDING",
+      "boundary": "after gap_epoch_bindings links GAP, affected epoch, shock, controller, and transition; before predecessor close",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-06-AFTER-PREDECESSOR-CLOSE",
+      "boundary": "after guarded predecessor generation close UPDATE and before generation_transitions INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-07-AFTER-GENERATION-TRANSITION",
+      "boundary": "after generation_transitions INSERT and before successor generation INSERT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-08-AFTER-SUCCESSOR-INSERT",
+      "boundary": "after guarded successor generation INSERT and before GAP COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_GAP_AT_SEQUENCE_3"}
+    },
+    {
+      "id": "GAP-09-DURING-COMMIT",
+      "boundary": "during atomic GAP and coherence transaction COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "allowed_atomic_outcomes": [{"sql_row_deltas": {"gap_records": 0, "shock_observations": 0, "coherence_transitions": 0, "coherence_controllers": 0, "gap_epoch_bindings": 0, "generation_transitions": 0, "stream_generations": 0}, "coherence_controller_updates": 0, "predecessor_generation": "0_ACTIVE", "successor_generation": "NOT_CREATED", "coherence_state": "OPEN", "recovery_action": "REDETECT_GAP"}, {"sql_row_deltas": {"gap_records": 1, "shock_observations": 1, "coherence_transitions": 1, "coherence_controllers": 0, "gap_epoch_bindings": 1, "generation_transitions": 1, "stream_generations": 1, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "coherence_controller_updates": 1, "predecessor_generation": "0_CLOSED", "successor_generation": "1_ACTIVE", "coherence_state": "SHOCKED_CLOSED", "recovery_action": "RESUME_ONLY_IN_GENERATION_1"}], "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1"}
+    },
+    {
+      "id": "GAP-10-AFTER-COMMIT",
+      "boundary": "after atomic GAP and coherence transaction COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {"gap_records": 1, "shock_observations": 1, "coherence_transitions": 1, "coherence_controllers": 0, "gap_epoch_bindings": 1, "generation_transitions": 1, "stream_generations": 1, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "coherence_controller_updates": 1, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_CLOSED", "successor_generation": "1_ACTIVE", "coherence_state": "SHOCKED_CLOSED", "recovery_action": "AUTHENTICATE_GENERATION_AND_COHERENCE_FACTS_AND_RESUME_ONLY_IN_GENERATION_1"}
+    },
+    {
+      "id": "CONFLICT-01-SAME-POSITION-DIFFERENT-HASH",
+      "boundary": "conflicting duplicate compare and quarantine transaction",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"raw_conflicts": 1, "gap_records": 1, "shock_observations": 1, "coherence_transitions": 1, "coherence_controllers": 0, "gap_epoch_bindings": 1, "generation_transitions": 1, "stream_generations": 1, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "coherence_controller_updates": 1, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_CLOSED", "successor_generation": "1_ACTIVE", "coherence_state": "SHOCKED_CLOSED", "recovery_action": "QUARANTINE_CONFLICT_ATOMICALLY_CLOSE_COHERENCE_AND_START_GENERATION_1_WITHOUT_ACKING_CONFLICT"}
+    },
+    {
+      "id": "LATE-01-MISSING-POSITION-AFTER-GAP",
+      "boundary": "late sequence 2 arrives after generation 0 permanently closed",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"raw_commits": 1, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0, "gap_records": 0, "generation_transitions": 0}, "reducer_cursor": "GEN0_Q1_H1", "extension_ack": "GEN0_Q1_H1", "backend_ack": "GEN0_Q1_H1", "predecessor_generation": "0_CLOSED_HISTORY_REPAIRED_EPOCH_REMAINS_CLOSED", "successor_generation": "1_ACTIVE", "coherence_state": "WAITING_FOR_RESNAPSHOT", "recovery_action": "STORE_LATE_REPAIR_ONLY_NEVER_REOPEN_GENERATION_0_OR_ITS_EPOCH"}
+    },
+    {
+      "id": "GAP-11-REPEATED-GAP-IN-SUCCESSOR",
+      "boundary": "new missing sequence in generation 1",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"gap_records": 1, "shock_observations": 1, "coherence_transitions": 1, "coherence_controllers": 0, "gap_epoch_bindings": 1, "generation_transitions": 1, "stream_generations": 1, "application_records": 0, "derived_revisions": 0, "reducer_cursors": 0, "ack_outbox": 0}, "coherence_controller_updates": 1, "reducer_cursor": "GEN1_Q0_H0", "extension_ack": "GEN1_Q0_H0", "backend_ack": "GEN1_Q0_H0", "predecessor_generation": "1_CLOSED", "successor_generation": "2_ACTIVE", "coherence_state": "SHOCKED_CLOSED", "recovery_action": "ATOMICALLY_CLOSE_COHERENCE_CLOSE_GENERATION_1_AND_OPEN_EXACT_SUCCESSOR_2"}
+    },
+    {
+      "id": "CAPACITY-01-NORMAL-LIMIT-REACHED",
+      "boundary": "127 MiB normal spool capacity reached with 1 MiB terminal reserve intact",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 1, "sql_row_deltas": {}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "ACTIVE_UNTIL_TERMINAL_GAP_COMMIT", "successor_generation": "NOT_CREATED", "coherence_state": "SHOCKED_CLOSED_AFTER_TERMINAL_GAP", "recovery_action": "SPOOL_CAPACITY_SAFETY_STOP_NEVER_EVICT_UNACKNOWLEDGED_ROWS"}
+    },
+    {
+      "id": "CLOCK-01-AFTER-MAPPING-CLOSURE-INSERT",
+      "boundary": "after clock_mapping_closures INSERT and before transaction COMMIT",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"clock_mapping_closures": 0, "shock_observations": 0, "coherence_transitions": 0}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "UNCHANGED", "successor_generation": "UNCHANGED", "coherence_state": "OPEN", "recovery_action": "ROLLBACK_AND_REDETECT_CLOSURE_BEFORE_ACCEPTING_LATER_EVIDENCE"}
+    },
+    {
+      "id": "CLOCK-02-AFTER-CLOSURE-COMMIT-BEFORE-SHOCK",
+      "boundary": "after permanent mapping closure commit and before coherence shock transaction",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"clock_mapping_closures": 1, "shock_observations": 0, "coherence_transitions": 0}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "UNCHANGED", "successor_generation": "UNCHANGED", "coherence_state": "OPEN_BUT_INELIGIBLE", "recovery_action": "SYNTHESIZE_MAPPING_CLOSURE_SHOCK_BEFORE_ANY_LATER_EVIDENCE"}
+    },
+    {
+      "id": "EPOCH-01-AFTER-SHOCK-BEFORE-CLOSE-COMMIT",
+      "boundary": "after shock_observations and OPEN to SHOCKED_CLOSED transition writes before commit",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"shock_observations": 0, "coherence_transitions": 0}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "UNCHANGED", "successor_generation": "UNCHANGED", "coherence_state": "OPEN_BUT_SHOCK_REDETECTION_REQUIRED", "recovery_action": "ROLLBACK_REDETECT_SHOCK_AND_CLOSE_BEFORE_ELIGIBILITY"}
+    },
+    {
+      "id": "EPOCH-02-AFTER-SHOCK-CLOSE-COMMIT",
+      "boundary": "after atomic shock and predecessor epoch close commit",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"shock_observations": 1, "coherence_transitions": 1}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "UNCHANGED", "successor_generation": "UNCHANGED", "coherence_state": "SHOCKED_CLOSED", "recovery_action": "ADVANCE_TO_WAITING_FOR_RESNAPSHOT_PREDECESSOR_REMAINS_CLOSED"}
+    },
+    {
+      "id": "EPOCH-03-AFTER-PENDING-WRITES-BEFORE-COMMIT",
+      "boundary": "after resnapshot proof, freshness vector, candidate epoch, and pending transition writes before commit",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"authoritative_resnapshot_proofs": 0, "input_freshness_vectors": 0, "coherence_epochs": 0, "coherence_transitions": 0}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "UNCHANGED", "successor_generation": "UNCHANGED", "coherence_state": "WAITING_FOR_RESNAPSHOT", "recovery_action": "ROLLBACK_AND_REVALIDATE_FULL_RELEASE_PREDICATE"}
+    },
+    {
+      "id": "EPOCH-04-DURING-NEW-EPOCH-OPEN-COMMIT",
+      "boundary": "during NEW_EPOCH_PENDING to NEW_EPOCH_OPEN commit",
+      "kill": "SIGKILL_BACKEND_CHILD",
+      "expected": {"indexeddb_spool_delta": 0, "allowed_atomic_outcomes": [{"sql_row_deltas": {"coherence_transitions": 0}, "coherence_state": "NEW_EPOCH_PENDING", "recovery_action": "REVALIDATE_RELEASE_PREDICATE"}, {"sql_row_deltas": {"coherence_transitions": 1}, "coherence_state": "NEW_EPOCH_OPEN", "recovery_action": "USE_ONLY_DISTINCT_SUCCESSOR_EPOCH"}], "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "CLOSED", "successor_generation": "ACTIVE"}
+    },
+    {
+      "id": "EPOCH-05-NEW-SHOCK-WHILE-PENDING",
+      "boundary": "new or intersecting shock while successor candidate is pending",
+      "kill": "NONE",
+      "expected": {"indexeddb_spool_delta": 0, "sql_row_deltas": {"shock_observations": 1, "coherence_epochs": 1, "coherence_transitions": 1}, "reducer_cursor": "UNCHANGED", "extension_ack": "UNCHANGED", "backend_ack": "UNCHANGED", "predecessor_generation": "CLOSED", "successor_generation": "ACTIVE", "coherence_state": "WAITING_FOR_RESNAPSHOT", "recovery_action": "PERMANENTLY_CLOSE_CANDIDATE_AND_BUILD_A_NEW_DISTINCT_CANDIDATE"}
+    },
+    {
+      "id": "DESTROY-01-BEFORE-AUTHORITY",
+      "boundary": "before signed destruction authority and human invocation",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "PRESENT", "backend_database": "PRESENT", "external_intent_delta": 0, "external_proof_delta": 0, "sql_row_deltas": {}, "reducer_cursor": "FINAL_UNCHANGED", "extension_ack": "FINAL_UNCHANGED", "backend_ack": "FINAL_UNCHANGED", "predecessor_generation": "FINAL_CLOSED", "successor_generation": "FINAL", "coherence_state": "FINAL_CLOSED", "recovery_action": "DO_NOT_DELETE"}
+    },
+    {
+      "id": "DESTROY-01A-AFTER-CONSUMPTION-BEFORE-INTENT",
+      "boundary": "after the exact one-use EVIDENCE_EXPORT_ACCEPTED authorization consumption commit and before external RunDestructionIntent creation",
+      "kill": "SIGKILL_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "PRESENT", "backend_database": "PRESENT", "run_status": "CLOSED", "receipt_state": "CONSUMED_ONE_USE_PERMANENTLY_BURNED", "external_intent_delta": 0, "external_proof_delta": 0, "deletion_started": false, "sql_row_deltas": {"authorization_consumptions": 1}, "second_authorization_consumption_allowed": false, "new_authority_required": false, "reducer_cursor": "FINAL_UNCHANGED", "extension_ack": "FINAL_UNCHANGED", "backend_ack": "FINAL_UNCHANGED", "predecessor_generation": "FINAL_CLOSED", "successor_generation": "FINAL", "coherence_state": "FINAL_CLOSED", "recovery_action": "FAIL_CLOSED_REVALIDATE_SAME_RECEIPT_BYTES_AS_DATA_ONLY_AND_RECONSTRUCT_ONLY_THE_BYTE_IDENTICAL_EXTERNAL_INTENT_MATCHING_PRECOMMITTED_ID_CONTENT_HASH_INVENTORY_HASH_CREATED_AT_AND_FIXED_ARTIFACT_ORDER_NEVER_RECONSUME_OR_ALTER_ANY_FIELD"}
+    },
+    {
+      "id": "DESTROY-02-AFTER-INTENT-BEFORE-DELETION",
+      "boundary": "after the exact one-use EVIDENCE_EXPORT_ACCEPTED GateReceipt consumption and byte-identical precommitted external intent commit, and before either whole-run store deletion",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "PRESENT", "backend_database": "PRESENT", "run_status": "DESTRUCTION_PENDING", "external_intent_delta": 1, "external_proof_delta": 0, "sql_row_deltas": {"authorization_consumptions": 1}, "reducer_cursor": "FINAL_UNCHANGED", "extension_ack": "FINAL_UNCHANGED", "backend_ack": "FINAL_UNCHANGED", "predecessor_generation": "FINAL_CLOSED", "successor_generation": "FINAL", "coherence_state": "FINAL_CLOSED", "recovery_action": "REVALIDATE_PERSISTED_EXTERNAL_INTENT_ID_AND_CANONICAL_CONTENT_HASH_AGAINST_IMMUTABLE_PRECOMMIT_PLUS_EXACT_RUN_MANIFEST_RECEIPT_CONSUMPTION_AND_HUMAN_BINDINGS_THEN_RESUME_SAME_WHOLE_RUN_DESTRUCTION"}
+    },
+    {
+      "id": "DESTROY-03-AFTER-EXTENSION-DELETION",
+      "boundary": "after IndexedDB run deletion and before backend database deletion",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "DELETED", "backend_database": "PRESENT", "external_intent_delta": 1, "external_proof_delta": 0, "sql_row_deltas": {"authorization_consumptions": 1}, "reducer_cursor": "READABLE_FROM_BACKEND", "extension_ack": "UNAVAILABLE_AFTER_DELETE", "backend_ack": "FINAL_UNCHANGED", "predecessor_generation": "READABLE_FROM_BACKEND", "successor_generation": "READABLE_FROM_BACKEND", "coherence_state": "READABLE_FROM_BACKEND", "recovery_action": "REVALIDATE_EXTERNAL_INTENT_AGAINST_COMMITTED_ONE_USE_CONSUMPTION_FOR_THE_SAME_RUN_THEN_DELETE_BACKEND_AND_PROVE_PARTIAL_HISTORY"}
+    },
+    {
+      "id": "DESTROY-04-AFTER-BACKEND-DELETION",
+      "boundary": "after backend database deletion and before IndexedDB run deletion",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "PRESENT", "backend_database": "DELETED", "external_intent_delta": 1, "external_proof_delta": 0, "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED", "reducer_cursor": "UNAVAILABLE_AFTER_DELETE", "extension_ack": "FINAL_UNCHANGED", "backend_ack": "UNAVAILABLE_AFTER_DELETE", "predecessor_generation": "UNAVAILABLE_AFTER_DELETE", "successor_generation": "UNAVAILABLE_AFTER_DELETE", "coherence_state": "UNAVAILABLE_AFTER_DELETE", "recovery_action": "REVALIDATE_SIGNED_EXTERNAL_INTENT_EXACT_RUN_MANIFEST_AND_RECEIPT_CONTENT_HASH_BINDING_THEN_DELETE_ONLY_THE_SAME_RUN_INDEXEDDB_AND_WRITE_PROOF"}
+    },
+    {
+      "id": "DESTROY-05-AFTER-BOTH-DELETIONS-BEFORE-PROOF",
+      "boundary": "after both component deletions and before external proof write",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "DELETED", "backend_database": "DELETED", "external_intent_delta": 1, "external_proof_delta": 0, "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED", "reducer_cursor": "RECORDED_IN_INTENT_ONLY", "extension_ack": "RECORDED_IN_INTENT_ONLY", "backend_ack": "RECORDED_IN_INTENT_ONLY", "predecessor_generation": "RECORDED_IN_INTENT_ONLY", "successor_generation": "RECORDED_IN_INTENT_ONLY", "coherence_state": "RECORDED_IN_INTENT_ONLY", "recovery_action": "WRITE_LOGICAL_DELETION_PROOF_FROM_ACCEPTED_EXTERNAL_INTENT"}
+    },
+    {
+      "id": "DESTROY-06-AFTER-PROOF",
+      "boundary": "after external deletion proof write",
+      "kill": "TERMINATE_DESTRUCTION_CHILD",
+      "expected": {"indexeddb_store": "DELETED", "backend_database": "DELETED", "external_intent_delta": 1, "external_proof_delta": 1, "sql_row_deltas": "NOT_APPLICABLE_DATABASE_DELETED", "reducer_cursor": "RECORDED_IN_INTENT_ONLY", "extension_ack": "RECORDED_IN_INTENT_ONLY", "backend_ack": "RECORDED_IN_INTENT_ONLY", "predecessor_generation": "RECORDED_IN_INTENT_ONLY", "successor_generation": "RECORDED_IN_INTENT_ONLY", "coherence_state": "RECORDED_IN_INTENT_ONLY", "recovery_action": "NO_FURTHER_ACTION_LOGICAL_DELETION_COMPLETE_SECURE_ERASURE_CLAIM_FALSE"}
+    }
+  ]
+}

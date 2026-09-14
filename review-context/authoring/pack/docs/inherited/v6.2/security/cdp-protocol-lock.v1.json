@@ -1,0 +1,19 @@
+{
+  "schema_version": "cdp-protocol-lock/v1",
+  "lock_id": "chrome-devtools-protocol/f4f1f32211cf19a29d3a478b83cc13effb503235",
+  "repository": "https://github.com/ChromeDevTools/devtools-protocol",
+  "commit": "f4f1f32211cf19a29d3a478b83cc13effb503235",
+  "files": [
+    {
+      "path": "browser_protocol.json",
+      "sha256": "9ec7cd3dd1ae22514ec48761681b029f78a9cfa32c1befb2806269b15a799894",
+      "size_bytes": 1397718
+    },
+    {
+      "path": "js_protocol.json",
+      "sha256": "cf124bf143bf361a7900bcfeea3926c1cfcc1da36d83756c228c43d84321539a",
+      "size_bytes": 181783
+    }
+  ],
+  "production_authority": "NONE"
+}

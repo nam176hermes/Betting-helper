@@ -1,0 +1,233 @@
+{
+  "schema_version": "delivery-map/v1",
+  "authoring_source_exports": [
+    {
+      "source": "authoring-tests/test_artifact_ownership.py",
+      "destination": "pack/authoring-source/authoring-tests/test_artifact_ownership.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_authority_graph.py",
+      "destination": "pack/authoring-source/authoring-tests/test_authority_graph.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_command_registry_generation.py",
+      "destination": "pack/authoring-source/authoring-tests/test_command_registry_generation.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_current_authoring_receipt.py",
+      "destination": "pack/authoring-source/authoring-tests/test_current_authoring_receipt.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_declaration_gate.py",
+      "destination": "pack/authoring-source/authoring-tests/test_declaration_gate.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_descendant_qualification_followup.py",
+      "destination": "pack/authoring-source/authoring-tests/test_descendant_qualification_followup.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_full_verifier_controller_config.py",
+      "destination": "pack/authoring-source/authoring-tests/test_full_verifier_controller_config.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_full_verifier_followup_amendment.py",
+      "destination": "pack/authoring-source/authoring-tests/test_full_verifier_followup_amendment.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_normative_sync.py",
+      "destination": "pack/authoring-source/authoring-tests/test_normative_sync.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_review_source_import.py",
+      "destination": "pack/authoring-source/authoring-tests/test_review_source_import.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_successor_migration_receipt.py",
+      "destination": "pack/authoring-source/authoring-tests/test_successor_migration_receipt.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_successor_workspace.py",
+      "destination": "pack/authoring-source/authoring-tests/test_successor_workspace.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_task_manifest_semantics.py",
+      "destination": "pack/authoring-source/authoring-tests/test_task_manifest_semantics.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_v62_source_identity.py",
+      "destination": "pack/authoring-source/authoring-tests/test_v62_source_identity.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_version_rebinding.py",
+      "destination": "pack/authoring-source/authoring-tests/test_version_rebinding.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/apply_descendant_qualification_followup.py",
+      "destination": "pack/authoring-source/authoring-tools/apply_descendant_qualification_followup.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/apply_full_verifier_followup.py",
+      "destination": "pack/authoring-source/authoring-tools/apply_full_verifier_followup.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/build_task_command_registry.py",
+      "destination": "pack/authoring-source/authoring-tools/build_task_command_registry.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/create_successor_workspace.py",
+      "destination": "pack/authoring-source/authoring-tools/create_successor_workspace.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/import_review_sources.py",
+      "destination": "pack/authoring-source/authoring-tools/import_review_sources.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/issue_current_authoring_repository_receipt.py",
+      "destination": "pack/authoring-source/authoring-tools/issue_current_authoring_repository_receipt.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/issue_declaration_gate.py",
+      "destination": "pack/authoring-source/authoring-tools/issue_declaration_gate.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/rebind_successor.py",
+      "destination": "pack/authoring-source/authoring-tools/rebind_successor.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/sync_normative_bundle.py",
+      "destination": "pack/authoring-source/authoring-tools/sync_normative_bundle.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/validate_artifact_ownership.py",
+      "destination": "pack/authoring-source/authoring-tools/validate_artifact_ownership.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/validate_authority_graph.py",
+      "destination": "pack/authoring-source/authoring-tools/validate_authority_graph.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/validate_task_manifest.py",
+      "destination": "pack/authoring-source/authoring-tools/validate_task_manifest.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/verify_successor_migration.py",
+      "destination": "pack/authoring-source/authoring-tools/verify_successor_migration.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/verify_v62_source.py",
+      "destination": "pack/authoring-source/authoring-tools/verify_v62_source.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/create_authoring_workspace.py",
+      "destination": "pack/authoring-source/bootstrap/create_authoring_workspace.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/extract_plan.py",
+      "destination": "pack/authoring-source/bootstrap/extract_plan.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/initialize_authoring_repository.py",
+      "destination": "pack/authoring-source/bootstrap/initialize_authoring_repository.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/test_bootstrap_tools.py",
+      "destination": "pack/authoring-source/bootstrap/test_bootstrap_tools.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "plan-input/bootstrap/verify_extracted_plan.py",
+      "destination": "pack/authoring-source/bootstrap/verify_extracted_plan.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/prepare_part_b_review_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/prepare_part_b_review_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_part_b_review_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_part_b_review_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-review-predecessor.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-review-predecessor.json",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-compiler-inputs.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-compiler-inputs.json",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/prepare_one_ready_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/prepare_one_ready_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tools/validate_current_phase_inputs.py",
+      "destination": "pack/authoring-source/authoring-tools/validate_current_phase_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_one_ready_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_one_ready_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-tests/test_current_phase_inputs.py",
+      "destination": "pack/authoring-source/authoring-tests/test_current_phase_inputs.py",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-one-ready-predecessor.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-one-ready-predecessor.json",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-review-launch-source.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-review-launch-source.json",
+      "owner": "V636-P09-T01"
+    },
+    {
+      "source": "authoring-fixtures/part-b-security-surface-source.json",
+      "destination": "pack/authoring-source/authoring-fixtures/part-b-security-surface-source.json",
+      "owner": "V636-P09-T01"
+    }
+  ],
+  "runtime_source_root": "/home/thenam176/betting-helper/part-b-candidate",
+  "final_runtime_root": "/home/thenam176/betting-helper/part-b-candidate",
+  "rule": "Sealed-review reference resolution maps historic authoring source paths through this exact source export; runtime references resolve in final runtime. No authoring workspace mount is needed."
+}

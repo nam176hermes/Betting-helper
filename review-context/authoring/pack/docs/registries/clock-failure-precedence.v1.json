@@ -1,0 +1,220 @@
+{
+  "schema_version": "clock-failure-precedence/v2",
+  "source_file": "docs/vectors/inherited/clock-coherence-v6.2.json",
+  "source_sha256": "7124139b9a0a5a89032e3fb7809c16dc36d6dce03e84ea34d2b8194f4625867f",
+  "negative_mapping_count": 16,
+  "ordered_error_codes": [
+    "E_NEGATIVE_TARGET_ORDER",
+    "E_NEGATIVE_SOURCE_ORDER",
+    "E_NEGATIVE_NETWORK_RTT",
+    "E_SOURCE_DOMAIN_MISMATCH",
+    "E_TARGET_DOMAIN_MISMATCH",
+    "E_BOOT_MISMATCH",
+    "E_UNIT_NOT_MICROSECOND",
+    "E_TIMESTAMP_OWNER_MISMATCH",
+    "E_INVERTED_OFFSET_INTERVAL",
+    "E_MAX_NETWORK_RTT_EXCEEDED",
+    "E_MAX_BASE_UNCERTAINTY_EXCEEDED",
+    "E_MINIMUM_VALID_SAMPLES",
+    "E_MAX_MAPPING_SEGMENT_AGE",
+    "E_WALL_STEP_TOLERANCE",
+    "E_INCONSISTENT_MAPPING",
+    "SOURCE_AGE_UNKNOWN",
+    "ACCEPT"
+  ],
+  "negative_vectors": [
+    {
+      "vector_id": "MAP-NEG-01-TARGET-ORDER",
+      "source_index": 0,
+      "mutation": {
+        "t2": 1005401,
+        "t3": 1005400
+      },
+      "expected_error": "E_NEGATIVE_TARGET_ORDER",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 1
+    },
+    {
+      "vector_id": "MAP-NEG-02-SOURCE-ORDER",
+      "source_index": 1,
+      "mutation": {
+        "t1": 1000601,
+        "t4": 1000600
+      },
+      "expected_error": "E_NEGATIVE_SOURCE_ORDER",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 2
+    },
+    {
+      "vector_id": "MAP-NEG-03-NEGATIVE-RTT",
+      "source_index": 2,
+      "mutation": {
+        "t1": 1000000,
+        "t2": 1000100,
+        "t3": 1001000,
+        "t4": 1000500
+      },
+      "expected_error": "E_NEGATIVE_NETWORK_RTT",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 3
+    },
+    {
+      "vector_id": "MAP-NEG-04-WRONG-SOURCE-DOMAIN",
+      "source_index": 3,
+      "mutation": {
+        "t4_clock_domain_id": "33333333-3333-4333-8333-333333333333"
+      },
+      "expected_error": "E_SOURCE_DOMAIN_MISMATCH",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 4
+    },
+    {
+      "vector_id": "MAP-NEG-05-WRONG-TARGET-DOMAIN",
+      "source_index": 4,
+      "mutation": {
+        "t3_clock_domain_id": "33333333-3333-4333-8333-333333333333"
+      },
+      "expected_error": "E_TARGET_DOMAIN_MISMATCH",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 5
+    },
+    {
+      "vector_id": "MAP-NEG-06-WRONG-BOOT",
+      "source_index": 5,
+      "mutation": {
+        "t4_boot_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
+      },
+      "expected_error": "E_BOOT_MISMATCH",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 6
+    },
+    {
+      "vector_id": "MAP-NEG-07-WRONG-UNIT",
+      "source_index": 6,
+      "mutation": {
+        "t3_unit": "MILLISECOND"
+      },
+      "expected_error": "E_UNIT_NOT_MICROSECOND",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 7
+    },
+    {
+      "vector_id": "MAP-NEG-08-WRONG-OWNER",
+      "source_index": 7,
+      "mutation": {
+        "t2_owner": "EXTENSION_SERVICE_WORKER"
+      },
+      "expected_error": "E_TIMESTAMP_OWNER_MISMATCH",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 8
+    },
+    {
+      "vector_id": "MAP-NEG-09-INVERTED-INTERVAL",
+      "source_index": 8,
+      "mutation": {
+        "offset_lower_us": 5230,
+        "offset_upper_us": 4770
+      },
+      "expected_error": "E_INVERTED_OFFSET_INTERVAL",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 9
+    },
+    {
+      "vector_id": "MAP-NEG-10-RTT-EXCEEDED",
+      "source_index": 9,
+      "mutation": {
+        "network_rtt_us": 250001
+      },
+      "expected_error": "E_MAX_NETWORK_RTT_EXCEEDED",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 10
+    },
+    {
+      "vector_id": "MAP-NEG-11-UNCERTAINTY-EXCEEDED",
+      "source_index": 10,
+      "mutation": {
+        "base_uncertainty_us": 125001
+      },
+      "expected_error": "E_MAX_BASE_UNCERTAINTY_EXCEEDED",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 11
+    },
+    {
+      "vector_id": "MAP-NEG-12-TOO-FEW-SAMPLES",
+      "source_index": 11,
+      "mutation": {
+        "valid_sample_count": 7
+      },
+      "expected_error": "E_MINIMUM_VALID_SAMPLES",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 12
+    },
+    {
+      "vector_id": "MAP-NEG-13-SEGMENT-TOO-OLD",
+      "source_index": 12,
+      "mutation": {
+        "mapping_segment_age_us": 30000001
+      },
+      "expected_error": "E_MAX_MAPPING_SEGMENT_AGE",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 13
+    },
+    {
+      "vector_id": "MAP-NEG-14-WALL-STEP",
+      "source_index": 13,
+      "mutation": {
+        "wall_step_us": 1000001
+      },
+      "expected_error": "E_WALL_STEP_TOLERANCE",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 14
+    },
+    {
+      "vector_id": "MAP-NEG-15-NONINTERSECTING-TARGET-INTERVALS",
+      "source_index": 14,
+      "mutation": {
+        "eligible_target_intervals": [
+          [
+            4770,
+            4800
+          ],
+          [
+            5000,
+            5230
+          ]
+        ]
+      },
+      "expected_error": "E_INCONSISTENT_MAPPING",
+      "mapping_eligible": false,
+      "expected_source_age": null,
+      "precedence_rank": 15
+    },
+    {
+      "vector_id": "MAP-NEG-16-UNMAPPED-CDP",
+      "source_index": 15,
+      "mutation": {
+        "source_owner": "CDP_BROWSER",
+        "proven_mapping": false
+      },
+      "expected_error": null,
+      "mapping_eligible": false,
+      "expected_source_age": "UNKNOWN",
+      "precedence_rank": 16
+    }
+  ],
+  "evaluation_rule": "RECOMPUTE_INPUTS_IN_PYTHON_AND_TYPESCRIPT_NEVER_TRUST_EXPECTED_FIELDS"
+}

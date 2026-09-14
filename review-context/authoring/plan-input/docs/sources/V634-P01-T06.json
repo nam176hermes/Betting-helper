@@ -1,0 +1,44 @@
+{
+  "task_id": "V634-P01-T06",
+  "result": "HOLD",
+  "authority": "PLAN_AUTHORING",
+  "authorized_production_phases": "NONE",
+  "attempts": [
+    {
+      "result": "REJECTED",
+      "reason": "The initial gate accepted blank, source-less and unknown ownership metadata and issued MATERIALIZATION_COMPLETE PASS despite the sealed MIG0-T05 task/command-I/O omission for review-authority."
+    }
+  ],
+  "commands": [
+    {
+      "command_id": "TYPECHECK_MATERIALIZED_TS",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.4-authoring/runtime",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json",
+        "--noEmit"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command_id": "TEST_V634_P01_T06",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.4-authoring/runtime",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/materialization/test_materialization_gate.py"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "command_registry_sha256": "b357014bf37848675d59300c16b6148b98be9be9b2169053aea8b45a9ce1036e",
+  "hold_reason": "A successor sealed-plan amendment must close the MIG0-T05 task/command-I/O ownership mismatch, then P00 declaration and P01 materialization must be reissued against that new immutable identity."
+}

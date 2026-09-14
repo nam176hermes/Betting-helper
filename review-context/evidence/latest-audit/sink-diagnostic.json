@@ -1,0 +1,124 @@
+{
+  "status": "LOCAL_DIAGNOSTIC_PASS",
+  "allowed_control": {
+    "hash_sink_observed": true,
+    "sqlite_insert_observed": true
+  },
+  "denied_cases": [
+    {
+      "field": "cookie",
+      "depth": "event",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "cookie",
+      "depth": "payload",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "cookie",
+      "depth": "selection",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "token",
+      "depth": "event",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "token",
+      "depth": "payload",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "token",
+      "depth": "selection",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "raw_response",
+      "depth": "event",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "raw_response",
+      "depth": "payload",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "raw_response",
+      "depth": "selection",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "authorization",
+      "depth": "event",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "authorization",
+      "depth": "payload",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    },
+    {
+      "field": "authorization",
+      "depth": "selection",
+      "rejection": "E_LIVE_RECORD",
+      "hash_calls": 0,
+      "sql_calls": 0,
+      "logs": 0,
+      "database_bytes_unchanged": true
+    }
+  ],
+  "source_kind": "SYNTHETIC",
+  "limitations": [
+    "Not controller-executed",
+    "No independent review",
+    "No guard-disabled proof-invalidating mutation",
+    "No browser or IndexedDB observations in this diagnostic"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "observed_at": "2026-09-13T21:21:55.314143+00:00",
+  "runtime_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "authoring_commit": "959439f492b6bd385bfdce57443733a00044aebc",
+  "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+  "controller_config_sha256": "369af32c8e9956a3805bf15e48d06444d7841232e6eae9ffde3625d7a41d9ffb",
+  "sealed_artifact_sha256": {
+    "pack.zip": "2cfe4ad84189db200b3f06ab7bd55d9703aaf11fa0db74381036dd2ef2a909ab",
+    "pack.zip.sha256": "ecc02b72c8e22752700a07c57b162672654f5d944e6aa785ace9a6cb62d0c13f",
+    "pack.seal-attestation.json": "aec3255cafa1bc265503a0423d363990fcfc86595ec3ecfc97e6dddb672954ca"
+  },
+  "handoff_sha256": "202de786951bdd6c072a94443cb9a19e11a2dc9012800baf7d7375006750f939",
+  "stage": "v3-launch-b_RUNNING",
+  "launches_observed": [
+    {
+      "role": "IMPLEMENTATION_READINESS_REVIEWER",
+      "review_run_id": "ed622e15-194e-4177-9ea0-d2b168e5193a",
+      "issued_at": "2026-09-13T20:56:48.188533+00:00",
+      "expires_at": "2026-09-14T04:56:48.188533+00:00",
+      "issued_at_toronto": "2026-09-13T16:56:48.188533-04:00",
+      "expires_at_toronto": "2026-09-14T00:56:48.188533-04:00"
+    }
+  ],
+  "prepared_ab_receipt_exists": false,
+  "verification": "Receipt and artifact byte identity checked; no new signing or full qualification rerun",
+  "provider_attempts": 0,
+  "operator_captures": 0,
+  "live_sessions": 0,
+  "credential_accesses": 0,
+  "production_authority": "NONE"
+}

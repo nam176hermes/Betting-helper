@@ -1,0 +1,105 @@
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: .venv
+Installed 22 packages in 113ms
+........................................................................ [ 82%]
+..F............                                                          [100%]
+=================================== FAILURES ===================================
+___________________ test_typescript_closed_contract_executes ___________________
+
+synthetic_book = {'binding_id': '11111111-1111-4111-8111-111111111111', 'binding_revision': '1', 'operator_fixture_id': 'SYNTHETIC-101', 'market_id': 'SYNTHETIC-FT', ...}
+tmp_path = PosixPath('/tmp/pytest-of-thenam176/pytest-254/test_typescript_closed_contrac0')
+
+    def test_typescript_closed_contract_executes(synthetic_book: Any, tmp_path: Path) -> None:
+        """Exercise emitted TS against the same source schemas, not compile-only evidence."""
+        code = """
+          import {createRequire} from 'node:module';
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const {validateLiveRecord} = await import(process.argv[1]);
+          const require = createRequire(new URL('./extension/package.json', import.meta.url));
+          const Ajv = require('ajv/dist/2020').default;
+          const ajv = new Ajv({strict:false});
+          require('ajv-formats')(ajv);
+          const schema = JSON.parse(fs.readFileSync('contracts/live_readonly/v1/records.schema.json'));
+          ajv.addSchema(schema);
+          const validate = (value, kind) => ajv.getSchema(schema.$id+'#/$defs/'+kind)(value);
+          const book = JSON.parse(fs.readFileSync(0, 'utf8'));
+          assert.deepEqual(validateLiveRecord(book, 'MarketBook', validate), book);
+          for (const bad of [{...book, cookie:'TEST_ONLY'},
+              {...book, browser_mono_us:'9223372036854775808'},
+              {...book, capture_evidence_tier:'NATIVE_ATOMIC'},
+              {...book, selections:{...book.selections, DRAW:book.selections.HOME}}]) {
+            assert.throws(() => validateLiveRecord(bad, 'MarketBook', validate), /E_LIVE_RECORD/);
+          }
+          assert.throws(() => validateLiveRecord(book,'MarketBook',()=>false), /E_LIVE_RECORD/);
+          console.log('TS_LIVE_CONTRACT: 1 positive, 5 rejections');
+        """
+        root = Path(__file__).resolve().parents[2]
+        compiled = tmp_path / "compiled"
+        compiled.mkdir()
+        (compiled / "package.json").write_text('{"type":"module"}\n')
+        (compiled / "node_modules").symlink_to(
+            root / "extension/node_modules", target_is_directory=True
+        )
+        before = set((root / "extension/.test-build").rglob("*"))
+        for argv, data in [
+            (
+                [
+                    "pnpm",
+                    "--dir",
+                    "extension",
+                    "exec",
+                    "tsc",
+                    "-p",
+                    "tsconfig.live.json",
+                    "--outDir",
+                    str(compiled),
+                ],
+                None,
+            ),
+            (
+                [
+                    "node",
+                    "--input-type=module",
+                    "-e",
+                    code,
+                    (compiled / "src/live/contracts.js").as_uri(),
+                ],
+                json.dumps(synthetic_book),
+            ),
+        ]:
+            result = subprocess.run(  # noqa: S603 -- fixed isolated compiler/test commands
+                argv,
+                input=data,
+                text=True,
+                capture_output=True,
+                cwd=root,
+                timeout=60,
+            )
+>           assert result.returncode == 0, result.stdout + result.stderr
+E           AssertionError: error TS2318: Cannot find global type 'Array'.
+E             error TS2318: Cannot find global type 'Boolean'.
+E             error TS2318: Cannot find global type 'CallableFunction'.
+E             error TS2318: Cannot find global type 'Function'.
+E             error TS2318: Cannot find global type 'IArguments'.
+E             error TS2318: Cannot find global type 'NewableFunction'.
+E             error TS2318: Cannot find global type 'Number'.
+E             error TS2318: Cannot find global type 'Object'.
+E             error TS2318: Cannot find global type 'RegExp'.
+E             error TS2318: Cannot find global type 'String'.
+E             error TS2688: Cannot find type definition file for 'chrome'.
+E               The file is in the program because:
+E                 Entry point of type library 'chrome' specified in compilerOptions
+E             error TS2688: Cannot find type definition file for 'node'.
+E               The file is in the program because:
+E                 Entry point of type library 'node' specified in compilerOptions
+E             tsconfig.json(6,13): error TS6046: Argument for '--lib' option must be: 'es5', 'es6', 'es2015', 'es7', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'es2023', 'esnext', 'dom', 'dom.iterable', 'webworker', 'webworker.importscripts', 'webworker.iterable', 'scripthost', 'es2015.core', 'es2015.collection', 'es2015.generator', 'es2015.iterable', 'es2015.promise', 'es2015.proxy', 'es2015.reflect', 'es2015.symbol', 'es2015.symbol.wellknown', 'es2016.array.include', 'es2017.object', 'es2017.sharedmemory', 'es2017.string', 'es2017.intl', 'es2017.typedarrays', 'es2018.asyncgenerator', 'es2018.asynciterable', 'es2018.intl', 'es2018.promise', 'es2018.regexp', 'es2019.array', 'es2019.object', 'es2019.string', 'es2019.symbol', 'es2019.intl', 'es2020.bigint', 'es2020.date', 'es2020.promise', 'es2020.sharedmemory', 'es2020.string', 'es2020.symbol.wellknown', 'es2020.intl', 'es2020.number', 'es2021.promise', 'es2021.string', 'es2021.weakref', 'es2021.intl', 'es2022.array', 'es2022.error', 'es2022.intl', 'es2022.object', 'es2022.sharedmemory', 'es2022.string', 'es2022.regexp', 'es2023.array', 'esnext.array', 'esnext.symbol', 'esnext.asynciterable', 'esnext.intl', 'esnext.bigint', 'esnext.string', 'esnext.promise', 'esnext.weakref', 'decorators', 'decorators.legacy'.
+E             tsconfig.json(18,15): error TS6046: Argument for '--target' option must be: 'es3', 'es5', 'es6', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'esnext'.
+E             
+E           assert 2 == 0
+E            +  where 2 = CompletedProcess(args=['pnpm', '--dir', 'extension', 'exec', 'tsc', '-p', 'tsconfig.live.json', '--outDir', '/tmp/pyte... 'es5', 'es6', 'es2015', 'es2016', 'es2017', 'es2018', 'es2019', 'es2020', 'es2021', 'es2022', 'esnext'.\n", stderr='').returncode
+
+tests/live/test_live_contracts.py:158: AssertionError
+=========================== short test summary info ============================
+FAILED tests/live/test_live_contracts.py::test_typescript_closed_contract_executes
+1 failed, 86 passed in 5.36s

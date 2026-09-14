@@ -1,0 +1,32 @@
+[
+  {
+    "path": "review-context/ai-packs/application.1.xml",
+    "files": 235,
+    "mismatches": [],
+    "bytes": 2938357
+  },
+  {
+    "path": "review-context/ai-packs/governance.1.xml",
+    "files": 36,
+    "mismatches": [],
+    "bytes": 214474
+  },
+  {
+    "path": "review-context/ai-packs/governance.2.xml",
+    "files": 157,
+    "mismatches": [],
+    "bytes": 3130250
+  },
+  {
+    "path": "review-context/ai-packs/governance.3.xml",
+    "files": 1,
+    "mismatches": [],
+    "bytes": 155709
+  },
+  {
+    "path": "review-context/ai-packs/tests.1.xml",
+    "files": 258,
+    "mismatches": [],
+    "bytes": 1701948
+  }
+]

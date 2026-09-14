@@ -1,0 +1,435 @@
+{
+  "baseline_guidance_sha256": "3f63ade0f2a3958574629aa58893fb242e9decae85158fa2cb12d46c62effc3c",
+  "design": "One pair per shape; frozen Phase 1 guide + Astra/high versus bounded routed policy. Models/effort change too; no causal attribution to an individual component. Eight native local CLI evaluations, not production qualification.",
+  "limitations": [
+    "No repeated seeds or long engineering tasks; cannot establish broad quota savings.",
+    "Token counters are recorded API telemetry, not billable quota conversions.",
+    "Exact model turns, complete file-read coverage and semantic retry counts unavailable.",
+    "Tool counts include command, MCP and file-change events; exclude notices/reasoning/messages.",
+    "Model outputs include serialized MCP results. Test invocations are command-pattern proxies, plus one independent oracle per case.",
+    "Native agents disabled in both variants; zeros do not demonstrate coordination savings.",
+    "Initial critical-after keyword oracle false negative was corrected from its recorded ambiguous-delivery evidence without rerunning or changing task behavior.",
+    "Runner metric extraction was corrected to count MCP output and omit non-tool notices. No additional model run was performed."
+  ],
+  "results": [
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "complex",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "- FINDING: Fixed normalization with `strip().casefold()` and explicit collision detection.\n- EVIDENCE: `python3 oracle.py` and `git diff --check` passed. Oracle hash unchanged. Log: `/tmp/bh-complex-after-oracle.log`.\n- IMPACT: Equivalent keys raise `ValueError`, even with equal values, avoiding ambiguous lookup. Missing keys retain `KeyError`; APIs preserved.\n- ACTION: Changed only `names.py` and `catalog.py`.\n- OPEN ISSUE: Authority remains **HOLD / NONE**; no production access or Git mutations.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 15470,
+        "read_command_invocations": 1,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08013-8dd4-7f10-9ea3-e5d5f4715617",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 1207,
+        "tool_calls": 6,
+        "transcript_bytes": 18590,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 82560,
+            "input_tokens": 124498,
+            "output_tokens": 510,
+            "reasoning_output_tokens": 9
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "COMPLEX",
+        "minimum_verification": "V2",
+        "model": "gpt-6-astra",
+        "reasoning": "medium",
+        "required_review": false,
+        "transition": "initial risk route"
+      },
+      "state": "/tmp/bh-phase2/bench/complex-after.state.json",
+      "transcript_sha256": "648ca05bbe1a9d95825015f2fed03f715f4ee5ad0691a1bd3c15caf0e2a2b442",
+      "variant": "after"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "complex",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "Updated normalization to `strip().casefold()`; APIs and missing-key `KeyError` remain intact.\n\nAll normalized collisions raise `ValueError`, even with equal values, to prevent silent overwrites.\n\n`python3 oracle.py`, added regression checks, and `git diff --check` passed. `oracle.py` unchanged.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 20066,
+        "read_command_invocations": 2,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08013-46d7-7690-a944-0424d935ea85",
+        "spawns": 0,
+        "test_invocations_proxy": 2,
+        "text_and_command_output_bytes": 2099,
+        "tool_calls": 9,
+        "transcript_bytes": 25182,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 177792,
+            "input_tokens": 203999,
+            "output_tokens": 1154,
+            "reasoning_output_tokens": 167
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "COMPLEX",
+        "minimum_verification": "V2",
+        "model": "gpt-6-astra",
+        "reasoning": "high"
+      },
+      "state": "/tmp/bh-phase2/bench/complex-before.state.json",
+      "transcript_sha256": "d85f412f366413b09ae8cef8ed20372efb7c830c6e6245b892a3dd96fd96bc1c",
+      "variant": "before"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "critical",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "initial_keyword_oracle": "FAIL: wording false negative on crash_window",
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "{\n  \"findings\": [\n    {\n      \"category\": \"concurrency_duplicate_send\",\n      \"evidence\": \"ledger.py:3-5: deterministic two-thread probe sent the same key twice; both calls returned 'sent'.\",\n      \"action\": \"Atomically claim each key before sending; verify concurrent callers cannot both dispatch.\"\n    },\n    {\n      \"category\": \"ambiguous_delivery_retry\",\n      \"evidence\": \"ledger.py:4-5: simulated send applied an effect then raised; retry produced a second effect because the key remained unrecorded.\",\n      \"action\": \"Persist delivery intent and reconcile ambiguous outcomes using downstream idempotency; merely moving seen.add before send risks lost delivery.\"\n    },\n    {\n      \"category\": \"restart_loses_deduplication\",\n      \"evidence\": \"ledger.py:1: fresh module state accepted an already-sent key again in the restart simulation.\",\n      \"action\": \"Persist deduplication state and verify recovery across actual process restarts.\"\n    },\n    {\n      \"category\": \"payload_conflict_silently_suppressed\",\n      \"evidence\": \"ledger.py:3: reusing a key with a different payload returned 'duplicate' without reporting the conflict.\",\n      \"action\": \"Bind keys to payload identity and explicitly reject mismatched reuse.\"\n    },\n    {\n      \"category\": \"oracle_has_no_behavioral_coverage\",\n      \"evidence\": \"python3 oracle.py passed. oracle.py:1 only checks that ledger.py starts with 'seen=set()'; all four failure probes also reproduced.\",\n      \"action\": \"Preserve oracle.py; require separate concurrency, ambiguous-delivery, restart, and payload-conflict checks.\"\n    }\n  ],\n  \"qualification\": {\n    \"status\": \"HOLD\",\n    \"authority\": \"NONE\",\n    \"bound_head\": \"41a215feac6bc3710f3366b73a3b2b2663caaf08\",\n    \"evidence_scope\": \"Supplied bootstrap and inspected disposable files; final git status clean.\",\n    \"open_issue\": \"V2 oracle passed; required V4 qualification remains unmet. No formal review launched.\",\n    \"logs\": \"Complete outputs retained in tool transcript; no filesystem logs written under read-only constraints.\"\n  }\n}",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 17060,
+        "read_command_invocations": 1,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08014-9bc2-78f2-9f11-d777fce64876",
+        "spawns": 0,
+        "test_invocations_proxy": 2,
+        "text_and_command_output_bytes": 2699,
+        "tool_calls": 4,
+        "transcript_bytes": 22196,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 134528,
+            "input_tokens": 156308,
+            "output_tokens": 1362,
+            "reasoning_output_tokens": 249
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_correction": "Manual transcript/code-probe review confirms ambiguous_delivery_retry: effect occurred, send raised, retry duplicated. Expanded synonym matcher; no task behavior or quality contract changed.",
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": {
+        "concurrency": true,
+        "crash_window": true,
+        "durability": true,
+        "payload_binding": true
+      },
+      "route": {
+        "class": "CRITICAL",
+        "minimum_verification": "V4",
+        "model": "gpt-6-astra",
+        "reasoning": "high",
+        "required_review": true,
+        "transition": "initial risk route"
+      },
+      "state": "/tmp/bh-phase2/bench/critical-after.state.json",
+      "transcript_sha256": "cea23cf0111d3b6c80c6fffc09da18a1308e59969339a9d305a0bdb8ee1d0859",
+      "variant": "after"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "critical",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "{\n  \"findings\": [\n    {\n      \"category\": \"Ambiguous-send replay\",\n      \"evidence\": \"ledger.py:4-5 records the key after sending. Simulated effect followed by timeout, then retry, produced two payments.\",\n      \"action\": \"Require downstream idempotency and reconciliation of uncertain outcomes.\"\n    },\n    {\n      \"category\": \"Concurrent duplicate execution\",\n      \"evidence\": \"ledger.py:3-5 lacks atomic reservation. Two synchronized callers sent the same payment twice.\",\n      \"action\": \"Atomically reserve keys across all executors.\"\n    },\n    {\n      \"category\": \"Volatile deduplication state\",\n      \"evidence\": \"ledger.py:1 stores keys only in memory. Fresh module state permitted the same payment again.\",\n      \"action\": \"Persist operation state and verify restart recovery.\"\n    },\n    {\n      \"category\": \"Payload-key conflict suppression\",\n      \"evidence\": \"ledger.py:3 returned 'duplicate' for a reused key with a different payload.\",\n      \"action\": \"Bind keys to payloads and reject conflicting reuse.\"\n    },\n    {\n      \"category\": \"Nonbehavioral qualification oracle\",\n      \"evidence\": \"python3 oracle.py passed; oracle.py:1 only checks that source starts with 'seen=set()'.\",\n      \"action\": \"Require behavioral concurrency, uncertain-send, recovery, and payload-conflict checks.\"\n    }\n  ],\n  \"qualification\": \"HOLD. Local counterexamples reproduced; commands exited 0. Git worktree remained clean. No implementation or provider calls.\"\n}",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 16805,
+        "read_command_invocations": 2,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08014-6dbe-70c1-85f9-9bb8f9781e92",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 2434,
+        "tool_calls": 5,
+        "transcript_bytes": 21972,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 139136,
+            "input_tokens": 162119,
+            "output_tokens": 1011,
+            "reasoning_output_tokens": 95
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": {
+        "concurrency": true,
+        "crash_window": true,
+        "durability": true,
+        "payload_binding": true
+      },
+      "route": {
+        "class": "CRITICAL",
+        "minimum_verification": "V4",
+        "model": "gpt-6-astra",
+        "reasoning": "high"
+      },
+      "state": "/tmp/bh-phase2/bench/critical-before.state.json",
+      "transcript_sha256": "8420856341acd47a4e6f6ec097e480303edfce77db434b58150cf41683f86201",
+      "variant": "before"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "mechanical",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "FINDING: Changed README title to `Offline sample`.\n\nEVIDENCE: `python3 oracle.py` passed. `oracle.py` unchanged; only `README.md` modified.\n\nIMPACT: Remaining text preserved.\n\nACTION: Complete.\n\nOPEN ISSUE: None; no production or remote access used.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 15145,
+        "read_command_invocations": 1,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08011-d9e1-7ce3-a267-b477607bfcc1",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 880,
+        "tool_calls": 5,
+        "transcript_bytes": 17864,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 174592,
+            "input_tokens": 204045,
+            "output_tokens": 621,
+            "reasoning_output_tokens": 174
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "MECHANICAL",
+        "minimum_verification": "V0",
+        "model": "gpt-5.6-luna",
+        "reasoning": "low",
+        "required_review": false,
+        "transition": "initial risk route"
+      },
+      "state": "/tmp/bh-phase2/bench/mechanical-after.state.json",
+      "transcript_sha256": "cbab1c1897eb0ce36489a375da93ba261ee00ec7d73dff215901fda73e936cdc",
+      "variant": "after"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "mechanical",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "Changed the README title to \u201cOffline sample\u201d; remaining text preserved. `python3 oracle.py` passed. `oracle.py` unchanged.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 15365,
+        "read_command_invocations": 2,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08011-d9d2-7973-9081-bd7ed07ef4cc",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 1078,
+        "tool_calls": 6,
+        "transcript_bytes": 18952,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 106112,
+            "input_tokens": 128747,
+            "output_tokens": 397,
+            "reasoning_output_tokens": 0
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "MECHANICAL",
+        "minimum_verification": "V0",
+        "model": "gpt-6-astra",
+        "reasoning": "high"
+      },
+      "state": "/tmp/bh-phase2/bench/mechanical-before.state.json",
+      "transcript_sha256": "e811351a9f4f16bdad201aa7f82c5275fb19d3bbf32ad1ee0a6b150b5d26bd03",
+      "variant": "before"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "normal",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "FINDING: `valid_port` now accepts only exact `int` values 1\u201365535; booleans, zero, and other types reject.\n\nEVIDENCE: `python3 oracle.py` exited 0.\n\nIMPACT: Only `validation.py` changed; `oracle.py` preserved.\n\nACTION: Complete. Formal review remains HOLD (authority: NONE).\n\nOPEN ISSUE: None.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 24917,
+        "read_command_invocations": 1,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08012-8072-7842-bffc-d3d33dfea244",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 7837,
+        "tool_calls": 8,
+        "transcript_bytes": 29182,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 292608,
+            "input_tokens": 324870,
+            "output_tokens": 1216,
+            "reasoning_output_tokens": 454
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "NORMAL",
+        "minimum_verification": "V2",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium",
+        "required_review": false,
+        "transition": "initial risk route"
+      },
+      "state": "/tmp/bh-phase2/bench/normal-after.state.json",
+      "transcript_sha256": "3cc103b56efea30c503cb37ced2145dd9d7e350fac8ae04e39c9a06dabb6eeb6",
+      "variant": "after"
+    },
+    {
+      "actual_verification": "Synthetic local oracle only; no production V3/V4 qualification",
+      "case": "normal",
+      "exit": 0,
+      "external_oracle_invocations": 1,
+      "measurement": "MEASURED",
+      "metrics": {
+        "coordination_messages": 0,
+        "files_inspected": "NOT AVAILABLE: shell commands may combine reads",
+        "final": "Updated `valid_port` to accept only integers 1\u201365535, rejecting booleans and other types. API unchanged.\n\n`python3 oracle.py` passed; `oracle.py` unchanged.",
+        "host_turns": 1,
+        "measurement_scope": "Routed policy versus Astra/high Phase 1 baseline; bundled change, not a causal per-component comparison. Tool output counts include serialized MCP results.",
+        "model_turns": "NOT AVAILABLE: exec JSONL does not expose every model request",
+        "output_bytes": 15415,
+        "read_command_invocations": 2,
+        "repeated_commands": 0,
+        "repeated_read_commands": 0,
+        "retries_proxy": 0,
+        "session_id": "01a08012-7be9-7ad3-8055-8a6daf416970",
+        "spawns": 0,
+        "test_invocations_proxy": 1,
+        "text_and_command_output_bytes": 1146,
+        "tool_calls": 6,
+        "transcript_bytes": 18945,
+        "usage": [
+          {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 140544,
+            "input_tokens": 164184,
+            "output_tokens": 513,
+            "reasoning_output_tokens": 45
+          }
+        ],
+        "waits": 0
+      },
+      "oracle_exit": 0,
+      "oracle_unchanged": true,
+      "quality": "PASS",
+      "review_findings": "NOT APPLICABLE",
+      "route": {
+        "class": "NORMAL",
+        "minimum_verification": "V2",
+        "model": "gpt-6-astra",
+        "reasoning": "high"
+      },
+      "state": "/tmp/bh-phase2/bench/normal-before.state.json",
+      "transcript_sha256": "7fa5b762a5ed865c833d67715182515b707fcad783d72f9a0809ed54026faaff",
+      "variant": "before"
+    }
+  ],
+  "harness_worker_launches": 8,
+  "max_concurrent_harness_workers": 2,
+  "excluded_probes": [
+    "One successful native resume instruction probe",
+    "One old-executable Astra availability failure; no comparable task result"
+  ],
+  "measurement_scope": "Evaluation traces only; excludes coordinator implementation/review/tooling work for Phase 2"
+}

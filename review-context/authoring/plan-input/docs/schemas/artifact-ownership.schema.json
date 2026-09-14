@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.3.6:artifact-ownership",
+  "$defs": {
+    "ArtifactOwnershipRegistry": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "entries"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "artifact-ownership/v2"
+        },
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "classification",
+              "creation_owner",
+              "modifying_tasks",
+              "materialization_required",
+              "source",
+              "qualification_owner",
+              "consumers"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "classification": {
+                "enum": [
+                  "BASELINE_INPUT",
+                  "EXTERNAL_INPUT",
+                  "BASELINE_COPY",
+                  "PLAN_SEED",
+                  "TASK_OUTPUT",
+                  "GENERATED_OUTPUT",
+                  "EVIDENCE_OUTPUT"
+                ]
+              },
+              "creation_owner": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "modifying_tasks": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              },
+              "materialization_required": {
+                "type": "boolean"
+              },
+              "source": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "qualification_owner": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "consumers": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

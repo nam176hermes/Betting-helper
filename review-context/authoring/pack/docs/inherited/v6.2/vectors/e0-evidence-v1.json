@@ -1,0 +1,667 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_version": "e0-evidence-vectors/v1",
+  "target_schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+  "vector_contract": {
+    "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorContract",
+    "base_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorBase",
+    "case_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorCase",
+    "denial_case_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalDenialVectorCase",
+    "scanner_fault_case_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalScannerFaultVectorCase",
+    "content_reference_resolution_policy_schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#ContentReferenceResolutionPolicy",
+    "patch_semantics": "RFC6902",
+    "error_selection": "LOWEST_PRECEDENCE_RANK_ONLY"
+  },
+  "positive_content_reference_resolution": {
+    "schema_version": "content-reference-resolution-policy/v1",
+    "positive_collections": ["valid_records", "semantic_bases"],
+    "coverage": "EVERY_CONTENT_REFERENCE_RECURSIVELY_IN_EVERY_POSITIVE_BASE",
+    "schema_id_resolution": "EXACT_PUBLISHED_ID_ONLY_NO_ALIAS_OR_FILENAME_FALLBACK",
+    "type_version_resolution": "EXACT_SCHEMA_ID_ARTIFACT_TYPE_SCHEMA_VERSION_BINDING_TO_RESOLVABLE_SCHEMA_TARGET",
+    "binding_schema_ids": ["urn:hybrid-discovery:v6.2:raw-observation:v1", "urn:hybrid-discovery:v6.2:e0-evidence:v1"],
+    "missing_or_mismatched_reference_error": "E_CONTENT_REFERENCE_RESOURCE",
+    "production_authority": "NONE"
+  },
+  "error_precedence": [
+    { "precedence_rank": 1, "stage": "UNIVERSAL_DENIAL", "rule": "DENY_BEFORE_ANY_SIDE_EFFECT" },
+    { "precedence_rank": 5, "stage": "JSON_PATCH", "rule": "PATCH_MUST_APPLY_EXACTLY" },
+    { "precedence_rank": 10, "stage": "SCHEMA", "rule": "DRAFT_2020_12_CLOSED_SCHEMA" },
+    { "precedence_rank": 15, "stage": "REFERENCE", "rule": "REFERENCE_INTEGRITY" },
+    { "precedence_rank": 20, "stage": "SEMANTIC", "rule": "E0_SEMANTIC_RULES" },
+    { "precedence_rank": 30, "stage": "AUTHORITY", "rule": "PRODUCTION_AUTHORITY_NONE" }
+  ],
+  "valid_records": [
+    {
+      "case_id": "E0-VALID-S01-NOT-OBSERVED",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1",
+        "record_kind": "E0_SCENARIO_RESULT",
+        "scenario_id": "E0-S01",
+        "scenario_name": "Soccer catalog loaded",
+        "attempt_index": "1",
+        "status": "NOT_OBSERVED",
+        "discovery_run_refs": [
+          { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" }
+        ],
+        "limitation_codes": ["VISIBLE_CATALOG_NOT_AVAILABLE"],
+        "unknown_codes": ["CATALOG_COVERAGE_UNKNOWN"],
+        "positive_fact_refs": [],
+        "facts": { "fact_state": "NOT_OBSERVED", "observation_attempted": true, "positive_fact_count": "0" },
+        "content_hash": "1010101010101010101010101010101010101010101010101010101010101010",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S16-NEW-BOOT-RUN-NO-RESUME",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1",
+        "record_kind": "E0_SCENARIO_RESULT",
+        "scenario_id": "E0-S16",
+        "scenario_name": "Chrome restart",
+        "attempt_index": "1",
+        "status": "COMPLETE",
+        "discovery_run_refs": [
+          { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" }
+        ],
+        "limitation_codes": [],
+        "unknown_codes": [],
+        "positive_fact_refs": [
+          { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "LIFECYCLE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" }
+        ],
+        "facts": {
+          "fact_state": "OBSERVED",
+          "prior_run_sealed": true,
+          "prior_browser_boot_id": "11111111-1111-4111-8111-111111111111",
+          "new_browser_boot_id": "22222222-2222-4222-8222-222222222222",
+          "prior_browser_run_id": "33333333-3333-4333-8333-333333333333",
+          "new_browser_run_id": "44444444-4444-4444-8444-444444444444",
+          "automatic_resume": false,
+          "evidence_refs": [
+            { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "LIFECYCLE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" }
+          ]
+        },
+        "content_hash": "2020202020202020202020202020202020202020202020202020202020202020",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S21-PASSIVE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1",
+        "record_kind": "E0_SCENARIO_RESULT",
+        "scenario_id": "E0-S21",
+        "scenario_name": "Partial Cashout UI/curve observation",
+        "attempt_index": "1",
+        "status": "PARTIAL",
+        "discovery_run_refs": [
+          { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" }
+        ],
+        "limitation_codes": ["CURVE_NOT_OBSERVED"],
+        "unknown_codes": ["CURVE_SEMANTICS_UNKNOWN"],
+        "positive_fact_refs": [
+          { "artifact_id": "artifact:3333333333333333333333333333333333333333333333333333333333333333", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "3333333333333333333333333333333333333333333333333333333333333333" }
+        ],
+        "facts": {
+          "fact_state": "OBSERVED",
+          "ui_state": "VISIBLE",
+          "curve_state": "NOT_OBSERVED",
+          "active_request_issued": false,
+          "tool_caused_action": false,
+          "provenance": {
+            "origin": "INDEPENDENT_USER_CREATED_STATE",
+            "human_action_outside_tool": true,
+            "tool_caused_action": false,
+            "source_observation_ref": { "artifact_id": "artifact:3333333333333333333333333333333333333333333333333333333333333333", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "3333333333333333333333333333333333333333333333333333333333333333" }
+          },
+          "offer_ref": { "artifact_id": "artifact:3131313131313131313131313131313131313131313131313131313131313131", "artifact_type": "CASHOUT_OFFER", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer/v1", "content_hash": "3131313131313131313131313131313131313131313131313131313131313131" },
+          "offer_revision_ref": { "artifact_id": "artifact:3232323232323232323232323232323232323232323232323232323232323232", "artifact_type": "CASHOUT_OFFER_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer-revision/v1", "content_hash": "3232323232323232323232323232323232323232323232323232323232323232" },
+          "evidence_refs": [
+            { "artifact_id": "artifact:3333333333333333333333333333333333333333333333333333333333333333", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "3333333333333333333333333333333333333333333333333333333333333333" }
+          ]
+        },
+        "content_hash": "3030303030303030303030303030303030303030303030303030303030303030",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S18-PASSIVE-BETSLIP-OFFER",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1", "record_kind": "E0_SCENARIO_RESULT", "scenario_id": "E0-S18", "scenario_name": "Betslip price observation", "attempt_index": "1", "status": "COMPLETE",
+        "discovery_run_refs": [ { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" } ],
+        "limitation_codes": [], "unknown_codes": [],
+        "positive_fact_refs": [ { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181818", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181818" } ],
+        "facts": {
+          "fact_state": "OBSERVED",
+          "provenance": { "origin": "INDEPENDENT_USER_CREATED_STATE", "human_action_outside_tool": true, "tool_caused_action": false, "source_observation_ref": { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181818", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181818" } },
+          "betslip_ref": { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181801", "artifact_type": "BETSLIP", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "betslip/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181801" },
+          "offer_ref": { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181802", "artifact_type": "OFFER", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "offer/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181802" },
+          "offer_revision_ref": { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181803", "artifact_type": "OFFER_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "offer-revision/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181803" },
+          "submission_disposition": "NOT_OBSERVED", "acceptance_disposition": "NOT_OBSERVED", "tool_caused_action": false,
+          "evidence_refs": [ { "artifact_id": "artifact:1818181818181818181818181818181818181818181818181818181818181818", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1818181818181818181818181818181818181818181818181818181818181818" } ]
+        },
+        "content_hash": "1818181818181818181818181818181818181818181818181818181818181899", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S19-PASSIVE-SUBMISSION-ACCEPTANCE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1", "record_kind": "E0_SCENARIO_RESULT", "scenario_id": "E0-S19", "scenario_name": "Existing accepted position observation", "attempt_index": "1", "status": "COMPLETE",
+        "discovery_run_refs": [ { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" } ],
+        "limitation_codes": [], "unknown_codes": [],
+        "positive_fact_refs": [ { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191919", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191919" } ],
+        "facts": {
+          "fact_state": "OBSERVED", "provenance": { "origin": "PRE_EXISTING_OPERATOR_STATE", "human_action_outside_tool": true, "tool_caused_action": false, "source_observation_ref": { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191919", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191919" } },
+          "user_submission_ref": { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191901", "artifact_type": "USER_SUBMISSION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "user-submission/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191901" },
+          "operator_acceptance_ref": { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191902", "artifact_type": "OPERATOR_ACCEPTANCE", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "operator-acceptance/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191902" },
+          "position_ref": { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191903", "artifact_type": "POSITION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "position/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191903" },
+          "position_revision_ref": { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191904", "artifact_type": "POSITION_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "position-revision/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191904" },
+          "correction_disposition": "NONE_OBSERVED", "tool_caused_action": false,
+          "evidence_refs": [ { "artifact_id": "artifact:1919191919191919191919191919191919191919191919191919191919191919", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "1919191919191919191919191919191919191919191919191919191919191919" } ]
+        },
+        "content_hash": "1919191919191919191919191919191919191919191919191919191919191999", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S20-PASSIVE-FULL-CASHOUT-OFFER",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1", "record_kind": "E0_SCENARIO_RESULT", "scenario_id": "E0-S20", "scenario_name": "Full Cashout offer observation", "attempt_index": "1", "status": "COMPLETE",
+        "discovery_run_refs": [ { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" } ],
+        "limitation_codes": [], "unknown_codes": [], "positive_fact_refs": [ { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202021", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202021" } ],
+        "facts": { "fact_state": "OBSERVED", "provenance": { "origin": "PRE_EXISTING_OPERATOR_STATE", "human_action_outside_tool": true, "tool_caused_action": false, "source_observation_ref": { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202021", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202021" } }, "position_ref": { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202001", "artifact_type": "POSITION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "position/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202001" }, "offer_ref": { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202002", "artifact_type": "CASHOUT_OFFER", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202002" }, "offer_revision_ref": { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202003", "artifact_type": "CASHOUT_OFFER_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer-revision/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202003" }, "offer_state": "AVAILABLE", "active_request_issued": false, "tool_caused_action": false, "evidence_refs": [ { "artifact_id": "artifact:2020202020202020202020202020202020202020202020202020202020202021", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2020202020202020202020202020202020202020202020202020202020202021" } ] },
+        "content_hash": "2020202020202020202020202020202020202020202020202020202020202099", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S22-PASSIVE-OFFER-REVISION",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1", "record_kind": "E0_SCENARIO_RESULT", "scenario_id": "E0-S22", "scenario_name": "Offer removal/change", "attempt_index": "1", "status": "COMPLETE",
+        "discovery_run_refs": [ { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" } ],
+        "limitation_codes": [], "unknown_codes": [], "positive_fact_refs": [ { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222223", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222223" } ],
+        "facts": { "fact_state": "OBSERVED", "provenance": { "origin": "PRE_EXISTING_OPERATOR_STATE", "human_action_outside_tool": true, "tool_caused_action": false, "source_observation_ref": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222223", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222223" } }, "prior_offer_revision_ref": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222201", "artifact_type": "CASHOUT_OFFER_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer-revision/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222201" }, "successor_offer_revision_ref": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222202", "artifact_type": "CASHOUT_OFFER_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-offer-revision/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222202" }, "transition": "REVISED", "active_request_issued": false, "tool_caused_action": false, "evidence_refs": [ { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222223", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222223" } ] },
+        "content_hash": "2222222222222222222222222222222222222222222222222222222222222299", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S23-PASSIVE-POST-CASHOUT-REVISION",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1", "record_kind": "E0_SCENARIO_RESULT", "scenario_id": "E0-S23", "scenario_name": "Post-Cashout position revision", "attempt_index": "1", "status": "COMPLETE",
+        "discovery_run_refs": [ { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" } ],
+        "limitation_codes": [], "unknown_codes": [], "positive_fact_refs": [ { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232324", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232324" } ],
+        "facts": { "fact_state": "OBSERVED", "provenance": { "origin": "MANUAL_EXTERNAL_ACTION", "human_action_outside_tool": true, "tool_caused_action": false, "source_observation_ref": { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232324", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232324" } }, "cashout_submission_ref": { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232301", "artifact_type": "USER_CASHOUT_SUBMISSION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "cashout-submission/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232301" }, "operator_acceptance_ref": { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232302", "artifact_type": "OPERATOR_ACCEPTANCE", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "operator-acceptance/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232302" }, "prior_position_revision_ref": { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232303", "artifact_type": "POSITION_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "position-revision/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232303" }, "successor_position_revision_ref": { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232304", "artifact_type": "POSITION_REVISION", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "position-revision/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232304" }, "correction_disposition": "CORRECTION_OBSERVED", "tool_caused_action": false, "evidence_refs": [ { "artifact_id": "artifact:2323232323232323232323232323232323232323232323232323232323232324", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2323232323232323232323232323232323232323232323232323232323232324" } ] },
+        "content_hash": "2323232323232323232323232323232323232323232323232323232323232399", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-S24-LOW-SAMPLE-P99-UNAVAILABLE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-scenario-result/v1",
+        "record_kind": "E0_SCENARIO_RESULT",
+        "scenario_id": "E0-S24",
+        "scenario_name": "Catalog burst/capacity observation",
+        "attempt_index": "1",
+        "status": "PARTIAL",
+        "discovery_run_refs": [
+          { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" }
+        ],
+        "limitation_codes": ["SAMPLE_COUNT_BELOW_1000"],
+        "unknown_codes": ["P99_UNKNOWN"],
+        "positive_fact_refs": [
+          { "artifact_id": "artifact:4444444444444444444444444444444444444444444444444444444444444444", "artifact_type": "CAPACITY_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "4444444444444444444444444444444444444444444444444444444444444444" }
+        ],
+        "facts": { "fact_state": "OBSERVED", "traffic_source": "NATURAL_OPERATOR_TRAFFIC", "generated_load": false, "sample_count": "999", "observed_bytes": "9000", "peak_backlog_count": "2", "cpu_peak_percent": "5.2", "ram_peak_bytes": "1048576", "p50_us": "100", "p95_us": "900", "p99": { "availability": "UNKNOWN", "reason_code": "SAMPLE_COUNT_BELOW_1000" }, "evidence_refs": [ { "artifact_id": "artifact:4444444444444444444444444444444444444444444444444444444444444444", "artifact_type": "CAPACITY_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "4444444444444444444444444444444444444444444444444444444444444444" } ] },
+        "content_hash": "4040404040404040404040404040404040404040404040404040404040404040",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-CATALOG-REPORT",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-report/v1",
+        "record_kind": "E0_REPORT",
+        "report_name": "catalog-capability-report.json",
+        "source_scenario_ids": ["E0-S01"],
+        "evidence_refs": [
+          { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" }
+        ],
+        "report_summary": {
+          "disposition": "SUPPORTED",
+          "metrics": [
+            { "metric_id": "CATALOG_VISIBLE_FIXTURES", "disposition": "OBSERVED", "sample_count": "2", "denominator": "2", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] }
+          ],
+          "unexplained_gap_count": "0",
+          "replay_disposition": "MATCHED"
+        },
+        "sufficiency": {
+          "classification": "FULL_CATALOG",
+          "minimum_bounded_runs": "2",
+          "required_checkpoints_per_run": "3",
+          "run_count": "2",
+          "runs": [
+            {
+              "run_ref": { "artifact_id": "artifact:1111111111111111111111111111111111111111111111111111111111111111", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "1111111111111111111111111111111111111111111111111111111111111111" },
+              "bounded_run": true,
+              "natural_operator_traffic": true,
+              "one_detail_tab_per_fixture_used": false,
+              "checkpoints": [
+                { "checkpoint_id": "CATALOG_LOAD", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] },
+                { "checkpoint_id": "AFTER_NATURAL_UPDATE", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] },
+                { "checkpoint_id": "RUN_CLOSE", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] }
+              ]
+            },
+            {
+              "run_ref": { "artifact_id": "artifact:6666666666666666666666666666666666666666666666666666666666666666", "artifact_type": "DISCOVERY_RUN", "schema_id": "urn:hybrid-discovery:v6.2:authorization-records", "schema_version": "discovery-run-authorization/v1", "content_hash": "6666666666666666666666666666666666666666666666666666666666666666" },
+              "bounded_run": true,
+              "natural_operator_traffic": true,
+              "one_detail_tab_per_fixture_used": false,
+              "checkpoints": [
+                { "checkpoint_id": "CATALOG_LOAD", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] },
+                { "checkpoint_id": "AFTER_NATURAL_UPDATE", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] },
+                { "checkpoint_id": "RUN_CLOSE", "visible_fixture_denominator": "2", "reconciled_fixture_numerator": "2", "unexplained_gap_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ] }
+              ]
+            }
+          ],
+          "tested_context_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ],
+          "all_visible_fixtures_reconciled": true,
+          "unexplained_gap_count": "0",
+          "one_detail_tab_per_fixture_used": false,
+          "natural_operator_traffic": true
+        },
+        "scope0_projection": {
+          "coverage": { "category": "coverage", "records": [ { "datum_id": "OPERATOR_CATALOG_COVERAGE", "disposition": "OBSERVED", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ], "numerator": "2", "denominator": "2", "unit": "COUNT", "limitation_codes": [] } ] },
+          "missingness": { "category": "missingness", "records": [ { "datum_id": "OPERATOR_CATALOG_MISSINGNESS", "disposition": "OBSERVED", "evidence_refs": [ { "artifact_id": "artifact:5555555555555555555555555555555555555555555555555555555555555555", "artifact_type": "E0_SCENARIO_RESULT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-scenario-result/v1", "content_hash": "5555555555555555555555555555555555555555555555555555555555555555" } ], "numerator": "0", "denominator": "2", "unit": "COUNT", "limitation_codes": [] } ] }
+        },
+        "confidence": "OBSERVED",
+        "limitation_codes": [],
+        "unknown_codes": [],
+        "content_hash": "5050505050505050505050505050505050505050505050505050505050505050",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-GLOBAL-FULL-CATALOG",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-report/v1", "record_kind": "E0_REPORT", "report_name": "global-operator-state-report.json", "source_scenario_ids": ["E0-S01", "E0-S02"],
+        "evidence_refs": [ { "artifact_id": "artifact:5050505050505050505050505050505050505050505050505050505050505050", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "5050505050505050505050505050505050505050505050505050505050505050" } ],
+        "report_summary": { "disposition": "SUPPORTED", "metrics": [ { "metric_id": "GLOBAL_STATE_FIELDS_OBSERVED", "disposition": "OBSERVED", "sample_count": "4", "numerator": "4", "denominator": "4", "unit": "COUNT", "evidence_refs": [ { "artifact_id": "artifact:5050505050505050505050505050505050505050505050505050505050505050", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "5050505050505050505050505050505050505050505050505050505050505050" } ] } ], "unexplained_gap_count": "0", "replay_disposition": "MATCHED" },
+        "sufficiency": { "classification": "FULL_CATALOG", "catalog_report_ref": { "artifact_id": "artifact:5050505050505050505050505050505050505050505050505050505050505050", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "5050505050505050505050505050505050505050505050505050505050505050" }, "observed_global_state_class_count": "4", "required_global_state_class_count": "4", "unknown_global_state_class_count": "0", "evidence_refs": [ { "artifact_id": "artifact:5050505050505050505050505050505050505050505050505050505050505050", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "5050505050505050505050505050505050505050505050505050505050505050" } ] },
+        "scope0_projection": { "semantics": { "category": "semantics", "records": [ { "datum_id": "OPERATOR_GLOBAL_STATE_SEMANTICS", "disposition": "OBSERVED", "evidence_refs": [ { "artifact_id": "artifact:5050505050505050505050505050505050505050505050505050505050505050", "artifact_type": "E0_REPORT", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "e0-report/v1", "content_hash": "5050505050505050505050505050505050505050505050505050505050505050" } ], "numerator": "4", "denominator": "4", "unit": "COUNT", "limitation_codes": [] } ] } },
+        "confidence": "OBSERVED", "limitation_codes": [], "unknown_codes": [], "content_hash": "5151515151515151515151515151515151515151515151515151515151515151", "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-QUOTE-THRESHOLD-BOUNDARY",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1",
+      "record": {
+        "schema_version": "e0-report/v1",
+        "record_kind": "E0_REPORT",
+        "report_name": "quote-display-parity-report.json",
+        "source_scenario_ids": ["E0-S04", "E0-S05", "E0-S06"],
+        "evidence_refs": [
+          { "artifact_id": "artifact:7777777777777777777777777777777777777777777777777777777777777777", "artifact_type": "MATCHED_QUOTE_REVISIONS", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "matched-quote-revisions/v1", "content_hash": "7777777777777777777777777777777777777777777777777777777777777777" }
+        ],
+        "report_summary": {
+          "disposition": "SUPPORTED",
+          "metrics": [
+            { "metric_id": "MATCHED_PRICE_REVISIONS", "disposition": "OBSERVED", "sample_count": "30", "numerator": "30", "denominator": "30", "unit": "COUNT", "evidence_refs": [ { "artifact_id": "artifact:7777777777777777777777777777777777777777777777777777777777777777", "artifact_type": "MATCHED_QUOTE_REVISIONS", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "matched-quote-revisions/v1", "content_hash": "7777777777777777777777777777777777777777777777777777777777777777" } ] }
+          ],
+          "unexplained_gap_count": "0",
+          "replay_disposition": "MATCHED"
+        },
+        "sufficiency": {
+          "matched_revision_count": "30",
+          "distinct_fixture_count": "3",
+          "distinct_run_count": "2",
+          "minimum_matched_revisions": "30",
+          "minimum_distinct_fixtures": "3",
+          "minimum_distinct_runs": "2",
+          "price_transformation_disposition": "THRESHOLD_MET",
+          "tick_inference_disposition": "THRESHOLD_MET",
+          "one_detail_tab_per_fixture_used": false,
+          "natural_operator_traffic": true,
+          "evidence_refs": [ { "artifact_id": "artifact:7777777777777777777777777777777777777777777777777777777777777777", "artifact_type": "MATCHED_QUOTE_REVISIONS", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "matched-quote-revisions/v1", "content_hash": "7777777777777777777777777777777777777777777777777777777777777777" } ]
+        },
+        "scope0_projection": {
+          "semantics": { "category": "semantics", "records": [ { "datum_id": "OPERATOR_QUOTE_DISPLAY_SEMANTICS", "disposition": "OBSERVED", "evidence_refs": [ { "artifact_id": "artifact:7777777777777777777777777777777777777777777777777777777777777777", "artifact_type": "MATCHED_QUOTE_REVISIONS", "schema_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1", "schema_version": "matched-quote-revisions/v1", "content_hash": "7777777777777777777777777777777777777777777777777777777777777777" } ], "numerator": "30", "denominator": "30", "unit": "COUNT", "limitation_codes": [] } ] }
+        },
+        "confidence": "OBSERVED",
+        "limitation_codes": [],
+        "unknown_codes": [],
+        "content_hash": "7070707070707070707070707070707070707070707070707070707070707070",
+        "production_authority": "NONE"
+      }
+    }
+  ],
+  "required_report_anchors": [
+    { "anchor": "CatalogCapabilityReport", "report_name": "catalog-capability-report.json" },
+    { "anchor": "GlobalOperatorStateReport", "report_name": "global-operator-state-report.json" },
+    { "anchor": "OperatorIdentityReport", "report_name": "operator-identity-report.json" },
+    { "anchor": "ParticipantOrientationReport", "report_name": "participant-orientation-report.json" },
+    { "anchor": "TransportSemanticsReport", "report_name": "transport-semantics-report.json" },
+    { "anchor": "QuoteDisplayParityReport", "report_name": "quote-display-parity-report.json" },
+    { "anchor": "BrowserLifecycleReport", "report_name": "browser-lifecycle-report.json" },
+    { "anchor": "ClockTimestampReport", "report_name": "clock-timestamp-report.json" },
+    { "anchor": "GapsAndLossReport", "report_name": "gaps-and-loss-report.json" },
+    { "anchor": "LoopbackTopologyReport", "report_name": "loopback-topology-report.json" },
+    { "anchor": "BetslipObservationReport", "report_name": "betslip-observation-report.json" },
+    { "anchor": "PositionObservationReport", "report_name": "position-observation-report.json" },
+    { "anchor": "CashoutObservationReport", "report_name": "cashout-observation-report.json" },
+    { "anchor": "CapacityReport", "report_name": "capacity-report.json" },
+    { "anchor": "CredentialRedactionReport", "report_name": "credential-redaction-report.json" }
+  ],
+  "semantic_bases": [
+    {
+      "case_id": "E0-VALID-DOM-OBSERVATION",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "record": {
+        "schema_version": "raw-observation/v1",
+        "raw_observation_id": "observation:8181818181818181818181818181818181818181818181818181818181818181",
+        "observation_kind": "DOM_VERIFICATION",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "discovery_run_id": "11111111-1111-4111-8111-111111111111",
+        "run_receipt_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "stream_id": "22222222-2222-4222-8222-222222222222",
+        "generation": "1",
+        "sequence": "1",
+        "context": {
+          "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:one", "document_instance_id": "55555555-5555-4555-8555-555555555555", "navigation_epoch": "1", "bfcache_activation": "0", "debugger_attachment_generation": "1", "session_generation": "1", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/"
+        },
+        "clock_context": { "clock_domain_id": "66666666-6666-4666-8666-666666666666", "boot_id": "33333333-3333-4333-8333-333333333333", "unit": "MICROSECOND", "monotonic_value": "1000", "resolution_us": "1", "owner": "DOCUMENT", "mapping_id": "NOT_OBSERVED", "mapping_status": "NOT_OBSERVED" },
+        "sanitizer_version": "sanitizer/v1",
+        "facts": { "probe_id": "DOM_DOCUMENT_LIFECYCLE_V1", "verification_status": "VERIFIED", "observed_document_instance_id": "55555555-5555-4555-8555-555555555555", "observed_navigation_epoch": "1", "fixture_id": "fixture:one" },
+        "content_hash": "8181818181818181818181818181818181818181818181818181818181818181",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-LIFECYCLE-TAB-DISCARD",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "record": {
+        "schema_version": "raw-observation/v1",
+        "raw_observation_id": "observation:8282828282828282828282828282828282828282828282828282828282828282",
+        "observation_kind": "LIFECYCLE",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "discovery_run_id": "11111111-1111-4111-8111-111111111111",
+        "run_receipt_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "stream_id": "22222222-2222-4222-8222-222222222222",
+        "generation": "2",
+        "sequence": "2",
+        "context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:two", "document_instance_id": "77777777-7777-4777-8777-777777777777", "navigation_epoch": "2", "bfcache_activation": "0", "debugger_attachment_generation": "2", "session_generation": "2", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+        "clock_context": { "clock_domain_id": "66666666-6666-4666-8666-666666666666", "boot_id": "33333333-3333-4333-8333-333333333333", "unit": "MICROSECOND", "monotonic_value": "2000", "resolution_us": "1", "owner": "DOCUMENT", "mapping_id": "NOT_OBSERVED", "mapping_status": "NOT_OBSERVED" },
+        "sanitizer_version": "sanitizer/v1",
+        "facts": {
+          "lifecycle_event": "TAB_DISCARD",
+          "before_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:one", "document_instance_id": "55555555-5555-4555-8555-555555555555", "navigation_epoch": "1", "bfcache_activation": "0", "debugger_attachment_generation": "1", "session_generation": "1", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "after_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:two", "document_instance_id": "77777777-7777-4777-8777-777777777777", "navigation_epoch": "2", "bfcache_activation": "0", "debugger_attachment_generation": "2", "session_generation": "2", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "continuity_disposition": "NEW_DOCUMENT_REQUIRED",
+          "pre_transition_evidence_state": "ACTIVE",
+          "post_transition_evidence_state": "MANUAL_REBIND_REQUIRED",
+          "prior_context_disposition": "SEALED",
+          "stale_evidence_disposition": "INVALIDATED",
+          "invalidated_evidence_refs": [ { "artifact_id": "artifact:8181818181818181818181818181818181818181818181818181818181818181", "artifact_type": "DOM_VERIFICATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "8181818181818181818181818181818181818181818181818181818181818181" } ],
+          "authority_disposition": "REAUTHORIZATION_REQUIRED",
+          "automatic_resume": false,
+          "manual_rebind_required": true
+        },
+        "content_hash": "8282828282828282828282828282828282828282828282828282828282828282",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-LIFECYCLE-TAB-REPLACED",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "record": {
+        "schema_version": "raw-observation/v1",
+        "raw_observation_id": "observation:8383838383838383838383838383838383838383838383838383838383838383",
+        "observation_kind": "LIFECYCLE",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "discovery_run_id": "11111111-1111-4111-8111-111111111111",
+        "run_receipt_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "stream_id": "22222222-2222-4222-8222-222222222222",
+        "generation": "3",
+        "sequence": "3",
+        "context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:three", "document_instance_id": "88888888-8888-4888-8888-888888888888", "navigation_epoch": "3", "bfcache_activation": "0", "debugger_attachment_generation": "3", "session_generation": "3", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+        "clock_context": { "clock_domain_id": "66666666-6666-4666-8666-666666666666", "boot_id": "33333333-3333-4333-8333-333333333333", "unit": "MICROSECOND", "monotonic_value": "3000", "resolution_us": "1", "owner": "DOCUMENT", "mapping_id": "NOT_OBSERVED", "mapping_status": "NOT_OBSERVED" },
+        "sanitizer_version": "sanitizer/v1",
+        "facts": {
+          "lifecycle_event": "TAB_REPLACED",
+          "before_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:two", "document_instance_id": "77777777-7777-4777-8777-777777777777", "navigation_epoch": "2", "bfcache_activation": "0", "debugger_attachment_generation": "2", "session_generation": "2", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "after_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:three", "document_instance_id": "88888888-8888-4888-8888-888888888888", "navigation_epoch": "3", "bfcache_activation": "0", "debugger_attachment_generation": "3", "session_generation": "3", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "continuity_disposition": "NEW_DOCUMENT_REQUIRED",
+          "pre_transition_evidence_state": "ACTIVE",
+          "post_transition_evidence_state": "MANUAL_REBIND_REQUIRED",
+          "prior_context_disposition": "SEALED",
+          "stale_evidence_disposition": "INVALIDATED",
+          "invalidated_evidence_refs": [ { "artifact_id": "artifact:8282828282828282828282828282828282828282828282828282828282828282", "artifact_type": "LIFECYCLE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "8282828282828282828282828282828282828282828282828282828282828282" } ],
+          "authority_disposition": "REAUTHORIZATION_REQUIRED",
+          "automatic_resume": false,
+          "manual_rebind_required": true
+        },
+        "content_hash": "8383838383838383838383838383838383838383838383838383838383838383",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-LIFECYCLE-BROWSER-RESTART",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "record": {
+        "schema_version": "raw-observation/v1",
+        "raw_observation_id": "observation:8989898989898989898989898989898989898989898989898989898989898989",
+        "observation_kind": "LIFECYCLE",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "discovery_run_id": "99999999-9999-4999-8999-999999999999",
+        "run_receipt_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "stream_id": "22222222-2222-4222-8222-222222222222",
+        "generation": "5",
+        "sequence": "5",
+        "context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "99999999-9999-4999-8999-999999999999", "browser_boot_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "tab_instance_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "frame_id": "0", "document_id": "document:restart", "document_instance_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc", "navigation_epoch": "1", "bfcache_activation": "0", "debugger_attachment_generation": "1", "session_generation": "1", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+        "clock_context": { "clock_domain_id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd", "boot_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "unit": "MICROSECOND", "monotonic_value": "5000", "resolution_us": "1", "owner": "DOCUMENT", "mapping_id": "NOT_OBSERVED", "mapping_status": "NOT_OBSERVED" },
+        "sanitizer_version": "sanitizer/v1",
+        "facts": {
+          "lifecycle_event": "BROWSER_RESTART",
+          "before_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "tab_instance_id": "44444444-4444-4444-8444-444444444444", "frame_id": "0", "document_id": "document:three", "document_instance_id": "88888888-8888-4888-8888-888888888888", "navigation_epoch": "3", "bfcache_activation": "0", "debugger_attachment_generation": "3", "session_generation": "3", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "after_context": { "context_kind": "DOCUMENT_BOUND", "browser_run_id": "99999999-9999-4999-8999-999999999999", "browser_boot_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "tab_instance_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "frame_id": "0", "document_id": "document:restart", "document_instance_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc", "navigation_epoch": "1", "bfcache_activation": "0", "debugger_attachment_generation": "1", "session_generation": "1", "origin_binding": "https://miseojeu.espacejeux.com", "pathname_binding": "/" },
+          "continuity_disposition": "NEW_RUN_REQUIRED",
+          "pre_transition_evidence_state": "ACTIVE",
+          "post_transition_evidence_state": "NEW_RUN_AUTHORIZATION_REQUIRED",
+          "prior_context_disposition": "SEALED",
+          "stale_evidence_disposition": "INVALIDATED",
+          "invalidated_evidence_refs": [ { "artifact_id": "artifact:8383838383838383838383838383838383838383838383838383838383838383", "artifact_type": "LIFECYCLE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "8383838383838383838383838383838383838383838383838383838383838383" } ],
+          "authority_disposition": "NEW_RUN_AUTHORIZATION_REQUIRED",
+          "automatic_resume": false,
+          "manual_rebind_required": false
+        },
+        "content_hash": "8989898989898989898989898989898989898989898989898989898989898989",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-GAP-LINEAGE",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:raw-observation:v1",
+      "record": {
+        "schema_version": "raw-observation/v1",
+        "raw_observation_id": "observation:8484848484848484848484848484848484848484848484848484848484848484",
+        "observation_kind": "GAP",
+        "pack_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "build_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "implementation_baseline_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "capability_manifest_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "discovery_run_id": "11111111-1111-4111-8111-111111111111",
+        "run_receipt_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "stream_id": "22222222-2222-4222-8222-222222222222",
+        "generation": "4",
+        "sequence": "4",
+        "context": { "context_kind": "RUN_BOUND_NOT_DOCUMENT", "browser_run_id": "11111111-1111-4111-8111-111111111111", "browser_boot_id": "33333333-3333-4333-8333-333333333333", "binding_reason": "GAP_ACCOUNTING" },
+        "clock_context": { "clock_domain_id": "66666666-6666-4666-8666-666666666666", "boot_id": "33333333-3333-4333-8333-333333333333", "unit": "MICROSECOND", "monotonic_value": "4000", "resolution_us": "1", "owner": "BACKEND", "mapping_id": "NOT_APPLICABLE", "mapping_status": "NOT_APPLICABLE" },
+        "sanitizer_version": "sanitizer/v1",
+        "facts": {
+          "gap_id": "gap:one", "predecessor_generation": "3", "replacement_generation": "4", "first_missing_sequence": "10", "last_missing_sequence": "12", "reason_code": "TAB_DISCARD",
+          "gap_record_ref": { "artifact_id": "artifact:8484848484848484848484848484848484848484848484848484848484848484", "artifact_type": "GAP_RECORD", "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json", "schema_version": "gap-record/v1", "content_hash": "8484848484848484848484848484848484848484848484848484848484848484" },
+          "reducer_cursor_ref": { "artifact_id": "artifact:8585858585858585858585858585858585858585858585858585858585858585", "artifact_type": "REDUCER_CURSOR", "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json", "schema_version": "reducer-cursor/v1", "content_hash": "8585858585858585858585858585858585858585858585858585858585858585" },
+          "generation_transition_ref": { "artifact_id": "artifact:8686868686868686868686868686868686868686868686868686868686868686", "artifact_type": "GENERATION_TRANSITION", "schema_id": "https://hybrid-discovery.local/schemas/v6.2/durability-records.schema.json", "schema_version": "generation-transition/v1", "content_hash": "8686868686868686868686868686868686868686868686868686868686868686" },
+          "closed_epoch_ref": { "artifact_id": "artifact:8787878787878787878787878787878787878787878787878787878787878787", "artifact_type": "FIXTURE_COHERENCE_EPOCH", "schema_id": "https://hybrid-discovery.local/schemas/v6.2/clock-coherence-records.schema.json", "schema_version": "fixture-coherence-epoch/v1", "content_hash": "8787878787878787878787878787878787878787878787878787878787878787" }
+        },
+        "content_hash": "8484848484848484848484848484848484848484848484848484848484848484",
+        "production_authority": "NONE"
+      }
+    },
+    {
+      "case_id": "E0-VALID-COMPLETE-BUNDLE-INDEX",
+      "record_schema_ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#E0BundleIndex",
+      "record": {
+        "scenario_ids": ["E0-S01", "E0-S02", "E0-S03", "E0-S04", "E0-S05", "E0-S06", "E0-S07", "E0-S08", "E0-S09", "E0-S10", "E0-S11", "E0-S12", "E0-S13", "E0-S14", "E0-S15", "E0-S16", "E0-S17", "E0-S18", "E0-S19", "E0-S20", "E0-S21", "E0-S22", "E0-S23", "E0-S24"],
+        "report_names": ["catalog-capability-report.json", "global-operator-state-report.json", "operator-identity-report.json", "participant-orientation-report.json", "transport-semantics-report.json", "quote-display-parity-report.json", "browser-lifecycle-report.json", "clock-timestamp-report.json", "gaps-and-loss-report.json", "loopback-topology-report.json", "betslip-observation-report.json", "position-observation-report.json", "cashout-observation-report.json", "capacity-report.json", "credential-redaction-report.json"]
+      }
+    }
+  ],
+  "counterexamples": [
+    { "case_id": "E0-REJECT-NOT-OBSERVED-POSITIVE-FACT", "base_case_id": "E0-VALID-S01-NOT-OBSERVED", "operations": [ { "op": "add", "path": "/record/positive_fact_refs/0", "value": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "LIFECYCLE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" } } ], "candidate_schema_state": "INVALID", "expected_error": "E_NOT_OBSERVED_POSITIVE_FACT", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-NOT-OBSERVED-OBSERVED-FACTS", "base_case_id": "E0-VALID-S01-NOT-OBSERVED", "operations": [ { "op": "replace", "path": "/record/facts", "value": { "fact_state": "OBSERVED", "fact_code": "CATALOG_OBSERVED", "observed_count": "1", "passive_observation": true, "tool_caused_action": false, "evidence_refs": [ { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" } ] } } ], "candidate_schema_state": "INVALID", "expected_error": "E_NOT_OBSERVED_POSITIVE_FACT", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-COMPLETE-NOT-OBSERVED-FACTS", "base_case_id": "E0-VALID-S01-NOT-OBSERVED", "operations": [ { "op": "replace", "path": "/record/status", "value": "COMPLETE" }, { "op": "add", "path": "/record/positive_fact_refs/0", "value": { "artifact_id": "artifact:2222222222222222222222222222222222222222222222222222222222222222", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "2222222222222222222222222222222222222222222222222222222222222222" } } ], "candidate_schema_state": "INVALID", "expected_error": "E_COMPLETE_REQUIRES_OBSERVED_FACTS", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S16-SAME-BOOT", "base_case_id": "E0-VALID-S16-NEW-BOOT-RUN-NO-RESUME", "operations": [ { "op": "copy", "from": "/record/facts/prior_browser_boot_id", "path": "/record/facts/new_browser_boot_id" } ], "candidate_schema_state": "VALID", "expected_error": "E_S16_BOOT_NOT_ROTATED", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-S16-SAME-RUN", "base_case_id": "E0-VALID-S16-NEW-BOOT-RUN-NO-RESUME", "operations": [ { "op": "copy", "from": "/record/facts/prior_browser_run_id", "path": "/record/facts/new_browser_run_id" } ], "candidate_schema_state": "VALID", "expected_error": "E_S16_RUN_NOT_ROTATED", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-S16-AUTOMATIC-RESUME", "base_case_id": "E0-VALID-S16-NEW-BOOT-RUN-NO-RESUME", "operations": [ { "op": "replace", "path": "/record/facts/automatic_resume", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_AUTOMATIC_RESUME_FORBIDDEN", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S21-ACTIVE-REQUEST", "base_case_id": "E0-VALID-S21-PASSIVE", "operations": [ { "op": "replace", "path": "/record/facts/active_request_issued", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_ACTIVE_REQUEST_FORBIDDEN", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S24-GENERATED-LOAD", "base_case_id": "E0-VALID-S24-LOW-SAMPLE-P99-UNAVAILABLE", "operations": [ { "op": "replace", "path": "/record/facts/generated_load", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_GENERATED_OPERATOR_LOAD", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S24-SYNTHETIC-TRAFFIC", "base_case_id": "E0-VALID-S24-LOW-SAMPLE-P99-UNAVAILABLE", "operations": [ { "op": "replace", "path": "/record/facts/traffic_source", "value": "SYNTHETIC_OPERATOR_TRAFFIC" } ], "candidate_schema_state": "INVALID", "expected_error": "E_NON_NATURAL_OPERATOR_TRAFFIC", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-P99-BELOW-1000", "base_case_id": "E0-VALID-S24-LOW-SAMPLE-P99-UNAVAILABLE", "operations": [ { "op": "remove", "path": "/record/facts/p99/reason_code" }, { "op": "replace", "path": "/record/facts/p99/availability", "value": "AVAILABLE" }, { "op": "add", "path": "/record/facts/p99/value_us", "value": "999" } ], "candidate_schema_state": "VALID", "expected_error": "E_P99_SAMPLE_COUNT", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-DOM-WITHOUT-CONTEXT", "base_case_id": "E0-VALID-DOM-OBSERVATION", "operations": [ { "op": "remove", "path": "/record/context" } ], "candidate_schema_state": "INVALID", "expected_error": "E_DOCUMENT_CONTEXT_REQUIRED", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-DOM-CREDENTIAL-FIELD", "base_case_id": "E0-VALID-DOM-OBSERVATION", "operations": [ { "op": "add", "path": "/record/facts/cookie", "value": "TEST_ONLY_SECRET_A7z9Q2m5N8v1K4p7R0t3W6y9B2d5F8h1" } ], "candidate_schema_state": "INVALID", "expected_error": "E_FORBIDDEN_NAME", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-DOM-MUTATING-COMMAND", "base_case_id": "E0-VALID-DOM-OBSERVATION", "operations": [ { "op": "add", "path": "/record/facts/command", "value": "Input.dispatchMouseEvent" } ], "candidate_schema_state": "INVALID", "expected_error": "E_FORBIDDEN_COMMAND", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-ENVELOPE-PRODUCTION-TEXT", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "add", "path": "/record/production_authorization_text", "value": "PRODUCTION" } ], "candidate_schema_state": "INVALID", "expected_error": "E_FORBIDDEN_NAME", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-GENERIC-PAYLOAD", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "add", "path": "/record/payload", "value": {} } ], "candidate_schema_state": "INVALID", "expected_error": "E_OPEN_OBJECT_ESCAPE", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-GENERIC-DATA", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "add", "path": "/record/data", "value": {} } ], "candidate_schema_state": "INVALID", "expected_error": "E_OPEN_OBJECT_ESCAPE", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-GENERIC-ATTRIBUTES", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "add", "path": "/record/attributes", "value": {} } ], "candidate_schema_state": "INVALID", "expected_error": "E_OPEN_OBJECT_ESCAPE", "precedence_rank": 1 },
+    { "case_id": "E0-REJECT-UNKNOWN-REPORT-NAME", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "replace", "path": "/record/report_name", "value": "extra-report.json" } ], "candidate_schema_state": "INVALID", "expected_error": "E_REPORT_NAME_UNKNOWN", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-MISSING-SCENARIO", "base_case_id": "E0-VALID-COMPLETE-BUNDLE-INDEX", "operations": [ { "op": "remove", "path": "/record/scenario_ids/23" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCENARIO_SET", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-DUPLICATE-SCENARIO", "base_case_id": "E0-VALID-COMPLETE-BUNDLE-INDEX", "operations": [ { "op": "copy", "from": "/record/scenario_ids/0", "path": "/record/scenario_ids/24" } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCENARIO_SET", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-UNLISTED-SCOPE-CATEGORY", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "add", "path": "/record/scope0_projection/performance", "value": { "category": "performance", "records": [] } } ], "candidate_schema_state": "INVALID", "expected_error": "E_SCOPE0_CATEGORY", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-CATALOG-ONE-RUN-FULL", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "remove", "path": "/record/sufficiency/runs/1" }, { "op": "replace", "path": "/record/sufficiency/run_count", "value": "1" } ], "candidate_schema_state": "INVALID", "expected_error": "E_CATALOG_FULL_SUFFICIENCY", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-CATALOG-TWO-CHECKPOINTS", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "remove", "path": "/record/sufficiency/runs/1/checkpoints/2" } ], "candidate_schema_state": "INVALID", "expected_error": "E_CATALOG_FULL_SUFFICIENCY", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-CATALOG-DUPLICATE-RUN-REF", "base_case_id": "E0-VALID-CATALOG-REPORT", "operations": [ { "op": "copy", "from": "/record/sufficiency/runs/0/run_ref", "path": "/record/sufficiency/runs/1/run_ref" }, { "op": "replace", "path": "/record/sufficiency/runs/1/checkpoints/0/visible_fixture_denominator", "value": "3" }, { "op": "replace", "path": "/record/sufficiency/runs/1/checkpoints/0/reconciled_fixture_numerator", "value": "3" } ], "candidate_schema_state": "VALID", "expected_error": "E_CATALOG_DUPLICATE_RUN_REF", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-QUOTE-29-REVISIONS", "base_case_id": "E0-VALID-QUOTE-THRESHOLD-BOUNDARY", "operations": [ { "op": "replace", "path": "/record/sufficiency/matched_revision_count", "value": "29" } ], "candidate_schema_state": "VALID", "expected_error": "E_QUOTE_SUFFICIENCY", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-QUOTE-2-FIXTURES", "base_case_id": "E0-VALID-QUOTE-THRESHOLD-BOUNDARY", "operations": [ { "op": "replace", "path": "/record/sufficiency/distinct_fixture_count", "value": "2" } ], "candidate_schema_state": "VALID", "expected_error": "E_QUOTE_SUFFICIENCY", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-QUOTE-1-RUN", "base_case_id": "E0-VALID-QUOTE-THRESHOLD-BOUNDARY", "operations": [ { "op": "replace", "path": "/record/sufficiency/distinct_run_count", "value": "1" } ], "candidate_schema_state": "VALID", "expected_error": "E_QUOTE_SUFFICIENCY", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-LIFECYCLE-STALE-RETAINED", "base_case_id": "E0-VALID-LIFECYCLE-TAB-DISCARD", "operations": [ { "op": "replace", "path": "/record/facts/stale_evidence_disposition", "value": "RETAINED" } ], "candidate_schema_state": "INVALID", "expected_error": "E_STALE_EVIDENCE_NOT_INVALIDATED", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-LIFECYCLE-AUTOMATIC-RESUME", "base_case_id": "E0-VALID-LIFECYCLE-TAB-REPLACED", "operations": [ { "op": "replace", "path": "/record/facts/automatic_resume", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_AUTOMATIC_RESUME_FORBIDDEN", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-BROWSER-RESTART-STALE-RETAINED", "base_case_id": "E0-VALID-LIFECYCLE-BROWSER-RESTART", "operations": [ { "op": "replace", "path": "/record/facts/stale_evidence_disposition", "value": "RETAINED" } ], "candidate_schema_state": "INVALID", "expected_error": "E_STALE_EVIDENCE_NOT_INVALIDATED", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-BROWSER-RESTART-AUTOMATIC-RESUME", "base_case_id": "E0-VALID-LIFECYCLE-BROWSER-RESTART", "operations": [ { "op": "replace", "path": "/record/facts/automatic_resume", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_AUTOMATIC_RESUME_FORBIDDEN", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-GAP-CURSOR-MISSING", "base_case_id": "E0-VALID-GAP-LINEAGE", "operations": [ { "op": "remove", "path": "/record/facts/reducer_cursor_ref" } ], "candidate_schema_state": "INVALID", "expected_error": "E_GAP_CURSOR_REFERENCE", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-GAP-TRANSITION-MISSING", "base_case_id": "E0-VALID-GAP-LINEAGE", "operations": [ { "op": "remove", "path": "/record/facts/generation_transition_ref" } ], "candidate_schema_state": "INVALID", "expected_error": "E_GAP_TRANSITION_REFERENCE", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-GAP-CLOSED-EPOCH-MISSING", "base_case_id": "E0-VALID-GAP-LINEAGE", "operations": [ { "op": "remove", "path": "/record/facts/closed_epoch_ref" } ], "candidate_schema_state": "INVALID", "expected_error": "E_GAP_CLOSED_EPOCH_REFERENCE", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-COMPLETE-EVIDENCE-REF-MISMATCH", "base_case_id": "E0-VALID-S18-PASSIVE-BETSLIP-OFFER", "operations": [ { "op": "replace", "path": "/record/facts/evidence_refs/0", "value": { "artifact_id": "artifact:9999999999999999999999999999999999999999999999999999999999999998", "artifact_type": "APP_STATE_OBSERVATION", "schema_id": "urn:hybrid-discovery:v6.2:raw-observation:v1", "schema_version": "raw-observation/v1", "content_hash": "9999999999999999999999999999999999999999999999999999999999999998" } } ], "candidate_schema_state": "VALID", "expected_error": "E_SCENARIO_FACT_REFERENCE_MATCH", "precedence_rank": 20 },
+    { "case_id": "E0-REJECT-S18-TOOL-CAUSED-ACTION", "base_case_id": "E0-VALID-S18-PASSIVE-BETSLIP-OFFER", "operations": [ { "op": "replace", "path": "/record/facts/tool_caused_action", "value": true } ], "candidate_schema_state": "INVALID", "expected_error": "E_TOOL_CAUSED_MONETARY_ACTION", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S19-MISSING-OPERATOR-ACCEPTANCE", "base_case_id": "E0-VALID-S19-PASSIVE-SUBMISSION-ACCEPTANCE", "operations": [ { "op": "remove", "path": "/record/facts/operator_acceptance_ref" } ], "candidate_schema_state": "INVALID", "expected_error": "E_OPERATOR_ACCEPTANCE_REFERENCE", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-S23-MISSING-CORRECTION-DISPOSITION", "base_case_id": "E0-VALID-S23-PASSIVE-POST-CASHOUT-REVISION", "operations": [ { "op": "remove", "path": "/record/facts/correction_disposition" } ], "candidate_schema_state": "INVALID", "expected_error": "E_CORRECTION_DISPOSITION", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-GLOBAL-FULL-WITH-UNKNOWN-CLASS", "base_case_id": "E0-VALID-GLOBAL-FULL-CATALOG", "operations": [ { "op": "replace", "path": "/record/sufficiency/unknown_global_state_class_count", "value": "1" } ], "candidate_schema_state": "INVALID", "expected_error": "E_GLOBAL_CLASSIFICATION", "precedence_rank": 10 },
+    { "case_id": "E0-REJECT-GLOBAL-PARTIAL-MARKED-FULL", "base_case_id": "E0-VALID-GLOBAL-FULL-CATALOG", "operations": [ { "op": "replace", "path": "/record/sufficiency/observed_global_state_class_count", "value": "3" } ], "candidate_schema_state": "VALID", "expected_error": "E_GLOBAL_CLASSIFICATION", "precedence_rank": 20 }
+  ],
+  "denial_seam_vectors": [
+    {
+      "case_id": "DENIAL-RAW-SECRET-NEVER-HASHED",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "operations": [ { "op": "add", "path": "/record/facts/cookie", "value": "TEST_ONLY_SECRET_A7z9Q2m5N8v1K4p7R0t3W6y9B2d5F8h1" } ],
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0101010101010101010101010101010101010101010101010101010101010101", "attempt_id": "01010101-0101-4101-8101-010101010101", "input_class": "RAW_OBSERVATION", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_NAME", "location_code": "FACTS_COOKIE", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-DATABASE-BEFORE-SQLITE",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "operations": [ { "op": "add", "path": "/record/facts/secret", "value": "TEST_ONLY_SECRET_D4g7J0m3P6s9V2y5B8e1H4k7N0q3T6w9" } ],
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0202020202020202020202020202020202020202020202020202020202020202", "attempt_id": "02020202-0202-4202-8202-020202020202", "input_class": "DATABASE_RECORD", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_NAME", "location_code": "FACTS_SECRET", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-FIXTURE-BEFORE-EMIT",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "operations": [ { "op": "add", "path": "/record/facts/payload", "value": {} } ],
+      "expected_error": "E_OPEN_OBJECT_ESCAPE",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0303030303030303030303030303030303030303030303030303030303030303", "attempt_id": "03030303-0303-4303-8303-030303030303", "input_class": "FIXTURE", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_NAME", "location_code": "FACTS_PAYLOAD", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-REPORT-BEFORE-EMIT",
+      "base_case_id": "E0-VALID-CATALOG-REPORT",
+      "operations": [ { "op": "add", "path": "/record/authorization", "value": "Bearer TEST_ONLY" } ],
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0404040404040404040404040404040404040404040404040404040404040404", "attempt_id": "04040404-0404-4404-8404-040404040404", "input_class": "REPORT", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_NAME", "location_code": "ROOT_AUTHORIZATION", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-REPLAY-BEFORE-EMIT",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "operations": [ { "op": "add", "path": "/record/facts/command", "value": "Input.dispatchMouseEvent" } ],
+      "expected_error": "E_FORBIDDEN_COMMAND",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0505050505050505050505050505050505050505050505050505050505050505", "attempt_id": "05050505-0505-4505-8505-050505050505", "input_class": "REPLAY_ARTIFACT", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_VALUE", "location_code": "FACTS_COMMAND", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-EXPORT-BEFORE-EMIT",
+      "base_case_id": "E0-VALID-CATALOG-REPORT",
+      "operations": [ { "op": "add", "path": "/record/token", "value": "TEST_ONLY_SECRET_Q1t4W7z0C3f6J9m2P5s8V1y4B7e0H3k6" } ],
+      "expected_error": "E_FORBIDDEN_NAME",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0606060606060606060606060606060606060606060606060606060606060606", "attempt_id": "06060606-0606-4606-8606-060606060606", "input_class": "EXPORT", "scanner_disposition": "REJECTED", "violation_class": "FORBIDDEN_NAME", "location_code": "ROOT_TOKEN", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-SCANNER-FAILURE-CLOSED",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "fault_injection": {
+        "schema_version": "scanner-fault-injection/v1",
+        "fixture_id": "scanner-fault:after-shape-before-name",
+        "enabled_only_in": "SYNTHETIC_VECTOR_HARNESS",
+        "inject_after_stage": "SHAPE_SCAN",
+        "inject_before_stage": "NAME_SCAN",
+        "fault_kind": "DETERMINISTIC_SCANNER_INTERNAL_EXCEPTION",
+        "occurrence": "FIRST_INVOCATION",
+        "candidate_bytes_changed": false,
+        "candidate_member_added": false,
+        "production_authority": "NONE"
+      },
+      "expected_error": "E_SCANNER_FAILURE",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0707070707070707070707070707070707070707070707070707070707070707", "attempt_id": "07070707-0707-4707-8707-070707070707", "input_class": "RAW_OBSERVATION", "scanner_disposition": "SCANNER_FAILURE", "violation_class": "SCANNER_FAILURE", "location_code": "SCANNER_INTERNAL_FAILURE", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    },
+    {
+      "case_id": "DENIAL-UNKNOWN-MEMBER-QUARANTINED",
+      "base_case_id": "E0-VALID-DOM-OBSERVATION",
+      "operations": [ { "op": "add", "path": "/record/facts/unknown_name", "value": "UNKNOWN_SCHEMA_MEMBER" } ],
+      "expected_error": "E_UNKNOWN_NAME",
+      "precedence_rank": 1,
+      "expected_receipt": { "schema_version": "universal-denial-receipt/v1", "receipt_id": "denial-receipt:0808080808080808080808080808080808080808080808080808080808080808", "attempt_id": "08080808-0808-4808-8808-080808080808", "input_class": "RAW_OBSERVATION", "scanner_disposition": "QUARANTINED", "violation_class": "UNKNOWN_NAME", "location_code": "FACTS_UNKNOWN_NAME", "matched_bytes_recorded": false, "candidate_bytes_hashed": false, "sanitized_record_projected": false, "artifact_written": false, "log_written": false, "indexeddb_written": false, "sqlite_written": false, "fixture_emitted": false, "report_emitted": false, "replay_artifact_emitted": false, "export_emitted": false, "safety_stop": true, "production_authority": "NONE" },
+      "secret_fixture_hash_computed": false
+    }
+  ],
+  "production_authority": "NONE"
+}

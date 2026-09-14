@@ -1,0 +1,82 @@
+[
+  {
+    "path": "AGENTS.md",
+    "sha256": "34aa72697924789883678fe3adda754bc55882569b9c417bb25fff872ced7e12",
+    "bytes": 4369
+  },
+  {
+    "path": "docs/codex/workflow.md",
+    "sha256": "4a613c10dd7333f2d02017a69a40188f74ae2e36ceadf2c5ac90277196555cae",
+    "bytes": 13282
+  },
+  {
+    "path": "docs/codex/task-packet.example.json",
+    "sha256": "fc05d0266abca5e53d5204720614c8a0d732075880828be2ee5ba645f047d901",
+    "bytes": 915
+  },
+  {
+    "path": "docs/codex/phase2-2026-09-08.md",
+    "sha256": "7b4e59ca0b517b5ccec7f2c95bd9acb51e1969e8925f3ab2c729130283140de9",
+    "bytes": 24604
+  },
+  {
+    "path": "scripts/codex_task.py",
+    "sha256": "791a4d69f6c3c56f6084969348b8460cfcabd232ff97cea8009145ebb1722dff",
+    "bytes": 28321
+  },
+  {
+    "path": "scripts/benchmark_codex.py",
+    "sha256": "fb05c976475efb96b2dabe01be9d342eb5b92192171222e498e2702509478059",
+    "bytes": 12696
+  },
+  {
+    "path": "scripts/test_codex_task.py",
+    "sha256": "e81b6b5d4a4914b865689c983651dd8a1bfb1836f8466d49726cf9f059e13f9b",
+    "bytes": 5633
+  },
+  {
+    "path": "docs/codex/phase2-evidence/validation.json",
+    "sha256": "6bae5e601a427f81d28a28d6468a35b006d40bf24d34554f01f2fefc99865805",
+    "bytes": 3323
+  },
+  {
+    "path": "docs/codex/phase2-evidence/phase1-workflow.md",
+    "sha256": "3f63ade0f2a3958574629aa58893fb242e9decae85158fa2cb12d46c62effc3c",
+    "bytes": 8731
+  },
+  {
+    "path": "docs/codex/phase2-evidence/reproduce-waits.py",
+    "sha256": "94089c8bc99f6da8c038171edc2b27a089c6e80cb16b91bcbbc40637392b4c4a",
+    "bytes": 15683
+  },
+  {
+    "path": "docs/codex/phase2-evidence/propagation.json",
+    "sha256": "729c8f8b838a1e903cd71c04258e209dc52a3c743f4df1c23b70ec32b483c51a",
+    "bytes": 2551
+  },
+  {
+    "path": "docs/codex/phase2-evidence/benchmark.json",
+    "sha256": "1bf566a1b56f14cdd4982d74907b230ab1dc83fa4035827a5f94a281e8bdc61e",
+    "bytes": 22388
+  },
+  {
+    "path": "docs/codex/phase2-evidence/waits.json",
+    "sha256": "a8186f4bb5f796bb6d0c796121d139ad69797ca16085ae43a1a5d4d25c02a255",
+    "bytes": 1191028
+  },
+  {
+    "path": "discovery-runtime-v6.3.6/AGENTS.md",
+    "sha256": "b284d51c0c03cc9004a5dfefb8c1a066e86236b93ce16e0a8c34a1ee60060165",
+    "bytes": 2121
+  },
+  {
+    "path": "hybrid-discovery-v6.3.6-authoring/AGENTS.md",
+    "sha256": "68764ea30fadb3e6bf613f01d624728ac79a229542423d03774eb222425531ed",
+    "bytes": 847
+  },
+  {
+    "path": "authoring-controller-config-worktree/AGENTS.md",
+    "sha256": "68764ea30fadb3e6bf613f01d624728ac79a229542423d03774eb222425531ed",
+    "bytes": 847
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "command_registry_root": "48523735c9012b462d3132aa209244dfca8d75004529476d03c83656d54dacb8",
+  "content_hash": "1cdab5abc581d94273cd7064383ec84d1e23018a29c07a1fb2a5f50b64aa710c",
+  "destination_root": "runtime",
+  "legacy_scan_result": "PASS",
+  "rebinding_registry_sha256": "c44f0f8f0c4c2fab9d92ad4002d60dd5dbed5b121e4f4a7e549fd1a9609c8a26",
+  "schema_version": "migration-receipt/v1",
+  "source_identity": "46767ea8097f51a568e656fcebed17350e93fc94:86759aed58358f25218bc14e24bc8874f5eba204",
+  "vendor_root": "2b3d917522e6f7fb2ab57e4704a22d7aa48497cb62a1c5f57a18336e2d52bc2f"
+}

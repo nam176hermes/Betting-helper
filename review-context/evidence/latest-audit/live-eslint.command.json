@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "pnpm",
+    "--dir",
+    "extension",
+    "exec",
+    "eslint",
+    "src/live",
+    "src/storage",
+    "test/live"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 0,
+  "seconds": 4.531645751994802,
+  "log": "live-eslint.log",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "browser_platform": null
+}

@@ -1,0 +1,7 @@
+{
+  "schema_version": "governed-content-root/v1",
+  "algorithm": "HD636-GOVERNED-ROOT-SHA256-v1",
+  "root_sha256": "53732bf2ab7354ea504ed7d1a7e4f8e6e5bdac3c454a50db6856df94f43e3c1c",
+  "file_count": 156,
+  "exclusion_registry": "docs/registries/seal-exclusions.v1.json"
+}

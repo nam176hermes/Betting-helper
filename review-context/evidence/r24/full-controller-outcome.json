@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "tools/verify_local.py",
+    "--profile",
+    "full",
+    "--config",
+    "/home/thenam176/betting-helper/part-b-candidate/vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 0,
+  "interrupted": false,
+  "started_at": "2026-09-13T16:13:49.424247+00:00",
+  "finished_at": "2026-09-13T17:48:45.523915+00:00",
+  "duration_seconds": 5696.099701818981,
+  "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "log_sha256": "263990645f619454c03c1482f049303d9c6f04b71918811028884add9de94442",
+  "worker_real_provider_attempts": 0,
+  "worker_operator_captures": 0,
+  "worker_primary_credential_slot_accesses": 0
+}

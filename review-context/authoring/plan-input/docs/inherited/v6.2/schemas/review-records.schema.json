@@ -1,0 +1,471 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:review-records:v1",
+  "title": "Hybrid Discovery v6.2 independent review records",
+  "x-semantic-rules": [
+    {
+      "rule_id": "FINDING_IDS_UNIQUE",
+      "predicate": "finding_id values are unique",
+      "error": "E_FINDING_ID_DUPLICATE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "BLOCKER_PROPAGATES_TO_VERDICTS",
+      "predicate": "for every finding where blocking is true, every named affected_verdict is NO; review_outcome is HELD or REJECTED; READY_TO_IMPLEMENT_DISCOVERY_PACK is NO",
+      "error": "E_BLOCKER_VERDICT",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "ACCEPTED_HAS_NO_BLOCKER",
+      "predicate": "review_outcome == ACCEPTED implies no finding has blocking == true",
+      "error": "E_BLOCKER_VERDICT",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "READY_REQUIRES_ALL_YES",
+      "predicate": "READY_TO_IMPLEMENT_DISCOVERY_PACK == YES iff REPO0_BASELINE_VALID and every SAFE_TO_IMPLEMENT or SAFE_TO_FREEZE verdict are YES and no blocker exists",
+      "error": "E_READY_CONTRADICTION",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REQUIRED_DECISION_SET_EXACT",
+      "predicate": "required_discovery_decisions contains the exact ordered 18-decision registry without omission or duplication",
+      "error": "E_REQUIRED_DECISION_SET",
+      "precedence_rank": 20
+    }
+  ],
+  "$ref": "#/$defs/CodexReviewOutput",
+  "$defs": {
+    "DecisionRecord": {
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/RequiredDecision"
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "SUPPORTED"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "const": "PARTIAL"
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "limitation_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "UNSUPPORTED",
+                  "UNKNOWN",
+                  "NOT_OBSERVED",
+                  "INCONCLUSIVE",
+                  "SAFETY_STOP"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "authorized_consumers": {
+                "maxItems": 0
+              },
+              "limitation_codes": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CodexReviewOutput": {
+      "$anchor": "CodexReviewOutput",
+      "allOf": [
+        {
+          "$ref": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/CodexReviewOutput"
+        },
+        {
+          "properties": {
+            "required_discovery_decisions": {
+              "type": "array",
+              "minItems": 18,
+              "maxItems": 18,
+              "prefixItems": [
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_CATALOG_WDL_COVERAGE"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_GLOBAL_STATE_COVERAGE"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_TRANSPORT_TARGET_INVENTORY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_SEQUENCE_RESUME_SEMANTICS"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_IDENTIFIER_STABILITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_IDENTIFIER_LIFECYCLE"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_WDL_ORIENTATION"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_PRICE_TRANSFORMATION_ATOMICITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "OPERATOR_TIMESTAMP_SEMANTICS"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "BROWSER_LIFECYCLE_CONTINUITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "LOOPBACK_TOPOLOGY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "NATURAL_CAPACITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "BODY_CLASS_SAFETY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "CASHOUT_OBSERVABILITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "BETSLIP_POSITION_SEMANTICS"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "PARTIAL_CASHOUT_SIDE_EFFECT_FREEDOM"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "PROVIDER_FEASIBILITY"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/DecisionRecord"
+                    },
+                    {
+                      "properties": {
+                        "decision_id": {
+                          "const": "POST_SHOCK_RESNAPSHOT_RECOGNITION"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ],
+              "items": false
+            }
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "properties": {
+                  "REPO0_BASELINE_VALID": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "REPO0_BASELINE_VALID"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_IMPLEMENT_R0": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_IMPLEMENT_R0"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_IMPLEMENT_F0A": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_IMPLEMENT_F0A"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_IMPLEMENT_SEC0": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_IMPLEMENT_SEC0"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_IMPLEMENT_E0": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_IMPLEMENT_E0"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_IMPLEMENT_D0": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_IMPLEMENT_D0"
+                ]
+              },
+              {
+                "properties": {
+                  "SAFE_TO_FREEZE_SCOPE0": {
+                    "const": "NO"
+                  }
+                },
+                "required": [
+                  "SAFE_TO_FREEZE_SCOPE0"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+                "const": "NO"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

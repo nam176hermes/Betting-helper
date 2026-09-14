@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "repomix",
+    ".",
+    "--include",
+    "tests/**,tests-red/**,extension/test/**,extension/test-red/**,extension/test-harness/**",
+    "--style",
+    "xml",
+    "--parsable-style",
+    "--split-output",
+    "3mb",
+    "--no-git-sort-by-changes",
+    "--output",
+    "review-context/ai-packs/tests.xml"
+  ],
+  "exit": 0,
+  "seconds": 1.1445568820054177,
+  "log": "repomix-tests.log"
+}

@@ -1,0 +1,528 @@
+{
+  "schema_version": "clock-vector-coverage/v1",
+  "source_sha256": "7124139b9a0a5a89032e3fb7809c16dc36d6dce03e84ea34d2b8194f4625867f",
+  "source_vector_id": "CLOCK_COHERENCE_V1",
+  "total_named_vectors": 65,
+  "entries": [
+    {
+      "vector_id": "CLOCK-HASH-POS-01-BROWSER-OBSERVATION",
+      "section": "canonical_hash_positive_vector",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOCK-HASH-NEG-01-MISSING-CONTENT-HASH",
+      "section": "canonical_hash_negative_vector",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOCK-GOLDEN-FOUR-TIMESTAMP-01",
+      "section": "golden_mapping",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "DRIFT-01-AT-ANCHOR",
+      "section": "drift_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "DRIFT-02-ONE-SECOND",
+      "section": "drift_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "DRIFT-03-CEILING",
+      "section": "drift_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "DRIFT-04-ABSOLUTE-BEFORE-ANCHOR",
+      "section": "drift_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-01-TARGET-ORDER",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-02-SOURCE-ORDER",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-03-NEGATIVE-RTT",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-04-WRONG-SOURCE-DOMAIN",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-05-WRONG-TARGET-DOMAIN",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-06-WRONG-BOOT",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-07-WRONG-UNIT",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-08-WRONG-OWNER",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-09-INVERTED-INTERVAL",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-10-RTT-EXCEEDED",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-11-UNCERTAINTY-EXCEEDED",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-12-TOO-FEW-SAMPLES",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-13-SEGMENT-TOO-OLD",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-14-WALL-STEP",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-15-NONINTERSECTING-TARGET-INTERVALS",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MAP-NEG-16-UNMAPPED-CDP",
+      "section": "mapping_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "SELECT-01-NARROWEST",
+      "section": "mapping_selection_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "SELECT-02-LATEST-VALIDITY-START",
+      "section": "mapping_selection_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "SELECT-03-LEXICOGRAPHIC-ID",
+      "section": "mapping_selection_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MIDPOINT-POS-GOLDEN",
+      "section": "midpoint_constraint_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MIDPOINT-NEG-WRONG-VALUE",
+      "section": "midpoint_constraint_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MIDPOINT-POS-MAX-BOUNDARY",
+      "section": "midpoint_constraint_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "MIDPOINT-NEG-OVERFLOW",
+      "section": "midpoint_constraint_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-01-DOMAIN-BOOT",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-02-MONOTONIC",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-03-WALL",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-04-SLEEP",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-05-DURATION",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-06-RTT",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-07-UNCERTAINTY",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-08-INCONSISTENT",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-09-LIFECYCLE",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-10-RUN",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CLOSE-NEG-USE-AFTER-CLOSE",
+      "section": "closure_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-POS-01",
+      "section": "release_positive_vector",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-01-PREDECESSOR-NOT-CLOSED",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-02-NOT-OBSERVED",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-03-UNKNOWN",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-04-UNSIGNED-CAPABILITY",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-05-FOOTBALL-STALE",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-06-OPERATOR-UNKNOWN",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-07-BOOK-INCOMPLETE",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-08-NOT-STRICTLY-POST-SHOCK",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-09-MAPPING-CLOSED",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-10-IDENTITY-MISMATCH",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-11-CURSOR-GAP",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-12-BLOCKING-GAP",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-13-STATE-DISAGREEMENT",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-14-LATER-SHOCK",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-15-REOPEN-PREDECESSOR",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-16-NO-CANDIDATE",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-17-SAME-EPOCH",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-18-NON-GENESIS-PREDECESSOR-NOT-CLOSED",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "RELEASE-NEG-19-UNBOUND-PROOF",
+      "section": "release_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CANDIDATE-NEG-01-JSON-UNKNOWN",
+      "section": "candidate_acceptance_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CANDIDATE-NEG-02-SQL-UNKNOWN",
+      "section": "candidate_acceptance_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CANDIDATE-NEG-03-NOT-OBSERVED",
+      "section": "candidate_acceptance_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    },
+    {
+      "vector_id": "CANDIDATE-NEG-04-UNSIGNED-UNVERIFIED",
+      "section": "candidate_acceptance_negative_vectors",
+      "owner_task": "V636-P04-T04",
+      "python_evaluator": "runtime/src/moj_discovery/clock_vectors.py::evaluate_clock_mapping_vector",
+      "typescript_evaluator": "runtime/extension/src/contracts/clock-vectors.ts#evaluateClockMappingVector",
+      "verification_command_id": "TEST_V636_P04_T04"
+    }
+  ]
+}

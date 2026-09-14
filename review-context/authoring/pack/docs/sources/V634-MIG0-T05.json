@@ -1,0 +1,84 @@
+{
+  "task_id": "V634-MIG0-T05",
+  "result": "PASS",
+  "authority": "PLAN_AUTHORING",
+  "authorized_production_phases": "NONE",
+  "successful_commands": [
+    "VERIFY_V634_MIG0_T05",
+    "MIG0_UV_SYNC",
+    "MIG0_PNPM_INSTALL"
+  ],
+  "attempts": [
+    {
+      "result": "HOLD",
+      "held_command": "MIG0_UV_SYNC",
+      "hold_reason": "offline cache is missing mypy==2.3.1"
+    },
+    {
+      "result": "PASS",
+      "cache_hydration": "UV_PYTHON_DOWNLOADS=never uv sync --frozen --no-progress",
+      "offline_empty_environment_replay": "PASS",
+      "registered_commands": [
+        "VERIFY_V634_MIG0_T05",
+        "MIG0_UV_SYNC",
+        "MIG0_PNPM_INSTALL"
+      ]
+    },
+    {
+      "result": "PASS",
+      "reason": "P01-T06 exposed the omitted MIG0-owned review-authority config; the builder now copies all ownership-declared review configs.",
+      "commands": [
+        {
+          "command_id": "VERIFY_V634_MIG0_T05",
+          "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.4-authoring",
+          "argv": [
+            "python3.12",
+            "-B",
+            "authoring-tools/build_task_command_registry.py",
+            "--tasks",
+            "pack/docs/tasks/task-manifest.v6.3.4.json",
+            "--output",
+            "runtime/task-command-registry.json",
+            "--source-registry",
+            "pack/docs/registries/task-command-registry.v1.json",
+            "--review-config-source",
+            "pack/docs/configs"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command_id": "MIG0_UV_SYNC",
+          "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.4-authoring/runtime",
+          "argv": [
+            "uv",
+            "sync",
+            "--frozen",
+            "--offline"
+          ],
+          "exit_code": 0
+        },
+        {
+          "command_id": "MIG0_PNPM_INSTALL",
+          "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.4-authoring/runtime",
+          "argv": [
+            "pnpm",
+            "install",
+            "--frozen-lockfile",
+            "--offline",
+            "--ignore-scripts"
+          ],
+          "exit_code": 0
+        }
+      ],
+      "review_config_count": 4,
+      "runtime_config_sha256": {
+        "runtime/review-config/review-a.v1.json": "e5b7cf64e2f9590b5e8fc062152122cccbf34251fc05104441c476d68c86d3cb",
+        "runtime/review-config/review-b.v1.json": "7e183fb348f8cab2ae9f9a4cc6b5ac5e929c8e3a34c26bb09cc0955ba51e4897",
+        "runtime/review-config/review-aggregation.v1.json": "ed48b1a253b0ce116e31ebd171b6dfd0401c2e71b1f91a0da0d0e62f09544a32",
+        "runtime/review-config/review-authority.v1.json": "b0d641e8bf0e7825ceb2f4c151fe64913b029b8612a505dbea3a09709761361d"
+      }
+    }
+  ],
+  "task_command_registry_sha256": "b357014bf37848675d59300c16b6148b98be9be9b2169053aea8b45a9ce1036e",
+  "sealed_task_card_defect": "V634-MIG0-T05 output/exact_files and command I/O omit runtime/review-config/review-authority.v1.json although ownership requires it; a successor sealed-plan amendment remains required."
+}

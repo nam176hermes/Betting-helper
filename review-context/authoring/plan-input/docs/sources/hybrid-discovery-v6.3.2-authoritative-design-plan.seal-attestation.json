@@ -1,0 +1,12 @@
+{
+  "schema_version": "external-seal-attestation/v5",
+  "artifact": "hybrid-discovery-v6.3.2-authoritative-design-plan",
+  "zip_sha256": "dc7be9176d88a3160ea7259fad3c7f57d48d855b7211ad995fc24d33f59ba59b",
+  "manifest_sha256": "9fba82947a5a9b414d5e962fef80598c0a5a078da38f152d1efad63b1b2533dc",
+  "governed_content_root": "50c7a356d98f2b47bdc992d0a67a9375b6a891aa5a02799c0826becc4c6bbaf5",
+  "self_review_markdown_sha256": "8f32538988b7a7cf83ee96ba4ba0316cadc3da1d689d64a8246724b1b1945dfb",
+  "self_review_json_sha256": "403507798ffb41a11d2ee4795cca4711e74569f1c50e4fe1adc8b3a6ec2b57f8",
+  "task_manifest_sha256": "1459bc030f8fbed42f7c287aed76fcdf74d4f107b491c49430a04238bb20bc44",
+  "authorized_production_phases": "NONE",
+  "created_at": "2026-09-04T00:00:00Z"
+}

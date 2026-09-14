@@ -1,0 +1,4501 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+  "title": "Hybrid Discovery v6.2 meta records",
+  "x-universal-forbidden-registry": {
+    "forbidden_name_fragments": [
+      "cookie",
+      "authorization",
+      "bearer",
+      "basic",
+      "token",
+      "secret",
+      "key",
+      "password",
+      "credentials",
+      "url",
+      "query",
+      "fragment",
+      "headers",
+      "selector",
+      "script",
+      "expression"
+    ],
+    "credential_safe_identifier_name_allowlist": [
+      {
+        "field_name": "issuer_key_id",
+        "required_declaring_schema_id": "urn:hybrid-discovery:v6.2:authorization-records",
+        "required_declared_value_pattern": "^key:ed25519:[0-9a-f]{64}$",
+        "excepted_forbidden_segment": "key",
+        "bypass_scope": "NAME_FRAGMENT_ONLY"
+      }
+    ],
+    "forbidden_open_object_names": [
+      "payload",
+      "data",
+      "attributes"
+    ],
+    "forbidden_credential_value_markers": [
+      "Bearer ",
+      "Basic "
+    ],
+    "forbidden_command_prefixes": [
+      "Runtime.",
+      "DOM.",
+      "Input.",
+      "Fetch."
+    ],
+    "forbidden_mutating_command_prefixes": [
+      "Page.",
+      "Network.set",
+      "Network.emulate",
+      "Network.continue",
+      "Network.fail",
+      "Network.fulfill",
+      "Network.delete",
+      "Network.clear"
+    ],
+    "forbidden_authority_values": [
+      "PRODUCTION",
+      "LIVE",
+      "REAL_MONEY"
+    ],
+    "allowed_non_mutating_command_values": [
+      "Network.enable",
+      "Network.disable"
+    ],
+    "forbidden_result_names": [
+      "final_score",
+      "winner",
+      "settlement",
+      "outcome",
+      "outcomes"
+    ],
+    "forbidden_metric_names": [
+      "wdl_metric",
+      "model_metric",
+      "calibration_metric",
+      "market_performance",
+      "roi",
+      "yield",
+      "ev",
+      "edge",
+      "profit",
+      "pnl",
+      "drawdown",
+      "ranking",
+      "champion"
+    ]
+  },
+  "x-universal-denial-policy": {
+    "policy_id": "universal-denial-before-side-effects/v1",
+    "input_encoding": "UTF8_NO_BOM",
+    "encoding_validation": "REJECT_INVALID_UTF8_OVERLONG_SEQUENCES_SURROGATES_NONCHARACTERS_AND_BOM",
+    "unicode_rule": "REQUIRE_NFC_DO_NOT_NORMALIZE",
+    "duplicate_object_names": "REJECT_BEFORE_TRAVERSAL",
+    "name_case_rule": "ASCII_LOWERCASE_FOR_MATCH_ONLY",
+    "value_case_rule": "UNICODE_DEFAULT_CASEFOLD_FOR_MATCH_ONLY",
+    "traversal": "DEPTH_FIRST_PREORDER_OBJECT_NAMES_UTF8_LEXICOGRAPHIC_ARRAY_INDEX_ASCENDING",
+    "matching_rules": {
+      "forbidden_name_fragments": "ASCII_CASE_INSENSITIVE_SUBSTRING",
+      "credential_safe_identifier_segment_rule": "SPLIT_ASCII_LOWERCASED_NAME_ON_UNDERSCORE; A_FORBIDDEN_SEGMENT_IS_EXEMPT_ONLY_WHEN_THE_COMPLETE_FIELD_NAME_EXACTLY_MATCHES_AN_ALLOWLIST_ENTRY_THE_ACTIVE_PUBLISHED_SCHEMA_ID_MATCHES_REQUIRED_DECLARING_SCHEMA_ID_THE_RESOLVED_PROPERTY_PATTERN_EXACTLY_MATCHES_REQUIRED_DECLARED_VALUE_PATTERN_AND_THE_VALUE_MATCHES_THAT_PATTERN",
+      "credential_safe_identifier_non_bypass": "ALLOWLIST_BYPASSES_ONLY_THE_NAMED_FORBIDDEN_NAME_SEGMENT; ALL_OTHER_NAME_FRAGMENTS_VALUE_MARKERS_COMMAND_AUTHORITY_AND_ENTROPY_RULES_REMAIN_MANDATORY; UNDECLARED_OR_PATTERN_MISMATCHED_USE_IS_NOT_ALLOWLISTED",
+      "forbidden_open_object_names": "ASCII_CASE_INSENSITIVE_EXACT_NAME",
+      "forbidden_result_names": "ASCII_CASE_INSENSITIVE_EXACT_NAME",
+      "forbidden_metric_names": "ASCII_CASE_INSENSITIVE_EXACT_NAME",
+      "credential_value_markers": "UNICODE_CASEFOLD_PREFIX",
+      "command_prefixes": "ASCII_CASE_SENSITIVE_PREFIX",
+      "authority_values": "UNICODE_CASEFOLD_EXACT_VALUE",
+      "recursive_scope": "EVERY_OBJECT_NAME_AND_EVERY_STRING_VALUE_AT_EVERY_DEPTH"
+    },
+    "shape_rule": "JSON_OBJECT_ROOT_ONLY_FINITE_TREE_RESOURCE_LIMITS_NO_NONFINITE_NUMBER_CAPTURE_EVERY_MEMBER_WITHOUT_SCHEMA_ACCEPTANCE",
+    "shape_unknown_member_handling": "CAPTURE_EPHEMERALLY_THEN_CONTINUE_NAME_VALUE_ENTROPY_SCANS; IF_NO_EARLIER_DENIAL_MATCH_QUARANTINE_AS_UNKNOWN_NAME_OR_SCHEMA_AT_DECLARATION_CHECK_BEFORE_SCHEMA_VALIDATE",
+    "captured_member_custody": "IN_MEMORY_EXACT_BYTES_ONLY_UNHASHED_UNLOGGED_UNPERSISTED_UNEMITTED",
+    "limits": {
+      "maximum_depth": 64,
+      "maximum_object_properties": 512,
+      "maximum_array_items": 4096,
+      "maximum_total_nodes": 100000,
+      "maximum_string_utf8_bytes": 2097152
+    },
+    "entropy_rule": {
+      "minimum_utf8_bytes": 32,
+      "minimum_shannon_bits_per_byte": "4.5",
+      "minimum_character_classes": 3,
+      "calculation": "SHANNON_ENTROPY_BASE2_OVER_EXACT_UTF8_BYTE_FREQUENCIES_WHOLE_STRING",
+      "scope": "EVERY_STRING_VALUE_NOT_MATCHING_A_SCHEMA_COMPILED_EXCLUDED_TYPED_PATH",
+      "excluded_typed_value_classes": [
+        "SHA256",
+        "UUID",
+        "OPAQUE_ID",
+        "SIGNATURE",
+        "NONCE",
+        "DECIMAL",
+        "UTC_DATETIME"
+      ]
+    },
+    "ordered_stages": [
+      "DECODE",
+      "SHAPE_SCAN",
+      "NAME_SCAN",
+      "VALUE_SCAN",
+      "ENTROPY_SCAN",
+      "DECLARATION_CHECK",
+      "SCHEMA_VALIDATE",
+      "PROJECT_SANITIZED_RECORD",
+      "HASH_SANITIZED_RECORD",
+      "LOG_RECEIPT",
+      "PERSIST_INDEXEDDB",
+      "PERSIST_SQLITE",
+      "EMIT_FIXTURE",
+      "EMIT_REPORT",
+      "EMIT_REPLAY_ARTIFACT",
+      "EMIT_EXPORT"
+    ],
+    "within_denial_error_precedence": [
+      {
+        "scanner_rank": 1,
+        "stage": "DECODE",
+        "outcome": "E_ENCODING_OR_DUPLICATE_OR_NFC"
+      },
+      {
+        "scanner_rank": 2,
+        "stage": "SHAPE_SCAN",
+        "outcome": "E_SHAPE_RESOURCE_LIMIT_OR_NONFINITE"
+      },
+      {
+        "scanner_rank": 3,
+        "stage": "NAME_SCAN",
+        "outcome": "E_FORBIDDEN_NAME_OR_OPEN_OBJECT_ESCAPE"
+      },
+      {
+        "scanner_rank": 4,
+        "stage": "VALUE_SCAN",
+        "outcome": "E_FORBIDDEN_VALUE_OR_COMMAND_OR_AUTHORITY"
+      },
+      {
+        "scanner_rank": 5,
+        "stage": "ENTROPY_SCAN",
+        "outcome": "E_CREDENTIAL_ENTROPY"
+      },
+      {
+        "scanner_rank": 6,
+        "stage": "DECLARATION_CHECK",
+        "outcome": "E_UNKNOWN_NAME_OR_SCHEMA_QUARANTINE"
+      },
+      {
+        "scanner_rank": 7,
+        "stage": "SCHEMA_VALIDATE",
+        "outcome": "E_CLOSED_SCHEMA_VIOLATION"
+      }
+    ],
+    "scanner_fault_injection_rule": "SYNTHETIC_VECTOR_HARNESS_CONTROL_SEPARATE_FROM_CANDIDATE_BYTES; DETERMINISTIC_FAILURE_BETWEEN_DECLARED_STAGES; NEVER_AVAILABLE_IN_OPERATOR_PROVIDER_BROWSER_OR_PRODUCTION_PATHS",
+    "denial_must_complete_before": [
+      "PROJECT_SANITIZED_RECORD",
+      "HASH_SANITIZED_RECORD",
+      "LOG_RECEIPT",
+      "PERSIST_INDEXEDDB",
+      "PERSIST_SQLITE",
+      "EMIT_FIXTURE",
+      "EMIT_REPORT",
+      "EMIT_REPLAY_ARTIFACT",
+      "EMIT_EXPORT"
+    ],
+    "scanner_failure": "SAFETY_STOP_ZERO_SIDE_EFFECTS",
+    "unknown_name_or_schema": "QUARANTINE_ZERO_SIDE_EFFECTS",
+    "matched_bytes_recorded": false,
+    "candidate_bytes_hashed": false,
+    "denied_or_quarantined_candidate_bytes_projected": false,
+    "receipt_custody": "SYNTHETIC_IN_MEMORY_EXPECTATION_ONLY_NOT_A_LOG_OR_PERSISTED_ARTIFACT",
+    "production_authority": "NONE"
+  },
+  "x-schema-resource-alias-registry": [
+    {
+      "relative_reference": "common-records.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:common-records:v1"
+    },
+    {
+      "relative_reference": "meta-records.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:meta-records:v1"
+    },
+    {
+      "relative_reference": "raw-observation.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+    },
+    {
+      "relative_reference": "e0-evidence.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+    },
+    {
+      "relative_reference": "d0-evidence.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:d0-evidence:v1"
+    },
+    {
+      "relative_reference": "scope-records.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:scope-records:v1"
+    },
+    {
+      "relative_reference": "review-records.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:review-records:v1"
+    },
+    {
+      "relative_reference": "authorization-records.schema.json",
+      "resource_id": "urn:hybrid-discovery:v6.2:authorization-records"
+    }
+  ],
+  "x-content-reference-type-bindings": [
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "G0_ACCEPTANCE",
+      "schema_version": "task-evidence/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#TaskEvidence"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "REVOCATION_EVIDENCE",
+      "schema_version": "task-evidence/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#TaskEvidence"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "REVIEW_EVIDENCE",
+      "schema_version": "task-evidence/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#TaskEvidence"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "SCOPE_INPUT_AUDIT",
+      "schema_version": "scope-input-audit/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeInputAudit"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "REPO0_BASELINE_RECEIPT",
+      "schema_version": "repo0-baseline-receipt/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#Repo0BaselineReceipt"
+    },
+    {
+      "schema_id": "urn:hybrid-discovery:v6.2:meta-records:v1",
+      "artifact_type": "DISCOVERY_ARTIFACT_MANIFEST",
+      "schema_version": "discovery-artifact-manifest/v1",
+      "schema_target": "urn:hybrid-discovery:v6.2:meta-records:v1#DiscoveryArtifactManifest"
+    }
+  ],
+  "x-discovery-capability-semantic-rules": [
+    {
+      "rule_id": "CAPABILITY_EVALUATED_CONSUMERS_EXACT",
+      "predicate": "set(evaluated_consumers) equals the eight ConsumerId registry values",
+      "error": "E_CONSUMER_PARTITION_INCOMPLETE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "CAPABILITY_CONSUMER_PARTITION",
+      "predicate": "authorized_consumers and blocked_consumers are disjoint and their union equals evaluated_consumers",
+      "error": "E_CONSUMER_PARTITION",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "SUPPORTED_EXACT",
+      "predicate": "SUPPORTED requires tested closed context, evidence, OBSERVED or INFERRED confidence, no unknowns, and at least one authorized consumer",
+      "error": "E_SUPPORTED_SEMANTICS",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "PARTIAL_EXACT",
+      "predicate": "PARTIAL requires tested closed context, evidence, OBSERVED or INFERRED confidence, limitations, and nonempty authorized and blocked consumers",
+      "error": "E_PARTIAL_SEMANTICS",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "UNSUPPORTED_EXACT",
+      "predicate": "UNSUPPORTED requires tested closed context, evidence, limitations, no required unknowns, no authorized consumers, and every evaluated consumer blocked",
+      "error": "E_UNSUPPORTED_SEMANTICS",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "UNKNOWN_EXACT",
+      "predicate": "UNKNOWN requires UNKNOWN or NOT_OBSERVED confidence, limitations and unknowns, no authorized consumers, and every evaluated consumer blocked",
+      "error": "E_UNKNOWN_SEMANTICS",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "INDETERMINATE_EXACT",
+      "predicate": "INDETERMINATE requires conflict, integrity failure, or insufficient sample confidence, evidence, limitations, no authorized consumers, and every evaluated consumer blocked",
+      "error": "E_INDETERMINATE_SEMANTICS",
+      "precedence_rank": 20
+    }
+  ],
+  "x-cross-domain-hash-semantic-rules": [
+    {
+      "rule_id": "REPO0_BASELINE_IDENTITIES_RECOMPUTE",
+      "predicate": "actual_git_commit_oid, actual_git_tree_oid, HD-REPO0-FILE-TREE-SHA256-v1 root and entry count, both exact raw-byte lockfile hashes, HD-VENDOR-TREE-SHA256-v1 root, exact command registry raw-byte hash, and HD-REPO0-COMMAND-RESULTS-SHA256-v1 root and invocation count independently recompute for the one clean zero-parent no-remote baseline and its external accepted command-result set",
+      "error": "E_REPO0_BASELINE_IDENTITY",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_RECEIPT_EXTERNAL_AND_ID_INDEPENDENT",
+      "predicate": "receipt_id is allocated independently of content_hash; accepted command results and receipt use their exact pack-relative paths and both remain outside the baseline commit",
+      "error": "E_REPO0_RECEIPT_CYCLE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "DISCOVERY_MANIFEST_EXACT_MEMBERSHIP",
+      "predicate": "files contains every required sanitized evidence artifact exactly once in normalized path order, contains no extras, and excludes manifest_path and checksum_path",
+      "error": "E_EXPORT_INVENTORY",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "DISCOVERY_MANIFEST_EXACT_COUNTS",
+      "predicate": "declared_file_count equals size(files) and declared_total_size_bytes equals the exact sum of file size_bytes",
+      "error": "E_EXPORT_INVENTORY_TOTAL",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "DISCOVERY_MANIFEST_HASHES_RECOMPUTE",
+      "predicate": "every file_sha256 and artifact_content_hash recomputes from admitted bytes and the referenced closed artifact schema before manifest content_hash is computed under its registered self-exclusion",
+      "error": "E_EXPORT_HASH",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "DISCOVERY_MANIFEST_ACCEPTANCE_EXTERNAL",
+      "predicate": "the immutable manifest never self-accepts; independent G0 acceptance is a later external record bound to this manifest content_hash",
+      "error": "E_EXPORT_SELF_ACCEPTANCE",
+      "precedence_rank": 20
+    }
+  ],
+  "x-pack-governed-metadata-semantic-rules": [
+    {
+      "rule_id": "PLAN_MANIFEST_GRAPH_COMPOSITION",
+      "predicate": "PlanManifest executable_graph resolves the exact eight-node eight-edge EXECUTABLE_DISCOVERY_GRAPH and future_roadmap resolves the exact twenty-node twenty-two-edge NON_AUTHORITATIVE_FUTURE_ROADMAP; both referenced artifacts validate, their node sets are disjoint, every edge endpoint is in its own set, no cross-set edge or reachability exists, and every future node plus its graph root is non-executable, authority NONE, may_start false, and auto_activate false",
+      "error": "E_PLAN_MANIFEST_GRAPH",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "PLAN_MANIFEST_TASK_COMPOSITION",
+      "predicate": "PlanManifest task_registry resolves the canonical task-command registry and the byte-identical runtime root copy; the registry has exactly 51 unique task IDs with phase counts REPO0 5, R0 7, F0A 8, SEC0 7, E0 10, D0 6, G0 4, SCOPE0 4 and contains no future-roadmap task",
+      "error": "E_PLAN_MANIFEST_TASK_REGISTRY",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "PLAN_MANIFEST_AUTHORITY_HELD",
+      "predicate": "PlanManifest keeps all seven implementation and scope verdicts NO and both plan and production authority NONE; draft state requires READY_FOR_CODEX_REVIEW NO while sealed review-handoff state requires READY_FOR_CODEX_REVIEW YES",
+      "error": "E_PLAN_MANIFEST_AUTHORITY",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "SOURCE_PROVENANCE_IMPORT_BYTES",
+      "predicate": "each of the four ordered SourceProvenance import bindings resolves both exact paths, lstat finds regular single-link files, raw byte sizes and SHA-256 values recompute to the recorded values, and cmp-style byte equality holds",
+      "error": "E_SOURCE_PROVENANCE_IMPORT_BYTES",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "SOURCE_PROVENANCE_V61_SOURCE_PACK",
+      "predicate": "the v6.1 source directory manifest, plan manifest, archive, and sidecar resolve as exact regular single-link files; every raw size and SHA-256 recomputes; the source manifest fields and plan-manifest entry match; and the one-line sidecar declares the actual archive digest",
+      "error": "E_SOURCE_PROVENANCE_V61_SOURCE_PACK",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "PACK_GOVERNED_METADATA_NO_HD_JCS",
+      "predicate": "PlanManifest and SourceProvenance have no content_hash, approval_hash, revocation_hash, or signature member and no canonical-hash domain entry; after closed-schema and semantic validation their exact raw file bytes and sizes must each appear once in the eventual self-excluding PackManifest",
+      "error": "E_PACK_GOVERNED_METADATA_BINDING",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "PACK_GOVERNED_METADATA_VECTOR_SET",
+      "predicate": "the two valid and ten negative pack-governed metadata vectors are present exactly once in frozen order and each mutation yields its declared first error without adding an HD-JCS domain or self-hash",
+      "error": "E_PACK_GOVERNED_METADATA_VECTOR",
+      "precedence_rank": 20
+    }
+  ],
+  "x-repo0-baseline-root-semantic-rules": [
+    {
+      "rule_id": "REPO0_PRECOMMIT_NO_AMBIENT_INSPECTION",
+      "predicate": "candidate capture requires only that root/.git be absent; an ancestor .git may exist but capture is filesystem-only and neither searches ancestors nor invokes or inherits Git state",
+      "error": "E_REPO0_CANDIDATE_CONTEXT",
+      "precedence_rank": 10
+    },
+    {
+      "rule_id": "REPO0_LOCAL_GIT_ROOT",
+      "predicate": "post-commit lstat requires root and root/.git to be real directories rather than symlinks and git show-toplevel to resolve exactly to root; a missing local .git that resolves the ambient parent repository is rejected",
+      "error": "E_REPO0_AMBIENT_GIT",
+      "precedence_rank": 10
+    },
+    {
+      "rule_id": "REPO0_FILE_TREE_CLOSED",
+      "predicate": "HEAD leaf entries are exactly modes 100644 or 100755 regular blobs; candidate and post-commit working-tree hardlinks, symlinks, gitlinks, .gitmodules, other modes, invalid paths including U+FEFF at any code-point position, and duplicate paths are rejected",
+      "error": "E_REPO0_FILE_TREE_ENTRY",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_GITIGNORE_EXACT_BYTES",
+      "predicate": "the committed .gitignore equals the registry candidate policy gitignore_lines joined by LF plus one final LF and its raw SHA-256 equals the registered gitignore_sha256; candidate capture never interprets ignore syntax",
+      "error": "E_REPO0_GITIGNORE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_FILE_TREE_ORDER",
+      "predicate": "Repo0IndependentFileTree entries equal the entire recursive HEAD leaf set sorted by unsigned UTF-8 path bytes with no exclusions",
+      "error": "E_REPO0_FILE_TREE_ORDER",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_COMMAND_EXPANSION",
+      "predicate": "results equal PRE_BASELINE verification_commands then PRE_BASELINE tasks in source-array order, each primary argv then all additional_argv in source-array order, with contiguous one-based invocation indexes",
+      "error": "E_REPO0_COMMAND_EXPANSION",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_COMMAND_CONTEXT",
+      "predicate": "every result binds the exact registry argv, canonical working directory, and complete non-inherited execution_environment; stdout and stderr are captured separately as unchanged bytes",
+      "error": "E_REPO0_COMMAND_CONTEXT",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_QUALIFIED_TREE_BINDING",
+      "predicate": "after the complete successful pre-commit command run, qualified_file_tree and qualified_file_tree_root_sha256 cover every and only non-generated candidate file; no candidate file changes before commit; the committed independent manifest and a post-commit no-follow working-tree capture must equal every qualified path, mode, size, file hash, single-link/type fact, and root, not root alone",
+      "error": "E_REPO0_QUALIFIED_TREE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_INTENTIONAL_RED_EXACT",
+      "predicate": "INTENTIONAL_RED has the registered exit, all fragment checks, and exactly the singleton E_CONTRACT_NOT_IMPLEMENTED owner-task token with no other contract token",
+      "error": "E_REPO0_CONTRACT_RED",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_COMMAND_ROOT_ELIGIBILITY",
+      "predicate": "COMPLETE_ACCEPTED and root_eligible true iff all registry invocations are present and expectation_matched; any mismatch or no-result is BLOCKED and cannot populate a baseline receipt",
+      "error": "E_REPO0_COMMAND_ROOT_INELIGIBLE",
+      "precedence_rank": 20
+    },
+    {
+      "rule_id": "REPO0_RECEIPT_COMMAND_SET_EXTERNAL",
+      "predicate": "the accepted command-result set and receipt are external to the baseline commit; receipt command_result_manifest_file_sha256 hashes the exact external bytes and command_result_root_sha256 hashes their schema-valid JCS value under the registered command-result domain",
+      "error": "E_REPO0_COMMAND_RESULT_SET",
+      "precedence_rank": 20
+    }
+  ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/TaskEvidence"
+    },
+    {
+      "$ref": "#/$defs/ScopeInputView"
+    },
+    {
+      "$ref": "#/$defs/ScopeInputAudit"
+    },
+    {
+      "$ref": "#/$defs/DiscoveryCapability"
+    },
+    {
+      "$ref": "#/$defs/CodexReviewOutput"
+    },
+    {
+      "$ref": "#/$defs/BuildManifest"
+    },
+    {
+      "$ref": "#/$defs/PackManifest"
+    },
+    {
+      "$ref": "#/$defs/PlanManifest"
+    },
+    {
+      "$ref": "#/$defs/SourceProvenance"
+    },
+    {
+      "$ref": "#/$defs/PackGovernedMetadataVectorSet"
+    },
+    {
+      "$ref": "#/$defs/Repo0BaselineReceipt"
+    },
+    {
+      "$ref": "#/$defs/DiscoveryArtifactManifest"
+    },
+    {
+      "$ref": "#/$defs/UniversalDenialReceipt"
+    }
+  ],
+  "$defs": {
+    "CodeArray": {
+      "type": "array",
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+      }
+    },
+    "ReferenceArray": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+      }
+    },
+    "ConsumerId": {
+      "type": "string",
+      "enum": [
+        "G0_DISCOVERY_EVIDENCE_REVIEW",
+        "SCOPE0_INPUT_VIEW_BUILDER",
+        "SCOPE0_SCOPE_FREEZER",
+        "V7_DESIGN_HANDOFF",
+        "FUTURE_FORMAL_SCANNER",
+        "FUTURE_OPERATOR_STATE_REDUCER",
+        "FUTURE_COHERENCE_CONTROLLER",
+        "FUTURE_PROVIDER_FEASIBILITY_SELECTOR"
+      ]
+    },
+    "ConsumerArray": {
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/ConsumerId"
+      }
+    },
+    "JsonPatchOperation": {
+      "$anchor": "JsonPatchOperation",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "path",
+            "value"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "add",
+                "replace",
+                "test"
+              ]
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^(?:/(?:[^~/]|~0|~1)*)+$"
+            },
+            "value": true
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "path"
+          ],
+          "properties": {
+            "op": {
+              "const": "remove"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^(?:/(?:[^~/]|~0|~1)*)+$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "op",
+            "from",
+            "path"
+          ],
+          "properties": {
+            "op": {
+              "enum": [
+                "copy",
+                "move"
+              ]
+            },
+            "from": {
+              "type": "string",
+              "pattern": "^(?:/(?:[^~/]|~0|~1)*)+$"
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^(?:/(?:[^~/]|~0|~1)*)+$"
+            }
+          }
+        }
+      ]
+    },
+    "SemanticVectorCase": {
+      "$anchor": "SemanticVectorCase",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "base_case_id",
+        "operations",
+        "candidate_schema_state",
+        "expected_error",
+        "precedence_rank"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "base_case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/JsonPatchOperation"
+          }
+        },
+        "candidate_schema_state": {
+          "enum": [
+            "VALID",
+            "INVALID"
+          ]
+        },
+        "expected_error": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "precedence_rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    },
+    "SemanticVectorBase": {
+      "$anchor": "SemanticVectorBase",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "record_schema_ref",
+        "record"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "record_schema_ref": {
+          "type": "string",
+          "pattern": "^urn:hybrid-discovery:v6\\.2:[a-z0-9-]+(?::v[0-9]+)?(?:#(?:[A-Za-z][A-Za-z0-9_-]*|/.*))?$"
+        },
+        "scanner_acceptance_expectation": {
+          "$ref": "#/$defs/UniversalScannerAcceptanceExpectation"
+        },
+        "record": {
+          "oneOf": [
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:raw-observation:v1"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:d0-evidence:v1"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:scope-records:v1"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:review-records:v1#/$defs/CodexReviewOutput"
+            },
+            {
+              "$ref": "#/$defs/DiscoveryCapability"
+            },
+            {
+              "$ref": "#/$defs/Repo0BaselineReceipt"
+            },
+            {
+              "$ref": "#/$defs/DiscoveryArtifactManifest"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/E0BundleIndex"
+            },
+            {
+              "$ref": "urn:hybrid-discovery:v6.2:scope-records:v1#/$defs/ScopeApprovalRevocationIntegrity"
+            }
+          ]
+        }
+      }
+    },
+    "SemanticErrorPrecedence": {
+      "$anchor": "SemanticErrorPrecedence",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "precedence_rank",
+        "stage",
+        "rule"
+      ],
+      "properties": {
+        "precedence_rank": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "stage": {
+          "enum": [
+            "UNIVERSAL_DENIAL",
+            "JSON_PATCH",
+            "SCHEMA",
+            "REFERENCE",
+            "SEMANTIC",
+            "AUTHORITY"
+          ]
+        },
+        "rule": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        }
+      }
+    },
+    "SemanticVectorContract": {
+      "$anchor": "SemanticVectorContract",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_ref",
+        "base_schema_ref",
+        "case_schema_ref",
+        "patch_semantics",
+        "error_selection"
+      ],
+      "properties": {
+        "schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorContract"
+        },
+        "base_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorBase"
+        },
+        "case_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#SemanticVectorCase"
+        },
+        "denial_case_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalDenialVectorCase"
+        },
+        "scanner_fault_case_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalScannerFaultVectorCase"
+        },
+        "scanner_acceptance_expectation_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#UniversalScannerAcceptanceExpectation"
+        },
+        "content_reference_resolution_policy_schema_ref": {
+          "const": "urn:hybrid-discovery:v6.2:meta-records:v1#ContentReferenceResolutionPolicy"
+        },
+        "patch_semantics": {
+          "const": "RFC6902"
+        },
+        "error_selection": {
+          "const": "LOWEST_PRECEDENCE_RANK_ONLY"
+        }
+      }
+    },
+    "UniversalDenialReceipt": {
+      "$anchor": "UniversalDenialReceipt",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "receipt_id",
+        "attempt_id",
+        "input_class",
+        "scanner_disposition",
+        "violation_class",
+        "location_code",
+        "matched_bytes_recorded",
+        "candidate_bytes_hashed",
+        "sanitized_record_projected",
+        "artifact_written",
+        "log_written",
+        "indexeddb_written",
+        "sqlite_written",
+        "fixture_emitted",
+        "report_emitted",
+        "replay_artifact_emitted",
+        "export_emitted",
+        "safety_stop",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "universal-denial-receipt/v1"
+        },
+        "receipt_id": {
+          "type": "string",
+          "pattern": "^denial-receipt:[0-9a-f]{64}$"
+        },
+        "attempt_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "input_class": {
+          "enum": [
+            "RAW_OBSERVATION",
+            "DATABASE_RECORD",
+            "FIXTURE",
+            "REPORT",
+            "REPLAY_ARTIFACT",
+            "EXPORT"
+          ]
+        },
+        "scanner_disposition": {
+          "enum": [
+            "REJECTED",
+            "SCANNER_FAILURE",
+            "QUARANTINED"
+          ]
+        },
+        "violation_class": {
+          "enum": [
+            "ENCODING",
+            "NORMALIZATION",
+            "DUPLICATE_NAME",
+            "SHAPE",
+            "FORBIDDEN_NAME",
+            "FORBIDDEN_VALUE",
+            "CREDENTIAL_ENTROPY",
+            "UNKNOWN_NAME",
+            "UNKNOWN_SCHEMA",
+            "SCANNER_FAILURE"
+          ]
+        },
+        "location_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "matched_bytes_recorded": {
+          "const": false
+        },
+        "candidate_bytes_hashed": {
+          "const": false
+        },
+        "sanitized_record_projected": {
+          "const": false
+        },
+        "artifact_written": {
+          "const": false
+        },
+        "log_written": {
+          "const": false
+        },
+        "indexeddb_written": {
+          "const": false
+        },
+        "sqlite_written": {
+          "const": false
+        },
+        "fixture_emitted": {
+          "const": false
+        },
+        "report_emitted": {
+          "const": false
+        },
+        "replay_artifact_emitted": {
+          "const": false
+        },
+        "export_emitted": {
+          "const": false
+        },
+        "safety_stop": {
+          "const": true
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "UniversalDenialVectorCase": {
+      "$anchor": "UniversalDenialVectorCase",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "base_case_id",
+        "operations",
+        "expected_error",
+        "precedence_rank",
+        "expected_receipt",
+        "secret_fixture_hash_computed"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "base_case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/JsonPatchOperation"
+          }
+        },
+        "expected_error": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "precedence_rank": {
+          "const": 1
+        },
+        "expected_receipt": {
+          "$ref": "#/$defs/UniversalDenialReceipt"
+        },
+        "secret_fixture_hash_computed": {
+          "const": false
+        }
+      }
+    },
+    "UniversalScannerFaultInjection": {
+      "$anchor": "UniversalScannerFaultInjection",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "fixture_id",
+        "enabled_only_in",
+        "inject_after_stage",
+        "inject_before_stage",
+        "fault_kind",
+        "occurrence",
+        "candidate_bytes_changed",
+        "candidate_member_added",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "scanner-fault-injection/v1"
+        },
+        "fixture_id": {
+          "type": "string",
+          "pattern": "^scanner-fault:[a-z0-9][a-z0-9-]{2,95}$"
+        },
+        "enabled_only_in": {
+          "const": "SYNTHETIC_VECTOR_HARNESS"
+        },
+        "inject_after_stage": {
+          "const": "SHAPE_SCAN"
+        },
+        "inject_before_stage": {
+          "const": "NAME_SCAN"
+        },
+        "fault_kind": {
+          "const": "DETERMINISTIC_SCANNER_INTERNAL_EXCEPTION"
+        },
+        "occurrence": {
+          "const": "FIRST_INVOCATION"
+        },
+        "candidate_bytes_changed": {
+          "const": false
+        },
+        "candidate_member_added": {
+          "const": false
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "UniversalScannerFaultVectorCase": {
+      "$anchor": "UniversalScannerFaultVectorCase",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "base_case_id",
+        "fault_injection",
+        "expected_error",
+        "precedence_rank",
+        "expected_receipt",
+        "secret_fixture_hash_computed"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "base_case_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$"
+        },
+        "fault_injection": {
+          "$ref": "#/$defs/UniversalScannerFaultInjection"
+        },
+        "expected_error": {
+          "const": "E_SCANNER_FAILURE"
+        },
+        "precedence_rank": {
+          "const": 1
+        },
+        "expected_receipt": {
+          "$ref": "#/$defs/UniversalDenialReceipt"
+        },
+        "secret_fixture_hash_computed": {
+          "const": false
+        }
+      }
+    },
+    "UniversalScannerAcceptanceExpectation": {
+      "$anchor": "UniversalScannerAcceptanceExpectation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expectation_id",
+        "expected_disposition",
+        "complete_record_requirement",
+        "safe_identifier_declaring_schema_id",
+        "schema_declared_safe_identifier_names",
+        "safe_identifier_bypass_scope",
+        "value_scan_completed",
+        "entropy_scan_completed",
+        "side_effects_before_acceptance",
+        "production_authority"
+      ],
+      "properties": {
+        "expectation_id": {
+          "type": "string",
+          "pattern": "^scanner-acceptance:[a-z0-9][a-z0-9-]{2,95}$"
+        },
+        "expected_disposition": {
+          "const": "ACCEPTED"
+        },
+        "complete_record_requirement": {
+          "const": "SCHEMA_VALID_PROVIDER_CALL_RECEIPT_WITH_COMPLETE_CANONICAL_PROVIDER_PROBE_PROTOCOL"
+        },
+        "safe_identifier_declaring_schema_id": {
+          "const": "urn:hybrid-discovery:v6.2:authorization-records"
+        },
+        "schema_declared_safe_identifier_names": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "prefixItems": [
+            {
+              "const": "issuer_key_id"
+            }
+          ],
+          "items": false
+        },
+        "safe_identifier_bypass_scope": {
+          "const": "NAME_FRAGMENT_ONLY"
+        },
+        "value_scan_completed": {
+          "const": true
+        },
+        "entropy_scan_completed": {
+          "const": true
+        },
+        "side_effects_before_acceptance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_bytes_hashed",
+            "sanitized_record_projected",
+            "artifact_written",
+            "log_written",
+            "indexeddb_written",
+            "sqlite_written",
+            "fixture_emitted",
+            "report_emitted",
+            "replay_artifact_emitted",
+            "export_emitted"
+          ],
+          "properties": {
+            "candidate_bytes_hashed": {
+              "const": false
+            },
+            "sanitized_record_projected": {
+              "const": false
+            },
+            "artifact_written": {
+              "const": false
+            },
+            "log_written": {
+              "const": false
+            },
+            "indexeddb_written": {
+              "const": false
+            },
+            "sqlite_written": {
+              "const": false
+            },
+            "fixture_emitted": {
+              "const": false
+            },
+            "report_emitted": {
+              "const": false
+            },
+            "replay_artifact_emitted": {
+              "const": false
+            },
+            "export_emitted": {
+              "const": false
+            }
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "ContentReferenceResolutionPolicy": {
+      "$anchor": "ContentReferenceResolutionPolicy",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "positive_collections",
+        "coverage",
+        "schema_id_resolution",
+        "type_version_resolution",
+        "binding_schema_ids",
+        "missing_or_mismatched_reference_error",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "content-reference-resolution-policy/v1"
+        },
+        "positive_collections": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "valid_records",
+              "semantic_bases",
+              "valid_review",
+              "valid_capabilities"
+            ]
+          }
+        },
+        "coverage": {
+          "const": "EVERY_CONTENT_REFERENCE_RECURSIVELY_IN_EVERY_POSITIVE_BASE"
+        },
+        "schema_id_resolution": {
+          "const": "EXACT_PUBLISHED_ID_ONLY_NO_ALIAS_OR_FILENAME_FALLBACK"
+        },
+        "type_version_resolution": {
+          "const": "EXACT_SCHEMA_ID_ARTIFACT_TYPE_SCHEMA_VERSION_BINDING_TO_RESOLVABLE_SCHEMA_TARGET"
+        },
+        "binding_schema_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^urn:hybrid-discovery:v6\\.2:[a-z0-9-]+(?::v[0-9]+)?$"
+          }
+        },
+        "missing_or_mismatched_reference_error": {
+          "const": "E_CONTENT_REFERENCE_RESOURCE"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "TaskEvidence": {
+      "$anchor": "TaskEvidence",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "task_id",
+        "attempt_id",
+        "command_id",
+        "result",
+        "exit_code",
+        "evidence_refs",
+        "created_at",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "task-evidence/v1"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^TASK-[A-Z0-9]+-T[0-9]{2}$"
+        },
+        "attempt_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "command_id": {
+          "type": "string",
+          "pattern": "^command:[a-z0-9][a-z0-9-]{0,95}$"
+        },
+        "result": {
+          "enum": [
+            "PASS",
+            "EXPECTED_CONTRACT_RED",
+            "FAIL",
+            "NOT_RUN"
+          ]
+        },
+        "exit_code": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "failure_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "created_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "ScopeCategoryDatum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "datum_id",
+        "disposition",
+        "evidence_refs"
+      ],
+      "properties": {
+        "datum_id": {
+          "enum": [
+            "OPERATOR_CATALOG_COVERAGE",
+            "OPERATOR_CATALOG_MISSINGNESS",
+            "OPERATOR_GLOBAL_STATE_SEMANTICS",
+            "OPERATOR_IDENTITY_CONFIDENCE",
+            "OPERATOR_ORIENTATION_SEMANTICS",
+            "OPERATOR_TRANSPORT_SEMANTICS",
+            "OPERATOR_TRANSPORT_SCHEMA_STABILITY",
+            "OPERATOR_QUOTE_DISPLAY_SEMANTICS",
+            "BROWSER_REPLAYABILITY",
+            "CLOCK_TIMING",
+            "GAP_MISSINGNESS",
+            "GAP_REPLAYABILITY",
+            "LOOPBACK_CAPACITY",
+            "LOOPBACK_REPLAYABILITY",
+            "BETSLIP_SEMANTICS",
+            "POSITION_SEMANTICS",
+            "CASHOUT_SEMANTICS",
+            "NATURAL_CAPACITY",
+            "NATURAL_TIMING",
+            "CREDENTIAL_SCHEMA_STABILITY",
+            "PROVIDER_COVERAGE",
+            "PROVIDER_SCHEMA_STABILITY",
+            "PROVIDER_QUOTA",
+            "PROVIDER_LICENSING",
+            "PROVIDER_COST",
+            "PROVIDER_TIMING",
+            "PROVIDER_MISSINGNESS",
+            "PROVIDER_CAPACITY",
+            "PROVIDER_REPLAYABILITY",
+            "PROVIDER_IDENTITY_CONFIDENCE"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "OBSERVED",
+            "INFERRED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "numerator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "denominator": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "decimal_value": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+        },
+        "unit": {
+          "enum": [
+            "COUNT",
+            "MICROSECOND",
+            "BYTE",
+            "PERCENT",
+            "CURRENCY_MINOR_UNIT",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        }
+      }
+    },
+    "ScopeCategoryRecord": {
+      "$anchor": "ScopeCategoryRecord",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "records"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "coverage",
+            "semantics",
+            "identity_confidence",
+            "missingness",
+            "timing",
+            "replayability",
+            "schema_stability",
+            "capacity",
+            "quota",
+            "licensing",
+            "cost"
+          ]
+        },
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": {
+            "$ref": "#/$defs/ScopeCategoryDatum"
+          }
+        }
+      }
+    },
+    "ScopeInputView": {
+      "$anchor": "ScopeInputView",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "view_id",
+        "policy_hash",
+        "source_refs",
+        "categories",
+        "content_hash",
+        "created_at",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "scope-input-view/v1"
+        },
+        "view_id": {
+          "type": "string",
+          "pattern": "^scope-input-view:[0-9a-f]{64}$"
+        },
+        "policy_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "source_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "categories": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 11,
+          "items": {
+            "$ref": "#/$defs/ScopeCategoryRecord"
+          }
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "created_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "ScopeInputAudit": {
+      "$anchor": "ScopeInputAudit",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "audit_id",
+        "view_hash",
+        "policy_hash",
+        "opened_refs",
+        "denied_access_codes",
+        "network_namespace",
+        "completed_at",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "scope-input-audit/v1"
+        },
+        "audit_id": {
+          "type": "string",
+          "pattern": "^scope-input-audit:[0-9a-f]{64}$"
+        },
+        "view_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "policy_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "opened_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "denied_access_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "network_namespace": {
+          "const": "UNSHARED"
+        },
+        "completed_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "TestedContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "capability_manifest_hash",
+        "run_ids",
+        "context_status"
+      ],
+      "properties": {
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "capability_manifest_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "run_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+          }
+        },
+        "context_status": {
+          "const": "CLOSED"
+        }
+      }
+    },
+    "DiscoveryCapability": {
+      "$anchor": "DiscoveryCapability",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "capability_id",
+        "tested_context",
+        "verdict",
+        "confidence",
+        "evidence_refs",
+        "limitation_codes",
+        "unknown_codes",
+        "evaluated_consumers",
+        "authorized_consumers",
+        "blocked_consumers",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "discovery-capability/v1"
+        },
+        "capability_id": {
+          "type": "string",
+          "pattern": "^capability:[a-z0-9][a-z0-9-]{0,95}$"
+        },
+        "tested_context": {
+          "$ref": "#/$defs/TestedContext"
+        },
+        "verdict": {
+          "enum": [
+            "SUPPORTED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "UNKNOWN",
+            "INDETERMINATE"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "OBSERVED",
+            "INFERRED",
+            "NOT_OBSERVED",
+            "UNKNOWN",
+            "CONFLICT",
+            "INTEGRITY_FAILURE",
+            "INSUFFICIENT_SAMPLE"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "unknown_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "evaluated_consumers": {
+          "$ref": "#/$defs/ConsumerArray"
+        },
+        "authorized_consumers": {
+          "$ref": "#/$defs/ConsumerArray"
+        },
+        "blocked_consumers": {
+          "$ref": "#/$defs/ConsumerArray"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "SUPPORTED"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "OBSERVED",
+                  "INFERRED"
+                ]
+              },
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "unknown_codes": {
+                "maxItems": 0
+              },
+              "authorized_consumers": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "PARTIAL"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "OBSERVED",
+                  "INFERRED"
+                ]
+              },
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "limitation_codes": {
+                "minItems": 1
+              },
+              "authorized_consumers": {
+                "minItems": 1
+              },
+              "blocked_consumers": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "UNSUPPORTED"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "limitation_codes": {
+                "minItems": 1
+              },
+              "unknown_codes": {
+                "maxItems": 0
+              },
+              "authorized_consumers": {
+                "maxItems": 0
+              },
+              "blocked_consumers": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "UNKNOWN",
+                  "NOT_OBSERVED"
+                ]
+              },
+              "limitation_codes": {
+                "minItems": 1
+              },
+              "unknown_codes": {
+                "minItems": 1
+              },
+              "authorized_consumers": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "verdict": {
+                "const": "INDETERMINATE"
+              }
+            },
+            "required": [
+              "verdict"
+            ]
+          },
+          "then": {
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "CONFLICT",
+                  "INTEGRITY_FAILURE",
+                  "INSUFFICIENT_SAMPLE"
+                ]
+              },
+              "evidence_refs": {
+                "minItems": 1
+              },
+              "limitation_codes": {
+                "minItems": 1
+              },
+              "authorized_consumers": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "severity",
+        "finding_code",
+        "evidence_refs",
+        "repair_criteria_codes",
+        "affected_verdicts",
+        "blocking"
+      ],
+      "properties": {
+        "finding_id": {
+          "type": "string",
+          "pattern": "^V62-[CFIM][0-9]{1,3}$"
+        },
+        "severity": {
+          "enum": [
+            "CRITICAL",
+            "IMPORTANT",
+            "MINOR"
+          ]
+        },
+        "finding_code": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "evidence_refs": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/ReferenceArray"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "repair_criteria_codes": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/CodeArray"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "affected_verdicts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "REPO0_BASELINE_VALID",
+              "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+              "SAFE_TO_IMPLEMENT_R0",
+              "SAFE_TO_IMPLEMENT_F0A",
+              "SAFE_TO_IMPLEMENT_SEC0",
+              "SAFE_TO_IMPLEMENT_E0",
+              "SAFE_TO_IMPLEMENT_D0",
+              "SAFE_TO_FREEZE_SCOPE0"
+            ]
+          }
+        },
+        "blocking": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RequiredDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "disposition",
+        "evidence_refs",
+        "limitation_codes",
+        "authorized_consumers"
+      ],
+      "properties": {
+        "decision_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "disposition": {
+          "enum": [
+            "SUPPORTED",
+            "PARTIAL",
+            "UNSUPPORTED",
+            "UNKNOWN",
+            "NOT_OBSERVED",
+            "INCONCLUSIVE",
+            "SAFETY_STOP"
+          ]
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/ReferenceArray"
+        },
+        "limitation_codes": {
+          "$ref": "#/$defs/CodeArray"
+        },
+        "authorized_consumers": {
+          "$ref": "#/$defs/ConsumerArray"
+        }
+      }
+    },
+    "CodexReviewOutput": {
+      "$anchor": "CodexReviewOutput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "review_outcome",
+        "reviewed_pack_hash",
+        "REPO0_BASELINE_VALID",
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+        "SAFE_TO_IMPLEMENT_R0",
+        "SAFE_TO_IMPLEMENT_F0A",
+        "SAFE_TO_IMPLEMENT_SEC0",
+        "SAFE_TO_IMPLEMENT_E0",
+        "SAFE_TO_IMPLEMENT_D0",
+        "SAFE_TO_FREEZE_SCOPE0",
+        "AUTHORIZED_PRODUCTION_PHASES",
+        "findings",
+        "required_discovery_decisions",
+        "content_hash"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "codex-review-output/v1"
+        },
+        "review_outcome": {
+          "enum": [
+            "ACCEPTED",
+            "HELD",
+            "REJECTED"
+          ]
+        },
+        "reviewed_pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "REPO0_BASELINE_VALID": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_IMPLEMENT_R0": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_IMPLEMENT_F0A": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_IMPLEMENT_SEC0": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_IMPLEMENT_E0": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_IMPLEMENT_D0": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "SAFE_TO_FREEZE_SCOPE0": {
+          "enum": [
+            "YES",
+            "NO"
+          ]
+        },
+        "AUTHORIZED_PRODUCTION_PHASES": {
+          "const": "NONE"
+        },
+        "findings": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/Finding"
+          }
+        },
+        "required_discovery_decisions": {
+          "type": "array",
+          "minItems": 18,
+          "maxItems": 18,
+          "items": {
+            "$ref": "#/$defs/RequiredDecision"
+          }
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "review_outcome": {
+                "enum": [
+                  "HELD",
+                  "REJECTED"
+                ]
+              }
+            },
+            "required": [
+              "review_outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "findings": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+                "const": "YES"
+              }
+            },
+            "required": [
+              "READY_TO_IMPLEMENT_DISCOVERY_PACK"
+            ]
+          },
+          "then": {
+            "properties": {
+              "REPO0_BASELINE_VALID": {
+                "const": "YES"
+              },
+              "SAFE_TO_IMPLEMENT_R0": {
+                "const": "YES"
+              },
+              "SAFE_TO_IMPLEMENT_F0A": {
+                "const": "YES"
+              },
+              "SAFE_TO_IMPLEMENT_SEC0": {
+                "const": "YES"
+              },
+              "SAFE_TO_IMPLEMENT_E0": {
+                "const": "YES"
+              },
+              "SAFE_TO_IMPLEMENT_D0": {
+                "const": "YES"
+              },
+              "SAFE_TO_FREEZE_SCOPE0": {
+                "const": "YES"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "Repo0FileTreeEntry": {
+      "$anchor": "Repo0FileTreeEntry",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entry_kind",
+        "file_sha256",
+        "git_mode",
+        "gitlink",
+        "hardlink",
+        "path",
+        "size_bytes",
+        "symlink"
+      ],
+      "properties": {
+        "entry_kind": {
+          "const": "REGULAR_FILE"
+        },
+        "file_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "git_mode": {
+          "enum": [
+            "100644",
+            "100755"
+          ]
+        },
+        "gitlink": {
+          "const": false
+        },
+        "hardlink": {
+          "const": false
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "pattern": "^(?!.*\\uFEFF)(?!/)(?!.*//)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*\\\\)[^\\u0000]+$",
+          "not": {
+            "const": ".gitmodules"
+          }
+        },
+        "size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "symlink": {
+          "const": false
+        }
+      }
+    },
+    "Repo0IndependentFileTree": {
+      "$anchor": "Repo0IndependentFileTree",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entries",
+        "schema_version"
+      ],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32768,
+          "items": {
+            "$ref": "#/$defs/Repo0FileTreeEntry"
+          }
+        },
+        "schema_version": {
+          "const": "repo0-independent-file-tree/v1"
+        }
+      }
+    },
+    "Repo0ExecutionEnvironment": {
+      "$anchor": "Repo0ExecutionEnvironment",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "FORCE_COLOR",
+        "HOME",
+        "LANG",
+        "LC_ALL",
+        "NPM_CONFIG_IGNORE_SCRIPTS",
+        "NPM_CONFIG_USERCONFIG",
+        "NO_COLOR",
+        "PATH",
+        "PYTHONHASHSEED",
+        "TMPDIR",
+        "TZ",
+        "UV_NO_CONFIG",
+        "UV_NO_PROGRESS",
+        "UV_PYTHON_DOWNLOADS"
+      ],
+      "properties": {
+        "FORCE_COLOR": {
+          "const": "0"
+        },
+        "HOME": {
+          "const": "/home/thenam176"
+        },
+        "LANG": {
+          "const": "C.UTF-8"
+        },
+        "LC_ALL": {
+          "const": "C.UTF-8"
+        },
+        "NPM_CONFIG_IGNORE_SCRIPTS": {
+          "const": "true"
+        },
+        "NPM_CONFIG_USERCONFIG": {
+          "const": "/dev/null"
+        },
+        "NO_COLOR": {
+          "const": "1"
+        },
+        "PATH": {
+          "const": "/home/thenam176/.npm-global/bin:/home/thenam176/.local/share/mise/shims:/home/thenam176/.local/bin:/usr/local/bin:/usr/bin:/bin"
+        },
+        "PYTHONHASHSEED": {
+          "const": "0"
+        },
+        "TMPDIR": {
+          "const": "/tmp"
+        },
+        "TZ": {
+          "const": "UTC"
+        },
+        "UV_NO_CONFIG": {
+          "const": "1"
+        },
+        "UV_NO_PROGRESS": {
+          "const": "1"
+        },
+        "UV_PYTHON_DOWNLOADS": {
+          "const": "never"
+        }
+      }
+    },
+    "Repo0CommandExpectation": {
+      "$anchor": "Repo0CommandExpectation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_exit_code",
+        "forbidden_output_fragments",
+        "kind",
+        "required_output_fragments"
+      ],
+      "properties": {
+        "expected_exit_code": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "expected_contract_error": {
+          "type": "string",
+          "pattern": "^E_CONTRACT_NOT_IMPLEMENTED:(?:REPO0|R0|F0A|SEC0|E0|D0|G0|SCOPE0)-T[0-9]{2}$"
+        },
+        "forbidden_output_fragments": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "kind": {
+          "enum": [
+            "GREEN",
+            "INTENTIONAL_RED"
+          ]
+        },
+        "required_output_fragments": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "INTENTIONAL_RED"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "expected_contract_error"
+            ],
+            "properties": {
+              "expected_exit_code": {
+                "const": 1
+              }
+            }
+          },
+          "else": {
+            "not": {
+              "required": [
+                "expected_contract_error"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Repo0CommandInvocationResult": {
+      "$anchor": "Repo0CommandInvocationResult",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "argv",
+        "argv_ordinal",
+        "disposition",
+        "execution_state",
+        "expectation",
+        "expectation_matched",
+        "invocation_id",
+        "invocation_index",
+        "owner_id",
+        "owner_kind",
+        "working_directory"
+      ],
+      "properties": {
+        "argv": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          }
+        },
+        "argv_ordinal": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "contract_error_tokens": {
+          "type": "array",
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^E_CONTRACT_NOT_IMPLEMENTED:(?:REPO0|R0|F0A|SEC0|E0|D0|G0|SCOPE0)-T[0-9]{2}$"
+          }
+        },
+        "disposition": {
+          "enum": [
+            "PASS",
+            "EXPECTED_CONTRACT_RED",
+            "FAIL",
+            "NOT_RUN"
+          ]
+        },
+        "execution_state": {
+          "enum": [
+            "COMPLETED",
+            "NO_RESULT"
+          ]
+        },
+        "expectation": {
+          "$ref": "#/$defs/Repo0CommandExpectation"
+        },
+        "expectation_matched": {
+          "type": "boolean"
+        },
+        "exit_code": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "failure_code": {
+          "enum": [
+            "E_COMMAND_EXPECTATION",
+            "E_COMMAND_SPAWN",
+            "E_COMMAND_SIGNAL",
+            "E_COMMAND_CAPTURE",
+            "E_COMMAND_HOST_INTERRUPTED"
+          ]
+        },
+        "invocation_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9-]{1,95}(?:#additional-[1-9][0-9]*)?$"
+        },
+        "invocation_index": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$",
+          "maxLength": 40
+        },
+        "no_result_reason": {
+          "enum": [
+            "SPAWN_FAILED",
+            "TERMINATED_BY_SIGNAL",
+            "CAPTURE_FAILED",
+            "HOST_INTERRUPTED"
+          ]
+        },
+        "owner_id": {
+          "type": "string",
+          "pattern": "^(?:[A-Z0-9][A-Z0-9-]{1,95}|(?:REPO0|R0|F0A|SEC0|E0|D0|G0|SCOPE0)-T[0-9]{2})$"
+        },
+        "owner_kind": {
+          "enum": [
+            "VERIFICATION_COMMAND",
+            "TASK"
+          ]
+        },
+        "stderr_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "stderr_size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "stdout_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "stdout_size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "working_directory": {
+          "const": "/home/thenam176/betting-helper/discovery-runtime"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_state": {
+                "const": "COMPLETED"
+              }
+            },
+            "required": [
+              "execution_state"
+            ]
+          },
+          "then": {
+            "required": [
+              "contract_error_tokens",
+              "exit_code",
+              "stderr_sha256",
+              "stderr_size_bytes",
+              "stdout_sha256",
+              "stdout_size_bytes"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "failure_code"
+                  ]
+                },
+                {
+                  "required": [
+                    "no_result_reason"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "failure_code",
+              "no_result_reason"
+            ],
+            "properties": {
+              "disposition": {
+                "const": "NOT_RUN"
+              },
+              "expectation_matched": {
+                "const": false
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "contract_error_tokens"
+                  ]
+                },
+                {
+                  "required": [
+                    "exit_code"
+                  ]
+                },
+                {
+                  "required": [
+                    "stderr_sha256"
+                  ]
+                },
+                {
+                  "required": [
+                    "stderr_size_bytes"
+                  ]
+                },
+                {
+                  "required": [
+                    "stdout_sha256"
+                  ]
+                },
+                {
+                  "required": [
+                    "stdout_size_bytes"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Repo0CommandResultSet": {
+      "$anchor": "Repo0CommandResultSet",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "additional_argv_invocation_count",
+        "algorithm_id",
+        "candidate_exclusion_policy_id",
+        "completion_state",
+        "domain",
+        "execution_environment",
+        "expanded_invocation_count",
+        "inherit_parent_environment",
+        "production_authority",
+        "record_type",
+        "registry_path",
+        "registry_sha256",
+        "results",
+        "root_eligible",
+        "schema_version",
+        "task_invocation_count",
+        "verification_invocation_count",
+        "working_directory"
+      ],
+      "properties": {
+        "additional_argv_invocation_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "algorithm_id": {
+          "const": "HD-REPO0-COMMAND-RESULTS-SHA256-v1"
+        },
+        "candidate_exclusion_policy_id": {
+          "const": "REPO0-CANDIDATE-EXCLUSIONS-v1"
+        },
+        "blocking_code": {
+          "enum": [
+            "E_COMMAND_EXPECTATION",
+            "E_COMMAND_NO_RESULT",
+            "E_COMMAND_REGISTRY_DRIFT",
+            "E_COMMAND_EXPANSION"
+          ]
+        },
+        "completion_state": {
+          "enum": [
+            "COMPLETE_ACCEPTED",
+            "BLOCKED"
+          ]
+        },
+        "domain": {
+          "const": "HYBRID-DISCOVERY/v6.2/Repo0CommandResultSet/v1\u0000"
+        },
+        "execution_environment": {
+          "$ref": "#/$defs/Repo0ExecutionEnvironment"
+        },
+        "expanded_invocation_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "first_blocking_invocation_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9][A-Z0-9-]{1,95}(?:#additional-[1-9][0-9]*)?$"
+        },
+        "inherit_parent_environment": {
+          "const": false
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "qualified_file_tree": {
+          "$ref": "#/$defs/Repo0IndependentFileTree"
+        },
+        "qualified_file_tree_root_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "record_type": {
+          "const": "Repo0CommandResultSet"
+        },
+        "registry_path": {
+          "const": "task-command-registry.json"
+        },
+        "registry_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/Repo0CommandInvocationResult"
+          }
+        },
+        "root_eligible": {
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "repo0-command-result-set/v1"
+        },
+        "task_invocation_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "verification_invocation_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "working_directory": {
+          "const": "/home/thenam176/betting-helper/discovery-runtime"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "completion_state": {
+                "const": "COMPLETE_ACCEPTED"
+              }
+            },
+            "required": [
+              "completion_state"
+            ]
+          },
+          "then": {
+            "required": [
+              "qualified_file_tree",
+              "qualified_file_tree_root_sha256"
+            ],
+            "properties": {
+              "root_eligible": {
+                "const": true
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "blocking_code"
+                  ]
+                },
+                {
+                  "required": [
+                    "first_blocking_invocation_id"
+                  ]
+                }
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "blocking_code",
+              "first_blocking_invocation_id"
+            ],
+            "properties": {
+              "root_eligible": {
+                "const": false
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "qualified_file_tree"
+                  ]
+                },
+                {
+                  "required": [
+                    "qualified_file_tree_root_sha256"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Repo0BaselineRootVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain_hex",
+        "input",
+        "jcs_utf8_sha256",
+        "jcs_size_bytes",
+        "preimage_size_bytes",
+        "sha256",
+        "vector_id"
+      ],
+      "properties": {
+        "domain_hex": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{2})+$"
+        },
+        "input": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Repo0IndependentFileTree"
+            },
+            {
+              "$ref": "#/$defs/Repo0CommandResultSet"
+            }
+          ]
+        },
+        "jcs_utf8_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "jcs_size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "preimage_size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "vector_id": {
+          "enum": [
+            "REPO0-FILE-TREE-ROOT-ASCII",
+            "REPO0-COMMAND-RESULT-ROOT-ASCII"
+          ]
+        }
+      }
+    },
+    "Repo0BaselineRootInvalidVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "condition",
+        "expected_error",
+        "target",
+        "vector_id"
+      ],
+      "properties": {
+        "condition": {
+          "enum": [
+            "POSTCOMMIT_AMBIENT_PARENT_GIT_WITHOUT_LOCAL_DOTGIT",
+            "NON_NFC_PATH",
+            "UFEFF_PATH_LEADING",
+            "UFEFF_PATH_EMBEDDED",
+            "SYMLINK_MODE",
+            "HARDLINK_COUNT",
+            "GITLINK_MODE",
+            "GITMODULES_PATH",
+            "FILE_ENTRY_ORDER_CHANGED",
+            "QUALIFIED_FILE_EXTRA_OR_COMMITTED_OMISSION",
+            "QUALIFIED_FILE_OMITTED_OR_COMMITTED_EXTRA",
+            "QUALIFIED_FILE_MODE_CHANGED",
+            "ADDITIONAL_ARGV_OMITTED",
+            "RESULT_ORDER_CHANGED",
+            "WORKING_DIRECTORY_CHANGED",
+            "ENVIRONMENT_INHERITED_OR_CHANGED",
+            "INTENTIONAL_RED_TOKEN_WRONG_OR_NOT_SINGLETON",
+            "INTENTIONAL_RED_TOKEN_MALFORMED_LEADING_BOUNDARY",
+            "INTENTIONAL_RED_TOKEN_MALFORMED_TRAILING_BOUNDARY",
+            "COMMAND_FAILED",
+            "COMMAND_NOT_RUN",
+            "RESULT_FILE_INSIDE_BASELINE"
+          ]
+        },
+        "expected_error": {
+          "enum": [
+            "E_REPO0_AMBIENT_GIT",
+            "E_REPO0_FILE_TREE_ENTRY",
+            "E_REPO0_FILE_TREE_ORDER",
+            "E_REPO0_QUALIFIED_TREE",
+            "E_REPO0_COMMAND_EXPANSION",
+            "E_REPO0_COMMAND_CONTEXT",
+            "E_REPO0_CONTRACT_RED",
+            "E_REPO0_COMMAND_ROOT_INELIGIBLE",
+            "E_REPO0_RECEIPT_CYCLE"
+          ]
+        },
+        "path_utf8_hex": {
+          "type": "string",
+          "pattern": "^(?:[0-9a-f]{2})+$"
+        },
+        "target": {
+          "enum": [
+            "FILE_TREE",
+            "COMMAND_RESULT_SET",
+            "BASELINE_RECEIPT"
+          ]
+        },
+        "vector_id": {
+          "type": "string",
+          "pattern": "^REPO0-ROOT-REJECT-[A-Z0-9-]+$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "condition": {
+                "const": "UFEFF_PATH_LEADING"
+              }
+            },
+            "required": [
+              "condition"
+            ]
+          },
+          "then": {
+            "required": [
+              "path_utf8_hex"
+            ],
+            "properties": {
+              "path_utf8_hex": {
+                "const": "efbbbf626f6d2e747874"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "condition": {
+                "const": "UFEFF_PATH_EMBEDDED"
+              }
+            },
+            "required": [
+              "condition"
+            ]
+          },
+          "then": {
+            "required": [
+              "path_utf8_hex"
+            ],
+            "properties": {
+              "path_utf8_hex": {
+                "const": "656d626564646564efbbbf626f6d2e747874"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "condition": {
+                "not": {
+                  "enum": [
+                    "UFEFF_PATH_LEADING",
+                    "UFEFF_PATH_EMBEDDED"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "condition"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "path_utf8_hex"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Repo0BaselineRootVectorSet": {
+      "$anchor": "Repo0BaselineRootVectorSet",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file_tree_algorithm",
+        "command_result_algorithm",
+        "valid_vectors",
+        "invalid_vectors",
+        "production_authority",
+        "schema_version"
+      ],
+      "properties": {
+        "command_result_algorithm": {
+          "const": "HD-REPO0-COMMAND-RESULTS-SHA256-v1"
+        },
+        "file_tree_algorithm": {
+          "const": "HD-REPO0-FILE-TREE-SHA256-v1"
+        },
+        "invalid_vectors": {
+          "type": "array",
+          "minItems": 22,
+          "maxItems": 22,
+          "items": {
+            "$ref": "#/$defs/Repo0BaselineRootInvalidVector"
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "schema_version": {
+          "const": "repo0-baseline-roots-v1"
+        },
+        "valid_vectors": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/Repo0BaselineRootVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "REPO0-FILE-TREE-ROOT-ASCII"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/Repo0BaselineRootVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "REPO0-COMMAND-RESULT-ROOT-ASCII"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        }
+      }
+    },
+    "Repo0ToolchainVersions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "toolchain",
+            "version"
+          ],
+          "properties": {
+            "toolchain": {
+              "const": "Node"
+            },
+            "version": {
+              "const": "22.23.0"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "toolchain",
+            "version"
+          ],
+          "properties": {
+            "toolchain": {
+              "const": "pnpm"
+            },
+            "version": {
+              "const": "10.33.2"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "toolchain",
+            "version"
+          ],
+          "properties": {
+            "toolchain": {
+              "const": "Python"
+            },
+            "version": {
+              "const": "3.12.3"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "toolchain",
+            "version"
+          ],
+          "properties": {
+            "toolchain": {
+              "const": "uv"
+            },
+            "version": {
+              "const": "0.11.7"
+            }
+          }
+        }
+      ],
+      "items": false
+    },
+    "Repo0LockfileHashes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "const": "pnpm-lock.yaml"
+            },
+            "sha256": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "const": "uv.lock"
+            },
+            "sha256": {
+              "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+            }
+          }
+        }
+      ],
+      "items": false
+    },
+    "Repo0BaselineReceipt": {
+      "$anchor": "Repo0BaselineReceipt",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "receipt_id",
+        "receipt_id_allocation",
+        "receipt_path",
+        "git_object_format",
+        "actual_git_commit_oid",
+        "actual_git_tree_oid",
+        "independent_file_tree_algorithm",
+        "independent_file_tree_entry_count",
+        "independent_file_tree_root_sha256",
+        "toolchain_versions",
+        "lockfile_hash_algorithm",
+        "lockfile_hashes",
+        "vendor_root_algorithm",
+        "vendor_root_sha256",
+        "command_result_algorithm",
+        "command_result_manifest_path",
+        "command_result_manifest_committed_in_baseline",
+        "command_result_manifest_file_sha256",
+        "command_registry_file_sha256",
+        "command_result_invocation_count",
+        "command_result_root_sha256",
+        "baseline_commit_count",
+        "parent_commit_count",
+        "worktree_clean",
+        "no_remote",
+        "remote_count",
+        "zero_parent_commit",
+        "receipt_committed_in_baseline",
+        "verified_at",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "Repo0BaselineReceipt"
+        },
+        "schema_version": {
+          "const": "repo0-baseline-receipt/v1"
+        },
+        "receipt_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "receipt_id_allocation": {
+          "const": "UUID_V4_INDEPENDENT_OF_CONTENT_HASH"
+        },
+        "receipt_path": {
+          "const": "docs/receipts/repo0-baseline-receipt.json"
+        },
+        "git_object_format": {
+          "const": "sha1"
+        },
+        "actual_git_commit_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "actual_git_tree_oid": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "independent_file_tree_algorithm": {
+          "const": "HD-REPO0-FILE-TREE-SHA256-v1"
+        },
+        "independent_file_tree_entry_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "independent_file_tree_root_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "toolchain_versions": {
+          "$ref": "#/$defs/Repo0ToolchainVersions"
+        },
+        "lockfile_hash_algorithm": {
+          "const": "SHA-256-RAW-BYTES"
+        },
+        "lockfile_hashes": {
+          "$ref": "#/$defs/Repo0LockfileHashes"
+        },
+        "vendor_root_algorithm": {
+          "const": "HD-VENDOR-TREE-SHA256-v1"
+        },
+        "vendor_root_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "command_result_algorithm": {
+          "const": "HD-REPO0-COMMAND-RESULTS-SHA256-v1"
+        },
+        "command_result_manifest_path": {
+          "const": "docs/receipts/repo0-command-results.json"
+        },
+        "command_result_manifest_committed_in_baseline": {
+          "const": false
+        },
+        "command_result_manifest_file_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "command_registry_file_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "command_result_invocation_count": {
+          "const": "101"
+        },
+        "command_result_root_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "baseline_commit_count": {
+          "const": 1
+        },
+        "parent_commit_count": {
+          "const": 0
+        },
+        "worktree_clean": {
+          "const": true
+        },
+        "no_remote": {
+          "const": true
+        },
+        "remote_count": {
+          "const": 0
+        },
+        "zero_parent_commit": {
+          "const": true
+        },
+        "receipt_committed_in_baseline": {
+          "const": false
+        },
+        "verified_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "SanitizedArtifactFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "entry_kind",
+        "symlink",
+        "size_bytes",
+        "file_sha256",
+        "artifact_type",
+        "schema_id",
+        "schema_version",
+        "artifact_content_hash"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*//)(?!.*(?:^|/)\\.\\.?(?:/|$))[A-Za-z0-9._-]+(?:/[A-Za-z0-9._-]+)*$",
+          "not": {
+            "enum": [
+              "sanitized-export/discovery-artifact-manifest.json",
+              "sanitized-export/checksums.sha256"
+            ]
+          }
+        },
+        "entry_kind": {
+          "const": "REGULAR_FILE"
+        },
+        "symlink": {
+          "const": false
+        },
+        "size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "file_sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "artifact_type": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+        },
+        "schema_id": {
+          "type": "string",
+          "pattern": "^(?:urn:hybrid-discovery:v6\\.2:[a-z0-9-]+(?::v[0-9]+)?|https://hybrid-discovery\\.local/schemas/v6\\.2/[a-z0-9-]+\\.schema\\.json)$"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+/v[0-9]+$"
+        },
+        "artifact_content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        }
+      }
+    },
+    "DiscoveryArtifactManifest": {
+      "$anchor": "DiscoveryArtifactManifest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_type",
+        "schema_version",
+        "manifest_id",
+        "manifest_id_allocation",
+        "export_kind",
+        "custody_mode",
+        "run_id",
+        "pack_hash",
+        "build_hash",
+        "implementation_baseline_hash",
+        "run_state",
+        "writer_count",
+        "terminal_state",
+        "files",
+        "declared_file_count",
+        "declared_total_size_bytes",
+        "manifest_path",
+        "manifest_listed_in_files",
+        "checksum_path",
+        "checksum_listed_in_files",
+        "inventory_state",
+        "schema_validation_state",
+        "semantic_denial_state",
+        "sensitive_material_scan_state",
+        "raw_sensitive_material_included",
+        "content_hash_validation_state",
+        "file_hash_validation_state",
+        "replay_state",
+        "accounting_state",
+        "required_artifacts_included",
+        "pre_delete_inventory_included",
+        "destruction_intent_included",
+        "independent_acceptance_required",
+        "self_acceptance_claimed",
+        "acceptance_state",
+        "immutable",
+        "created_at",
+        "content_hash",
+        "production_authority"
+      ],
+      "properties": {
+        "record_type": {
+          "const": "DiscoveryArtifactManifest"
+        },
+        "schema_version": {
+          "const": "discovery-artifact-manifest/v1"
+        },
+        "manifest_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "manifest_id_allocation": {
+          "const": "UUID_V4_INDEPENDENT_OF_CONTENT_HASH"
+        },
+        "export_kind": {
+          "const": "SANITIZED_EVIDENCE_EXPORT"
+        },
+        "custody_mode": {
+          "const": "PROHIBITION_AND_DEFERRED_ARCHIVAL"
+        },
+        "run_id": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "run_state": {
+          "const": "CLOSED"
+        },
+        "writer_count": {
+          "const": "0"
+        },
+        "terminal_state": {
+          "const": "SEALED"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8192,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/SanitizedArtifactFile"
+          }
+        },
+        "declared_file_count": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "declared_total_size_bytes": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+        },
+        "manifest_path": {
+          "const": "sanitized-export/discovery-artifact-manifest.json"
+        },
+        "manifest_listed_in_files": {
+          "const": false
+        },
+        "checksum_path": {
+          "const": "sanitized-export/checksums.sha256"
+        },
+        "checksum_listed_in_files": {
+          "const": false
+        },
+        "inventory_state": {
+          "const": "EXACT_NO_EXTRAS_NO_OMISSIONS"
+        },
+        "schema_validation_state": {
+          "const": "PASS"
+        },
+        "semantic_denial_state": {
+          "const": "PASS"
+        },
+        "sensitive_material_scan_state": {
+          "const": "PASS_NO_CREDENTIAL_PII_OR_PRODUCTION_AUTHORITY"
+        },
+        "raw_sensitive_material_included": {
+          "const": false
+        },
+        "content_hash_validation_state": {
+          "const": "PASS"
+        },
+        "file_hash_validation_state": {
+          "const": "PASS"
+        },
+        "replay_state": {
+          "const": "PASS_FRESH_EMPTY_STORE_EQUIVALENT"
+        },
+        "accounting_state": {
+          "const": "ALL_ROWS_ACK_CHAIN_OR_EXPLICIT_GAP_EXPORT_ACCOUNTED"
+        },
+        "required_artifacts_included": {
+          "const": true
+        },
+        "pre_delete_inventory_included": {
+          "const": true
+        },
+        "destruction_intent_included": {
+          "const": false
+        },
+        "independent_acceptance_required": {
+          "const": true
+        },
+        "self_acceptance_claimed": {
+          "const": false
+        },
+        "acceptance_state": {
+          "const": "PENDING_INDEPENDENT_G0_REVIEW"
+        },
+        "immutable": {
+          "const": true
+        },
+        "created_at": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+        },
+        "content_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "ManifestFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sha256": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        }
+      }
+    },
+    "BuildManifest": {
+      "$anchor": "BuildManifest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "build_hash",
+        "implementation_baseline_hash",
+        "pack_hash",
+        "files",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "build-manifest/v1"
+        },
+        "build_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4096,
+          "items": {
+            "$ref": "#/$defs/ManifestFile"
+          }
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "PackManifest": {
+      "$anchor": "PackManifest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "pack_version",
+        "pack_hash",
+        "implementation_baseline_hash",
+        "files",
+        "self_excluded_path",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "pack-manifest/v1"
+        },
+        "pack_version": {
+          "const": "6.2"
+        },
+        "pack_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "implementation_baseline_hash": {
+          "$ref": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+        },
+        "files": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4096,
+          "items": {
+            "$ref": "#/$defs/ManifestFile"
+          }
+        },
+        "self_excluded_path": {
+          "const": "MANIFEST_SHA256.json"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "HeldAuthoringAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK",
+        "SAFE_TO_IMPLEMENT_R0",
+        "SAFE_TO_IMPLEMENT_F0A",
+        "SAFE_TO_IMPLEMENT_SEC0",
+        "SAFE_TO_IMPLEMENT_E0",
+        "SAFE_TO_IMPLEMENT_D0",
+        "SAFE_TO_FREEZE_SCOPE0",
+        "READY_FOR_CODEX_REVIEW",
+        "AUTHORIZED_PRODUCTION_PHASES"
+      ],
+      "properties": {
+        "READY_TO_IMPLEMENT_DISCOVERY_PACK": {
+          "const": "NO"
+        },
+        "SAFE_TO_IMPLEMENT_R0": {
+          "const": "NO"
+        },
+        "SAFE_TO_IMPLEMENT_F0A": {
+          "const": "NO"
+        },
+        "SAFE_TO_IMPLEMENT_SEC0": {
+          "const": "NO"
+        },
+        "SAFE_TO_IMPLEMENT_E0": {
+          "const": "NO"
+        },
+        "SAFE_TO_IMPLEMENT_D0": {
+          "const": "NO"
+        },
+        "SAFE_TO_FREEZE_SCOPE0": {
+          "const": "NO"
+        },
+        "READY_FOR_CODEX_REVIEW": {
+          "enum": [
+            "NO",
+            "YES"
+          ]
+        },
+        "AUTHORIZED_PRODUCTION_PHASES": {
+          "const": "NONE"
+        }
+      }
+    },
+    "PlanExecutableGraphReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "graph_type",
+        "path",
+        "node_count",
+        "edge_count",
+        "terminal",
+        "composition"
+      ],
+      "properties": {
+        "graph_type": {
+          "const": "EXECUTABLE_DISCOVERY_GRAPH"
+        },
+        "path": {
+          "const": "docs/graphs/executable-discovery-graph.v1.json"
+        },
+        "node_count": {
+          "const": 8
+        },
+        "edge_count": {
+          "const": 8
+        },
+        "terminal": {
+          "const": "DISCOVERY_COMPLETE"
+        },
+        "composition": {
+          "const": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+        }
+      }
+    },
+    "PlanFutureRoadmapReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "graph_type",
+        "path",
+        "node_count",
+        "edge_count",
+        "cross_set_edge_count",
+        "executable",
+        "authority",
+        "may_start",
+        "auto_activate",
+        "composition"
+      ],
+      "properties": {
+        "graph_type": {
+          "const": "NON_AUTHORITATIVE_FUTURE_ROADMAP"
+        },
+        "path": {
+          "const": "docs/graphs/non-authoritative-future-roadmap.v1.json"
+        },
+        "node_count": {
+          "const": 20
+        },
+        "edge_count": {
+          "const": 22
+        },
+        "cross_set_edge_count": {
+          "const": 0
+        },
+        "executable": {
+          "const": false
+        },
+        "authority": {
+          "const": "NONE"
+        },
+        "may_start": {
+          "const": false
+        },
+        "auto_activate": {
+          "const": false
+        },
+        "composition": {
+          "const": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+        }
+      }
+    },
+    "PlanTaskPhaseCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "REPO0",
+        "R0",
+        "F0A",
+        "SEC0",
+        "E0",
+        "D0",
+        "G0",
+        "SCOPE0"
+      ],
+      "properties": {
+        "REPO0": {
+          "const": 5
+        },
+        "R0": {
+          "const": 7
+        },
+        "F0A": {
+          "const": 8
+        },
+        "SEC0": {
+          "const": 7
+        },
+        "E0": {
+          "const": 10
+        },
+        "D0": {
+          "const": 6
+        },
+        "G0": {
+          "const": 4
+        },
+        "SCOPE0": {
+          "const": 4
+        }
+      }
+    },
+    "PlanTaskRegistryReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry_type",
+        "canonical_path",
+        "runtime_path",
+        "task_count",
+        "repo0_authoring_task_count",
+        "discovery_task_count",
+        "phase_task_counts",
+        "composition"
+      ],
+      "properties": {
+        "registry_type": {
+          "const": "TASK_COMMAND_REGISTRY"
+        },
+        "canonical_path": {
+          "const": "docs/registries/task-command-registry.v1.json"
+        },
+        "runtime_path": {
+          "const": "/home/thenam176/betting-helper/discovery-runtime/task-command-registry.json"
+        },
+        "task_count": {
+          "const": 51
+        },
+        "repo0_authoring_task_count": {
+          "const": 5
+        },
+        "discovery_task_count": {
+          "const": 46
+        },
+        "phase_task_counts": {
+          "$ref": "#/$defs/PlanTaskPhaseCounts"
+        },
+        "composition": {
+          "const": "REFERENCE_EXACT_ARTIFACT_NO_INLINE_OVERRIDE"
+        }
+      }
+    },
+    "PlanManifest": {
+      "$anchor": "PlanManifest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "pack_id",
+        "pack_version",
+        "pack_kind",
+        "artifact_status",
+        "sealed",
+        "pack_root",
+        "runtime_root",
+        "pack_is_implementation_worktree",
+        "executable_graph",
+        "future_roadmap",
+        "task_registry",
+        "authority",
+        "governance_binding",
+        "hd_jcs_domain_registered",
+        "plan_authority",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "hybrid-discovery-plan-manifest/v6.2"
+        },
+        "record_type": {
+          "const": "PlanManifest"
+        },
+        "pack_id": {
+          "const": "plan:hybrid-discovery-v6.2"
+        },
+        "pack_version": {
+          "const": "6.2"
+        },
+        "pack_kind": {
+          "const": "DOCUMENTATION_SCHEMA_AND_BOOTSTRAP_CONTRACT_ONLY"
+        },
+        "artifact_status": {
+          "enum": [
+            "AUTHORING_DRAFT_NOT_SEALED",
+            "SEALED_READY_FOR_INDEPENDENT_REVIEW"
+          ]
+        },
+        "sealed": {
+          "type": "boolean"
+        },
+        "pack_root": {
+          "const": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2"
+        },
+        "runtime_root": {
+          "const": "/home/thenam176/betting-helper/discovery-runtime"
+        },
+        "pack_is_implementation_worktree": {
+          "const": false
+        },
+        "executable_graph": {
+          "$ref": "#/$defs/PlanExecutableGraphReference"
+        },
+        "future_roadmap": {
+          "$ref": "#/$defs/PlanFutureRoadmapReference"
+        },
+        "task_registry": {
+          "$ref": "#/$defs/PlanTaskRegistryReference"
+        },
+        "authority": {
+          "$ref": "#/$defs/HeldAuthoringAuthority"
+        },
+        "governance_binding": {
+          "const": "PACK_MANIFEST_RAW_SHA256_ONLY_NO_HD_JCS_SELF_HASH"
+        },
+        "hd_jcs_domain_registered": {
+          "const": false
+        },
+        "plan_authority": {
+          "const": "NONE"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sealed": {
+                "const": true
+              }
+            },
+            "required": [
+              "sealed"
+            ]
+          },
+          "then": {
+            "properties": {
+              "artifact_status": {
+                "const": "SEALED_READY_FOR_INDEPENDENT_REVIEW"
+              },
+              "authority": {
+                "properties": {
+                  "READY_FOR_CODEX_REVIEW": {
+                    "const": "YES"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "artifact_status": {
+                "const": "AUTHORING_DRAFT_NOT_SEALED"
+              },
+              "authority": {
+                "properties": {
+                  "READY_FOR_CODEX_REVIEW": {
+                    "const": "NO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SourceImportBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "import_path",
+        "source_path",
+        "media_type",
+        "import_size_bytes",
+        "source_size_bytes",
+        "import_raw_sha256",
+        "source_raw_sha256",
+        "byte_identity"
+      ],
+      "properties": {
+        "import_path": {
+          "type": "string",
+          "pattern": "^docs/reviews/[A-Za-z0-9._-]+$"
+        },
+        "source_path": {
+          "type": "string",
+          "pattern": "^/home/thenam176/betting-helper/docs/reviews/[A-Za-z0-9._-]+$"
+        },
+        "media_type": {
+          "enum": [
+            "text/markdown",
+            "application/json"
+          ]
+        },
+        "import_size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "source_size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "import_raw_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_raw_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byte_identity": {
+          "const": "EXACT"
+        }
+      }
+    },
+    "V61SourcePackBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_directory",
+        "manifest_path",
+        "manifest_size_bytes",
+        "manifest_raw_sha256",
+        "manifest_schema_version",
+        "manifest_pack_id",
+        "manifest_entry_count",
+        "manifest_total_file_count",
+        "manifest_self_excluded",
+        "plan_manifest_path",
+        "plan_manifest_size_bytes",
+        "plan_manifest_raw_sha256",
+        "plan_manifest_listed_in_source_manifest",
+        "archive_path",
+        "archive_size_bytes",
+        "archive_raw_sha256",
+        "sidecar_path",
+        "sidecar_size_bytes",
+        "sidecar_raw_sha256",
+        "sidecar_declared_archive_sha256",
+        "archive_matches_sidecar"
+      ],
+      "properties": {
+        "source_directory": {
+          "const": "/home/thenam176/betting-helper/project"
+        },
+        "manifest_path": {
+          "const": "/home/thenam176/betting-helper/project/MANIFEST_SHA256.json"
+        },
+        "manifest_size_bytes": {
+          "const": 8198
+        },
+        "manifest_raw_sha256": {
+          "const": "388b09b33ca206d3928a77e4ec9102719719591c8bc76ad90757d448d689ef25"
+        },
+        "manifest_schema_version": {
+          "const": "pack-manifest-sha256/v1"
+        },
+        "manifest_pack_id": {
+          "const": "hybrid-discovery-implementation-pack-v6.1"
+        },
+        "manifest_entry_count": {
+          "const": 45
+        },
+        "manifest_total_file_count": {
+          "const": 46
+        },
+        "manifest_self_excluded": {
+          "const": true
+        },
+        "plan_manifest_path": {
+          "const": "/home/thenam176/betting-helper/project/plan-manifest.yaml"
+        },
+        "plan_manifest_size_bytes": {
+          "const": 4859
+        },
+        "plan_manifest_raw_sha256": {
+          "const": "d3f3f57f69094b0e5f81059c5518221e2267b97a6e81d9e4c2c518a457b1167c"
+        },
+        "plan_manifest_listed_in_source_manifest": {
+          "const": true
+        },
+        "archive_path": {
+          "const": "/home/thenam176/betting-helper/hybrid-discovery-implementation-pack-v6.1.zip"
+        },
+        "archive_size_bytes": {
+          "const": 115701
+        },
+        "archive_raw_sha256": {
+          "const": "eae81e66ede1c842952f19029f09e98ceff4751983d4474a7b763dbbf5d52f35"
+        },
+        "sidecar_path": {
+          "const": "/home/thenam176/betting-helper/hybrid-discovery-implementation-pack-v6.1.zip.sha256"
+        },
+        "sidecar_size_bytes": {
+          "const": 112
+        },
+        "sidecar_raw_sha256": {
+          "const": "8c5e4f79548f62f2428e32bd2ff6e061cddb7cfa97946ac0987924faa04b95f7"
+        },
+        "sidecar_declared_archive_sha256": {
+          "const": "eae81e66ede1c842952f19029f09e98ceff4751983d4474a7b763dbbf5d52f35"
+        },
+        "archive_matches_sidecar": {
+          "const": true
+        }
+      }
+    },
+    "SourceProvenance": {
+      "$anchor": "SourceProvenance",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "artifact_status",
+        "binding_mode",
+        "hd_jcs_domain_registered",
+        "import_count",
+        "imports",
+        "all_imports_byte_identical",
+        "v6_1_source_pack",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "source-provenance/v1"
+        },
+        "record_type": {
+          "const": "SourceProvenance"
+        },
+        "artifact_status": {
+          "enum": [
+            "AUTHORING_DRAFT_NOT_SEALED",
+            "SEALED_READY_FOR_INDEPENDENT_REVIEW"
+          ]
+        },
+        "binding_mode": {
+          "const": "PACK_MANIFEST_RAW_SHA256_ONLY_NO_HD_JCS_SELF_HASH"
+        },
+        "hd_jcs_domain_registered": {
+          "const": false
+        },
+        "import_count": {
+          "const": 4
+        },
+        "imports": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SourceImportBinding"
+                },
+                {
+                  "properties": {
+                    "import_path": {
+                      "const": "docs/reviews/v6-review-import.md"
+                    },
+                    "source_path": {
+                      "const": "/home/thenam176/betting-helper/docs/reviews/codex-hybrid-v6-review.md"
+                    },
+                    "media_type": {
+                      "const": "text/markdown"
+                    },
+                    "import_size_bytes": {
+                      "const": 53105
+                    },
+                    "source_size_bytes": {
+                      "const": 53105
+                    },
+                    "import_raw_sha256": {
+                      "const": "7e161434984ccb0a3af5cffc89f8159a708aa9e9780ceacd6256d764043a3a0d"
+                    },
+                    "source_raw_sha256": {
+                      "const": "7e161434984ccb0a3af5cffc89f8159a708aa9e9780ceacd6256d764043a3a0d"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SourceImportBinding"
+                },
+                {
+                  "properties": {
+                    "import_path": {
+                      "const": "docs/reviews/v6-review-import.json"
+                    },
+                    "source_path": {
+                      "const": "/home/thenam176/betting-helper/docs/reviews/codex-hybrid-v6-review.json"
+                    },
+                    "media_type": {
+                      "const": "application/json"
+                    },
+                    "import_size_bytes": {
+                      "const": 38434
+                    },
+                    "source_size_bytes": {
+                      "const": 38434
+                    },
+                    "import_raw_sha256": {
+                      "const": "156cd2f48c275a46e14b045cf042c48a9c8403372ec985f81e0c85050a6ef436"
+                    },
+                    "source_raw_sha256": {
+                      "const": "156cd2f48c275a46e14b045cf042c48a9c8403372ec985f81e0c85050a6ef436"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SourceImportBinding"
+                },
+                {
+                  "properties": {
+                    "import_path": {
+                      "const": "docs/reviews/v6.1-review-import.md"
+                    },
+                    "source_path": {
+                      "const": "/home/thenam176/betting-helper/docs/reviews/codex-hybrid-v6.1-review.md"
+                    },
+                    "media_type": {
+                      "const": "text/markdown"
+                    },
+                    "import_size_bytes": {
+                      "const": 23172
+                    },
+                    "source_size_bytes": {
+                      "const": 23172
+                    },
+                    "import_raw_sha256": {
+                      "const": "529a2de971d4f4e9feb30845ea4bf6564afa4120ee8dcdf76b962f67aa8b3c6b"
+                    },
+                    "source_raw_sha256": {
+                      "const": "529a2de971d4f4e9feb30845ea4bf6564afa4120ee8dcdf76b962f67aa8b3c6b"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/SourceImportBinding"
+                },
+                {
+                  "properties": {
+                    "import_path": {
+                      "const": "docs/reviews/v6.1-review-import.json"
+                    },
+                    "source_path": {
+                      "const": "/home/thenam176/betting-helper/docs/reviews/codex-hybrid-v6.1-review.json"
+                    },
+                    "media_type": {
+                      "const": "application/json"
+                    },
+                    "import_size_bytes": {
+                      "const": 25382
+                    },
+                    "source_size_bytes": {
+                      "const": 25382
+                    },
+                    "import_raw_sha256": {
+                      "const": "766e1dd57400db6fdcb2559aee53ddee6454fa65d496f3eecef470e9ddd41e54"
+                    },
+                    "source_raw_sha256": {
+                      "const": "766e1dd57400db6fdcb2559aee53ddee6454fa65d496f3eecef470e9ddd41e54"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "all_imports_byte_identical": {
+          "const": true
+        },
+        "v6_1_source_pack": {
+          "$ref": "#/$defs/V61SourcePackBinding"
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    },
+    "PackGovernedMetadataValidVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vector_id",
+        "artifact_path",
+        "schema_ref",
+        "expected_result"
+      ],
+      "properties": {
+        "vector_id": {
+          "enum": [
+            "PLAN-MANIFEST-VALID-CANONICAL",
+            "SOURCE-PROVENANCE-VALID-CANONICAL"
+          ]
+        },
+        "artifact_path": {
+          "enum": [
+            "plan-manifest.json",
+            "docs/receipts/source-provenance.json"
+          ]
+        },
+        "schema_ref": {
+          "enum": [
+            "urn:hybrid-discovery:v6.2:meta-records:v1#PlanManifest",
+            "urn:hybrid-discovery:v6.2:meta-records:v1#SourceProvenance"
+          ]
+        },
+        "expected_result": {
+          "const": "VALID"
+        }
+      }
+    },
+    "PackGovernedMetadataNegativeVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vector_id",
+        "base_artifact_path",
+        "mutation_code",
+        "expected_error"
+      ],
+      "properties": {
+        "vector_id": {
+          "type": "string",
+          "pattern": "^(?:PLAN-MANIFEST|SOURCE-PROVENANCE)-REJECT-[A-Z0-9-]+$"
+        },
+        "base_artifact_path": {
+          "enum": [
+            "plan-manifest.json",
+            "docs/receipts/source-provenance.json"
+          ]
+        },
+        "mutation_code": {
+          "enum": [
+            "FUTURE_GRAPH_ADD_SCOPE0_TO_F0B_EDGE",
+            "EXECUTABLE_GRAPH_ADD_F0B_NODE",
+            "TASK_REGISTRY_OMIT_LAST_TASK",
+            "PLAN_SET_READY_TO_IMPLEMENT_YES",
+            "PLAN_ADD_CONTENT_HASH",
+            "IMPORT_APPEND_ONE_BYTE",
+            "IMPORT_SOURCE_PATH_SWAP",
+            "V61_SOURCE_MANIFEST_REPLACE_PLAN_ENTRY_HASH",
+            "V61_SIDECAR_REPLACE_DECLARED_ARCHIVE_HASH",
+            "SOURCE_PROVENANCE_ADD_CONTENT_HASH"
+          ]
+        },
+        "expected_error": {
+          "enum": [
+            "E_PLAN_MANIFEST_GRAPH",
+            "E_PLAN_MANIFEST_TASK_REGISTRY",
+            "E_PACK_GOVERNED_METADATA_SCHEMA",
+            "E_SOURCE_PROVENANCE_IMPORT_BYTES",
+            "E_SOURCE_PROVENANCE_V61_SOURCE_PACK"
+          ]
+        }
+      }
+    },
+    "PackGovernedMetadataVectorSet": {
+      "$anchor": "PackGovernedMetadataVectorSet",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "valid_vectors",
+        "negative_vectors",
+        "production_authority"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "pack-governed-metadata-vectors/v1"
+        },
+        "record_type": {
+          "const": "PackGovernedMetadataVectorSet"
+        },
+        "valid_vectors": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataValidVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-VALID-CANONICAL"
+                    },
+                    "artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "schema_ref": {
+                      "const": "urn:hybrid-discovery:v6.2:meta-records:v1#PlanManifest"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataValidVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-VALID-CANONICAL"
+                    },
+                    "artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "schema_ref": {
+                      "const": "urn:hybrid-discovery:v6.2:meta-records:v1#SourceProvenance"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "negative_vectors": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-REJECT-CROSS-GRAPH-EDGE"
+                    },
+                    "base_artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "mutation_code": {
+                      "const": "FUTURE_GRAPH_ADD_SCOPE0_TO_F0B_EDGE"
+                    },
+                    "expected_error": {
+                      "const": "E_PLAN_MANIFEST_GRAPH"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-REJECT-CROSS-GRAPH-NODE"
+                    },
+                    "base_artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "mutation_code": {
+                      "const": "EXECUTABLE_GRAPH_ADD_F0B_NODE"
+                    },
+                    "expected_error": {
+                      "const": "E_PLAN_MANIFEST_GRAPH"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-REJECT-TASK-OMISSION"
+                    },
+                    "base_artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "mutation_code": {
+                      "const": "TASK_REGISTRY_OMIT_LAST_TASK"
+                    },
+                    "expected_error": {
+                      "const": "E_PLAN_MANIFEST_TASK_REGISTRY"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-REJECT-AUTHORITY-ESCALATION"
+                    },
+                    "base_artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "mutation_code": {
+                      "const": "PLAN_SET_READY_TO_IMPLEMENT_YES"
+                    },
+                    "expected_error": {
+                      "const": "E_PACK_GOVERNED_METADATA_SCHEMA"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "PLAN-MANIFEST-REJECT-HD-JCS-SELF-HASH"
+                    },
+                    "base_artifact_path": {
+                      "const": "plan-manifest.json"
+                    },
+                    "mutation_code": {
+                      "const": "PLAN_ADD_CONTENT_HASH"
+                    },
+                    "expected_error": {
+                      "const": "E_PACK_GOVERNED_METADATA_SCHEMA"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-REJECT-IMPORT-BYTES"
+                    },
+                    "base_artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "mutation_code": {
+                      "const": "IMPORT_APPEND_ONE_BYTE"
+                    },
+                    "expected_error": {
+                      "const": "E_SOURCE_PROVENANCE_IMPORT_BYTES"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-REJECT-SOURCE-SWAP"
+                    },
+                    "base_artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "mutation_code": {
+                      "const": "IMPORT_SOURCE_PATH_SWAP"
+                    },
+                    "expected_error": {
+                      "const": "E_PACK_GOVERNED_METADATA_SCHEMA"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-REJECT-V61-PLAN-ENTRY"
+                    },
+                    "base_artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "mutation_code": {
+                      "const": "V61_SOURCE_MANIFEST_REPLACE_PLAN_ENTRY_HASH"
+                    },
+                    "expected_error": {
+                      "const": "E_SOURCE_PROVENANCE_V61_SOURCE_PACK"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-REJECT-V61-ARCHIVE-SIDECAR"
+                    },
+                    "base_artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "mutation_code": {
+                      "const": "V61_SIDECAR_REPLACE_DECLARED_ARCHIVE_HASH"
+                    },
+                    "expected_error": {
+                      "const": "E_SOURCE_PROVENANCE_V61_SOURCE_PACK"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PackGovernedMetadataNegativeVector"
+                },
+                {
+                  "properties": {
+                    "vector_id": {
+                      "const": "SOURCE-PROVENANCE-REJECT-HD-JCS-SELF-HASH"
+                    },
+                    "base_artifact_path": {
+                      "const": "docs/receipts/source-provenance.json"
+                    },
+                    "mutation_code": {
+                      "const": "SOURCE_PROVENANCE_ADD_CONTENT_HASH"
+                    },
+                    "expected_error": {
+                      "const": "E_PACK_GOVERNED_METADATA_SCHEMA"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false
+        },
+        "production_authority": {
+          "const": "NONE"
+        }
+      }
+    }
+  }
+}

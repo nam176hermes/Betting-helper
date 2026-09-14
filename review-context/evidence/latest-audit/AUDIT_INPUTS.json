@@ -1,0 +1,15 @@
+{
+  "kind": "IMPLEMENTATION_COORDINATOR_AUDIT_NOT_INDEPENDENT_REVIEW",
+  "scope": "Part B current live path and review workflow; read-only source audit and local synthetic checks",
+  "runtime_root": "/home/thenam176/betting-helper/part-b-candidate",
+  "runtime_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "authoring_commit": "959439f492b6bd385bfdce57443733a00044aebc",
+  "runtime_dirty_before": " M extension/.test-build/src/spool.js\n M extension/.test-build/test/security/capability-reachability.bootstrap.test.js\n M extension/.test-build/test/security/cdp-reachability.test.js\n M extension/.test-build/test/security/dynamic-dispatch.test.js\n M extension/.test-build/test/security/message-smuggling.test.js\n M extension/.test-build/test/security/outbound-network.test.js\n M extension/.test-build/test/security/production-build-exclusion.test.js\n M extension/.test-build/test/security/target-escape.test.js\n M extension/.test-build/tools/verify-capability-graph.js\n M extension/dist/canonical.js\n M extension/dist/security/loopback.js\n M extension/dist/security/redaction.js\n M extension/dist/spool.js\n",
+  "provider_attempts": 0,
+  "operator_captures": 0,
+  "credential_reads": 0,
+  "live_sessions": 0,
+  "source_edits": 0,
+  "MODEL_ENABLED": false,
+  "MONEY_READY": "NO"
+}

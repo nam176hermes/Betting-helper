@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hybrid-discovery:v6.3.6:descendant-repository-qualification-receipt",
+  "$defs": {
+    "DescendantRepositoryQualificationReceipt": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "repository_identity_kind",
+        "production_authority",
+        "audited_ancestor_commit",
+        "repository_commit",
+        "repository_tree",
+        "repository_file_root_sha256",
+        "candidate_qualification_sha256",
+        "candidate_command_evidence_sha256",
+        "proof_coverage_sha256",
+        "controller_config_sha256",
+        "command_result_root",
+        "candidate_inventory_sha256",
+        "toolchain_versions",
+        "lockfile_hashes",
+        "vendor_root_sha256",
+        "normative_source_map_sha256",
+        "normative_source_set_root",
+        "normative_source_set_count",
+        "full_repair_aggregate_sha256",
+        "full_repair_evidence_root_sha256",
+        "environment_qualification_aggregate_sha256",
+        "environment_qualification_evidence_root_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "descendant-repository-qualification-receipt/v1"
+        },
+        "repository_identity_kind": {
+          "const": "DESCENDANT"
+        },
+        "production_authority": {
+          "const": "NONE"
+        },
+        "audited_ancestor_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "repository_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "repository_tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40,64}$"
+        },
+        "repository_file_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_qualification_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_command_evidence_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "proof_coverage_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "controller_config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "command_result_root": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "candidate_inventory_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "toolchain_versions": {
+          "type": "object",
+          "minProperties": 1
+        },
+        "lockfile_hashes": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "vendor_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "normative_source_map_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "normative_source_set_root": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "normative_source_set_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "full_repair_aggregate_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "full_repair_evidence_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "environment_qualification_aggregate_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "environment_qualification_evidence_root_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

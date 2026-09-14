@@ -1,0 +1,13 @@
+{
+  "schema_version": "review-authority-config/v1",
+  "authority_role": "HOST_REVIEW_AUTHORITY",
+  "signature_algorithm": "Ed25519",
+  "private_key_path": "/home/thenam176/.config/hybrid-discovery/review-authority/ed25519-private-key.pem",
+  "public_key_path": "/home/thenam176/.config/hybrid-discovery/review-authority/ed25519-public-key.json",
+  "private_key_mode": "0600",
+  "public_key_mode": "0644",
+  "maximum_launch_age_seconds": 14400,
+  "maximum_aggregate_delay_seconds": 3600,
+  "key_creation_policy": "EXPLICIT_HUMAN_BOOTSTRAP_OUTSIDE_REPOSITORIES",
+  "production_authority": "NONE"
+}

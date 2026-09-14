@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:part-b-run-intent:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "part-b-run-intent/v1"
+    },
+    "intent_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "stage": {
+      "enum": [
+        "PROVIDER_PROBE",
+        "OPERATOR_DISCOVERY",
+        "LIVE_READ_ONLY"
+      ]
+    },
+    "config_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "source_tree_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "fixture_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "operator_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "maxLength": 2048
+      },
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "max_duration_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7200
+    },
+    "max_http_attempts": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 600
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "user_confirmation_required": {
+      "const": true
+    },
+    "money_authority": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "PROVIDER_PROBE"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "max_http_attempts": {
+            "minimum": 1,
+            "maximum": 20
+          },
+          "max_duration_seconds": {
+            "maximum": 300
+          },
+          "operator_urls": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "OPERATOR_DISCOVERY"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "max_http_attempts": {
+            "const": 0
+          },
+          "max_duration_seconds": {
+            "maximum": 600
+          },
+          "operator_urls": {
+            "minItems": 1,
+            "maxItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "LIVE_READ_ONLY"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "fixture_ids": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "required": [
+    "schema_version",
+    "intent_id",
+    "stage",
+    "config_sha256",
+    "source_tree_sha256",
+    "fixture_ids",
+    "operator_urls",
+    "max_duration_seconds",
+    "max_http_attempts",
+    "issued_at",
+    "expires_at",
+    "user_confirmation_required",
+    "money_authority"
+  ]
+}

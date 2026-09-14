@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": ".test-build",
+    "rootDir": ".",
+    "sourceMap": false
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "test-red/**/*.ts",
+    "tools/**/*.ts",
+    "test-harness/**/*.ts"
+  ],
+  "exclude": []
+}

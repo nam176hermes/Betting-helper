@@ -1,0 +1,390 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "profile_version",
+    "status",
+    "source_kind",
+    "origin",
+    "exact_paths",
+    "permitted_fixture_ids",
+    "locale",
+    "price_parser",
+    "selectors",
+    "horizons",
+    "observation_mode",
+    "evidence_hashes",
+    "capture_source_hash",
+    "reviewed_source_hash",
+    "expires_at",
+    "max_matches"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "operator-extraction-profile/v1"
+    },
+    "profile_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "profile_version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$",
+      "maxLength": 19
+    },
+    "status": {
+      "enum": [
+        "DRAFT",
+        "ACCEPTED",
+        "REVOKED"
+      ]
+    },
+    "source_kind": {
+      "enum": [
+        "SYNTHETIC_TEST",
+        "OBSERVED_REAL"
+      ]
+    },
+    "origin": {
+      "type": "string",
+      "format": "uri"
+    },
+    "exact_paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^/[^?#]*$"
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 5
+    },
+    "permitted_fixture_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 5
+    },
+    "locale": {
+      "enum": [
+        "en",
+        "fr"
+      ]
+    },
+    "price_parser": {
+      "enum": [
+        "DECIMAL_DOT",
+        "DECIMAL_COMMA"
+      ]
+    },
+    "selectors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "match_root",
+        "fixture_id",
+        "home_team",
+        "away_team",
+        "home_id",
+        "away_id",
+        "score",
+        "period",
+        "market_root",
+        "horizon_label",
+        "home_selection",
+        "draw_selection",
+        "away_selection",
+        "home_odds",
+        "draw_odds",
+        "away_odds",
+        "market_status"
+      ],
+      "properties": {
+        "match_root": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "fixture_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "home_team": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "away_team": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "home_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "away_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "score": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "market_root": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "horizon_label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "home_selection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "draw_selection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "away_selection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "home_odds": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "draw_odds": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "away_odds": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        },
+        "market_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 512
+        }
+      }
+    },
+    "horizons": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "FT",
+          "H1",
+          "H2"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 3
+    },
+    "observation_mode": {
+      "const": "FIXED_DOM_READONLY"
+    },
+    "evidence_hashes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "maxItems": 32,
+      "uniqueItems": true
+    },
+    "capture_source_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reviewed_source_hash": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "max_matches": {
+      "enum": [
+        1,
+        3,
+        5
+      ]
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:betting-helper:operator-extraction-profile:v1",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "ACCEPTED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "source_kind": {
+            "const": "OBSERVED_REAL"
+          },
+          "evidence_hashes": {
+            "minItems": 1
+          },
+          "reviewed_source_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "selectors": {
+            "properties": {
+              "match_root": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "fixture_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "home_team": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "away_team": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "market_root": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "horizon_label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "home_selection": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "draw_selection": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "away_selection": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "home_odds": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "draw_odds": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "away_odds": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "market_status": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

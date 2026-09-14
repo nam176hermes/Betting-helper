@@ -1,0 +1,334 @@
+{
+  "kind": "TECHNICAL_REPAIR_PRE_FREEZE_NOT_QUALIFICATION",
+  "source_files": {
+    "tools/run_environment_qualification.py": "7b12dadf366e13d292bd351c72660b8ef45d1eb61954b7b9f47653d40875d4e2",
+    "tests/review/test_descendant_namespace_projection.py": "466ca7497eecf4ab188cdc77b84cefaf23f131cf91a6dccf6e8091f488d15386",
+    "tests/security/test_bubblewrap_isolation.py": "f1d05ce9d5fb4e8fd0c0fe11ed70cab49333cd476eedd5b15e5d406222ce5ec3",
+    "tests/security/test_no_archive_policy.py": "f575a8a19d486e2f0641a6f1d3f8518381581b460a5f097b746ed12db929a2ca",
+    "tests/live/test_live_spool_bridge.py": "4ef143f48fc4070423db17353b7d558fd5e319bfcfdf9053f4782e1cba7fbb6d",
+    "extension/test/security/message-smuggling.test.ts": "e7f46c323d86d425e51f28785fcbb161de5b73469955f5e7ef895136823c51c4",
+    "extension/test/security/production-build-exclusion.test.ts": "898cbb2315c4478d5fa125b467bb71448e1e0202be9eba91dd8710cb474d68b9",
+    "tests/contracts/test_artifact_dependency_semantics.py": "d26f8193c44492684d63317cea57f5845c4d13b8bc1acf4cbdb427fb31934bb3",
+    "tests/contracts/test_declaration_complete_gate.py": "38c66209cf7326494232457d4a2dbe3c61e8e918cee39af4b1b5d22473aeaad3",
+    "docs/execution/PART_B_PROGRESS.md": "8e157782c8961336fe9540c1d78afa321a40dc34a20fa4a4b2ec0e204247215c"
+  },
+  "technical_source_review": {
+    "reviewer": "/root/r24_security_test_review",
+    "scope": "seven-file repair snapshot, read only, no tests by reviewer",
+    "finding": "No actionable issues found in supplied diff",
+    "formal_ab_receipt": false
+  },
+  "regression_diagnosis": {
+    "failed_log": "focused-python.log",
+    "error": "E_REPAIR_STALE_BINDING",
+    "cause": "Canonical input synchronization occurred during evidence-sensitive run",
+    "unchanged_input_recheck_log": "filesystem-recheck.log",
+    "unchanged_input_recheck_exit": 0
+  },
+  "provider_attempts": 0,
+  "operator_captures": 0,
+  "live_sessions": 0,
+  "credential_accesses": 0,
+  "MODEL_ENABLED": false,
+  "MONEY_READY": "NO",
+  "runtime_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+  "authoring_commit": "959439f492b6bd385bfdce57443733a00044aebc",
+  "source_commits": [
+    {
+      "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "Declare r24 review regression ownership and fresh evidence roots"
+      ],
+      "exit": 0,
+      "files": [
+        "authoring-tools/prepare_one_ready_inputs.py",
+        "pack/docs/configs/full-verifier-controller.v2.json",
+        "pack/docs/configs/review-a.v2.json",
+        "pack/docs/configs/review-a.v3.json",
+        "pack/docs/configs/review-aggregation.v2.json",
+        "pack/docs/configs/review-b.v2.json",
+        "pack/docs/configs/review-b.v3.json",
+        "pack/docs/contracts/part-b-one-ready.v1.json",
+        "pack/docs/registries/artifact-ownership.v1.json",
+        "pack/docs/registries/command-io.v1.json",
+        "pack/docs/registries/path-registry.v1.json",
+        "pack/docs/registries/proof-coverage-matrix.v1.json",
+        "pack/docs/registries/review-command-registry.v1.json",
+        "pack/docs/registries/task-command-registry.v1.json",
+        "pack/docs/schemas/review-launch-authorization.schema.json",
+        "pack/docs/tasks/task-manifest.v6.3.6.json"
+      ],
+      "patch_sha256": "5cb39b9b281fdcee0161dec735160995a1e7f30e7721579a7d50ab7a4b1db9eb",
+      "head": "959439f492b6bd385bfdce57443733a00044aebc",
+      "tree": "3faafd6fa719a08e00c0352b909b1b1901018ed7"
+    },
+    {
+      "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+      "argv": [
+        "git",
+        "commit",
+        "-m",
+        "Repair five independent review blockers and test real boundaries"
+      ],
+      "exit": 0,
+      "files": [
+        "docs/execution/PART_B_PROGRESS.md",
+        "extension/test/security/message-smuggling.test.ts",
+        "extension/test/security/production-build-exclusion.test.ts",
+        "review-config/review-a.v2.json",
+        "review-config/review-a.v3.json",
+        "review-config/review-aggregation.v2.json",
+        "review-config/review-b.v2.json",
+        "review-config/review-b.v3.json",
+        "schema-lock.json",
+        "task-command-registry.json",
+        "tests/contracts/test_artifact_dependency_semantics.py",
+        "tests/contracts/test_declaration_complete_gate.py",
+        "tests/live/test_live_spool_bridge.py",
+        "tests/review/test_descendant_namespace_projection.py",
+        "tests/security/test_bubblewrap_isolation.py",
+        "tests/security/test_no_archive_policy.py",
+        "tools/run_environment_qualification.py",
+        "vendor/hybrid-discovery-v6.3.6/SCHEMA_SHA256.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/full-verifier-controller.v2.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v2.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/review-a.v3.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/review-aggregation.v2.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v2.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/configs/review-b.v3.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/contracts/part-b-one-ready.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/artifact-ownership.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/command-io.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/path-registry.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/proof-coverage-matrix.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/review-command-registry.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/schemas/review-launch-authorization.schema.json",
+        "vendor/hybrid-discovery-v6.3.6/docs/tasks/task-manifest.v6.3.6.json"
+      ],
+      "patch_sha256": "8294877089d0d2a8fe5f49795c31fd0b5fc465ce778fa98ece9eddceb8445b25",
+      "head": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "tree": "075fec1dace3115aabd9f1f4380ce6c802bd2d80"
+    }
+  ],
+  "final_checks": {
+    "focused-python-final.log": {
+      "exit": 0,
+      "passed": 33,
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/security/test_bubblewrap_isolation.py",
+        "tests/security/test_no_archive_policy.py",
+        "tests/live/test_live_spool_bridge.py",
+        "tests/durability/test_environment_qualification.py",
+        "tests/contracts/test_artifact_dependency_semantics.py",
+        "tests/contracts/test_declaration_complete_gate.py"
+      ]
+    },
+    "security-node-final.log": {
+      "exit": 0,
+      "passed": 12,
+      "argv": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "extension/.test-build/test/security/message-smuggling.test.js",
+        "extension/.test-build/test/security/production-build-exclusion.test.js"
+      ]
+    },
+    "authoring.log": {
+      "exit": 0,
+      "passed": 20,
+      "subtests_passed": 4,
+      "scope": "authoring-tests/test_one_ready_inputs.py authoring-tests/test_current_phase_inputs.py authoring-tests/test_command_registry_generation.py authoring-tests/test_declaration_gate.py authoring-tests/test_task_manifest_semantics.py"
+    },
+    "a-namespace-green.log": {
+      "exit": 0,
+      "passed": 1,
+      "reproduce_argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/review/test_descendant_namespace_projection.py::test_real_test_only_namespace_preserves_descendant_producer_identity"
+      ]
+    },
+    "ts-typecheck.log": {
+      "exit": 0,
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json",
+        "--noEmit"
+      ]
+    },
+    "ts-lint.log": {
+      "exit": 0,
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "eslint",
+        "test/security/message-smuggling.test.ts",
+        "test/security/production-build-exclusion.test.ts"
+      ]
+    },
+    "python-static.log": {
+      "exit": 0,
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-m",
+        "ruff",
+        "check",
+        "tools/run_environment_qualification.py",
+        "tests/review/test_descendant_namespace_projection.py",
+        "tests/security/test_bubblewrap_isolation.py",
+        "tests/security/test_no_archive_policy.py",
+        "tests/live/test_live_spool_bridge.py"
+      ]
+    },
+    "mypy.log": {
+      "exit": 0,
+      "scope": "tools/run_environment_qualification.py; scoped source only"
+    },
+    "registry-self-check.log": {
+      "exit": 0,
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "-B",
+        "tools/run_command_registry.py",
+        "--self-check"
+      ]
+    },
+    "final-compile.log": {
+      "exit": 0,
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json"
+      ]
+    }
+  },
+  "log_sha256": {
+    "focused-python-final.log": "c4dd96669b793c8dc756d4de2f52cf9db87a5ac40d1f19e339873f9881ad2958",
+    "security-node-final.log": "ba2ff5f24ab04ca50a91441e8704eeb5de466a54e3ff4a41cfb8f2a1e90d99f0",
+    "authoring.log": "a47a1da544769624666071709e72c48808aa6587a458605b7a9d14b0e286c1ea",
+    "a-namespace-green.log": "6acd73be6ed5d6a654e90b35d5aca5cffe670bb94f42a6f4731be164187c5477",
+    "ts-typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ts-lint.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python-static.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "mypy.log": "5d4b6d285b77932e3d08212c3b4974d0a803f98ec60408ac6ccf6a063fa6c19e",
+    "registry-self-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "frozen_source_binding": {
+    "runtime": {
+      "head": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+      "tree": "075fec1dace3115aabd9f1f4380ce6c802bd2d80",
+      "source_diff": ""
+    },
+    "authoring_head": "959439f492b6bd385bfdce57443733a00044aebc",
+    "authoring_tree": "3faafd6fa719a08e00c0352b909b1b1901018ed7",
+    "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+    "controller_binding": {
+      "schema_version": "full-verifier-controller-binding/v2",
+      "config_sha256": "369af32c8e9956a3805bf15e48d06444d7841232e6eae9ffde3625d7a41d9ffb",
+      "accepted_authoring_ancestor": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
+      "current_checkout_root": "/home/thenam176/betting-helper/part-b-candidate",
+      "governed_source_pack": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/pack",
+      "evidence_root": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24",
+      "external_authoring_tests": "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
+      "external_authoring_source_sha256": "b23d94a5e8b86a28e565a9e168fda4b7b352b6a29602baa7d7cfdd1d9ad2f9ca",
+      "external_authoring_command": {
+        "cwd": "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+        "argv": [
+          "uv",
+          "run",
+          "--project",
+          "/home/thenam176/betting-helper/part-b-candidate",
+          "--frozen",
+          "--offline",
+          "python",
+          "-I",
+          "-B",
+          "-m",
+          "pytest",
+          "-q",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs/authoring-tests",
+          "-c",
+          "/dev/null",
+          "--confcutdir",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs",
+          "-o",
+          "cache_dir=/tmp/bh-v636-authoring-tests",
+          "/home/thenam176/betting-helper/authoring-part-b-review-inputs/plan-input/bootstrap/test_bootstrap_tools.py"
+        ]
+      },
+      "uv_cache": "/home/thenam176/.cache/uv",
+      "pnpm_store": "/home/thenam176/.local/share/pnpm/store/v10",
+      "chrome": {
+        "path": "/home/thenam176/.cache/ms-playwright/chromium-1232/chrome-linux64/chrome",
+        "sha256": "888bc05a6af72381dd9e45777a0a65569078a732d8c71f194f2789fdbfc6ad53"
+      },
+      "receipts": {
+        "authoring_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/bootstrap/authoring-repository-receipt-descendant-source-v2.json",
+        "candidate_command_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T01.json",
+        "proof_coverage_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T02.json",
+        "candidate_issuance_evidence": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P07-T03.json",
+        "candidate_qualification": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json",
+        "descendant_repository": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json"
+      },
+      "audited_runtime_ancestor": "7cd7ab14652458608386d940bdc7764910044f6a",
+      "qualification_evidence": {
+        "full_repair_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/aggregate.json",
+        "full_repair_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/full-repair/inventory.json",
+        "environment_qualification_aggregate": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/environment-aggregate.json",
+        "environment_qualification_inventory": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/environment/inventory.json",
+        "p03_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P03-T07.json",
+        "p04_proof": "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/V636-P04-T04.json"
+      }
+    }
+  },
+  "frozen_campaign_sha256": "c687e0ddd72e08081a0ff2c5b08fbe2a11233d809b48fa632eb5f89de125b434",
+  "limitations": [
+    "Focused evidence is not full qualification or accepted A/B.",
+    "Old A/B HOLD results remain unchanged and apply to 8e176a24 only.",
+    "New human fresh sessions and real independent judgments remain required by current contract.",
+    "No real operator DOM capture, accepted profile, current provider probe or live match was observed.",
+    "No physical power-loss or physical sleep/wake qualification.",
+    "All 13 entry generated dirty paths preserved outside the commits."
+  ]
+}

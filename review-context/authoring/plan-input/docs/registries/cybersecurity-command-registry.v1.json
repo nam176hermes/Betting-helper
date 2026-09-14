@@ -1,0 +1,261 @@
+{
+  "schema_version": "cybersecurity-command-registry/v1",
+  "commands": [
+    {
+      "command_id": "SEC_CAPABILITY_MANIFEST",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_capability_manifest.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_CAPABILITY_MANIFEST",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_CDP_REACHABILITY",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/cdp-reachability.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_CDP_REACHABILITY",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_DYNAMIC_DISPATCH",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/dynamic-dispatch.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_DYNAMIC_DISPATCH",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_TARGET_ESCAPE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/target-escape.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_TARGET_ESCAPE",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_MESSAGE_SMUGGLING",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/message-smuggling.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_MESSAGE_SMUGGLING",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_OUTBOUND_NETWORK",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/outbound-network.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_OUTBOUND_NETWORK",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_AUTHORIZATION_TRUST",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_authorization_trust.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_AUTHORIZATION_TRUST",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_REPLAY_REVOCATION",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_replay_revocation.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_REPLAY_REVOCATION",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_CREDENTIAL_EVIDENCE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_credential_evidence_boundary.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_CREDENTIAL_EVIDENCE",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_CANONICAL_HASHING",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_canonical_hashing.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_CANONICAL_HASHING",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_NO_ARCHIVE",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_no_archive_policy.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_NO_ARCHIVE",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_BUBBLEWRAP_ISOLATION",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_bubblewrap_isolation.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_BUBBLEWRAP_ISOLATION",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_SUPPLY_CHAIN",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_supply_chain_integrity.py"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_SUPPLY_CHAIN",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    },
+    {
+      "command_id": "SEC_PRODUCTION_BUILD_EXCLUSION",
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "argv": [
+        "node",
+        "extension/.test-build/test/security/production-build-exclusion.test.js"
+      ],
+      "expected_exit": 0,
+      "required": true,
+      "network": "DENY",
+      "kind": "review-leaf",
+      "available_at": "QUALIFIED",
+      "purpose": "SEC_PRODUCTION_BUILD_EXCLUSION",
+      "authenticated_operator_access": "DENY",
+      "provider_access": "DENY"
+    }
+  ]
+}

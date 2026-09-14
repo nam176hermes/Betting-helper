@@ -1,0 +1,115 @@
+{
+  "after": {
+    "authoring": {
+      "bridge": true,
+      "bytes": 41279,
+      "exit": 0,
+      "nested": false,
+      "root": false,
+      "workflow": true
+    },
+    "linked": {
+      "bridge": true,
+      "bytes": 41286,
+      "exit": 0,
+      "nested": false,
+      "root": false,
+      "workflow": true
+    },
+    "outer": {
+      "bridge": false,
+      "bytes": 44098,
+      "exit": 0,
+      "nested": false,
+      "root": true,
+      "workflow": true
+    },
+    "runtime": {
+      "bridge": true,
+      "bytes": 42538,
+      "exit": 0,
+      "nested": true,
+      "root": false,
+      "workflow": true
+    },
+    "subdir": {
+      "bridge": true,
+      "bytes": 42555,
+      "exit": 0,
+      "nested": true,
+      "root": false,
+      "workflow": true
+    }
+  },
+  "before": {
+    "authoring": {
+      "bridge": false,
+      "bytes": 40321,
+      "exit": 0,
+      "nested": false,
+      "root": false,
+      "workflow": false
+    },
+    "linked": {
+      "bridge": false,
+      "bytes": 40328,
+      "exit": 0,
+      "nested": false,
+      "root": false,
+      "workflow": false
+    },
+    "outer": {
+      "bridge": false,
+      "bytes": 44097,
+      "exit": 0,
+      "nested": false,
+      "root": true,
+      "workflow": true
+    },
+    "runtime": {
+      "bridge": false,
+      "bytes": 41679,
+      "exit": 0,
+      "nested": true,
+      "root": false,
+      "workflow": false
+    },
+    "subdir": {
+      "bridge": false,
+      "bytes": 41697,
+      "exit": 0,
+      "nested": true,
+      "root": false,
+      "workflow": false
+    }
+  },
+  "codex_version": "0.153.4",
+  "formal_host_render": {
+    "a": {
+      "cwd": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-a",
+      "exit": 0,
+      "nested": false,
+      "root": true,
+      "scope": "host render only; isolated governed execution NOT EXECUTED",
+      "workflow": true
+    },
+    "b": {
+      "cwd": "/home/thenam176/betting-helper/review-workspaces/hybrid-discovery-v6.3.6/review-b",
+      "exit": 0,
+      "nested": false,
+      "root": true,
+      "scope": "host render only; isolated governed execution NOT EXECUTED",
+      "workflow": true
+    }
+  },
+  "resume": {
+    "codex_version": "codex-cli 0.153.4",
+    "events": "/tmp/bh-phase2/resume.state.events.jsonl",
+    "exit": 0,
+    "final": "CODEX_WORKFLOW_POLICY_V2_RECEIVED",
+    "model": "gpt-5.6-luna",
+    "reasoning": "low",
+    "stderr": "/tmp/bh-phase2/resume.state.stderr",
+    "transcript_sha256": "6640efb87c79653abc475bf6751c78290f2ada7a80730f824fd724525dd0a16f"
+  }
+}

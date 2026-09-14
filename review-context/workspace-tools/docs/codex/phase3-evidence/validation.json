@@ -1,0 +1,241 @@
+{
+  "timestamp_utc": "2026-09-08T10:18:18.171909+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv/bin/ruff",
+        "format",
+        "--check",
+        "scripts/"
+      ],
+      "cwd": "/home/thenam176/betting-helper",
+      "exit": 0,
+      "output": "4 files already formatted\n"
+    },
+    {
+      "argv": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv/bin/ruff",
+        "check",
+        "scripts/"
+      ],
+      "cwd": "/home/thenam176/betting-helper",
+      "exit": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "argv": [
+        "/home/thenam176/betting-helper/discovery-runtime-v6.3.6/.venv/bin/mypy",
+        "--strict",
+        "--follow-imports=silent",
+        "scripts/"
+      ],
+      "cwd": "/home/thenam176/betting-helper",
+      "exit": 0,
+      "output": "Success: no issues found in 4 source files\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_codex_task.py"
+      ],
+      "cwd": "/home/thenam176/betting-helper",
+      "exit": 0,
+      "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.477s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/codex_task.py",
+        "bridge",
+        "--check"
+      ],
+      "cwd": "/home/thenam176/betting-helper",
+      "exit": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"changed\": []\n}\n"
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "exit": 0,
+      "output": "dd9d081ca9a04ac586203fb7b23d18cf40fc0b4a\n"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "exit": 0,
+      "output": " M AGENTS.md\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/thenam176/betting-helper/discovery-runtime-v6.3.6",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+      "exit": 0,
+      "output": "5249e84b57b7bc4d30abc24f41ead64174ab7549\n"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+      "exit": 0,
+      "output": " M .bootstrap/authoring-workspace-receipt.json\n M pack/docs/contracts/07-command-and-config-lifecycle.md\n M pack/docs/registries/baseline-replay-command-registry.v1.json\n M pack/docs/registries/command-io.v1.json\n M pack/docs/registries/review-command-registry.v1.json\n M pack/docs/registries/task-command-registry.v1.json\n M plan-input/MANIFEST_SHA256.json\n M plan-input/docs/contracts/07-command-and-config-lifecycle.md\n M plan-input/docs/registries/baseline-replay-command-registry.v1.json\n M plan-input/docs/registries/command-io.v1.json\n M plan-input/docs/registries/review-command-registry.v1.json\n M plan-input/docs/registries/task-command-registry.v1.json\n M plan-input/plan_tests/test_plan_contract.py\n M plan-input/plan_tools/check_plan.py\n?? AGENTS.md\n?? authoring-tests/\n?? authoring-tools/\n?? pack/docs/contracts/02-authority-graph.md\n?? pack/docs/receipts/\n?? runtime/\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring",
+      "exit": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/thenam176/betting-helper/authoring-controller-config-worktree",
+      "exit": 0,
+      "output": "67cefedc555ba8a0a29c61428b2cd82a4973d81b\n"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/home/thenam176/betting-helper/authoring-controller-config-worktree",
+      "exit": 0,
+      "output": "?? AGENTS.md\n"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/home/thenam176/betting-helper/authoring-controller-config-worktree",
+      "exit": 0,
+      "output": ""
+    }
+  ],
+  "preservation": {
+    "discovery-runtime-v6.3.6": {
+      "head": "dd9d081ca9a04ac586203fb7b23d18cf40fc0b4a",
+      "non_agents_status_unchanged": true
+    },
+    "hybrid-discovery-v6.3.6-authoring": {
+      "head": "5249e84b57b7bc4d30abc24f41ead64174ab7549",
+      "non_agents_status_unchanged": true
+    },
+    "authoring-controller-config-worktree": {
+      "head": "67cefedc555ba8a0a29c61428b2cd82a4973d81b",
+      "non_agents_status_unchanged": true
+    },
+    "docs/codex/audit-2026-09-08.md": "d1ac542fe48dc51356f5f0153efb1b95063ef1685e192f8c886dc1970e75811e",
+    "docs/codex/audit-evidence-2026-09-08.json": "6a851da0aa236a9052e62ef478f4581150eeec93c6ae6f8a19114756a9ed5179",
+    "AGENTS.md": "34aa72697924789883678fe3adda754bc55882569b9c417bb25fff872ced7e12",
+    "docs/codex/task-packet.example.json": "fc05d0266abca5e53d5204720614c8a0d732075880828be2ee5ba645f047d901",
+    "docs/codex/phase2-2026-09-08.md": "7b4e59ca0b517b5ccec7f2c95bd9acb51e1969e8925f3ab2c729130283140de9",
+    "docs/codex/phase2-evidence/validation.json": "6bae5e601a427f81d28a28d6468a35b006d40bf24d34554f01f2fefc99865805",
+    "docs/codex/phase2-evidence/phase1-workflow.md": "3f63ade0f2a3958574629aa58893fb242e9decae85158fa2cb12d46c62effc3c",
+    "docs/codex/phase2-evidence/reproduce-waits.py": "94089c8bc99f6da8c038171edc2b27a089c6e80cb16b91bcbbc40637392b4c4a",
+    "docs/codex/phase2-evidence/propagation.json": "729c8f8b838a1e903cd71c04258e209dc52a3c743f4df1c23b70ec32b483c51a",
+    "docs/codex/phase2-evidence/benchmark.json": "1bf566a1b56f14cdd4982d74907b230ab1dc83fa4035827a5f94a281e8bdc61e",
+    "docs/codex/phase2-evidence/waits.json": "a8186f4bb5f796bb6d0c796121d139ad69797ca16085ae43a1a5d4d25c02a255",
+    "/mnt/c/Users/thenam/.codex/config.toml": {
+      "expected_sha256": "c3c1e262fa1447e45eb408b1cd5ad894078092fef740675f5a268613e9b0b10c",
+      "actual_sha256": "af427d1c3011dae93848e7af0e2c7b8d37987b3fa5584852537c147c42dbae11",
+      "unchanged": false,
+      "caveat": "HOLD: config drift during evaluation window; all four disposable fixture trust entries present. No direct edit by helper/harness; other concurrent changes cannot be excluded."
+    },
+    "/mnt/c/Users/thenam/.codex/AGENTS.md": {
+      "expected_sha256": "fca9bff7e3ce3d7bbc5b4f9c18977171f4f9d09007a33efe3030d22e4baa7515",
+      "actual_sha256": "fca9bff7e3ce3d7bbc5b4f9c18977171f4f9d09007a33efe3030d22e4baa7515",
+      "unchanged": true
+    }
+  },
+  "control": {
+    "legacy_prompt_AST_unchanged": true,
+    "route_AST_unchanged": true,
+    "policy_unchanged": true
+  },
+  "historical_counter_reconciliations": 8,
+  "new_model_evaluations": [
+    {
+      "corner": "B",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "C",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "Dnew",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    },
+    {
+      "corner": "C2",
+      "status": "COMPLETED",
+      "hypothesis": "Baseline Terra versus new M/N context with same-model comparisons",
+      "decision_record": "docs/codex/phase3-evidence/phase3a-decision.md",
+      "quality": "PASS"
+    }
+  ],
+  "artifact_validation": {
+    "json_parse": "PASS",
+    "relative_links": "PASS",
+    "markdown_fences": "PASS",
+    "report_A_L_order": "PASS",
+    "archived_harness_syntax": "PASS"
+  },
+  "not_run": {
+    "portable_and_formal": "External workflow tooling/instructions only; application sources unchanged. Source-bound qualification remains held.",
+    "runtime_static": "Unchanged Phase 1 debt: Ruff 28; mypy 163 across 29 files. New operational scripts independently pass Ruff and strict mypy.",
+    "longer_model_task": "Synthetic same-Astra gate unmet; four-call budget exhausted.",
+    "formal_propagation": "HOLD; requires separately authorized governed preparation."
+  },
+  "result": "PASS with config-preservation caveat: scoped code/artifacts validated; efficiency verdict PARTIAL"
+}

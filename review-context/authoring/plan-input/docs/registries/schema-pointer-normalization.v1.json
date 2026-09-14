@@ -1,0 +1,2388 @@
+{
+  "schema_version": "schema-pointer-normalization/v1",
+  "owner_phase": "MIG0",
+  "source_root": "/home/thenam176/betting-helper/discovery-runtime/vendor/hybrid-discovery-v6.2/schemas",
+  "changes": [
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S01",
+      "after": "#/$defs/E0S01"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S02",
+      "after": "#/$defs/E0S02"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S03",
+      "after": "#/$defs/E0S03"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S04",
+      "after": "#/$defs/E0S04"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S05",
+      "after": "#/$defs/E0S05"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S06",
+      "after": "#/$defs/E0S06"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S07",
+      "after": "#/$defs/E0S07"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S08",
+      "after": "#/$defs/E0S08"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S09",
+      "after": "#/$defs/E0S09"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S10",
+      "after": "#/$defs/E0S10"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S11",
+      "after": "#/$defs/E0S11"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S12",
+      "after": "#/$defs/E0S12"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S13",
+      "after": "#/$defs/E0S13"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S14",
+      "after": "#/$defs/E0S14"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S15",
+      "after": "#/$defs/E0S15"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S16",
+      "after": "#/$defs/E0S16"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S17",
+      "after": "#/$defs/E0S17"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S18",
+      "after": "#/$defs/E0S18"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S19",
+      "after": "#/$defs/E0S19"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S20",
+      "after": "#/$defs/E0S20"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S21",
+      "after": "#/$defs/E0S21"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S22",
+      "after": "#/$defs/E0S22"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S23",
+      "after": "#/$defs/E0S23"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#E0S24",
+      "after": "#/$defs/E0S24"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#CatalogCapabilityReport",
+      "after": "#/$defs/CatalogCapabilityReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#GlobalOperatorStateReport",
+      "after": "#/$defs/GlobalOperatorStateReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#OperatorIdentityReport",
+      "after": "#/$defs/OperatorIdentityReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#ParticipantOrientationReport",
+      "after": "#/$defs/ParticipantOrientationReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#TransportSemanticsReport",
+      "after": "#/$defs/TransportSemanticsReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#QuoteDisplayParityReport",
+      "after": "#/$defs/QuoteDisplayParityReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#BrowserLifecycleReport",
+      "after": "#/$defs/BrowserLifecycleReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#ClockTimestampReport",
+      "after": "#/$defs/ClockTimestampReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#GapsAndLossReport",
+      "after": "#/$defs/GapsAndLossReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#LoopbackTopologyReport",
+      "after": "#/$defs/LoopbackTopologyReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#BetslipObservationReport",
+      "after": "#/$defs/BetslipObservationReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#PositionObservationReport",
+      "after": "#/$defs/PositionObservationReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#CashoutObservationReport",
+      "after": "#/$defs/CashoutObservationReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#CapacityReport",
+      "after": "#/$defs/CapacityReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "#CredentialRedactionReport",
+      "after": "#/$defs/CredentialRedactionReport"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#ScopeCategoryRecord",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/ScopeCategoryRecord"
+    },
+    {
+      "schema": "e0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#ContentReference",
+      "after": "#/$defs/ContentReference"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#ClockContext",
+      "after": "#/$defs/ClockContext"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#DocumentContext",
+      "after": "#/$defs/DocumentContext"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#PackBindings",
+      "after": "#/$defs/PackBindings"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#RegistryCode",
+      "after": "#/$defs/RegistryCode"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#PositiveInteger",
+      "after": "#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#OpaqueId",
+      "after": "#/$defs/OpaqueId"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UnsignedInteger",
+      "after": "#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#DocumentBoundContext",
+      "after": "#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#RunBoundContext",
+      "after": "#/$defs/RunBoundContext"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#Sha256",
+      "after": "#/$defs/Sha256"
+    },
+    {
+      "schema": "common-records.schema.json",
+      "before": "#UUID",
+      "after": "#/$defs/UUID"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "#FrozenInitialScopeApproval",
+      "after": "#/$defs/FrozenInitialScopeApproval"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "#NoFeasibleScopeRecord",
+      "after": "#/$defs/NoFeasibleScopeRecord"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "#ScopeRevocationRecord",
+      "after": "#/$defs/ScopeRevocationRecord"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "scope-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#GateReceipt",
+      "after": "#/$defs/GateReceipt"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#DiscoveryRunAuthorization",
+      "after": "#/$defs/DiscoveryRunAuthorization"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#BodyClassApproval",
+      "after": "#/$defs/BodyClassApproval"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#ProviderProbeProtocol",
+      "after": "#/$defs/ProviderProbeProtocol"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#ProviderCallAuthorization",
+      "after": "#/$defs/ProviderCallAuthorization"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#RevocationRecord",
+      "after": "#/$defs/RevocationRecord"
+    },
+    {
+      "schema": "authorization-records.schema.json",
+      "before": "#TrustRoot",
+      "after": "#/$defs/TrustRoot"
+    },
+    {
+      "schema": "review-records.schema.json",
+      "before": "#CodexReviewOutput",
+      "after": "#/$defs/CodexReviewOutput"
+    },
+    {
+      "schema": "review-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:meta-records:v1#CodexReviewOutput",
+      "after": "urn:hybrid-discovery:v6.2:meta-records:v1#/$defs/CodexReviewOutput"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#TaskEvidence",
+      "after": "#/$defs/TaskEvidence"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#ScopeInputView",
+      "after": "#/$defs/ScopeInputView"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#ScopeInputAudit",
+      "after": "#/$defs/ScopeInputAudit"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#DiscoveryCapability",
+      "after": "#/$defs/DiscoveryCapability"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#CodexReviewOutput",
+      "after": "#/$defs/CodexReviewOutput"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#BuildManifest",
+      "after": "#/$defs/BuildManifest"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#PackManifest",
+      "after": "#/$defs/PackManifest"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#PlanManifest",
+      "after": "#/$defs/PlanManifest"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#SourceProvenance",
+      "after": "#/$defs/SourceProvenance"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#PackGovernedMetadataVectorSet",
+      "after": "#/$defs/PackGovernedMetadataVectorSet"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#Repo0BaselineReceipt",
+      "after": "#/$defs/Repo0BaselineReceipt"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#DiscoveryArtifactManifest",
+      "after": "#/$defs/DiscoveryArtifactManifest"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#UniversalDenialReceipt",
+      "after": "#/$defs/UniversalDenialReceipt"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#JsonPatchOperation",
+      "after": "#/$defs/JsonPatchOperation"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#UniversalScannerAcceptanceExpectation",
+      "after": "#/$defs/UniversalScannerAcceptanceExpectation"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:review-records:v1#CodexReviewOutput",
+      "after": "urn:hybrid-discovery:v6.2:review-records:v1#/$defs/CodexReviewOutput"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#DiscoveryCapability",
+      "after": "#/$defs/DiscoveryCapability"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#Repo0BaselineReceipt",
+      "after": "#/$defs/Repo0BaselineReceipt"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#DiscoveryArtifactManifest",
+      "after": "#/$defs/DiscoveryArtifactManifest"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:e0-evidence:v1#E0BundleIndex",
+      "after": "urn:hybrid-discovery:v6.2:e0-evidence:v1#/$defs/E0BundleIndex"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:scope-records:v1#ScopeApprovalRevocationIntegrity",
+      "after": "urn:hybrid-discovery:v6.2:scope-records:v1#/$defs/ScopeApprovalRevocationIntegrity"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#JsonPatchOperation",
+      "after": "#/$defs/JsonPatchOperation"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#UniversalDenialReceipt",
+      "after": "#/$defs/UniversalDenialReceipt"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#UniversalScannerFaultInjection",
+      "after": "#/$defs/UniversalScannerFaultInjection"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "#UniversalDenialReceipt",
+      "after": "#/$defs/UniversalDenialReceipt"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "meta-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#BrowserClockObservation",
+      "after": "#/$defs/BrowserClockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#DocumentClockObservation",
+      "after": "#/$defs/DocumentClockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#CdpClockObservation",
+      "after": "#/$defs/CdpClockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#RelayClockObservation",
+      "after": "#/$defs/RelayClockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#BackendClockObservation",
+      "after": "#/$defs/BackendClockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#ClockMapping",
+      "after": "#/$defs/ClockMapping"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#ClockMappingClosure",
+      "after": "#/$defs/ClockMappingClosure"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#InputFreshnessVector",
+      "after": "#/$defs/InputFreshnessVector"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#ShockObservation",
+      "after": "#/$defs/ShockObservation"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#FixtureCoherenceEpoch",
+      "after": "#/$defs/FixtureCoherenceEpoch"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#CoherenceTransition",
+      "after": "#/$defs/CoherenceTransition"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#AuthoritativeResnapshotProof",
+      "after": "#/$defs/AuthoritativeResnapshotProof"
+    },
+    {
+      "schema": "clock-coherence-records.schema.json",
+      "before": "#GuardrailConstants",
+      "after": "#/$defs/GuardrailConstants"
+    },
+    {
+      "schema": "loopback-messages.schema.json",
+      "before": "#ClientToBackendMessage",
+      "after": "#/$defs/ClientToBackendMessage"
+    },
+    {
+      "schema": "loopback-messages.schema.json",
+      "before": "#BackendToClientMessage",
+      "after": "#/$defs/BackendToClientMessage"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#SpoolRecord",
+      "after": "#/$defs/SpoolRecord"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#RawCommitRecord",
+      "after": "#/$defs/RawCommitRecord"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#ApplicationRecord",
+      "after": "#/$defs/ApplicationRecord"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#DerivedRevision",
+      "after": "#/$defs/DerivedRevision"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#ReducerCursor",
+      "after": "#/$defs/ReducerCursor"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#AckOutboxRecord",
+      "after": "#/$defs/AckOutboxRecord"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#AckCursor",
+      "after": "#/$defs/AckCursor"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GapRecord",
+      "after": "#/$defs/GapRecord"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GenerationTransition",
+      "after": "#/$defs/GenerationTransition"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#RunDestructionIntent",
+      "after": "#/$defs/RunDestructionIntent"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#DeletionProof",
+      "after": "#/$defs/DeletionProof"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#StreamKey",
+      "after": "#/$defs/StreamKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GenerationKey",
+      "after": "#/$defs/GenerationKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#Position",
+      "after": "#/$defs/Position"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#Position",
+      "after": "#/$defs/Position"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#Position",
+      "after": "#/$defs/Position"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#Position",
+      "after": "#/$defs/Position"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GenerationKey",
+      "after": "#/$defs/GenerationKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GenerationKey",
+      "after": "#/$defs/GenerationKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#GenerationKey",
+      "after": "#/$defs/GenerationKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#StreamKey",
+      "after": "#/$defs/StreamKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "#StreamKey",
+      "after": "#/$defs/StreamKey"
+    },
+    {
+      "schema": "durability-records.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:authorization-records#GateReceipt",
+      "after": "urn:hybrid-discovery:v6.2:authorization-records#/$defs/GateReceipt"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#ProviderObservation",
+      "after": "#/$defs/ProviderObservation"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#ProviderCorrectionLineage",
+      "after": "#/$defs/ProviderCorrectionLineage"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#ProviderCallReceipt",
+      "after": "#/$defs/ProviderCallReceipt"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#FootballProviderCapabilityReport",
+      "after": "#/$defs/FootballProviderCapabilityReport"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#FootballLatencyReport",
+      "after": "#/$defs/FootballLatencyReport"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#FootballCorrectionReport",
+      "after": "#/$defs/FootballCorrectionReport"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "#FootballIdentityReport",
+      "after": "#/$defs/FootballIdentityReport"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ClockContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:authorization-records#ProviderProbeProtocol",
+      "after": "urn:hybrid-discovery:v6.2:authorization-records#/$defs/ProviderProbeProtocol"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "d0-evidence.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#NetworkMetadataObservation",
+      "after": "#/$defs/NetworkMetadataObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#AppStateObservation",
+      "after": "#/$defs/AppStateObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#DomVerificationObservation",
+      "after": "#/$defs/DomVerificationObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#LifecycleObservation",
+      "after": "#/$defs/LifecycleObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#ClockSampleObservation",
+      "after": "#/$defs/ClockSampleObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#GapObservation",
+      "after": "#/$defs/GapObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "#TerminalObservation",
+      "after": "#/$defs/TerminalObservation"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ClockContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#Sha256",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/Sha256"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UtcDateTime",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UtcDateTime"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedDecimal",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedDecimal"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UUID",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UUID"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ClockContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ClockContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ClockContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#ContentReference",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/ContentReference"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#OpaqueId",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/OpaqueId"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#PositiveInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/PositiveInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RegistryCode",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RegistryCode"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#UnsignedInteger",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/UnsignedInteger"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#DocumentBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/DocumentBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RunBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RunBoundContext"
+    },
+    {
+      "schema": "raw-observation.schema.json",
+      "before": "urn:hybrid-discovery:v6.2:common-records:v1#RunBoundContext",
+      "after": "urn:hybrid-discovery:v6.2:common-records:v1#/$defs/RunBoundContext"
+    }
+  ],
+  "rule": "Only $ref anchor spelling changes; constraints, $ids, $anchors, protocol domains and vector hashes do not change."
+}

@@ -1,0 +1,1023 @@
+{
+  "schema_version": "part-b-task-plan/v1",
+  "task_count": 25,
+  "tasks": [
+    {
+      "id": "PB-00",
+      "title": "Reconcile Part A evidence and register the Part B implementation scope",
+      "legacy_lv": "OS-15 / all LV",
+      "dependencies": [],
+      "files": [
+        "docs/execution/PART_B_SCOPE.md",
+        "docs/execution/PART_B_PROGRESS.md",
+        "docs/live/part-a-entry-review.md"
+      ],
+      "interfaces": [
+        "PartBProgress record: actual_head, completed_task_ids, current_task_id, blocked_tasks, evidence_refs"
+      ],
+      "steps": [
+        "Read AGENTS and nested instructions, actual HEAD/status. Do not reset to inspected commit. Confirm source pack and vendor unchanged; establish local-commit authority from pasted user scope and host controller.",
+        "Locate actual OS-15 result and verify with the same browser selection; record evidence or MISSING_PART_A_EVIDENCE. No claim that the chat says completed is a current verifier result.",
+        "Register code/mock batch and external gates. Preserve root live-access prohibition until separate real-run authority. Check installed Python/Node/pnpm/uv/browser and existing lock. Do not rebuild baseline or upgrade toolchain.",
+        "Read old LV mapping and v1 configuration. Record this package as the v2 batching/secret/capture seam amendment. Missing final A evidence blocks real activation but not independent mock implementation."
+      ],
+      "tests": [
+        "git diff --check"
+      ],
+      "acceptance": [
+        "Source/evidence status recorded without any network/session/API call; worktree conflicts isolated; next ready task automatically selected."
+      ],
+      "sources": [
+        "R1",
+        "R2",
+        "R3",
+        "R5"
+      ],
+      "external_gate": "NONE",
+      "example": "assert scope.live_run_authorized is False\nassert scope.money_authorized is False",
+      "plan_path": "tasks/PB-00.md"
+    },
+    {
+      "id": "PB-01",
+      "title": "Create source-owned live contracts, v2 config and fixed endpoint/fixture registries",
+      "legacy_lv": "LV-02/03",
+      "dependencies": [
+        "PB-00"
+      ],
+      "files": [
+        "contracts/live_readonly/v1/config.schema.json",
+        "contracts/live_readonly/v1/records.schema.json",
+        "contracts/live_readonly/v1/wire.schema.json",
+        "config/live-batched.example.json",
+        "src/moj_discovery/live_contracts.py",
+        "src/moj_discovery/live_config.py",
+        "tests/live/conftest.py",
+        "tests/live/test_live_contracts.py",
+        "tests/live/test_live_config.py",
+        "extension/src/live/contracts.ts",
+        "extension/tsconfig.live.json"
+      ],
+      "interfaces": [
+        "live_contracts.py::validate_live_record(value: object, kind: str) -> dict[str, object]",
+        "live_config.py::load_live_config(path: Path, require_enabled: bool = False) -> LiveConfig",
+        "tests/live/conftest.py fixtures: synthetic_provider_response, fake_clock, disabled_live_config",
+        "extension/src/live/contracts.ts#validateLiveRecord"
+      ],
+      "steps": [
+        "Copy plan assets to exact source-owned paths, not vendor. Add strict local schema registry with no remote reference resolver. Live payload union must have closed branches.",
+        "Create disabled v2 example with batching and600/run cap. Keep v1 parser/config; migration is explicit configure_live_batched later, old15s values are not forced into oldmin30 validator.",
+        "Define core types exactly from04_LIVE_CONTRACTS; synthetic test responses labelledSYNTHETIC. All paths/results reflect source kind. Nulls for unsupplied real IDs do not authorize enabled config.",
+        "Create separate TS build config including live source/tests; do not use compile-only as acceptance. Add config errors for predictions/odds URLs, unbounded fixture list, permissive host, key in config, mixed wire types."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_live_contracts.py tests/live/test_live_config.py"
+      ],
+      "acceptance": [
+        "v1 behavior preserved; v2 disabled draft valid; v2 enabled without exact scope/evidence invalid; no generic live payload escape."
+      ],
+      "sources": [
+        "R2",
+        "R4",
+        "A3",
+        "P5"
+      ],
+      "external_gate": "NONE",
+      "example": "assert draft[\"schema_version\"] == \"bh-live-readonly-config/v2\"\nassert draft[\"provider\"][\"events_fallback_enabled\"] is False\nwith pytest.raises(ValueError):\n    validate_live_record({\"payload\": {\"cookie\": \"TEST_ONLY\"}}, \"MarketBook\")",
+      "plan_path": "tasks/PB-01.md"
+    },
+    {
+      "id": "PB-02",
+      "title": "Build a user-operated no-echo API key launcher and secret handling tests",
+      "legacy_lv": "LV-02",
+      "dependencies": [
+        "PB-01"
+      ],
+      "files": [
+        "src/moj_discovery/secrets_local.py",
+        "tools/run_with_api_football_key.py",
+        "tests/live/test_secret_entry.py",
+        "tests/live/test_secret_nonleakage.py",
+        "docs/runbooks/API_FOOTBALL_KEY.md"
+      ],
+      "interfaces": [
+        "secrets_local.py::SecretValue (repr/str redacted; reveal_for_header() -> str)",
+        "secrets_local.py::obtain_api_football_key(interactive: bool) -> SecretValue",
+        "tools/run_with_api_football_key.py::main(argv: list[str] | None = None) -> int"
+      ],
+      "steps": [
+        "Implement no-echo getpass in a user-controlled TTY, GetPassWarning treated as error. NoTTY/empty/CRLF reject; accept provider key shape without assuming32hex.",
+        "Launcher action enum probe/live-readonly; parse config/intent, display exact scope and typed confirmation before obtaining key. Import dispatcher at action runtime only; no arbitrary subprocess command.",
+        "Write Vietnamese user instructions exactly as03_KEY_GUIDE_VI. Do not request real key while coding this task. Mock client/key and verify only finite output statuses.",
+        "Block real key from logs, argv, configs, API error messages, signed reports, browser messages and child env. Optional existing env reads only exact name; no global config or .env write."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_secret_entry.py tests/live/test_secret_nonleakage.py"
+      ],
+      "acceptance": [
+        "All mock secret leakage tests pass; aborted/noTTY prompt emits zero HTTP attempts; runtime action requiring unfinished provider owner cannot report success."
+      ],
+      "sources": [
+        "P1",
+        "A3",
+        "R3"
+      ],
+      "external_gate": "NONE",
+      "example": "secret = SecretValue(\"TEST_ONLY_credential\")\nassert repr(secret) == \"[REDACTED]\"\nassert \"TEST_ONLY_credential\" not in captured_logs\nassert fake_http.calls == []  # declined confirmation / no TTY",
+      "plan_path": "tasks/PB-02.md"
+    },
+    {
+      "id": "PB-03",
+      "title": "Implement global attempt reservation, shared quota ledger and estimator",
+      "legacy_lv": "LV-02",
+      "dependencies": [
+        "PB-01"
+      ],
+      "files": [
+        "contracts/live_readonly/v1/quota-store.sql",
+        "src/moj_discovery/providers/quota.py",
+        "src/moj_discovery/providers/poll_budget.py",
+        "tests/live/test_provider_budget.py",
+        "tests/live/test_quota_concurrency.py"
+      ],
+      "interfaces": [
+        "quota.py::QuotaLedger.reserve_attempt(scope_id: str, purpose: str, now_utc: datetime, now_mono: float) -> Reservation | Denied",
+        "quota.py::QuotaLedger.finalize_attempt(reservation_id: str, outcome: str, headers: Mapping[str, str]) -> None",
+        "poll_budget.py::estimate_requests(segments: Sequence[PollSegment], setup: int, confirmations: int, fallback_calls: int, reserve_fraction: Decimal) -> BudgetEstimate"
+      ],
+      "steps": [
+        "Use supplied DDL for persistent attempt reservations; one provider slot and process lock. Reservation commit precedes HTTP; unknown/failure is never refunded automatically.",
+        "Implement6000/day600/session6/sliding60s10s minimum gap andin-flight1. Provider headers reduce available allowance. Renew day only with consistent quota evidence, no wall-clock rollback bypass.",
+        "Count setup, status, retries, fallback, manual refresh as attempts. Preflight estimates using union of monitor windows, not per-fixture multiplication for simultaneous batch.",
+        "Test two processes cannot each reserve beyond cap and second process cannot start a parallel poller.500/429/timeout count even when provider billing unknown."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_provider_budget.py tests/live/test_quota_concurrency.py"
+      ],
+      "acceptance": [
+        "The arithmetic oracle returns 480 periodic calls + 5 overhead = 485 and 582 with a 20% retry reserve. Five concurrent fixtures share that total; five sequential windows total 2,425. Five event fallbacks add 600 calls and exceed the default session cap."
+      ],
+      "sources": [
+        "A1",
+        "A5",
+        "P3"
+      ],
+      "external_gate": "NONE",
+      "example": "assert budget_for_120min_constant15s == 485\nassert reserve20percent_budget == 582\nassert quota.seventh_attempt_in_60_seconds_allowed is False",
+      "plan_path": "tasks/PB-03.md"
+    },
+    {
+      "id": "PB-04",
+      "title": "Implement the fixed direct API client with bounded GET and safe response handling",
+      "legacy_lv": "LV-02",
+      "dependencies": [
+        "PB-02",
+        "PB-03"
+      ],
+      "files": [
+        "src/moj_discovery/providers/api_football.py",
+        "src/moj_discovery/provider_protocol.py",
+        "tests/live/test_api_football.py",
+        "tests/live/test_provider_http_boundary.py"
+      ],
+      "interfaces": [
+        "api_football.py::ApiFootballClient.get_status() -> SafeStatus",
+        "ApiFootballClient.get_coverage(league_id: int, season: int) -> Coverage",
+        "ApiFootballClient.get_fixture_bundle(ids: Sequence[int]) -> ProviderResponse",
+        "ApiFootballClient.get_events(fixture_id: int) -> ProviderResponse",
+        "ApiFootballClient.get_fixtures_for_date(league_id: int, season: int, date: str) -> ProviderResponse"
+      ],
+      "steps": [
+        "Build endpoint paths only from fixed purpose enums and validated parameters; ids sorted unique<=20, direct x-apisports-key header. No RapidAPI, arbitrary URL, redirect, ambient proxy or disabledTLS.",
+        "Reserve call budget before HTTP. Use10s timeout8MiB response bound, no raw HTTP dump; errors withHTTP200 handled before response. Parse status response privately and project quota fields only.",
+        "Mock HTTP returns missing/wrong IDs, partial response, wrong schema, paging>1,401/403,429 Retry-After date/delta,5xx/499/timeout, oversize and malicious redirect. Every retry is admitted by shared quota.",
+        "Implement existing provider_protocol entrypoints only for typed live-v2 probe scope; legacy stubs/receipts are not bypassed. Real requests disabled untilPB-18/user intent."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_api_football.py tests/live/test_provider_http_boundary.py"
+      ],
+      "acceptance": [
+        "Query/header construction is correct. Authentication failure stops without a retry storm. No secret leaves the fixed API authority or enters evidence. Mock tests perform zero external network calls."
+      ],
+      "sources": [
+        "A1",
+        "A3",
+        "A6",
+        "P2",
+        "P6"
+      ],
+      "external_gate": "NONE",
+      "example": "client.get_fixture_bundle([103, 101, 103])\nassert mock_http.last_query == \"ids=101-103\"\nassert \"api_key\" not in safe_report\nassert redirect_target.requests == []",
+      "plan_path": "tasks/PB-04.md"
+    },
+    {
+      "id": "PB-05",
+      "title": "Normalize football snapshots and preserve correction/missingness lineage",
+      "legacy_lv": "LV-02/03",
+      "dependencies": [
+        "PB-04"
+      ],
+      "files": [
+        "src/moj_discovery/providers/football_normalizer.py",
+        "tests/live/test_provider_normalization.py",
+        "tests/live/test_provider_corrections.py"
+      ],
+      "interfaces": [
+        "football_normalizer.py::normalize_bundle(response: ProviderResponse, selected: Sequence[int], observation: ObservationStamp) -> BundleProjection",
+        "football_normalizer.py::compare_event_sets(old: EventSet, new: EventSet) -> EventRevision"
+      ],
+      "steps": [
+        "Map only allowed fields from02_PROVIDER and04_CONTRACTS. kickoff timestamp is not update time; null clock/score remains null. Preserve selected-but-missing IDs as missing observation facts.",
+        "Create normalized immutable event multiset with deterministic ordering and duplicate multiplicity. Retain batch receipt separately from semantic content revision.",
+        "Change/removal of goal/card creates correction revision; never incrementally accumulate every poll. Unknown man-state and event detail stay unknown rather than guessing.",
+        "Drop unneeded players/stats/lineups bodies; record availability only. No extra endpoints to fetch dropped data. Redacted persisted output strict schema validates."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_provider_normalization.py tests/live/test_provider_corrections.py"
+      ],
+      "acceptance": [
+        "Reordering an unchanged event multiset preserves its semantic hash. Null differs from zero. An omitted fixture cannot corrupt another fixture. Score/period conflicts remain explicit."
+      ],
+      "sources": [
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "external_gate": "NONE",
+      "example": "assert normalize(response_with_null_goals).score_current is None\nassert event_hash([event_a, event_b]) == event_hash([event_b, event_a])\nassert normalize(response).provider_updated_at is None  # kickoff is not update time",
+      "plan_path": "tasks/PB-05.md"
+    },
+    {
+      "id": "PB-06",
+      "title": "Implement one adaptive ProviderBundlePoller for the complete watchlist",
+      "legacy_lv": "LV-02/04",
+      "dependencies": [
+        "PB-03",
+        "PB-04",
+        "PB-05"
+      ],
+      "files": [
+        "src/moj_discovery/providers/bundle_poller.py",
+        "tests/live/test_bundle_poller.py",
+        "tests/live/test_batch_request_counts.py"
+      ],
+      "interfaces": [
+        "bundle_poller.py::ProviderBundlePoller.set_watchlist(ids: Sequence[int], scope_revision: int) -> None",
+        "ProviderBundlePoller.tick(now_mono: float) -> PollOutcome",
+        "ProviderBundlePoller.stop(reason: str) -> None"
+      ],
+      "steps": [
+        "Apply exact status/deadline table from02_PROVIDER, fastest-active union for<=5. One shared in-flight request; no requests on UI re-render/panel reopen.",
+        "Full watcher IDs included at each due tick, numeric sort/dedupe; status/coverage/terminal controls recorded. Observe terminal once then+30/+120 checks bounded by run deadline.",
+        "No catch-up after missed ticks; rejected/budget exhausted/unknownquota =>visiblePAUSED/STALE. Manual refresh coalesces. Fallback events defaultOFF and cannot activate from empty array.",
+        "Use fake clock and mock transport to count requests for single/five simultaneous, staggered windows, HT/live overlap, slow HTTP,429, sleep/resume and fallback insufficiency."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_bundle_poller.py tests/live/test_batch_request_counts.py"
+      ],
+      "acceptance": [
+        "For up to five simultaneous fixtures, opening additional panels does not add polling loops. Calls cannot overlap or burst after sleep. A budget stop preserves last-known data and displays the stop reason."
+      ],
+      "sources": [
+        "A1",
+        "A2",
+        "A5"
+      ],
+      "external_gate": "NONE",
+      "example": "for second in range(7200):\n    poller.tick(float(second))\nassert http.bundle_calls == 480  # all five kept1H/2H in this synthetic schedule\nassert http.maximum_in_flight == 1",
+      "plan_path": "tasks/PB-06.md"
+    },
+    {
+      "id": "PB-07",
+      "title": "Implement typed multi-fixture LiveStore and independent replay",
+      "legacy_lv": "LV-03/04",
+      "dependencies": [
+        "PB-01",
+        "PB-05"
+      ],
+      "files": [
+        "contracts/live_readonly/v1/live-store.sql",
+        "src/moj_discovery/live_store.py",
+        "src/moj_discovery/live_replay.py",
+        "tests/live/test_live_store.py",
+        "tests/live/test_live_replay.py"
+      ],
+      "interfaces": [
+        "live_store.py::LiveStore.append(event: LiveEvent) -> DurableReceipt",
+        "live_store.py::LiveStore.read_projection(binding_id: str) -> MatchView",
+        "live_replay.py::verify_live_replay(run_dir: Path, target_dir: Path) -> ReplayResult"
+      ],
+      "steps": [
+        "Create new live DB from supplied DDL; preserve existing RunStore vendor. Register run and binding before first event; no imported fake approved rows.",
+        "Implement canonical event chain, contiguous source cursor, actual payload+projection commit, postcommit receipt, duplicate samebytes and conflict/gap controls.",
+        "Replay frozen actual live payloads/control timestamps into new DB using same reducer; compare independent readback, never copy derived rows.",
+        "Fault tests kill owned DB writer before/aftercommit, remove/tamper raw record, reorder receive index, corrupt quote/binding and replay twice. Record actual effects and keep expected parent-only."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_live_store.py tests/live/test_live_replay.py"
+      ],
+      "acceptance": [
+        "The real live store and a fresh replay database produce the same logical state. Partial failure never creates a false ACK. Independent expected/actual mutations are detected. Live records never enter the synthetic RawObservation contract."
+      ],
+      "sources": [
+        "R4",
+        "P3",
+        "P5"
+      ],
+      "external_gate": "NONE",
+      "example": "receipt = store.append(valid_event)\nassert store.append(valid_event) == receipt\nassert verify_live_replay(run_dir, fresh_dir).equal\nwith pytest.raises(ValueError):\n    store.append(conflicting_same_position)",
+      "plan_path": "tasks/PB-07.md"
+    },
+    {
+      "id": "PB-08",
+      "title": "Add live capture spool and separate authenticated live wire",
+      "legacy_lv": "LV-04",
+      "dependencies": [
+        "PB-01",
+        "PB-07"
+      ],
+      "files": [
+        "extension/src/storage/durable_idb.ts",
+        "extension/src/spool.ts",
+        "extension/src/live/spool.ts",
+        "extension/src/live/protocol.ts",
+        "extension/src/live/transport.ts",
+        "src/moj_discovery/live_wire.py",
+        "src/moj_discovery/live_receiver.py",
+        "tests/live/test_live_wire.py",
+        "tests/live/test_live_spool_bridge.py",
+        "extension/test/live/spool.test.ts",
+        "extension/test/live/wire.test.ts"
+      ],
+      "interfaces": [
+        "extension/src/live/spool.ts#LiveCaptureSpool",
+        "extension/src/live/transport.ts#LiveTransport",
+        "live_receiver.py::serve_live_receiver(context: LiveRunContext, store: LiveStore, pairing: PairingAuthority) -> LiveReceiver"
+      ],
+      "steps": [
+        "Extract only small shared IDB transaction helper; preserve old Spool semantics and rerun its unit/browser regressions. New live wrapper validates new schema before every write/read.",
+        "Separate protocol/path/HMAC domain from offline. Implement bounded exactOrigin/Host role-aware handshake and counter replay rejection; client accepts ACK only for committed identity+hash.",
+        "Implement manual120s pairing channel user popup/terminal, not API key; no public unauthenticated command listener. One multiplexed capture producer; subscribers get projections only.",
+        "Test browser worker restart, receiver commit-beforeACKloss, retained spool resend, wrong origin/key/counter, offline message on live path, producer attempting UI role and subscriber attempting append. Test hooks absent from eventual live build."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_live_wire.py tests/live/test_live_spool_bridge.py",
+        "pnpm --dir extension exec tsc -p tsconfig.test.json",
+        "node --test extension/.test-build/test/live/spool.test.js extension/.test-build/test/live/wire.test.js"
+      ],
+      "acceptance": [
+        "The authenticated local wire writes to the real LiveStore. Wrong secrets, roles or origins produce zero application writes. Part A remains functional and is retested separately."
+      ],
+      "sources": [
+        "R4",
+        "P3",
+        "P4",
+        "P5",
+        "C2"
+      ],
+      "external_gate": "NONE",
+      "example": "assert live_receiver.accepts(offline_frame) is False\nassert subscriber.send_capture(valid_capture).code == \"ROLE_DENIED\"\nassert after_restart.spool_pending == before_unacked_payloads",
+      "plan_path": "tasks/PB-08.md"
+    },
+    {
+      "id": "PB-09",
+      "title": "Build an inert extraction-profile validator using synthetic DOM samples",
+      "legacy_lv": "LV-01",
+      "dependencies": [
+        "PB-01"
+      ],
+      "files": [
+        "contracts/live_readonly/v1/operator-profile.schema.json",
+        "src/moj_discovery/operator_profile.py",
+        "tests/live/test_operator_profile.py",
+        "tests/live/fixtures/synthetic-match.html"
+      ],
+      "interfaces": [
+        "operator_profile.py::validate_extraction_profile(value: object, evidence: ProfileEvidence) -> ExtractionProfile"
+      ],
+      "steps": [
+        "Use05_OPERATOR profile schema. DRAFT/SYNTHETIC profile can run local tests only; accepted real profile needs actual sample hashes and source-bound review.",
+        "Restrict selectors to allowed match-root subtree and prohibit account/form/input/contenteditable/iframe readers. No arbitrary evaluate/URLs/commands.",
+        "Synthetic page declares TEST_ONLY names/IDs; do not publish it as a real Mise-o-jeu parser. Test swapped orientation,missingdraw,wrongmarket,horizon ambiguity,secret-bearing selectors.",
+        "Materialize field-map and parser interface; leave actual selectors unconfigured pendingPB-19 instead of guessing."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_operator_profile.py"
+      ],
+      "acceptance": [
+        "Synthetic profile validated for mocks; profile with no real evidence cannot activate on operator; field-map semantics explicit."
+      ],
+      "sources": [
+        "R3",
+        "C3",
+        "C4"
+      ],
+      "external_gate": "NONE",
+      "example": "assert draft.status == \"DRAFT\"\nwith pytest.raises(ValueError):\n    activate_profile(draft, target=\"OPERATOR\")\nassert reject_selector(\"input[type=password]\")",
+      "plan_path": "tasks/PB-09.md"
+    },
+    {
+      "id": "PB-10",
+      "title": "Implement fixed DOM reader, complete book assembly and document identity guards",
+      "legacy_lv": "LV-01/04",
+      "dependencies": [
+        "PB-08",
+        "PB-09"
+      ],
+      "files": [
+        "extension/src/live/dom_reader.ts",
+        "extension/src/live/capture.ts",
+        "extension/src/live/background.ts",
+        "extension/manifest.live.json",
+        "extension/test/live/capture.test.ts",
+        "tests/live/test_capture_graph.py"
+      ],
+      "interfaces": [
+        "extension/src/live/dom_reader.ts#readVisibleBook",
+        "extension/src/live/capture.ts#startReadOnlyCapture",
+        "extension/src/live/background.ts#handleCaptureMessage"
+      ],
+      "steps": [
+        "Initial live manifest uses minimal DOM permissions from05_OPERATOR, no debugger/cookies/network interception. Fixed bundled file injection only, frame0andISOLATED.",
+        "Read all3 prices/labels/context in one DOM task; stable2reads100ms;debounce250ms;max1emit/2s;watchdog30s onlyvisible. Expose incomplete/stale not merged book.",
+        "Bind response sender tab/document/profile/binding revision. Route replacement/hidden tab/root replacement invalidates prior eligibility. Optional host permission requested by user action only.",
+        "Tests use real isolated synthetic browser. Exclude secret areas, prohibit clicks/POST/Runtime/Input/cookies, validate unknown graph imports. No authenticated tab here."
+      ],
+      "tests": [
+        "pnpm --dir extension exec tsc -p tsconfig.test.json",
+        "node --test extension/.test-build/test/live/capture.test.js",
+        "uv run --frozen --offline python -m pytest -q tests/live/test_capture_graph.py"
+      ],
+      "acceptance": [
+        "Synthetic capture tests pass. No operator mutation capability exists. Unavailable or hidden markets display MARKET_NOT_VISIBLE rather than triggering a click or guessed value. Late output from a replaced document is rejected."
+      ],
+      "sources": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "external_gate": "NONE",
+      "example": "assert readVisibleBook(hidden_market).status == \"NOT_VISIBLE\"\nassert onMessage(late_tab_a, active_tab_b).accepted is False\nassert live_permissions.disjoint({\"debugger\", \"cookies\"})",
+      "plan_path": "tasks/PB-10.md"
+    },
+    {
+      "id": "PB-11",
+      "title": "Implement fixture bindings, market epochs and freshness as a pure reducer",
+      "legacy_lv": "LV-03",
+      "dependencies": [
+        "PB-05",
+        "PB-07",
+        "PB-09"
+      ],
+      "files": [
+        "src/moj_discovery/live_identity.py",
+        "src/moj_discovery/market_book.py",
+        "src/moj_discovery/live_state.py",
+        "tests/live/test_identity.py",
+        "tests/live/test_market_state_join.py"
+      ],
+      "interfaces": [
+        "live_identity.py::bind_fixture(provider: ProviderState, operator: OperatorFacts, evidence: BindingEvidence) -> FixtureBinding",
+        "market_book.py::assemble_book(capture: CapturedFields, profile: ExtractionProfile) -> MarketBook",
+        "live_state.py::reduce_live_event(current: MatchView, event: LiveEvent) -> MatchView"
+      ],
+      "steps": [
+        "No fuzzyautoapproval;compare ID/date/league/homeaway exactly against accepted mapping. Stable logical fixture key includes providerIDandbindingrevision.",
+        "Implement status and freshness policies from05_OPERATOR; stale receipt clocks never become upstream freshness. Timer-only updates change displayage notsourcequality.",
+        "Goal/card/period/VAR/suspension/gap/document change invalidates old books; reopening needs realnewcapture+newproviderobservation+coherentfields, missingoperatorcontext staysUNVERIFIED.",
+        "Tests H2same score confusion, halftime baseline missing, goal reversal,5fixture independence, partial book and old capture delivered afterbindchange."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_identity.py tests/live/test_market_state_join.py"
+      ],
+      "acceptance": [
+        "Coherence preserved; all mismatches visible; no probability/EV output; one fixture failure does not silently refresh another."
+      ],
+      "sources": [
+        "A3",
+        "R4"
+      ],
+      "external_gate": "NONE",
+      "example": "assert reduce_live_event(view, goal_correction).market_eligible is False\nassert view.source_age is None  # missing provider update timestamp\nassert h2_score(ht=(2,0), current=(2,1)) == (0,1)",
+      "plan_path": "tasks/PB-11.md"
+    },
+    {
+      "id": "PB-12",
+      "title": "Connect the shared live service and projection subscriptions with mocks",
+      "legacy_lv": "LV-04",
+      "dependencies": [
+        "PB-06",
+        "PB-08",
+        "PB-10",
+        "PB-11"
+      ],
+      "files": [
+        "src/moj_discovery/live_service.py",
+        "tools/run_live_readonly.py",
+        "tests/live/test_live_service.py"
+      ],
+      "interfaces": [
+        "live_service.py::run_live_service(config: LiveConfig, secret: SecretValue, admitted: RunAdmission) -> LiveRunResult",
+        "tools/run_live_readonly.py::main(argv: list[str] | None = None) -> int"
+      ],
+      "steps": [
+        "The backend owns one poller, store and wire server per run. Provider observations and capture frames enter separately validated pipelines before the pure reducer. Opening another UI must not create another poller.",
+        "Require a verified RunAdmission. Unit tests explicitly use MOCK admission and injected network-denied transports. Never add a force flag or a success-by-default preflight.",
+        "Implement manual stop, scope expiry, quota/lease exhaustion and visibly stale disconnected sources. Backend restart requires a fresh pairing and user-run key process. Close only owned resources.",
+        "Test missing sources, multiple subscribers, malformed input, replay and API-key exclusion from browser/process messages."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_live_service.py"
+      ],
+      "acceptance": [
+        "The mock end-to-end live-contract path works. Real startup remains blocked until PB-20 admits the required evidence. The UI and extension never receive the API key."
+      ],
+      "sources": [
+        "A1",
+        "P4",
+        "C2"
+      ],
+      "external_gate": "NONE",
+      "example": "service.open_panel(); service.open_panel(); service.open_workspace()\nassert service.provider_poller_count == 1\nassert service.initial_view.status == \"WAITING_FOR_DATA\"",
+      "plan_path": "tasks/PB-12.md"
+    },
+    {
+      "id": "PB-13",
+      "title": "Build Side Panel and multi-match workspace without model placeholders",
+      "legacy_lv": "LV-05",
+      "dependencies": [
+        "PB-12"
+      ],
+      "files": [
+        "extension/src/live/panel.ts",
+        "extension/src/live/panel.html",
+        "extension/src/live/panel.css",
+        "extension/src/live/workspace.ts",
+        "extension/src/live/workspace.html",
+        "src/moj_discovery/workspace_projection.py",
+        "extension/test/live/panel.test.ts",
+        "tests/live/test_workspace_projection.py"
+      ],
+      "interfaces": [
+        "extension/src/live/panel.ts#renderMatch",
+        "extension/src/live/workspace.ts#renderWatchlist",
+        "workspace_projection.py::project_watchlist(state: WorkspaceState) -> WorkspaceView"
+      ],
+      "steps": [
+        "Render the fields and controls in05_OPERATOR_AND_UI.md. Show source clock precision, observed odds and MODEL_NOT_QUALIFIED. Do not manufacture probabilities or recommendations.",
+        "Open the panel on a user gesture; use exact verified operator/LiveScore links. Shared watchlist and evidence are read-only except enumerated user commands. Escape all text and allow HTTPS links only.",
+        "Panel closure changes subscriptions, not collection ownership. Refresh requests are coalesced by backend. The accepted stage controls1/3/5 matches; an interface constant cannot enlarge scope.",
+        "Test narrow320px layout, keyboard navigation, malicious team text, STALE/NO_DATA states and switching between horizons/matches without showing a previous fixture’s prices."
+      ],
+      "tests": [
+        "pnpm --dir extension exec tsc -p tsconfig.test.json",
+        "node --test extension/.test-build/test/live/panel.test.js",
+        "uv run --frozen --offline python -m pytest -q tests/live/test_workspace_projection.py"
+      ],
+      "acceptance": [
+        "A working mock panel is clearly labelled as synthetic. Panel and watchlist share the same projection revision. Neither contains betting or Cashout controls."
+      ],
+      "sources": [
+        "C1",
+        "C2",
+        "C4"
+      ],
+      "external_gate": "NONE",
+      "example": "assert panel.text.includes(\"MODEL_NOT_QUALIFIED\")\nassert panel.getByRole(\"button\", {name: \"Bet\"}).count() == 0\nassert workspace.activeSnapshot.revision == panel.snapshot.revision",
+      "plan_path": "tasks/PB-13.md"
+    },
+    {
+      "id": "PB-14",
+      "title": "Implement configuration wizard, scope preview and user-confirmed run intents",
+      "legacy_lv": "LV-02/04",
+      "dependencies": [
+        "PB-02",
+        "PB-03",
+        "PB-12"
+      ],
+      "files": [
+        "tools/configure_live_batched.py",
+        "tools/prepare_part_b_intent.py",
+        "src/moj_discovery/live_intent.py",
+        "tools/probe_football_provider.py",
+        "tests/live/test_run_intents.py",
+        "tests/live/test_configure_live.py",
+        ".gitignore",
+        "contracts/live_readonly/v1/run-intent.schema.json",
+        "contracts/live_readonly/v1/intent-store.sql"
+      ],
+      "interfaces": [
+        "live_intent.py::consume_user_intent(intent: RunIntent, config: LiveConfig, confirmation: str) -> RunIntentReceipt",
+        "tools/configure_live_batched.py::main(argv: list[str] | None = None) -> int",
+        "tools/probe_football_provider.py::run_probe(config: LiveConfig, secret: SecretValue, intent: RunIntentReceipt) -> ProbeResult"
+      ],
+      "steps": [
+        "The wizard requests only nonsecret platform, league, season, fixture and budget inputs. Create a disabled local config. No hardcoded production fixture IDs. Do not overwrite a prior local config without explicit choice.",
+        "Create source/config-bound, one-use intents. The user terminal previews scope and cost before typed confirmation. This is local user consent, not an independent security signature.",
+        "Connect the key launcher’s probe/live-readonly enum to the corresponding implementation. A probe uses only status, coverage, bundle and at most two specifically budgeted event comparisons, within20attempts/5minutes.",
+        "Break the authorization bootstrap cycle as specified in06_EVIDENCE_AND_RUNS.md. Add gitignore entries for local config and evidence; never treat a generated fixture receipt as real permission."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_run_intents.py tests/live/test_configure_live.py"
+      ],
+      "acceptance": [
+        "Declined, expired, replayed or incorrectly source/config-bound intents prevent I/O. The CLI can guide key entry without exposing it. Mock tests enforce the 20-attempt probe cap."
+      ],
+      "sources": [
+        "A3",
+        "P1",
+        "R3"
+      ],
+      "external_gate": "NONE",
+      "example": "with pytest.raises(ValueError):\n    consume_user_intent(used_intent, config, \"ALLOW PROVIDER PROBE\")\nassert mock_http.attempts <= 20\nassert \"API_FOOTBALL_KEY=\" not in generated_commands",
+      "plan_path": "tasks/PB-14.md"
+    },
+    {
+      "id": "PB-15",
+      "title": "Qualify the actual browser-to-backend platform using synthetic local data",
+      "legacy_lv": "LV-04/06",
+      "dependencies": [
+        "PB-08",
+        "PB-10",
+        "PB-13",
+        "PB-14"
+      ],
+      "files": [
+        "tools/qualify_live_platform.py",
+        "tests/live/test_platform_binding.py",
+        "tests/live/test_local_bridge.py",
+        "docs/live/platform-qualification.md"
+      ],
+      "interfaces": [
+        "tools/qualify_live_platform.py::qualify_platform(config: LiveConfig, output: Path) -> PlatformResult"
+      ],
+      "steps": [
+        "Record the actual Windows Chrome→WSL topology or the explicitly chosen Linux alternative. Test browser identity, local Origin/path and listener scope with synthetic data only.",
+        "Do not open operator pages or request the API key. Never change a firewall, networking mode or bind0.0.0.0 automatically if localhost forwarding fails.",
+        "Exercise panel close, worker termination and reconnect in owned test profiles. Sleep/wake and process kill require user approval if they affect the actual platform. Record executed versus unobserved cases.",
+        "Linux evidence does not qualify Windows. A missing browser/display produces WAITING_PLATFORM; independent code tasks continue, live activation remains blocked."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_platform_binding.py tests/live/test_local_bridge.py"
+      ],
+      "acceptance": [
+        "The selected platform is tested on a real local path or explicitly marked pending. No unrelated user browser is terminated. A real API key is not needed."
+      ],
+      "sources": [
+        "W1",
+        "C2",
+        "C3",
+        "P4"
+      ],
+      "external_gate": "USER_PLATFORM_SELECTION",
+      "example": "assert platform_result.browser_sha256 == hash(actual_binary)\nassert server.bound_addresses == [\"127.0.0.1\"]\nassert platform_result.operator_observed is False",
+      "plan_path": "tasks/PB-15.md"
+    },
+    {
+      "id": "PB-16",
+      "title": "Implement live preflight evidence admission and executable security checks",
+      "legacy_lv": "LV-04/06",
+      "dependencies": [
+        "PB-12",
+        "PB-14",
+        "PB-15"
+      ],
+      "files": [
+        "src/moj_discovery/live_preflight_batched.py",
+        "tools/live_preflight_batched.py",
+        "tests/live/test_live_preflight_batched.py",
+        "tests/live/test_live_security.py",
+        "tools/verify_part_b.py",
+        "docs/live/pre-live-security-review.md"
+      ],
+      "interfaces": [
+        "live_preflight_batched.py::evaluate_live_readiness(config: LiveConfig, verified: EvidenceIndex, key_present: bool) -> Readiness",
+        "tools/verify_part_b.py::verify_profile(profile: str, output: Path) -> VerificationResult"
+      ],
+      "steps": [
+        "Preserve the legacy v1 preflight. The v2 verifier consumes actual provider/profile/platform/review/intent evidence, not truthy claims. Key presence means PRESENT_NOT_AUTHENTICATED.",
+        "Implement the security case matrix: redirects/proxy, secret leakage, permission/module graph, fixed read-only DOM operations, wire roles and unexpected outbound destinations.",
+        "Validate artifact references and current source/config/profile hashes. Missing or synthetic evidence produces named pending conditions. A changed enabled dependency requires its tests and review again.",
+        "Report self-review as SELF_ONLY. Respect existing real host approval mechanisms; do not fabricate a signer or claim that two run-ID strings prove reviewer independence."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_live_preflight_batched.py tests/live/test_live_security.py"
+      ],
+      "acceptance": [
+        "The pure preflight decision performs no network I/O. Forged, synthetic or stale evidence cannot qualify a real run. The verification CLI exists and is tested before the first provider probe."
+      ],
+      "sources": [
+        "R3",
+        "P1",
+        "C4"
+      ],
+      "external_gate": "NONE",
+      "example": "result = evaluate_live_readiness(config, synthetic_evidence, key_present=True)\nassert result.live_read_only_ready is False\nassert \"REQUIRES_REAL_PROVIDER_EVIDENCE\" in result.missing_inputs",
+      "plan_path": "tasks/PB-16.md"
+    },
+    {
+      "id": "PB-17",
+      "title": "Run the complete mock Part B gate and prepare the exact external-input checklist",
+      "legacy_lv": "all LV code boundary",
+      "dependencies": [
+        "PB-06",
+        "PB-07",
+        "PB-08",
+        "PB-09",
+        "PB-10",
+        "PB-11",
+        "PB-12",
+        "PB-13",
+        "PB-14",
+        "PB-15",
+        "PB-16"
+      ],
+      "files": [
+        "tests/live/test_part_b_inventory.py",
+        ".github/workflows/part-b.yml",
+        "docs/live/mock-handoff.md",
+        "docs/execution/PART_B_PROGRESS.md"
+      ],
+      "interfaces": [
+        "tests/live/test_part_b_inventory.py::test_every_required_case_has_executed_evidence"
+      ],
+      "steps": [
+        "Execute every required mock case in the acceptance registry with explicit Python and compiled TypeScript paths. Real-browser-required cases must use the recorded platform; collection or skipped cases do not count as PASS.",
+        "Add portable mock CI on push/PR and an opt-in browser job. Neither job needs real API credentials. Do not push or remote-dispatch the workflow without permission.",
+        "Run affected Part A spool/canonical/transport regressions and final acceptance when shared sources changed. Keep legacy full qualification separately reported.",
+        "Inspect the diff and output current source-bound mock evidence and the external-input checklist. Proceed to PB-18 only with honest gate results."
+      ],
+      "tests": [
+        "uv run --frozen --offline python tools/verify_part_b.py --profile mock --output .local/part-b/mock"
+      ],
+      "acceptance": [
+        "The complete mock gate is verified, or concrete blockers are reported. Codex asks for the API key only because an actual provider probe is now the next gated action."
+      ],
+      "sources": [
+        "R5",
+        "A1",
+        "C2"
+      ],
+      "external_gate": "NONE",
+      "example": "assert set(report.executed_case_ids) == set(required_mock_ids)\nassert report.live_read_only_pass is False\nassert report.money_ready is False",
+      "plan_path": "tasks/PB-17.md"
+    },
+    {
+      "id": "PB-18",
+      "title": "Guide user key entry, confirm scope and execute the bounded real provider probe",
+      "legacy_lv": "LV-02",
+      "dependencies": [
+        "PB-17"
+      ],
+      "files": [
+        "docs/live/provider-feasibility.md",
+        "docs/execution/PART_B_PROGRESS.md"
+      ],
+      "interfaces": [
+        "ProbeResult: source_kind=OBSERVED_REAL; selected fixture IDs; projected quota metadata; HTTP attempt count; embedded-section coverage; timing limitations."
+      ],
+      "steps": [
+        "Send the Vietnamese instructions from03_KEY_GUIDE_VI.md, including the user-owned WSL terminal command. Never request the key value in chat or prompt for it in an agent-captured terminal.",
+        "The user chooses league/season/fixture and confirms the20attempt/5minute probe. Codex reads sanitized result metadata, not the credential. An absent key becomes WAITING_FOR_USER_SECRET.",
+        "Validate actual account quota, competition coverage and bundled details for selected fixtures. On auth failure stop. Never buy or upgrade an account automatically.",
+        "Only if section quality needs comparison, use at most two approved fallback calls within the same budget. Record actual timing/missingness; do not turn fallback polling on automatically."
+      ],
+      "tests": [
+        "uv run --frozen --offline python tools/run_with_api_football_key.py --action probe --config config/live.local.json --intent .local/part-b/intents/provider-probe.json"
+      ],
+      "acceptance": [
+        "The direct API credential is authenticated without disclosure. Actual quota and selected competition/fixture coverage are observed. This result does not approve operator access."
+      ],
+      "sources": [
+        "A1",
+        "A2",
+        "A3",
+        "P1"
+      ],
+      "external_gate": "USER_SECRET_AND_PROVIDER_PROBE_APPROVAL",
+      "example": "assert probe.source_kind == \"OBSERVED_REAL\"\nassert probe.http_attempts <= 20\nassert \"account\" not in probe.public_report and \"key\" not in probe.public_report",
+      "plan_path": "tasks/PB-18.md"
+    },
+    {
+      "id": "PB-19",
+      "title": "Observe one dedicated operator tab and admit a real sanitized extraction profile",
+      "legacy_lv": "LV-01",
+      "dependencies": [
+        "PB-17"
+      ],
+      "files": [
+        "docs/live/operator-capability-report.md",
+        "tests/live/fixtures/admitted-profile-index.json",
+        "tests/live/test_operator_profile_samples.py"
+      ],
+      "interfaces": [
+        "AdmittedProfileEvidence: exact observed routes; field map; participant-orientation checks; sanitized sample hashes; profile hash; current review reference."
+      ],
+      "steps": [
+        "Ask the user to open one selected match in the dedicated Chrome profile and log in manually. Confirm the10minute read-only observation scope and actual platform. No account secrets are requested.",
+        "Use the reviewed fixed DOM reader to inspect only selected fixture labels, IDs, three odds and market context. Do not read full HTML, account/balance areas, cookies or click a selection.",
+        "Populate the extraction profile from observed sanitized samples. Verify HOME/AWAY independent of page order, horizon labels and normal-time settlement. Inaccessible data remains unsupported, not guessed.",
+        "Add admitted nonsecret samples and regression tests. Any profile-specific parser change requires affected security tests and independent review before enabling live capture."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_operator_profile_samples.py"
+      ],
+      "acceptance": [
+        "A real one-fixture FT extraction profile is accepted, or a specific unsupported result is recorded. No guessed selectors or account data enter the profile."
+      ],
+      "sources": [
+        "C3",
+        "C4",
+        "R3"
+      ],
+      "external_gate": "USER_OPERATOR_SESSION_AND_PASSIVE_OBSERVATION_APPROVAL",
+      "example": "assert profile.source_kind == \"OBSERVED_REAL\"\nassert profile.orientation_status == \"VERIFIED\"\nassert set(profile.horizons) >= {\"FT\"}",
+      "plan_path": "tasks/PB-19.md"
+    },
+    {
+      "id": "PB-20",
+      "title": "Bind real sources, review enabled surfaces and admit a single-fixture run",
+      "legacy_lv": "LV-03/04",
+      "dependencies": [
+        "PB-18",
+        "PB-19"
+      ],
+      "files": [
+        "docs/live/live-admission-review.md",
+        "tests/live/test_admitted_live_bindings.py",
+        "docs/execution/PART_B_PROGRESS.md"
+      ],
+      "interfaces": [
+        "RunAdmission: verified current source, config, profile, provider, platform and security evidence references; exact fixture/budget scope; no monetary authority."
+      ],
+      "steps": [
+        "Bind the selected provider fixture to the observed operator fixture using date, league, participants and verified orientation. No name-fuzzy auto-approval.",
+        "Run regressions with real sanitized provider/profile samples. Fix actual mismatches without weakening correction, missingness or complete-book requirements.",
+        "Obtain an actual independent read-only review for the enabled surface. Missing review is WAITING_REVIEW. Use existing host receipts when required, without manufacturing them.",
+        "Run preflight against current references and recomputed budgets. Prepare the one-match intent, which the user must confirm separately before live startup."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_admitted_live_bindings.py",
+        "uv run --frozen --offline python tools/live_preflight_batched.py --config config/live.local.json"
+      ],
+      "acceptance": [
+        "One known fixture becomes eligible for an explicitly confirmed bounded read-only run. This is not yet LIVE_READ_ONLY_PASS, and money remains disabled."
+      ],
+      "sources": [
+        "R3",
+        "A1",
+        "W1"
+      ],
+      "external_gate": "CURRENT_INDEPENDENT_SECURITY_REVIEW_AND_RUN_SELECTION",
+      "example": "assert admission.fixture_count == 1\nassert admission.profile_hash == current_profile_hash\nassert admission.model_enabled is False and admission.money_enabled is False",
+      "plan_path": "tasks/PB-20.md"
+    },
+    {
+      "id": "PB-21",
+      "title": "Run, record and replay one real football match with FT odds",
+      "legacy_lv": "LV-06",
+      "dependencies": [
+        "PB-20"
+      ],
+      "files": [
+        "tools/qualify_live_readonly.py",
+        "tests/live/test_live_qualification.py",
+        "docs/live/read-only-qualification.md"
+      ],
+      "interfaces": [
+        "tools/qualify_live_readonly.py::qualify_recorded_run(run_dir: Path) -> LiveQualification"
+      ],
+      "steps": [
+        "Execute the explicitly approved bounded live session in the user’s terminal. Start WAITING_FOR_DATA and compare complete visible FT books against recorded IDs/prices at least three times.",
+        "Record actual provider observations, operator captures, quota usage and stale/conflict states. Respect600attempts and120minutes; no invented update during a source outage.",
+        "Stop and freeze the run before fresh replay. Rare real shocks not observed remain NOT_OBSERVED; synthetic tests are labelled separately, never substituted for real observation.",
+        "Issue one-match FT qualification only for the observed scope. H1/H2 availability is separately stated; there are no forecasts or wager actions."
+      ],
+      "tests": [
+        "uv run --frozen --offline python tools/run_with_api_football_key.py --action live-readonly --config config/live.local.json --intent .local/part-b/intents/live-one.json",
+        "uv run --frozen --offline python tools/qualify_live_readonly.py --run-dir .local/part-b/live-one"
+      ],
+      "acceptance": [
+        "The one-match live gate reports an evidence-backed result for its exact scope. Actual data are retained and replayable. Manual stop closes only owned resources."
+      ],
+      "sources": [
+        "A1",
+        "A2",
+        "C1",
+        "P3"
+      ],
+      "external_gate": "USER_LIVE_ONE_RUN_CONFIRMATION",
+      "example": "assert qualification.observed_fixture_ids == selected_fixture_ids\nassert qualification.complete_ft_book_checks >= 3\nassert qualification.replay.equal is True",
+      "plan_path": "tasks/PB-21.md"
+    },
+    {
+      "id": "PB-22",
+      "title": "Scale accepted watchlist from one to three then five concurrent matches",
+      "legacy_lv": "LV-05/06",
+      "dependencies": [
+        "PB-21"
+      ],
+      "files": [
+        "tests/live/test_multimatch_qualification.py",
+        "docs/live/multimatch-qualification.md",
+        "tools/qualify_live_readonly.py"
+      ],
+      "interfaces": [
+        "LiveQualification.scope.max_matches in {1,3,5}; stages separately admitted"
+      ],
+      "steps": [
+        "Run three fixtures with a new user-approved config/budget/intent, qualify and replay, then do the same for five. API capacity20 is not permission to monitor20.",
+        "Measure shared cohort calls, missing fixture behavior, capture isolation and selected IDs. If simultaneous real fixtures are unavailable, report WAITING_MATCH_WINDOW.",
+        "Opening panels and changing the active fixture must not create extra pollers. Test hidden/closed tabs only with consent; the relevant book becomes stale without contaminating others.",
+        "Keep fallback OFF unless its profile is admitted. Budget exhaustion stops or pauses visibly; no automatic cap increase."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_multimatch_qualification.py"
+      ],
+      "acceptance": [
+        "Three- and five-fixture scopes are measured and admitted separately. Request cost follows shared polling windows, not UI widget count. Each fixture retains independent coherence state."
+      ],
+      "sources": [
+        "A1",
+        "C2"
+      ],
+      "external_gate": "USER_EXPANDED_SCOPE_RUN_CONFIRMATION",
+      "example": "assert one_batch.ids == sorted(selected_five_ids)\nassert actual_request_count == backend_ledger_attempt_count\nassert model_enabled is False",
+      "plan_path": "tasks/PB-22.md"
+    },
+    {
+      "id": "PB-23",
+      "title": "Freeze source-bound Part B release evidence and user startup/shutdown runbook",
+      "legacy_lv": "LV-06",
+      "dependencies": [
+        "PB-21",
+        "PB-22"
+      ],
+      "files": [
+        "docs/runbooks/START_LIVE_READ_ONLY.md",
+        "docs/live/PART_B_HANDOFF.md",
+        "docs/execution/PART_B_PROGRESS.md",
+        "README.md"
+      ],
+      "interfaces": [
+        "PartBHandoff: separate mock/provider/profile/platform/live-one/live-three/live-five statuses; current source/config/evidence hashes; missing capabilities; exact startup and shutdown commands."
+      ],
+      "steps": [
+        "Update README and runbooks with v2 commands and the legacy compatibility note. Do not reuse a receipt for changed bytes and call it current.",
+        "Freeze code before final campaign, replay and secret checks. Store results outside tracked source and use external checksums with no self-hash cycle.",
+        "Publish only sanitized commit/count/status/limitation summaries. Preserve private raw evidence and failures. Distinguish NOT_EXECUTED, NOT_OBSERVED and NOT_QUALIFIED.",
+        "Provide verified startup, key entry, pause/stop and stale-state instructions. Completing this task does not start Part C."
+      ],
+      "tests": [
+        "uv run --frozen --offline python tools/verify_part_b.py --profile release --output .local/part-b/release",
+        "git diff --check"
+      ],
+      "acceptance": [
+        "The handoff is usable and accurately states mock/provider/operator/platform/live results. No status is inferred merely from test counts. Controls remain read-only, and no private key is an artifact."
+      ],
+      "sources": [
+        "R1",
+        "R3",
+        "A1"
+      ],
+      "external_gate": "NONE",
+      "example": "assert release.money_ready == \"NO\"\nassert release.model_enabled is False\nassert release.source_revision == actually_tested_revision",
+      "plan_path": "tasks/PB-23.md"
+    },
+    {
+      "id": "PB-24",
+      "title": "Prepare performance-blind data and research-scope handoff without building models",
+      "legacy_lv": "LV-07",
+      "dependencies": [
+        "PB-23"
+      ],
+      "files": [
+        "src/moj_discovery/data_manifest.py",
+        "tests/live/test_data_manifest.py",
+        "docs/live/research-scope.md"
+      ],
+      "interfaces": [
+        "data_manifest.py::freeze_dataset_manifest(run_refs: Sequence[RunRef], quality_view: QualityView) -> DataManifest"
+      ],
+      "steps": [
+        "Expose only identity, coverage, timing, corrections, missingness, quota, cost and data-rights fields to scope selection. Retain actual targets in research inputs without exposing model performance.",
+        "Reference observed sources and license/access evidence. Mark missing historical data and propose chronological partitions without training a model.",
+        "Keep H1/H2/FT settlement semantics explicit and preserve existing SCOPE0 approval requirements. Do not choose a competition after seeing model ROI.",
+        "Hand off actual availability and unknowns to Part C, then stop; do not start RS-01 automatically."
+      ],
+      "tests": [
+        "uv run --frozen --offline python -m pytest -q tests/live/test_data_manifest.py"
+      ],
+      "acceptance": [
+        "A dataset/quality manifest is ready for research-scope review. No forecast, profit claim or Part C implementation is produced. The Part B batch ends."
+      ],
+      "sources": [
+        "R4",
+        "A1"
+      ],
+      "external_gate": "NONE",
+      "example": "assert \"roi\" not in quality_view\nassert \"model_accuracy\" not in quality_view\nassert dataset.has_source_provenance is True",
+      "plan_path": "tasks/PB-24.md"
+    }
+  ]
+}

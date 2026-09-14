@@ -1,0 +1,26 @@
+[
+  {
+    "argv": [
+      "/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python",
+      "-B",
+      "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/prepare_handoff.py"
+    ],
+    "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+    "exit": 0,
+    "started_at": "2026-09-13T20:56:43.410486+00:00",
+    "finished_at": "2026-09-13T20:56:47.268500+00:00",
+    "log_sha256": "22855a0b438180d897a5b31175cc37ca8396cb4bc468fcd7cfa7110f85019d2b"
+  },
+  {
+    "argv": [
+      "/home/thenam176/betting-helper/part-b-candidate/.venv/bin/python",
+      "-B",
+      "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/start_review_ab.py"
+    ],
+    "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+    "exit": 0,
+    "started_at": "2026-09-13T20:56:47.269180+00:00",
+    "finished_at": "2026-09-13T22:09:09.933713+00:00",
+    "log_sha256": "24ab89b372ad433db6caede867d82ebc667f345ce1b233d06a821b16a30e31eb"
+  }
+]

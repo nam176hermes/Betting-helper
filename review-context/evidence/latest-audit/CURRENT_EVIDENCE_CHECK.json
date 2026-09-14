@@ -1,0 +1,67 @@
+{
+  "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+  "source_hash_seconds": 0.028988353995373473,
+  "source_expected_matches": true,
+  "verified_files": {
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/QUALIFICATION_LAUNCH_REPORT.json": {
+      "sha256": "d5a7f92981731cb672bc201860f27330a8578251fc2429ba324ea3326ef870ce",
+      "size": 28193
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/CANDIDATE_QUALIFICATION.json": {
+      "sha256": "06a9c521a20c1711d8bcee4608451f930196b02899ee144d6d9b3d6878c5f3a1",
+      "size": 130833
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/DESCENDANT_REPOSITORY_QUALIFICATION.json": {
+      "sha256": "9a40210e1f0dd62dad962173307d614aa2a2f94fb0e84cabdd738bde5b8f14ee",
+      "size": 2059
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/mock-8570c78/result.json": {
+      "sha256": "035f9def152e062637e06e5110b00ea4a7f9d890f2214e2dd1e13fb42c8cdf6f",
+      "size": 62865
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/platform-8570c78/result.json": {
+      "sha256": "47ae5a004ae3e9df5ea4fdedfe952fa1dda755f986d89a98be4b7dd85d93e873",
+      "size": 9466
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-intake-20260914T005110Z/A-result.json": {
+      "sha256": "a72fb320b470efd855b126b92465cddd256056d17e6fd817de11be37fc98d556",
+      "size": 6378
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-intake-20260914T005110Z/B-result.json": {
+      "sha256": "983b49be30668a3894468d5d1650916bf3d07f1e7e60afea9d8165e91b3a2ac3",
+      "size": 6520
+    },
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-review-blockers-r24/review-ab-intake-20260914T005110Z/REVIEW_AB_ASSESSMENT.json": {
+      "sha256": "0c093584f227a12d05ea3b7eb6dc67efe3543eaae1d3a8083f08fc523ff7fad0",
+      "size": 10519
+    }
+  },
+  "historical_result_summary": {
+    "mock-8570c78/result.json": {
+      "status": "PASS",
+      "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+      "PART_B_MOCK_PASS": true,
+      "real_provider_attempts": 0,
+      "operator_observed": false,
+      "executed_tests_count": 457
+    },
+    "platform-8570c78/result.json": {
+      "status": "PASS",
+      "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+      "source_kind": "SYNTHETIC",
+      "real_provider_attempts": 0,
+      "operator_observed": false,
+      "sleep_wake": "NOT_OBSERVED",
+      "physical_power_loss": "NOT_OBSERVED"
+    }
+  },
+  "delivery": {
+    "source_commit": "8570c78b47b0f8afb59a4d1e305af269ad6a4936",
+    "source_tree_sha256": "eefb03b1ee322a64caacfb783b9e866d9ba59028c665dfaadb2da9151e9a029a",
+    "platform": "WINDOWS_CHROME_WSL2",
+    "extension_origin": "chrome-extension://jnegjfjalhnpdeejfcjlobpbdpabdfhp",
+    "release_state": "CANDIDATE_WAITING_REVIEW",
+    "files_verified": 25,
+    "desktop_zip_sha256": "24a6325e58d61ef648d7218bdcdbb2079094be8e4d9baf7c9a592a6b7c7e1e59"
+  }
+}

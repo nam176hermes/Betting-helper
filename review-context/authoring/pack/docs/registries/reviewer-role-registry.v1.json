@@ -1,0 +1,26 @@
+{
+  "schema_version": "reviewer-role-registry/v1",
+  "roles": [
+    {
+      "role": "IMPLEMENTATION_READINESS_REVIEWER",
+      "prompt": "docs/prompts/CODEX_IMPLEMENTATION_READINESS_REVIEW_PROMPT.md",
+      "command_registry": "docs/registries/review-command-registry.v1.json",
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host/results/review-a"
+    },
+    {
+      "role": "CYBERSECURITY_REVIEWER",
+      "prompt": "docs/prompts/CODEX_CYBERSECURITY_REVIEW_PROMPT.md",
+      "command_registry": "docs/registries/cybersecurity-command-registry.v1.json",
+      "output_root": "/home/thenam176/betting-helper/part-b-review-host/results/review-b"
+    }
+  ],
+  "mechanical_independence": "REQUIRED",
+  "human_fresh_session_attestation": "REQUIRED_PROCEDURAL",
+  "launch_authority_role": "HOST_REVIEW_AUTHORITY",
+  "trust_root": "docs/security/review-trust-root.v1.json",
+  "authority_config": "docs/configs/review-authority.v1.json",
+  "maximum_launch_age_seconds": 14400,
+  "maximum_aggregate_delay_seconds": 3600,
+  "workspace_root_prefix": "/home/thenam176/betting-helper/part-b-review-host/workspaces",
+  "authoring_root_excluded": "/home/thenam176/betting-helper/authoring-part-b-review-inputs"
+}

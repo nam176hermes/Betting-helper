@@ -1,0 +1,3828 @@
+{
+  "schema_version": "hybrid-discovery.task-command-registry/v1",
+  "registry_type": "TASK_COMMAND_REGISTRY",
+  "working_directory": "/home/thenam176/betting-helper/discovery-runtime",
+  "shell_execution": false,
+  "production_authority": "NONE",
+  "baseline_mode_runs_stages": [
+    "PRE_BASELINE"
+  ],
+  "baseline_mode_forbids_stages": [
+    "POST_SEAL"
+  ],
+  "post_seal_mode_runs_stages": [
+    "POST_SEAL"
+  ],
+  "recursive_registry_invocation_forbidden": true,
+  "baseline_result_contract": {
+    "schema_ref": "urn:hybrid-discovery:v6.2:meta-records:v1#Repo0CommandResultSet",
+    "vector_path": "vendor/hybrid-discovery-v6.2/vectors/repo0-baseline-roots-v1.json",
+    "accepted_result_path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2/docs/receipts/repo0-command-results.json",
+    "file_tree_algorithm": "HD-REPO0-FILE-TREE-SHA256-v1",
+    "command_result_algorithm": "HD-REPO0-COMMAND-RESULTS-SHA256-v1",
+    "entry_group_order": [
+      "verification_commands",
+      "tasks"
+    ],
+    "entry_order": "SOURCE_ARRAY_ORDER",
+    "argv_order": "PRIMARY_THEN_ADDITIONAL_ARGV_ARRAY_ORDER",
+    "invocation_index_origin": "1",
+    "primary_argv_ordinal": "0",
+    "expected_verification_invocations": "41",
+    "expected_task_invocations": "60",
+    "expected_additional_argv_invocations": "9",
+    "expected_total_invocations": "101",
+    "inherit_parent_environment": false,
+    "working_directory": "/home/thenam176/betting-helper/discovery-runtime",
+    "candidate_file_tree_policy": {
+      "policy_id": "REPO0-CANDIDATE-EXCLUSIONS-v1",
+      "local_dotgit_state": "MUST_NOT_EXIST",
+      "ancestor_dotgit_state": "MAY_EXIST_BUT_MUST_NOT_BE_INSPECTED",
+      "ambient_parent_git": "NEVER_QUERY_OR_INHERIT",
+      "gitignore_path": ".gitignore",
+      "gitignore_encoding": "UTF-8_NO_BOM",
+      "gitignore_lines": [
+        ".coverage/",
+        ".mypy_cache/",
+        ".pytest_cache/",
+        ".ruff_cache/",
+        ".superpowers/",
+        ".venv/",
+        "__pycache__/",
+        "*.py[cod]",
+        "extension/.test-build/",
+        "extension/dist/",
+        "extension/node_modules/",
+        "node_modules/",
+        ".local/"
+      ],
+      "gitignore_final_lf": true,
+      "gitignore_sha256": "495da3c21d0f9a2e7d84f8590c0ad200eec92335bd5c32aef038846a59538387",
+      "excluded_directory_components": [
+        ".coverage",
+        ".local",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".superpowers",
+        ".venv",
+        "__pycache__",
+        "node_modules"
+      ],
+      "excluded_exact_subtrees": [
+        "extension/.test-build",
+        "extension/dist"
+      ],
+      "excluded_file_suffixes": [
+        ".pyc",
+        ".pyd",
+        ".pyo"
+      ],
+      "all_other_exclusions_forbidden": true,
+      "symlinks_forbidden": true,
+      "hardlinks_forbidden": true,
+      "non_regular_files_forbidden": true,
+      "executable_mode_rule": "100755_IFF_ANY_EXECUTABLE_BIT_ELSE_100644",
+      "two_pass_stable_enumeration_required": true
+    },
+    "execution_environment": {
+      "FORCE_COLOR": "0",
+      "HOME": "/home/thenam176",
+      "LANG": "C.UTF-8",
+      "LC_ALL": "C.UTF-8",
+      "NPM_CONFIG_IGNORE_SCRIPTS": "true",
+      "NPM_CONFIG_USERCONFIG": "/dev/null",
+      "NO_COLOR": "1",
+      "PATH": "/home/thenam176/.npm-global/bin:/home/thenam176/.local/share/mise/shims:/home/thenam176/.local/bin:/usr/local/bin:/usr/bin:/bin",
+      "PYTHONHASHSEED": "0",
+      "TMPDIR": "/tmp",
+      "TZ": "UTC",
+      "UV_NO_CONFIG": "1",
+      "UV_NO_PROGRESS": "1",
+      "UV_PYTHON_DOWNLOADS": "never"
+    },
+    "output_capture": "SEPARATE_RAW_STDOUT_STDERR_BYTES_NO_NORMALIZATION",
+    "blocked_root_policy": "NO_AUTHORITATIVE_COMMAND_RESULT_ROOT_NO_BASELINE_NO_SEAL"
+  },
+  "verification_commands": [
+    {
+      "command_id": "PRE-TOOLCHAIN-NODE",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "v22.23.0"
+      ],
+      "forbidden_output_fragments": []
+    },
+    {
+      "command_id": "PRE-TOOLCHAIN-PNPM",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "--version"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "10.33.2"
+      ],
+      "forbidden_output_fragments": []
+    },
+    {
+      "command_id": "PRE-TOOLCHAIN-PYTHON",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "python3.12",
+        "--version"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "Python 3.12.3"
+      ],
+      "forbidden_output_fragments": []
+    },
+    {
+      "command_id": "PRE-TOOLCHAIN-UV",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "uv 0.11.7 (x86_64-unknown-linux-gnu)"
+      ],
+      "forbidden_output_fragments": []
+    },
+    {
+      "command_id": "PRE-PNPM-FROZEN-INSTALL",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "install",
+        "--frozen-lockfile",
+        "--ignore-scripts"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "ERR_PNPM",
+        "ELIFECYCLE"
+      ]
+    },
+    {
+      "command_id": "PRE-UV-FROZEN-SYNC",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "sync",
+        "--frozen",
+        "--python",
+        "3.12.3"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "error:"
+      ]
+    },
+    {
+      "command_id": "PRE-TOOLCHAIN-VERIFIER",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/verify_toolchains.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_TOOLCHAIN"
+      ]
+    },
+    {
+      "command_id": "PRE-VENDOR-SYNC",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/sync_pack_assets.py",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_VENDOR",
+        "Traceback (most recent call last)"
+      ]
+    },
+    {
+      "command_id": "PRE-VENDOR-CHECK",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/sync_pack_assets.py",
+        "--check",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_VENDOR",
+        "Traceback (most recent call last)"
+      ]
+    },
+    {
+      "command_id": "PRE-NORMATIVE-BUNDLE",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/verify_normative_bundle.py",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_NORMATIVE",
+        "Traceback (most recent call last)"
+      ]
+    },
+    {
+      "command_id": "PRE-ESLINT",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "eslint",
+        "src",
+        "test",
+        "test-red"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "Parsing error",
+        "fatal"
+      ]
+    },
+    {
+      "command_id": "PRE-TSC-MAIN",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.json",
+        "--noEmit"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "error TS"
+      ]
+    },
+    {
+      "command_id": "PRE-TSC-TEST",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.test.json"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "error TS"
+      ]
+    },
+    {
+      "command_id": "PRE-TSC-BUILD",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "pnpm",
+        "--dir",
+        "extension",
+        "exec",
+        "tsc",
+        "-p",
+        "tsconfig.build.json"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "error TS"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-BOOTSTRAP",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/bootstrap.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-SCHEMA-VENDOR",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/schema-vendor.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-CANONICAL-VECTORS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/bootstrap/canonical-vectors.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-CLOCK-VECTORS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-CAPABILITY-BOOTSTRAP",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/capability-reachability.bootstrap.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-NODE-CANONICAL-REJECTIONS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test-red/canonical-hash.red.test.js"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "# pass"
+      ],
+      "forbidden_output_fragments": [
+        "not ok"
+      ]
+    },
+    {
+      "command_id": "PRE-RUFF",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "tests-red",
+        "tools"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "All checks passed!"
+      ],
+      "forbidden_output_fragments": [
+        "error:"
+      ]
+    },
+    {
+      "command_id": "PRE-MYPY",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "mypy",
+        "src",
+        "tests",
+        "tools"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "Success: no issues found"
+      ],
+      "forbidden_output_fragments": [
+        "error:"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-TOOLCHAINS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_toolchains.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-BOOTSTRAP",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_bootstrap.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-SCHEMA-VENDOR",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_schema_vendor.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-COMMAND-REGISTRY",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_command_registry.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-REPOSITORY-BASELINE",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_repository_baseline.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-GRAPH-PARTITION",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_graph_partition.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-CAPABILITY-REACHABILITY",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_capability_reachability.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-AUTHORIZATION-VECTORS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_authorization_vectors.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-SCHEMA-CLOSURE",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_schema_closure.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-SEMANTIC-DENIAL",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_semantic_denial.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-DDL",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_ddl.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-DURABILITY-CRASH",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_durability_crash.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-CLOCK-COHERENCE",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_clock_coherence.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-SCOPE-SEMANTICS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_scope0_semantics.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-SCOPE-SANDBOX",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_scope0_sandbox.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-REVIEW-SEMANTICS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_review_semantics.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-CUSTODY-AUTHORITY",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_custody_authority.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-PY-CANONICAL-REJECTIONS",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests-red/test_canonical_hash_red.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "PRE-REGISTRY-SELF-CHECK",
+      "stage": "PRE_BASELINE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/run_command_registry.py",
+        "--self-check"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_COMMAND_REGISTRY",
+        "Traceback (most recent call last)"
+      ]
+    },
+    {
+      "command_id": "POST-PACK-ARCHIVE-VERIFY",
+      "stage": "POST_SEAL",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "-m",
+        "moj_discovery.pack_verifier",
+        "verify",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2",
+        "--archive",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2.zip"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_PACK",
+        "Traceback (most recent call last)"
+      ]
+    },
+    {
+      "command_id": "POST-BASELINE-RECEIPT-VERIFY",
+      "stage": "POST_SEAL",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_repository_baseline.py"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [
+        "passed"
+      ],
+      "forbidden_output_fragments": [
+        " failed",
+        "ERROR collecting"
+      ]
+    },
+    {
+      "command_id": "POST-VENDOR-EQUIVALENCE",
+      "stage": "POST_SEAL",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "tools/sync_pack_assets.py",
+        "--check",
+        "--pack",
+        "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2"
+      ],
+      "expected_exit_code": 0,
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_VENDOR",
+        "Traceback (most recent call last)"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "REPO0-T01",
+      "phase": "REPO0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [],
+      "authority_status": "AUTHORING_ONLY",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_toolchains.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:REPO0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:",
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "REPO0-T02",
+      "phase": "REPO0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "REPO0-T01"
+      ],
+      "authority_status": "AUTHORING_ONLY",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_schema_vendor.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/schema-vendor.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:REPO0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:",
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "REPO0-T03",
+      "phase": "REPO0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "REPO0-T02"
+      ],
+      "authority_status": "AUTHORING_ONLY",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_bootstrap.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/bootstrap.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:REPO0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:",
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "REPO0-T04",
+      "phase": "REPO0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "REPO0-T03"
+      ],
+      "authority_status": "AUTHORING_ONLY",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_command_registry.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:REPO0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:",
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "REPO0-T05",
+      "phase": "REPO0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "REPO0-T04"
+      ],
+      "authority_status": "AUTHORING_ONLY",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/bootstrap/test_repository_baseline.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:REPO0-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [],
+      "forbidden_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:",
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T01",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "REPO0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_review_imports.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T02",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_finding_ledger.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T03",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_identifier_namespaces.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T04",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_authority_graph.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T05",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_review_semantics.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T05"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T05"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T06",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T03",
+        "R0-T04",
+        "R0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_spec_coverage.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T06"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T06",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T06"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "R0-T07",
+      "phase": "R0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T01",
+        "R0-T02",
+        "R0-T03",
+        "R0-T04",
+        "R0-T05",
+        "R0-T06"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_phase_gate.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T07"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:R0-T07",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:R0-T07"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T01",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "R0-T07"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_canonical_hash.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/canonical.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T02",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_schema_registry.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/schema-registry.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T03",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/contracts/spool.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T04",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_ingest_transaction.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T05",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T04"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_gap_generation.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/resume.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T05"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T05"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T06",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T04"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_clock_coherence.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/clock-coherence.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T06"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T06",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T06"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T07",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T02",
+        "F0A-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_browser_lifecycle.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/lifecycle.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T07"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T07",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T07"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "F0A-T08",
+      "phase": "F0A",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T05",
+        "F0A-T06",
+        "F0A-T07"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/contracts/test_export_replay.py"
+      ],
+      "additional_argv": [
+        [
+          "node",
+          "--test",
+          "extension/.test-build/test/contracts/export-replay.test.js"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T08"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:F0A-T08",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:F0A-T08"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T01",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "F0A-T08"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/capability-manifest.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T02",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/cdp-broker.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T03",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/run-controller.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T04",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/fixed-probes.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T05",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/capability-reachability.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T05"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T05"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T06",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T04",
+        "SEC0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/security/loopback-redaction-custody.test.js"
+      ],
+      "additional_argv": [
+        [
+          "uv",
+          "run",
+          "--frozen",
+          "pytest",
+          "-q",
+          "tests/security/test_custody_policy.py"
+        ]
+      ],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T06"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T06",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T06"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SEC0-T07",
+      "phase": "SEC0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T01",
+        "SEC0-T02",
+        "SEC0-T03",
+        "SEC0-T04",
+        "SEC0-T05",
+        "SEC0-T06"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/security/test_sec0_gate.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T07"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T07",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SEC0-T07"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T01",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T07"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/e0/e0-preflight.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T02",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/e0/network-metadata.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T03",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/e0/body-class-disabled.test.js"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T04",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T02",
+        "E0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_catalog_global_reports.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T05",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_identity_orientation_transport.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T05"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T05"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T06",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_lifecycle_clock_gap_reports.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T06"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T06",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T06"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T07",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_quote_display_report.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T07"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T07",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T07"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T08",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T03",
+        "E0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_passive_position_reports.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T08"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T08",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T08"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T09",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T01",
+        "SEC0-T06"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_loopback_capacity_report.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T09"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T09",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T09"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "E0-T10",
+      "phase": "E0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T02",
+        "E0-T03",
+        "E0-T04",
+        "E0-T05",
+        "E0-T06",
+        "E0-T07",
+        "E0-T08",
+        "E0-T09"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/e0/test_e0_evidence_set.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T10"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:E0-T10",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:E0-T10"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T01",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SEC0-T07"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_provider_protocol.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T02",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "D0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_provider_lineage.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T03",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "D0-T01",
+        "D0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_provider_capability_identity.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T04",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "D0-T01",
+        "D0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_provider_latency.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T05",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "D0-T03",
+        "D0-T04"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_provider_correction.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T05"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T05",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T05"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "D0-T06",
+      "phase": "D0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "D0-T03",
+        "D0-T04",
+        "D0-T05"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/d0/test_d0_evidence_set.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T06"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:D0-T06",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:D0-T06"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "G0-T01",
+      "phase": "G0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "E0-T10",
+        "D0-T06"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/g0/test_integrity_redaction_replay.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:G0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "G0-T02",
+      "phase": "G0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "G0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/g0/test_scenario_sufficiency.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:G0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "G0-T03",
+      "phase": "G0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "G0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/g0/test_capability_dispositions.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:G0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "G0-T04",
+      "phase": "G0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "G0-T01",
+        "G0-T02",
+        "G0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/g0/test_discovery_acceptance.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:G0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:G0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SCOPE0-T01",
+      "phase": "SCOPE0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "G0-T04"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/scope0/test_scope_input_view.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T01"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T01",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T01"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SCOPE0-T02",
+      "phase": "SCOPE0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SCOPE0-T01"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/scope0/test_candidate_scopes.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T02"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T02",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T02"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SCOPE0-T03",
+      "phase": "SCOPE0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SCOPE0-T02"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/scope0/test_scope_records.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T03"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T03",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T03"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    },
+    {
+      "task_id": "SCOPE0-T04",
+      "phase": "SCOPE0",
+      "stage": "PRE_BASELINE",
+      "dependencies": [
+        "SCOPE0-T03"
+      ],
+      "authority_status": "BLOCKED_BY_FRESH_INDEPENDENT_V6_2_REVIEW",
+      "production_authority": "NONE",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "pytest",
+        "-q",
+        "tests/scope0/test_scope_revocation.py"
+      ],
+      "additional_argv": [],
+      "baseline_expectation": {
+        "kind": "INTENTIONAL_RED",
+        "expected_exit_code": 1,
+        "required_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T04"
+        ],
+        "forbidden_output_fragments": [
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "post_task_expectation": {
+        "kind": "GREEN",
+        "expected_exit_code": 0,
+        "required_output_fragments": [],
+        "forbidden_output_fragments": [
+          "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T04",
+          "ModuleNotFoundError",
+          "ImportError",
+          "ERR_MODULE_NOT_FOUND",
+          "Cannot find module",
+          "No such file"
+        ]
+      },
+      "required_output_fragments": [
+        "E_CONTRACT_NOT_IMPLEMENTED:SCOPE0-T04"
+      ],
+      "forbidden_output_fragments": [
+        "ModuleNotFoundError",
+        "ImportError",
+        "ERR_MODULE_NOT_FOUND",
+        "Cannot find module",
+        "No such file"
+      ]
+    }
+  ]
+}

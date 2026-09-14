@@ -1,0 +1,119 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_codex_task.py"
+      ],
+      "exit": 0,
+      "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.400s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "discovery-runtime-v6.3.6/.venv/bin/ruff",
+        "format",
+        "--check",
+        "scripts/",
+        "docs/codex/phase2-evidence/reproduce-waits.py"
+      ],
+      "exit": 0,
+      "output": "4 files already formatted\n"
+    },
+    {
+      "argv": [
+        "discovery-runtime-v6.3.6/.venv/bin/ruff",
+        "check",
+        "scripts/",
+        "docs/codex/phase2-evidence/reproduce-waits.py"
+      ],
+      "exit": 0,
+      "output": "All checks passed!\n"
+    },
+    {
+      "argv": [
+        "discovery-runtime-v6.3.6/.venv/bin/mypy",
+        "--strict",
+        "--follow-imports=silent",
+        "scripts/",
+        "docs/codex/phase2-evidence/reproduce-waits.py"
+      ],
+      "exit": 0,
+      "output": "Success: no issues found in 4 source files\n"
+    },
+    {
+      "argv": [
+        "python3",
+        "scripts/codex_task.py",
+        "bridge",
+        "--check"
+      ],
+      "exit": 0,
+      "output": "{\n  \"status\": \"PASS\",\n  \"changed\": []\n}\n"
+    }
+  ],
+  "preservation": {
+    "discovery-runtime-v6.3.6": {
+      "head_unchanged": true,
+      "other_status_unchanged": true,
+      "phase2_status": [
+        " M AGENTS.md"
+      ]
+    },
+    "hybrid-discovery-v6.3.6-authoring": {
+      "head_unchanged": true,
+      "other_status_unchanged": true,
+      "phase2_status": [
+        "?? AGENTS.md"
+      ]
+    },
+    "authoring-controller-config-worktree": {
+      "head_unchanged": true,
+      "other_status_unchanged": true,
+      "phase2_status": [
+        "?? AGENTS.md"
+      ]
+    },
+    "docs/codex/audit-2026-09-08.md": {
+      "bytes_unchanged": true
+    },
+    "docs/codex/audit-evidence-2026-09-08.json": {
+      "bytes_unchanged": true
+    }
+  },
+  "existing_static_debt": {
+    "source": "Unchanged Phase 1 evidence; not rerun as application Python sources/config were not edited",
+    "ruff": 28,
+    "mypy": 163,
+    "mypy_files": 29
+  },
+  "not_run": [
+    "765-second portable: only operating instructions and external workflow tooling changed; not application behavior",
+    "Full governed verification/formal A/B: authority/configuration/seal contract remains separate; source-bound readiness HOLD"
+  ],
+  "docs_checks": {
+    "status": "PASS",
+    "links": [
+      "AGENTS.md:docs/codex/workflow.md",
+      "docs/codex/workflow.md:task-packet.example.json",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/propagation.json",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/waits.json",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/reproduce-waits.py",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/validation.json",
+      "docs/codex/phase2-2026-09-08.md:phase2-evidence/benchmark.json"
+    ],
+    "json": "All evidence and example JSON parse",
+    "code_fences": "balanced"
+  },
+  "wait_reproduction": {
+    "status": "PASS",
+    "matched_waits": 1900,
+    "identical_to_independent_json": true
+  }
+}

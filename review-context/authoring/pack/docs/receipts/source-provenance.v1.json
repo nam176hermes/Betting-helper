@@ -1,0 +1,19 @@
+{
+  "result": "PASS",
+  "review_sha256": "6f045f9d426433d61c2cfe29ac037452b160d2910da22d32b95e90fe1210309d",
+  "schema_version": "source-provenance/v1",
+  "source_inputs_sha256": "eff88bfd8998cde7ed653d54cd8970b4d9535f315f4cb65d4734ac99b9751ee5",
+  "verified_paths": [
+    "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.seal-attestation.json",
+    "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip",
+    "docs/sources/hybrid-discovery-v6.3.2-authoritative-design-plan.zip.sha256",
+    "docs/reviews/v6.3.2-independent-review.md",
+    "docs/reviews/v6.3.2-independent-review-evidence.json",
+    "docs/reviews/v6.3.3-plan-review.md",
+    "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip",
+    "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.zip.sha256",
+    "docs/sources/hybrid-discovery-v6.3.4-authoritative-design-plan.seal-attestation.json",
+    "docs/sources/V634-MIG0-T05.json",
+    "docs/sources/V634-P01-T06.json"
+  ]
+}

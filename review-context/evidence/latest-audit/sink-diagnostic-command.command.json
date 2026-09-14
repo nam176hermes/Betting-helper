@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "uv",
+    "run",
+    "--frozen",
+    "--offline",
+    "python",
+    "-B",
+    "-c",
+    "import runpy,sys;sys.path[:0]=['.','src'];runpy.run_path(sys.argv[1],run_name='__main__')",
+    "/home/thenam176/betting-helper/authoring-evidence/part-b-first-live-audit-20260914T010425Z/audit_current_sinks.py"
+  ],
+  "cwd": "/home/thenam176/betting-helper/part-b-candidate",
+  "exit": 0,
+  "seconds": 0.866388458001893,
+  "log": "sink-diagnostic-command.log",
+  "log_sha256": "e9162bf8c4d7eb688fe668b446bcc37a0a167e2828b3d21ed19687931ff24225",
+  "browser_platform": null
+}

@@ -1,0 +1,1026 @@
+{
+  "schema_version": "inherited-baseline-qualification/v1",
+  "authority": "PLAN_SPECIFICATION_ONLY",
+  "authorized_production_phases": "NONE",
+  "python_files": [
+    {
+      "path": "runtime/tests/bootstrap/test_authorization_vectors.py",
+      "source_sha256": "7585c194faa2c91bc8f9ca2f7e73900c8bf3f8616bfc9a4c033c99904b5c4c42",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_rfc8032_vectors_reproduce",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_signed_vector_test_result_label_is_not_trusted",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_signed_vector_active_results_cannot_be_swapped",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_signed_vector_replay_and_revocation_state_is_evaluated",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_test_key_role_membership_is_evaluated",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_trust_root_rejects_extra_private_key_material",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_trust_root_rejects_role_order_and_duplicate_drift",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_authorization_bundle_rejects_unknown_contract_fields",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_signature_base64url_rejects_noncanonical_pad_bits",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_serial_and_nonce_conflicts_are_computed",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_clock_outcome_is_computed_from_context_not_declared_faults",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_failure_precedence_uses_observed_faults_not_fixture_faults",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_all_pack_baseline_build_and_path_bindings_are_evaluated",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_bootstrap.py",
+      "source_sha256": "ea521352f4addb419ced164291caced70056d5d71aeb5f487eccbab8557ecd96",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_bootstrap_is_inert_and_has_no_authority",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_capability_reachability.py",
+      "source_sha256": "6d2b6b5bf51a08cb67b70b1c7a04d059c38ea0769f03c45a92713c8954cd0f4a",
+      "modification_owner": "V636-P05-T09",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_no_privileged_extension_source_exists_before_projection",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_capability_vector_id_sets_are_exact",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_clock_coherence.py",
+      "source_sha256": "2bd4d19d961b0f6cf89936f1466f425e832bb1fdf0b1e1b1af63eb6a8761156d",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_golden_clock_formula",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_command_registry.py",
+      "source_sha256": "7cc6cad6c8230811bec2e4b853cdf4cb2348250970f4505bcce019de94ef3e27",
+      "modification_owner": "V636-P05-T09",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS",
+      "tests": [
+        {
+          "symbol": "test_canonical_command_registry_is_closed",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_baseline_runner_executes_primary_and_additional_commands",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_baseline_runner_reports_wrong_additional_output",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_registry_self_check_validates_each_additional_argv",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_expansion_is_verification_then_task_primary_then_additional",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_evaluation_uses_only_exact_registry_environment",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_fragments_cannot_be_manufactured_across_stream_boundaries",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_malformed_contract_token_boundaries_fail_closed",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_contract_token_must_occur_exactly_once_across_both_streams",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_baseline_runner_requires_candidate_tree_stability_before_and_after_commands",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_registry_closed_shape_and_mandatory_contract",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_excludes_only_contract_generated_paths",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_does_not_treat_directory_component_names_as_files",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_includes_files_named_like_exact_generated_subtrees",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_rejects_bom_path",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_rejects_unsafe_entries",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_candidate_tree_rejects_symlink_root_and_gitignore_drift",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_accepted_result_set_is_never_written_for_a_blocked_run",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        },
+        {
+          "symbol": "test_arbitrary_accepted_result_path_is_rejected_without_deletion",
+          "mode": "SUCCESSOR_COMMAND_EXECUTION_INVARIANTS"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_custody_authority.py",
+      "source_sha256": "a57bc2a17b0073beae339b2860cc0854a8cca7dbbef97677ebbc15df2fa35c54",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_runtime_has_no_production_authority",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_runtime_rejects_pack_held_signing_keys",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_runtime_rejects_automatic_or_individual_custody_paths",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_ddl.py",
+      "source_sha256": "7f9691f6997869779125ccdfc33bf56c15f7aed726df9975f45a43ac6118af81",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_literal_ddl_has_exact_table_set_and_integrity",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_phase_gate_consumption_is_non_circular_atomic_and_issuer_scoped",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_consumption_rejects_nonce_replay_bad_clock_and_missing_run",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_signed_revocation_chain_is_global_contiguous_and_immutable",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_durability_crash.py",
+      "source_sha256": "c0a1ef9a408d6bd05cde80d0733020dfbf34d9b0d0e8fc03c2721a0fa5796870",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_real_sigkill_rolls_back_each_statement_boundary",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_all_46_restart_contracts_have_executable_exact_post_restart_state",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_governance_semantic_vectors.py",
+      "source_sha256": "ef9bee80469d42a8b8175643eb46b9b395bf3fbdca990998cc008e99f249b85f",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_declared_semantic_error_drift_is_rejected",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_exact_semantic_registry_drift_is_rejected",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_additional_scope_predicates_are_executable",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_scope_evaluation_bands_require_canonical_chronology",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_graph_partition.py",
+      "source_sha256": "33621fce9fe1942ecf734a228fc6b2f09156d8d3e1c63450a295ab34d9d8b8c0",
+      "modification_owner": "V636-P02-T01",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_TASK_MANIFEST_AND_UNCHANGED_AUTHORITY_GRAPH",
+      "tests": [
+        {
+          "symbol": "test_executable_and_future_graphs_are_partitioned",
+          "mode": "SUCCESSOR_TASK_MANIFEST_AND_UNCHANGED_AUTHORITY_GRAPH"
+        },
+        {
+          "symbol": "test_graph_partition_requires_exact_approved_edges",
+          "mode": "SUCCESSOR_TASK_MANIFEST_AND_UNCHANGED_AUTHORITY_GRAPH"
+        },
+        {
+          "symbol": "test_graph_artifacts_require_closed_shape_and_ordered_unique_nodes",
+          "mode": "SUCCESSOR_TASK_MANIFEST_AND_UNCHANGED_AUTHORITY_GRAPH"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "source_sha256": "7ef1cad9c7f8f9ed194c81821c49fa1fd7e3904b0569b1bdb54136e821b58f84",
+      "modification_owner": "V636-P05-T09",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "MIXED_EXPLICIT_TEST_CLASSIFICATION",
+      "tests": [
+        {
+          "symbol": "test_manifest_writer_binds_baseline_tree_and_is_self_excluding",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_plan_manifest_authoring_and_sealing_authority_are_fail_closed",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_builder_is_byte_deterministic_and_writes_exact_sidecar",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_vendored_archive_contract_reproduces_exact_golden_bytes",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_manifest_tree_hash_mismatch_is_rejected",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_manifest_noncanonical_serialization_is_rejected",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_manifest_size_bytes_requires_bounded_json_integer",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_builder_rejects_output_inside_pack",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_build_cli_uses_the_normative_builder",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_builder_rejects_source_symlinks_hardlinks_and_special_files",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_builder_rejects_non_nfc_source_path",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_pack_archive_rejects_bom_path",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_verifier_requires_exact_sidecar",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_verifier_rejects_noncanonical_member_metadata",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_verifier_rejects_comments_and_directory_entries",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_verifier_rejects_archive_bytes_that_do_not_match_rebuild",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_unsealed_directory_is_not_a_repository_baseline",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_independent_file_and_command_roots_match_canonical_golden_vectors",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_repository_verifier_rejects_ambient_parent_git",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_repository_verifier_accepts_postcommit_then_complete_receipt",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_repository_verifier_rejects_receipt_and_result_tampering",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_repository_verifier_rejects_noncanonical_sizes_and_invalid_timestamp",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_repository_verifier_rejects_boolean_numeric_fields",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_repository_verifier_rejects_same_bytes_hardlinked_worktree",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_independent_file_tree_rejects_bom_path",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_public_receipt_symbols_reject_noncanonical_paths_without_mutation",
+          "mode": "SUCCESSOR_BASELINE"
+        },
+        {
+          "symbol": "test_archive_path_traversal_is_rejected",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_archive_file_set_precedes_untrusted_member_metadata",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_exact_pack_archive_is_accepted",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        },
+        {
+          "symbol": "test_nested_source_walk_does_not_change_global_member_order",
+          "mode": "HISTORICAL_V62_ARCHIVE_OR_HASH_FIXTURE"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_review_semantics.py",
+      "source_sha256": "f025f6a23dd4121429492c4c9174919608f2eb0b64e46c7061cbdfe2f8d7602c",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_review_counterexamples_are_present",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_open_semantic_vector_contract_is_rejected",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_closure.py",
+      "source_sha256": "73a046ac838ea9e214ae950ed7424abc7482977a56c00ee973c94946244545af",
+      "modification_owner": "V636-P05-T02",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "INHERITED_PROTOCOL_AND_SUCCESSOR_BINDING_COVERAGE",
+      "tests": [
+        {
+          "symbol": "test_normative_schemas_are_closed",
+          "mode": "INHERITED_PROTOCOL_AND_SUCCESSOR_BINDING_COVERAGE"
+        },
+        {
+          "symbol": "test_canonical_registry_is_partitioned_and_bound",
+          "mode": "INHERITED_PROTOCOL_AND_SUCCESSOR_BINDING_COVERAGE"
+        },
+        {
+          "symbol": "test_unpublished_schema_reference_is_rejected",
+          "mode": "INHERITED_PROTOCOL_AND_SUCCESSOR_BINDING_COVERAGE"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_format_checker.py",
+      "source_sha256": "7451330ce1ce19eb212f4c2dddede5242433f0ca36caa100206b4838022ca7bc",
+      "modification_owner": "V636-P05-T09",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_bootstrap_schema_validation_enforces_formats",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_governance_schema_validation_enforces_formats",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_schema_vendor.py",
+      "source_sha256": "d678082cea89d6295299b1d22cca3c21f28dde2c740b99e37cae510e0af5d398",
+      "modification_owner": "V636-MIG0-T04",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_LAYOUT_AND_SYNC",
+      "tests": [
+        {
+          "symbol": "test_vendor_sync_is_exact_and_registry_is_not_reauthored",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_source_symlinks",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_destination_symlinks",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_copy_removes_stale_destination_extra_and_check_rejects_it",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_nested_manifest_name_is_payload_not_self_exclusion",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_fifo_special_entries",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_hardlinked_source_file",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_non_nfc_paths",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_noncanonical_source_and_vendor_modes",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        },
+        {
+          "symbol": "test_sync_rejects_hardlinked_vendor_and_generated_files",
+          "mode": "SUCCESSOR_LAYOUT_AND_SYNC"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_scope0_sandbox.py",
+      "source_sha256": "837d2e516fae9c013f442ba612e2b5f6ef4af90b65a3e5f538420447c396cf29",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_scope0_uses_bwrap_with_network_unshared",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_scope0_semantics.py",
+      "source_sha256": "797da57652cc8cf49d7f8e607faa4725d5a0c1ae2f1f69f40488c9f0bfd6775c",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_scope_counterexamples_are_present",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_semantic_denial.py",
+      "source_sha256": "4c8ec7cd91b02746c08f722941ff56f54fdaf1c5f7be6f75fc8228a7641374aa",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "tests": [
+        {
+          "symbol": "test_evidence_counterexamples_are_closed",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_all_declared_universal_denial_vectors_execute",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_evidence_error_label_is_derived_not_trusted",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_name_stage_precedes_value_entropy_schema_and_side_effects",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_arbitrary_cdp_command_values_are_denied",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_exact_allowed_commands_pass_value_scan_only",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_decode_and_shape_fail_closed",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_entropy_denial_precedes_unknown_member_and_hash",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_schema_compiled_signature_and_safe_key_identifier_reach_acceptance",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_safe_key_identifier_requires_exact_declaring_path_and_value",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_schema_validation_uses_format_checker",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_denial_receipt_schema_rejects_mutation",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_forbidden_registry_removal_is_fail_closed_drift",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        },
+        {
+          "symbol": "test_public_scanner_has_no_fault_control_or_side_effect_primitive",
+          "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL"
+        }
+      ]
+    },
+    {
+      "path": "runtime/tests/bootstrap/test_toolchains.py",
+      "source_sha256": "319461f934868bccde5a559fcf7f50ae672e93b1a38c2a788d31b9a1645ae3d7",
+      "modification_owner": "V636-P01-T01",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES",
+      "tests": [
+        {
+          "symbol": "test_accepts_exact_toolchain_version_tuple",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_rejects_node_version_mutation_to_v22_23_1",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_rejects_missing_or_extra_toolchain_observations",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_exact_dependency_policy_and_lock_bindings_pass",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_package_dependency_ranges_and_extras_are_rejected",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_package_lifecycle_script_is_rejected",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_exact_bootstrap_config_bytes_are_required",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_pyproject_dependency_ranges_extras_and_uv_pin_are_rejected",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_direct_dependency_lock_drift_is_rejected",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        },
+        {
+          "symbol": "test_resolved_direct_dependency_version_drift_is_rejected",
+          "mode": "SUCCESSOR_CONFIG_AND_PINNED_DEPENDENCIES"
+        }
+      ]
+    }
+  ],
+  "typescript_files": [
+    {
+      "path": "runtime/extension/test/bootstrap.test.ts",
+      "source_sha256": "b163616fa228d02258ddd1e5112425f6faf256eb793fced034da1d9c7316af87",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "compiled_test_path": "extension/.test-build/test/bootstrap.test.js"
+    },
+    {
+      "path": "runtime/extension/test/bootstrap/canonical-vectors.test.ts",
+      "source_sha256": "5137a29caf42683a9e32899218e3c824078f0542a79a2e1cafc1d27abd630400",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "compiled_test_path": "extension/.test-build/test/bootstrap/canonical-vectors.test.js"
+    },
+    {
+      "path": "runtime/extension/test/bootstrap/clock-coherence-vectors.test.ts",
+      "source_sha256": "69c14fa8055b8dde60af1560f002b2b88da40ee50f887e74e1892b8ce3481df4",
+      "modification_owner": null,
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "compiled_test_path": "extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js"
+    },
+    {
+      "path": "runtime/extension/test/schema-vendor.test.ts",
+      "source_sha256": "910364e2d231f9f0f1d4f763ee8e0d6c55a523e76ea8eb9aa95c340404dd9d78",
+      "modification_owner": "V636-MIG0-T04",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_VENDOR_NAMESPACE",
+      "compiled_test_path": "extension/.test-build/test/schema-vendor.test.js"
+    },
+    {
+      "path": "runtime/extension/test/security/capability-reachability.bootstrap.test.ts",
+      "source_sha256": "1705c95cbc4e412778c9244e1e2ea8bd957bb73bf4ee725f7ba791045b258727",
+      "modification_owner": "V636-P05-T09",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "SUCCESSOR_RUNTIME_WITH_INHERITED_PROTOCOL",
+      "compiled_test_path": "extension/.test-build/test/security/capability-reachability.bootstrap.test.js"
+    }
+  ],
+  "source_consumers": [
+    {
+      "path": "runtime/tools/sync_pack_assets.py",
+      "source_sha256": "528663797d453aadd01a8ddccbf7c6351a0f46399193ff35d741671748c124ed",
+      "modification_owners": [
+        "V636-MIG0-T03",
+        "V636-MIG0-T04"
+      ],
+      "qualification_owner": "V636-MIG0-T04",
+      "interface_obligation": "Preserve sync_pack_assets(pack, root, check=False) compatibility; use the explicit normative source map and separate MIG0-owned command-registry generation; checks never generate or silently remove undeclared inputs."
+    },
+    {
+      "path": "runtime/src/moj_discovery/vendor.py",
+      "source_sha256": "d4c93f417daa5decf9e8345534b866c2a4da5b01a410a6cc380044e03b2267ee",
+      "modification_owners": [
+        "V636-MIG0-T03",
+        "V636-MIG0-T04"
+      ],
+      "qualification_owner": "V636-MIG0-T04",
+      "interface_obligation": "verify_vendored_assets(root) compares active root registry against vendor/hybrid-discovery-v6.3.6/docs/registries/task-command-registry.v1.json; manifest file-set/hash checks remain exact."
+    },
+    {
+      "path": "runtime/src/moj_discovery/governance.py",
+      "source_sha256": "420263b7ad3c9d0c5860a783e4e60174977a910c6136ba27eca811f0726aa614",
+      "modification_owners": [
+        "V636-MIG0-T03",
+        "V636-P02-T01",
+        "V636-P05-T02",
+        "V636-P05-T09"
+      ],
+      "qualification_owner": "V636-P05-T09",
+      "interface_obligation": "validate_task_dependencies accepts the successor task manifest explicitly and validates its declared count/DAG; validate_canonical_registry accepts pinned historical registry data and explicit successor coverage bindings, never assumes active commands have v6.2 verification_commands shape."
+    },
+    {
+      "path": "runtime/tools/verify_toolchains.py",
+      "source_sha256": "f26a788dcc28ef39fb429521ccbb513a4bb11e0670736a6b07108fa20d8022e6",
+      "modification_owners": [
+        "V636-P01-T01",
+        "V636-MIG0-T07"
+      ],
+      "qualification_owner": "V636-MIG0-T07",
+      "interface_obligation": "verify_dependency_policy(root) checks exact supplied successor configuration, pinned runtime/dependency versions and MIG0-produced native-lock hashes. No trust of arbitrary current config or self-observed lock hash."
+    },
+    {
+      "path": "runtime/tools/run_command_registry.py",
+      "source_sha256": "2fd3c2c28842beffc1b1d4dc353bb3475090b16f33ca0ce7b71ff4bf25a33ced",
+      "modification_owners": [
+        "V636-MIG0-T03",
+        "V636-P05-T09"
+      ],
+      "qualification_owner": "V636-P05-T09",
+      "interface_obligation": "Successor registry parser/runner accepts only explicit current schema, exact command order/argv/cwd/environment, approved output paths and expected exits; inherited legacy registry is test/provenance data and cannot become active execution authority."
+    },
+    {
+      "path": "runtime/src/moj_discovery/pack_verifier.py",
+      "source_sha256": "a068b722f9ba81234974f0be018e450a640dc1744f47dd360d8bd6c63f6dc1c2",
+      "modification_owners": [
+        "V636-MIG0-T03",
+        "V636-P05-T09"
+      ],
+      "qualification_owner": "V636-P05-T09",
+      "interface_obligation": "Keep historical archive/hash API semantics for immutable golden fixtures; successor repository receipt verification uses current command schema, current registry identity and explicit runtime/pack/evidence roots. Historical receipt acceptance cannot qualify a successor candidate."
+    },
+    {
+      "path": "runtime/tools/verify_normative_bundle.py",
+      "source_sha256": "78e89dc3b5004e14259ac36d7d03df5ae336d3cd5840b8cbd40c75bbc4d274bc",
+      "modification_owners": [
+        "V636-MIG0-T04"
+      ],
+      "qualification_owner": "V636-MIG0-T04",
+      "interface_obligation": "verify_normative_bundle(pack, runtime) uses explicit roots and current normative-source-map, fixtures and current manifest schema; validates mapped schema and CDP bytes without inferred parent roots or reading v6.2 SourceProvenance/current authority through historical schema. CLI requires --pack and --runtime."
+    }
+  ],
+  "fixtures": [
+    {
+      "source_path": "/home/thenam176/betting-helper/discovery-runtime/task-command-registry.json",
+      "size": 99952,
+      "sha256": "78f05809b0d027ef07523fe0efeb746fc96e7a2cb615d702cead04c902c1a685",
+      "plan_destination": "docs/fixtures/inherited/v6.2/task-command-registry.json",
+      "runtime_vendor_relative": "docs/fixtures/inherited/v6.2/task-command-registry.json",
+      "classification": "IMMUTABLE_TEST_DATA_NEVER_EXECUTABLE",
+      "creation_owner": "V636-BOOT0-T02",
+      "synchronization_owner": "V636-MIG0-T04"
+    },
+    {
+      "source_path": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2/plan-manifest.json",
+      "size": 2276,
+      "sha256": "77132d5005d312282d7521eb21f6db556a463d53d2ffe4015b1ecdb6dc028e50",
+      "plan_destination": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "runtime_vendor_relative": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "classification": "IMMUTABLE_TEST_DATA_NEVER_EXECUTABLE",
+      "creation_owner": "V636-BOOT0-T02",
+      "synchronization_owner": "V636-MIG0-T04"
+    }
+  ],
+  "completion_policy": {
+    "preserve_every_listed_test_symbol": true,
+    "preserve_all_parameterized_negative_cases": true,
+    "no_skip_xfail_or_collection_exclusion": true,
+    "historical_results_never_count_as_successor_readiness": true,
+    "successor_pack_tests_use_explicit_roots": true,
+    "all_fixture_reads_are_offline_and_pinned": true,
+    "inherited_command_ids_require_total_successor_obligation_mapping": true
+  },
+  "inherited_command_obligations": [
+    {
+      "inherited_command_id": "PRE-NODE-CANONICAL-VECTORS",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_TS"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-NODE-CAPABILITY-BOOTSTRAP",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_TS"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-NORMATIVE-BUNDLE",
+      "successor_command_ids": [
+        "QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-AUTHORIZATION-VECTORS",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-CANONICAL-REJECTIONS",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_CANONICAL_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-CAPABILITY-REACHABILITY",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-COMMAND-REGISTRY",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-CUSTODY-AUTHORITY",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-GRAPH-PARTITION",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-SCHEMA-CLOSURE",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-PY-SCOPE-SEMANTICS",
+      "successor_command_ids": [
+        "QUALIFY_INHERITED_BOOTSTRAP_PY"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    },
+    {
+      "inherited_command_id": "PRE-REGISTRY-SELF-CHECK",
+      "successor_command_ids": [
+        "QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK"
+      ],
+      "role": "COVERAGE_MAPPING_ONLY_NOT_EXECUTION_ALIAS"
+    }
+  ],
+  "extra_test_sources": [
+    {
+      "path": "runtime/tests-red/test_canonical_hash_red.py",
+      "source_sha256": "8330085fee60b9bd698a6b9f4853cf2e612abe6a440595484a526899b9cace51",
+      "modification_owner": "V636-MIG0-T03",
+      "qualification_owner": "V636-P05-T09",
+      "mode": "INHERITED_PROTOCOL_GOLDEN_AND_REJECTIONS",
+      "command_id": "QUALIFY_INHERITED_CANONICAL_PY"
+    }
+  ],
+  "qualification_commands": [
+    {
+      "command_id": "QUALIFY_INHERITED_BOOTSTRAP_PY",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "pytest",
+        "-q",
+        "tests/bootstrap"
+      ],
+      "owner": "V636-P05-T09",
+      "expected_exit": 0
+    },
+    {
+      "command_id": "QUALIFY_INHERITED_BOOTSTRAP_TS",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+      "argv": [
+        "node",
+        "--test",
+        "extension/.test-build/test/bootstrap.test.js",
+        "extension/.test-build/test/bootstrap/canonical-vectors.test.js",
+        "extension/.test-build/test/bootstrap/clock-coherence-vectors.test.js",
+        "extension/.test-build/test/schema-vendor.test.js",
+        "extension/.test-build/test/security/capability-reachability.bootstrap.test.js"
+      ],
+      "owner": "V636-P05-T09",
+      "expected_exit": 0
+    },
+    {
+      "command_id": "QUALIFY_INHERITED_CANONICAL_PY",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "pytest",
+        "-q",
+        "tests-red/test_canonical_hash_red.py"
+      ],
+      "owner": "V636-P05-T09",
+      "expected_exit": 0
+    },
+    {
+      "command_id": "QUALIFY_SUCCESSOR_NORMATIVE_BINDINGS",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/verify_normative_bundle.py",
+        "--pack",
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/pack",
+        "--runtime",
+        "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime"
+      ],
+      "owner": "V636-P05-T09",
+      "expected_exit": 0
+    },
+    {
+      "command_id": "QUALIFY_SUCCESSOR_REGISTRY_SELF_CHECK",
+      "cwd": "/home/thenam176/betting-helper/hybrid-discovery-v6.3.6-authoring/runtime",
+      "argv": [
+        "uv",
+        "run",
+        "--frozen",
+        "--offline",
+        "python",
+        "tools/run_command_registry.py",
+        "--self-check"
+      ],
+      "owner": "V636-P05-T09",
+      "expected_exit": 0
+    }
+  ],
+  "historical_reads": [
+    {
+      "consumer": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "symbol": "test_plan_manifest_authoring_and_sealing_authority_are_fail_closed",
+      "old_operand": "docs/schemas/meta-records.schema.json",
+      "plan_source": "docs/inherited/v6.2/schemas/meta-records.schema.json",
+      "runtime_vendor_relative": "schemas/meta-records.schema.json",
+      "owner_task": "V636-P05-T09"
+    },
+    {
+      "consumer": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "symbol": "test_plan_manifest_authoring_and_sealing_authority_are_fail_closed",
+      "old_operand": "plan-manifest.json",
+      "plan_source": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "runtime_vendor_relative": "docs/fixtures/inherited/v6.2/plan-manifest.json",
+      "owner_task": "V636-P05-T09"
+    },
+    {
+      "consumer": "runtime/tests/bootstrap/test_repository_baseline.py",
+      "symbol": "test_independent_file_and_command_roots_match_canonical_golden_vectors",
+      "old_operand": "/home/thenam176/betting-helper/review-packs/hybrid-discovery-v6.2/docs/vectors/repo0-baseline-roots-v1.json",
+      "plan_source": "docs/inherited/v6.2/vectors/repo0-baseline-roots-v1.json",
+      "runtime_vendor_relative": "vectors/repo0-baseline-roots-v1.json",
+      "owner_task": "V636-P05-T09"
+    }
+  ]
+}
